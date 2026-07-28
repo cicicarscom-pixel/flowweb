@@ -81,18 +81,7 @@ export default function Dashboard() {
         </header>
         {/* Canvas */}
         <div className="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop space-y-xl">
-          {/* Page Header */}
-          <div className="flex justify-between items-end">
-            <div>
-              <h1 className="font-display-lg text-[48px] font-bold text-on-surface tracking-tight">Workigom Flow Command Center</h1>
-              <p className="font-data-mono text-data-mono text-on-surface-variant mt-2 uppercase tracking-wider">System Operational | Data Flow Nominal</p>
-            </div>
-            <div className="hidden md:flex gap-sm">
-              <button className="glass-panel text-on-surface px-md py-sm rounded-lg font-label-sm text-[12px] font-bold uppercase hover:bg-white/5 transition-colors border-outline-variant">
-                Export Report
-              </button>
-            </div>
-          </div>
+
           {/* Metrics Bento Grid */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-md">
             {/* Metric 1: Revenue */}

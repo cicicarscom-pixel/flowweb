@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { logout } from "@/actions/auth";
 
 export default function Dashboard() {
   return (
@@ -78,9 +79,11 @@ export default function Dashboard() {
               <span className="material-symbols-outlined">notifications</span>
               <span className="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full shadow-[0_0_5px_#ebb2ff]"></span>
             </button>
-            <button className="text-on-surface-variant hover:text-error transition-all duration-300">
-              <span className="material-symbols-outlined">logout</span>
-            </button>
+            <form action={logout}>
+              <button type="submit" className="text-on-surface-variant hover:text-error transition-all duration-300">
+                <span className="material-symbols-outlined">logout</span>
+              </button>
+            </form>
             <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
               <img alt="User Profile Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8mjwcET0fw2jjuiL4WwhA_OVsuungFpHlVZtBTQp6YF46Rf9tE1Gty6isKLnOGeWfyjjI2-HploqdjUtth4gSMxT3fh-CmKh9NEtvuhWaHQcJboB6D7FGXKS1gD9K_2K6yHtNGxElkj5RypPd68Zq0fkDfrHLNoJYTdDeHNy9PdMw1K2x1boUckRNxRLkVFh7oYLfd7Mn6DMUGO_LfZY037-JVwFH7FG5cg1nD6cD0Dpx6H1bbEw4Pv9DODJeYepxL_oDdcNGZmc" />
             </div>

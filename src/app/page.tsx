@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Dashboard() {
   return (
     <>
@@ -17,38 +19,37 @@ export default function Dashboard() {
           New Analysis
         </button>
         <nav className="flex-1 flex flex-col gap-xs overflow-y-auto pr-sm">
-          {/* Active Item */}
-          <a className="relative flex items-center gap-sm text-primary-fixed-dim bg-gradient-to-r from-primary/10 to-transparent py-sm px-sm rounded-r-lg group" href="#">
+          <Link className="relative flex items-center gap-sm text-primary-fixed-dim bg-gradient-to-r from-primary/10 to-transparent py-sm px-sm rounded-r-lg group" href="/">
             <div className="absolute left-[-24px] h-8 w-1 bg-primary shadow-[0_0_15px_rgba(0,162,255,0.8)] rounded-r-full"></div>
             <span className="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
             <span className="font-data-mono text-data-mono uppercase">Dashboard</span>
-          </a>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/accounting">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">account_balance_wallet</span>
             <span className="font-data-mono text-data-mono uppercase">AI Accounting</span>
-          </a>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/bot-management">
             <span className="material-symbols-outlined group-hover:text-tertiary-fixed-dim transition-colors">smart_toy</span>
             <span className="font-data-mono text-data-mono uppercase">Bot Management</span>
-          </a>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/social-media">
             <span className="material-symbols-outlined group-hover:text-secondary-fixed-dim transition-colors">share</span>
             <span className="font-data-mono text-data-mono uppercase">Social Media</span>
-          </a>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/appointments">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">calendar_today</span>
             <span className="font-data-mono text-data-mono uppercase">Appointments</span>
-          </a>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">settings</span>
             <span className="font-data-mono text-data-mono uppercase">Settings</span>
-          </a>
+          </Link>
         </nav>
         <div className="mt-auto pt-md border-t border-white/5 flex flex-col gap-xs">
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">help</span>
             <span className="font-data-mono text-data-mono uppercase">Help</span>
-          </a>
+          </Link>
           <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">contact_support</span>
             <span className="font-data-mono text-data-mono uppercase">Support</span>

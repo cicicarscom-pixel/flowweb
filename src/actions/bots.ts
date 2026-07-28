@@ -22,7 +22,10 @@ export async function updateBotSettings(formData: FormData) {
   const custom_instruction = formData.get('custom_instruction') as string
   
   const { data: user } = await supabase.auth.getUser()
-  if (!user.user) return { success: false, message: 'Unauthorized' }
+  if (!user.user) {
+    console.error('Unauthorized');
+    return;
+  }
 
   // Update logic (Upsert into bot_settings)
   const { error } = await supabase.from('bot_settings').upsert({
@@ -34,9 +37,9 @@ export async function updateBotSettings(formData: FormData) {
   })
 
   if (error) {
-    return { success: false, message: error.message }
+    console.error(error.message);
+    return;
   }
 
   revalidatePath('/bot-management')
-  return { success: true }
 }

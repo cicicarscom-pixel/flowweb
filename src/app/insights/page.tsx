@@ -1,7 +1,10 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { getAnalyticsOverview } from "@/actions/insights";
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const stats = await getAnalyticsOverview();
+
   return (
     <div className="bg-black text-[var(--color-on-surface)] font-body-md antialiased flex h-screen overflow-hidden selection:bg-[var(--color-primary)]/30 selection:text-white">
       {/* Main Content Area */}
@@ -9,9 +12,9 @@ export default function InsightsPage() {
         {/* Top Nav / Header Area */}
         <header className="h-20 border-b border-white/5 bg-black/80 backdrop-blur-md px-10 flex items-center justify-between z-10 shrink-0">
           <div className="flex items-center gap-4">
-            <button className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors">
+            <Link href="/" className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors">
               <span className="material-symbols-outlined">arrow_back</span>
-            </button>
+            </Link>
             <h2 className="text-2xl font-bold flex items-center gap-3">
               Analiz <span className="text-sm font-normal text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container)] px-2 py-1 rounded border border-white/10 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Canlı</span>
             </h2>
@@ -22,21 +25,23 @@ export default function InsightsPage() {
               <span className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-primary)] rounded-full"></span>
             </button>
             <img 
-              alt="User Profile" 
-              className="w-8 h-8 rounded-full border border-white/10" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqFcwEA6bhBe_EjS_j4zTDkO4JjtjHhvYedYExnuSPTEGBVx77IfPCf5-aKlJOXVd6TSqVBjwLu4ZUc1jPSnGZtiEnQ7sOuVb3JQGqrCpzK5HDFY6t6bp47Bq5RuB5Y-vor5YuLhYKzHUAejJ8zapDzeF4tUU9GLo0qajmG9uWlens3ldIYpibyIni2hO1YDnXymJ9d5cRRAHdjUUkwQf0s9T79VAdYVc4vatk4NpHn7X9PrGO2XtGBYddO7zw6LmhSRlRTyHJcyQ"
+              alt="Avatar" 
+              className="w-10 h-10 rounded-full border border-white/10" 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD17V070fTgOolmD-H37TwFM4x_rLlFWV3CmxUK010l_vUoIk6AFTnld2XGR_JlTNgU0qGMyHWEHWv5htjxlqUUATLZ0EkT_ncDRdMc9gk-Wn-xV83DJPGPkkvVvpT57PDjJMKSlJqNlqODcbzhNTlPLSH_Gab0dbiG0scNnmHCeQTg89JmH7ZHZoiS5s2exlWPjN_9QfWY7-NgtbJb8rPtyWd-EMkNlfSc3FsFMsRyIQoLf8Jc7z634qguU4id8c57JbAGtx4j-_Q" 
             />
           </div>
         </header>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar">
-          {/* Sub-navigation & Filters */}
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center justify-between">
-            {/* Tabs */}
-            <div className="flex p-1 bg-[var(--color-surface-container)] rounded-lg border border-white/5 inline-flex">
-              <button className="px-6 py-2.5 rounded-md bg-[var(--color-surface-container-high)] text-[var(--color-primary)] font-medium text-sm transition-all shadow-sm">
-                Gönderi Analizi
+        {/* Scrollable Dashboard */}
+        <div className="flex-1 overflow-y-auto p-10 flex flex-col gap-8 custom-scrollbar">
+          
+          {/* Dashboard Controls */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[var(--color-surface)]/40 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
+            {/* Page Tabs */}
+            <div className="flex gap-2">
+              <button className="bg-[var(--color-surface-container-high)] px-6 py-2.5 rounded-md text-white font-medium text-sm border border-white/10 flex items-center gap-2 shadow-sm">
+                Sosyal Medya Perf.
+                <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">check</span>
               </button>
               <button className="px-6 py-2.5 rounded-md text-[var(--color-on-surface-variant)] hover:text-white font-medium text-sm transition-all">
                 Gelen Mesaj Analizi
@@ -70,13 +75,13 @@ export default function InsightsPage() {
             <div className="glass-panel p-6 rounded-xl relative overflow-hidden group">
               <div className="absolute inset-0 rounded-xl border border-[var(--color-primary)]/30 group-hover:glow-cyan transition-all duration-500 pointer-events-none"></div>
               <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider mb-2">Toplam Gönderi</p>
-              <p className="text-4xl font-bold text-[var(--color-primary)] font-data-mono">0</p>
+              <p className="text-4xl font-bold text-[var(--color-primary)] font-data-mono">{stats.totalPosts}</p>
             </div>
             {/* Card 2 */}
             <div className="glass-panel p-6 rounded-xl relative overflow-hidden group">
               <div className="absolute inset-0 rounded-xl border border-[var(--color-secondary)]/30 group-hover:glow-magenta transition-all duration-500 pointer-events-none"></div>
               <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider mb-2">Toplam Yorum</p>
-              <p className="text-4xl font-bold text-[var(--color-secondary)] font-data-mono">0</p>
+              <p className="text-4xl font-bold text-[var(--color-secondary)] font-data-mono">{stats.totalComments}</p>
             </div>
             {/* Card 3 */}
             <div className="glass-panel p-6 rounded-xl">
@@ -84,7 +89,7 @@ export default function InsightsPage() {
                 <span className="material-symbols-outlined text-[var(--color-on-surface-variant)] text-sm">group</span>
                 <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider">Toplam Takipçi</p>
               </div>
-              <p className="text-3xl font-bold text-white">--</p>
+              <p className="text-3xl font-bold text-white">{stats.totalFollowers}</p>
             </div>
             {/* Card 4 */}
             <div className="glass-panel p-6 rounded-xl">
@@ -92,7 +97,7 @@ export default function InsightsPage() {
                 <span className="material-symbols-outlined text-[var(--color-on-surface-variant)] text-sm">rate_review</span>
                 <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider">Değerlendirmeler</p>
               </div>
-              <p className="text-3xl font-bold text-white">0</p>
+              <p className="text-3xl font-bold text-white">{stats.reviews}</p>
             </div>
           </div>
 

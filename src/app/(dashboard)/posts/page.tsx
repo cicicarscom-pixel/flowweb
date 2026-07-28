@@ -6,42 +6,7 @@ export default async function PostsPage() {
   const posts = await getPosts() || [];
 
   return (
-    <div className="flex min-h-screen bg-[var(--color-background)] font-body-md antialiased overflow-x-hidden selection:bg-[var(--color-primary)]/30 selection:text-[var(--color-primary)]">
-      {/* Main Content Canvas */}
-      <main className="flex-1 md:ml-0 min-h-screen flex flex-col">
-        {/* TopNavBar (Web) */}
-        <header className="hidden md:flex fixed top-0 w-full z-50 justify-between items-center px-margin-desktop h-16 bg-[var(--color-surface)]/40 backdrop-blur-xl border-b border-white/5 flat no shadows">
-          <div className="flex items-center gap-md">
-            <Link href="/social-media" className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors">
-              <span className="material-symbols-outlined">arrow_back</span>
-            </Link>
-            {/* Search bar placeholder */}
-            <div className="relative group">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] group-focus-within:text-[var(--color-primary)] transition-colors">search</span>
-              <input className="bg-white/5 border-b border-white/10 text-[var(--color-on-surface)] pl-10 pr-4 py-2 w-64 focus:outline-none focus:border-[var(--color-primary)] focus:bg-white/10 transition-all font-data-mono text-data-mono rounded-t-DEFAULT" placeholder="Search FLOW..." type="text"/>
-            </div>
-          </div>
-          <div className="flex items-center gap-xl h-full">
-            <nav className="flex h-full">
-              <a className="flex flex-col justify-center px-sm h-full font-data-mono text-label-sm uppercase tracking-wider text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors duration-200" href="#">Analytics</a>
-              <a className="flex flex-col justify-center px-sm h-full font-data-mono text-label-sm uppercase tracking-wider text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors duration-200" href="#">Calendar</a>
-              <a className="flex flex-col justify-center px-sm h-full font-data-mono text-label-sm uppercase tracking-wider text-[var(--color-primary)] font-bold border-b-2 border-[var(--color-primary)] pb-1" href="#">Posts</a>
-              <a className="flex flex-col justify-center px-sm h-full font-data-mono text-label-sm uppercase tracking-wider text-[var(--color-on-surface-variant)] hover:text-[var(--color-primary)] transition-colors duration-200" href="#">Assets</a>
-            </nav>
-            
-            <div className="flex items-center gap-sm">
-              <button className="h-10 px-6 bg-[var(--color-primary)] text-black font-data-mono text-label-sm uppercase font-bold rounded-lg hover:bg-[var(--color-primary-container)] hover:shadow-[0_0_15px_rgba(0,162,255,0.4)] transition-all">
-                + New Post
-              </button>
-              <div className="w-10 h-10 rounded-full border border-white/10 overflow-hidden shrink-0 ml-2">
-                <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD17V070fTgOolmD-H37TwFM4x_rLlFWV3CmxUK010l_vUoIk6AFTnld2XGR_JlTNgU0qGMyHWEHWv5htjxlqUUATLZ0EkT_ncDRdMc9gk-Wn-xV83DJPGPkkvVvpT57PDjJMKSlJqNlqODcbzhNTlPLSH_Gab0dbiG0scNnmHCeQTg89JmH7ZHZoiS5s2exlWPjN_9QfWY7-NgtbJb8rPtyWd-EMkNlfSc3FsFMsRyIQoLf8Jc7z634qguU4id8c57JbAGtx4j-_Q"/>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Scrollable Content Area */}
-        <div className="flex-1 mt-16 p-margin-mobile md:p-margin-desktop overflow-y-auto custom-scrollbar">
+    <>
           <div className="max-w-7xl mx-auto space-y-md">
             
             {/* Header / Filter Row */}
@@ -157,8 +122,6 @@ export default async function PostsPage() {
               
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+    </>
   );
 }

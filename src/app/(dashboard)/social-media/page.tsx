@@ -5,68 +5,7 @@ export default async function SocialMedia() {
   const accounts = await getSocialAccounts() || [];
 
   return (
-    <div className="flex h-screen overflow-hidden font-body-md bg-background text-on-background w-full relative">
-      {/* SideNavBar (Shared Component) */}
-      <nav className="fixed left-0 top-0 h-screen w-[280px] bg-surface-container-lowest/80 backdrop-blur-md border-r border-white/5 flex-col py-lg px-md gap-md z-40 hidden md:flex">
-        <div className="font-headline-lg text-primary-fixed-dim mb-8">
-          <span className="block text-[32px] font-semibold tracking-tight">AI-ESNAF</span>
-          <span className="font-data-mono text-[12px] font-bold uppercase tracking-wider text-on-surface-variant">Command Center</span>
-        </div>
-        
-        <button className="bg-gradient-to-r from-primary-container to-tertiary-container text-on-primary-container font-data-mono text-[12px] font-bold py-3 px-4 rounded hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.3)] transition-all mb-4 text-left w-full uppercase">
-          New Analysis
-        </button>
-        
-        <div className="flex-1 flex flex-col gap-2">
-          <Link href="/" className="flex items-center gap-sm text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors p-3 rounded hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.2)]">
-            <span className="material-symbols-outlined">dashboard</span>
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/accounting" className="flex items-center gap-sm text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors p-3 rounded hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.2)]">
-            <span className="material-symbols-outlined">account_balance_wallet</span>
-            <span>AI Accounting</span>
-          </Link>
-          <Link href="/bot-management" className="flex items-center gap-sm text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors p-3 rounded hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.2)]">
-            <span className="material-symbols-outlined">smart_toy</span>
-            <span>Bot Ynetimi</span>
-          </Link>
-          <a href="#" className="flex items-center gap-sm text-primary bg-primary/10 border-r-2 border-primary transition-colors p-3 rounded shadow-[inset_0_0_20px_rgba(0,162,255,0.05)]">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "\"FILL\" 1" }}>share</span>
-            <span>Sosyal Medya</span>
-          </a>
-        </div>
-      </nav>
-
-      {/* Main Content Area */}
-      <main className="flex-1 md:ml-[280px] h-screen overflow-y-auto custom-scrollbar relative z-10 flex flex-col">
-        {/* Header */}
-        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex justify-between items-center shadow-sm">
-          <div className="flex items-center gap-3 md:hidden">
-            <button className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-[28px]">menu</span>
-            </button>
-            <span className="font-headline-lg text-[20px] font-semibold text-primary">AI-ESNAF</span>
-          </div>
-          <div className="hidden md:block">
-            <h1 className="font-display-lg text-[28px] font-bold text-on-surface flex items-center gap-3">
-              <span>Network Control</span>
-              <span className="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary-container font-data-mono text-[10px] uppercase tracking-widest border border-secondary-container/30">Zernio Active</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center bg-surface-container-high rounded-full px-3 py-1 border border-white/10">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse mr-2"></span>
-              <span className="font-data-mono text-[11px] text-on-surface-variant">System Optimal</span>
-            </div>
-            <button className="w-10 h-10 rounded-full glass-panel flex items-center justify-center hover:bg-white/10 transition-colors relative group">
-              <span className="material-symbols-outlined text-on-surface-variant group-hover:text-white transition-colors">notifications</span>
-              <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full animate-pulse shadow-[0_0_5px_rgba(255,180,171,0.8)]"></span>
-            </button>
-            <div className="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center border border-white/10 overflow-hidden">
-              <img alt="User" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD17V070fTgOolmD-H37TwFM4x_rLlFWV3CmxUK010l_vUoIk6AFTnld2XGR_JlTNgU0qGMyHWEHWv5htjxlqUUATLZ0EkT_ncDRdMc9gk-Wn-xV83DJPGPkkvVvpT57PDjJMKSlJqNlqODcbzhNTlPLSH_Gab0dbiG0scNnmHCeQTg89JmH7ZHZoiS5s2exlWPjN_9QfWY7-NgtbJb8rPtyWd-EMkNlfSc3FsFMsRyIQoLf8Jc7z634qguU4id8c57JbAGtx4j-_Q" className="w-full h-full object-cover" />
-            </div>
-          </div>
-        </header>
+    <>
 
         <div className="flex-1 p-4 md:p-6 lg:p-8 custom-scrollbar">
           <div className="max-w-6xl mx-auto space-y-6">
@@ -219,7 +158,6 @@ export default async function SocialMedia() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

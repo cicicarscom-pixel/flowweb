@@ -1,82 +1,7 @@
-import Link from "next/link";
-import { logout } from "@/actions/auth";
-
 export default function Dashboard() {
   return (
     <>
-      {/* SideNavBar */}
-      <aside className="hidden md:flex flex-col bg-surface-container-lowest/80 backdrop-blur-md fixed left-0 top-0 h-screen w-[280px] border-r border-white/5 py-lg px-md gap-md z-40">
-        <div className="flex items-center justify-center mb-lg w-full">
-          <img src="/logo.png" alt="Workigom Flow" className="h-[72px] w-auto object-contain drop-shadow-[0_0_10px_rgba(0,162,255,0.15)]" />
-        </div>
-        <nav className="flex-1 flex flex-col gap-xs overflow-y-auto pr-sm">
-          <Link className="relative flex items-center gap-sm text-primary-fixed-dim bg-gradient-to-r from-primary/10 to-transparent py-sm px-sm rounded-r-lg group" href="/">
-            <div className="absolute left-[-24px] h-8 w-1 bg-primary shadow-[0_0_15px_rgba(0,162,255,0.8)] rounded-r-full"></div>
-            <span className="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
-            <span className="font-data-mono text-data-mono uppercase">Anasayfa</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/ai-asistan">
-            <span className="material-symbols-outlined group-hover:text-tertiary-fixed-dim transition-colors">memory</span>
-            <span className="font-data-mono text-data-mono uppercase">Ai Asistan</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/accounting">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">account_balance_wallet</span>
-            <span className="font-data-mono text-data-mono uppercase">Ai Muhasebe</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/social-media">
-            <span className="material-symbols-outlined group-hover:text-secondary-fixed-dim transition-colors">share</span>
-            <span className="font-data-mono text-data-mono uppercase">Sosyal Medya</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/analiz">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">bar_chart</span>
-            <span className="font-data-mono text-data-mono uppercase">Analiz</span>
-          </Link>
-        </nav>
-        <div className="mt-auto pt-md border-t border-white/5 flex flex-col gap-xs">
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">help</span>
-            <span className="font-data-mono text-data-mono uppercase">Help</span>
-          </Link>
-          <a className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">contact_support</span>
-            <span className="font-data-mono text-data-mono uppercase">Support</span>
-          </a>
-        </div>
-      </aside>
-      
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col md:ml-[280px] h-screen overflow-hidden">
-        {/* TopNavBar */}
-        <header className="bg-surface/40 backdrop-blur-[20px] shadow-sm flex justify-between items-center w-full px-margin-desktop h-16 docked full-width top-0 sticky z-50 border-b border-white/5">
-          <div className="flex items-center gap-md">
-            {/* Mobile Menu Toggle (Visible only on mobile) */}
-            <button className="md:hidden text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined">menu</span>
-            </button>
-            <div className="md:hidden font-headline-lg-mobile text-[24px] font-semibold text-primary tracking-tighter italic">FLOW</div>
-            {/* Search Bar */}
-            <div className="hidden md:flex items-center bg-surface-container/50 border border-white/10 rounded-full px-sm py-xs focus-within:border-primary-fixed-dim focus-within:shadow-[0_0_10px_rgba(153,203,255,0.2)] transition-all w-64">
-              <span className="material-symbols-outlined text-on-surface-variant text-[18px] mr-xs">search</span>
-              <input className="bg-transparent border-none text-data-mono font-data-mono text-on-surface focus:ring-0 w-full placeholder:text-on-surface-variant/50 text-sm outline-none" placeholder="Search insights..." type="text" />
-            </div>
-          </div>
-          <div className="flex items-center gap-md">
-            <button className="text-on-surface-variant hover:text-primary transition-all duration-300 relative group">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full shadow-[0_0_5px_#ebb2ff]"></span>
-            </button>
-            <form action={logout}>
-              <button type="submit" className="text-on-surface-variant hover:text-error transition-all duration-300">
-                <span className="material-symbols-outlined">logout</span>
-              </button>
-            </form>
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-white/20">
-              <img alt="User Profile Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8mjwcET0fw2jjuiL4WwhA_OVsuungFpHlVZtBTQp6YF46Rf9tE1Gty6isKLnOGeWfyjjI2-HploqdjUtth4gSMxT3fh-CmKh9NEtvuhWaHQcJboB6D7FGXKS1gD9K_2K6yHtNGxElkj5RypPd68Zq0fkDfrHLNoJYTdDeHNy9PdMw1K2x1boUckRNxRLkVFh7oYLfd7Mn6DMUGO_LfZY037-JVwFH7FG5cg1nD6cD0Dpx6H1bbEw4Pv9DODJeYepxL_oDdcNGZmc" />
-            </div>
-          </div>
-        </header>
-        {/* Canvas */}
-        <div className="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop space-y-xl">
+
 
           {/* Metrics Bento Grid */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-md">
@@ -233,9 +158,6 @@ export default function Dashboard() {
               </div>
             </section>
           </div>
-          <div className="h-lg w-full"></div>
-        </div>
-      </main>
     </>
   );
 }

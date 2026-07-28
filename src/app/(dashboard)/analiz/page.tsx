@@ -6,32 +6,7 @@ export default async function InsightsPage() {
   const stats = await getAnalyticsOverview();
 
   return (
-    <div className="bg-black text-[var(--color-on-surface)] font-body-md antialiased flex h-screen overflow-hidden selection:bg-[var(--color-primary)]/30 selection:text-white">
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full relative overflow-hidden grid-bg ml-0 md:ml-[280px]">
-        {/* Top Nav / Header Area */}
-        <header className="h-20 border-b border-white/5 bg-black/80 backdrop-blur-md px-10 flex items-center justify-between z-10 shrink-0">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors">
-              <span className="material-symbols-outlined">arrow_back</span>
-            </Link>
-            <h2 className="text-2xl font-bold flex items-center gap-3">
-              Analiz <span className="text-sm font-normal text-[var(--color-on-surface-variant)] bg-[var(--color-surface-container)] px-2 py-1 rounded border border-white/10 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Canlı</span>
-            </h2>
-          </div>
-          <div className="flex items-center gap-6">
-            <button className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors relative">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-[var(--color-primary)] rounded-full"></span>
-            </button>
-            <img 
-              alt="Avatar" 
-              className="w-10 h-10 rounded-full border border-white/10" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD17V070fTgOolmD-H37TwFM4x_rLlFWV3CmxUK010l_vUoIk6AFTnld2XGR_JlTNgU0qGMyHWEHWv5htjxlqUUATLZ0EkT_ncDRdMc9gk-Wn-xV83DJPGPkkvVvpT57PDjJMKSlJqNlqODcbzhNTlPLSH_Gab0dbiG0scNnmHCeQTg89JmH7ZHZoiS5s2exlWPjN_9QfWY7-NgtbJb8rPtyWd-EMkNlfSc3FsFMsRyIQoLf8Jc7z634qguU4id8c57JbAGtx4j-_Q" 
-            />
-          </div>
-        </header>
-
+    <>
         {/* Scrollable Dashboard */}
         <div className="flex-1 overflow-y-auto p-10 flex flex-col gap-8 custom-scrollbar">
           
@@ -152,7 +127,6 @@ export default async function InsightsPage() {
             </div>
           </section>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

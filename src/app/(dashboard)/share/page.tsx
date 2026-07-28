@@ -12,60 +12,7 @@ export default function SharePage() {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] font-body-md text-[var(--color-on-surface)] antialiased grid-bg h-screen flex overflow-hidden">
-      {/* SideNavBar */}
-      <nav className="fixed left-0 top-0 h-full w-[280px] bg-[var(--color-surface-container-lowest)]/80 backdrop-blur-md border-r border-white/5 flex flex-col py-lg z-40 hidden md:flex">
-        <div className="px-md mb-xl flex items-center gap-sm">
-          <span className="material-symbols-outlined text-[var(--color-primary)] text-3xl">auto_awesome</span>
-          <div>
-            <h1 className="font-headline-lg text-[var(--color-primary)] text-2xl font-bold tracking-tight">Creator Hub</h1>
-            <p className="font-data-mono text-data-mono text-[var(--color-on-surface-variant)] text-[10px]">AI-Powered Scale</p>
-          </div>
-        </div>
-        <div className="flex-1 px-sm space-y-2">
-          <Link href="/" className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-white/5 transition-all duration-300 cursor-pointer">
-            <span className="material-symbols-outlined">dashboard</span>
-            <span className="font-body-md text-body-md">Dashboard</span>
-          </Link>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-white/5 transition-all duration-300 cursor-pointer" href="#">
-            <span className="material-symbols-outlined">auto_awesome</span>
-            <span className="font-body-md text-body-md">Content Lab</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 border-[var(--color-primary)] bg-gradient-to-r from-[var(--color-primary)]/10 to-transparent text-[var(--color-primary)] font-bold cursor-pointer" href="#">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>edit_square</span>
-            <span className="font-body-md text-body-md">AI Paylaşım</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-white/5 transition-all duration-300 cursor-pointer" href="#">
-            <span className="material-symbols-outlined">layers</span>
-            <span className="font-body-md text-body-md">Platforms</span>
-          </a>
-          <a className="flex items-center gap-3 px-4 py-3 rounded-xl border-l-4 border-transparent text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-white/5 transition-all duration-300 cursor-pointer" href="#">
-            <span className="material-symbols-outlined">psychology</span>
-            <span className="font-body-md text-body-md">AI Model</span>
-          </a>
-        </div>
-      </nav>
-
-      {/* Main Content Area */}
-      <main className="flex-1 ml-0 md:ml-[280px] h-screen overflow-y-auto custom-scrollbar relative flex flex-col items-center">
-        <header className="w-full h-16 border-b border-white/5 bg-[var(--color-surface)]/80 backdrop-blur-xl flex items-center justify-between px-md sticky top-0 z-30">
-          <div className="flex items-center gap-3">
-             <span className="font-headline-lg-mobile text-[18px] font-semibold text-white">Yeni Gönderi Oluştur</span>
-             <span className="px-2 py-0.5 rounded-full bg-[var(--color-primary-container)]/30 text-[var(--color-on-primary-container)] font-data-mono text-[10px] uppercase font-bold tracking-widest border border-[var(--color-primary)]/20">FLOW AI Aktif</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors">
-              <span className="material-symbols-outlined">help</span>
-            </button>
-            <button className="text-[var(--color-on-surface-variant)] hover:text-white transition-colors relative">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-            </button>
-            <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden bg-[var(--color-surface-container)]">
-              <img alt="User" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD17V070fTgOolmD-H37TwFM4x_rLlFWV3CmxUK010l_vUoIk6AFTnld2XGR_JlTNgU0qGMyHWEHWv5htjxlqUUATLZ0EkT_ncDRdMc9gk-Wn-xV83DJPGPkkvVvpT57PDjJMKSlJqNlqODcbzhNTlPLSH_Gab0dbiG0scNnmHCeQTg89JmH7ZHZoiS5s2exlWPjN_9QfWY7-NgtbJb8rPtyWd-EMkNlfSc3FsFMsRyIQoLf8Jc7z634qguU4id8c57JbAGtx4j-_Q"/>
-            </div>
-          </div>
-        </header>
+    <>
 
         <form action={handleCreatePost} className="w-full max-w-4xl p-md md:p-lg lg:p-xl space-y-xl flex-1 flex flex-col">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl">
@@ -158,7 +105,6 @@ export default function SharePage() {
           </div>
           <div className="h-32"></div> {/* spacer */}
         </form>
-      </main>
-    </div>
+    </>
   );
 }

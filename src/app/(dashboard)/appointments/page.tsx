@@ -23,41 +23,7 @@ export default async function Appointments() {
   const activeAppointments = appointments.filter((a: any) => a.status !== 'cancelled' && a.status !== 'completed');
 
   return (
-    <div className="text-on-background font-body-md tech-grid min-h-screen overflow-x-hidden selection:bg-primary/30 selection:text-primary">
-      {/* SideNavBar */}
-      <nav className="fixed left-0 h-screen w-[280px] bg-surface/40 backdrop-blur-xl border-r border-white/5 flex flex-col py-md px-sm z-40 hidden md:flex">
-        {/* Brand Header */}
-        <div className="mb-xl px-sm flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary-container p-[1px]">
-            <div className="w-full h-full bg-surface-container-lowest rounded-lg flex items-center justify-center">
-              <span className="material-symbols-outlined text-primary text-[20px]" style={{ fontVariationSettings: "\"FILL\" 1" }}>terminal</span>
-            </div>
-          </div>
-          <div>
-            <h1 className="font-display-lg text-[32px] font-semibold text-primary tracking-tighter uppercase leading-none">NEO-FINTECH</h1>
-            <p className="font-data-mono text-[14px] font-medium text-on-surface-variant text-[10px]">Operational Center</p>
-          </div>
-        </div>
-        
-        {/* Navigation Links */}
-        <div className="flex flex-col gap-2 flex-grow">
-          <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-medium hover:text-primary hover:bg-white/5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "\"FILL\" 0" }}>dashboard</span>
-            Dashboard
-          </Link>
-          <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-gradient-to-r from-primary/10 to-transparent text-primary font-medium hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 border-l-2 border-primary">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "\"FILL\" 1" }}>calendar_month</span>
-            Randevu Yönetimi
-          </a>
-          <Link href="/accounting" className="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-medium hover:text-primary hover:bg-white/5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "\"FILL\" 0" }}>account_balance_wallet</span>
-            AI Muhasebe
-          </Link>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="md:ml-[280px] p-margin-mobile md:p-margin-desktop flex flex-col h-screen overflow-y-auto custom-scrollbar relative z-10">
+    <>
         
         {/* Header */}
         <header className="flex justify-between items-center mb-lg">
@@ -219,7 +185,6 @@ export default async function Appointments() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+    </>
   );
 }

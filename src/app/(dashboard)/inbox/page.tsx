@@ -6,10 +6,7 @@ export default async function InboxPage() {
   const messages = await getMessages() || [];
 
   return (
-    <div className="antialiased min-h-screen flex text-[var(--color-on-surface)]">
-      {/* Main Content Area */}
-      <main className="ml-0 flex-1 flex h-screen">
-        
+    <>
         {/* Inbox List Column */}
         <section className="w-full md:w-[380px] border-r border-white/5 bg-[var(--color-surface)]/40 flex flex-col h-full shrink-0">
           {/* Header */}
@@ -96,7 +93,6 @@ export default async function InboxPage() {
              <p className="font-data-mono">Sohbet seçin</p>
           </div>
         </section>
-      </main>
-    </div>
+    </>
   );
 }

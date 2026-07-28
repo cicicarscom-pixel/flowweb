@@ -184,3 +184,36 @@ body {
     border: 1px solid var(--color-secondary);
 }
 
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-tertiary) 100%);
+    color: #0A0A0B;
+    transition: all 0.2s ease;
+}
+.btn-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(153, 203, 255, 0.5);
+}
+.btn-secondary {
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    background: transparent;
+    transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+    background: rgba(235, 178, 255, 0.1);
+}
+.nav-glow {
+    position: relative;
+}
+.nav-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+}
+

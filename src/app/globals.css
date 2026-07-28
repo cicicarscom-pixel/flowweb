@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@tailwind base; @tailwind components; @tailwind utilities;
 
-@theme {
+:root {
   --color-surface: #131315;
   --color-primary-fixed-dim: #99cbff;
   --color-error: #ffb4ab;
@@ -106,7 +106,7 @@ body {
 }
 
 
-@theme {
+:root {
   --color-magenta-accent: #bc13fe;
 }
 .grid-bg {

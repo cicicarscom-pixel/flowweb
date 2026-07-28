@@ -9,10 +9,6 @@ export default function Dashboard() {
         <div className="flex items-center justify-center mb-lg w-full">
           <img src="/logo.png" alt="Workigom Flow" className="h-[72px] w-auto object-contain drop-shadow-[0_0_10px_rgba(0,162,255,0.15)]" />
         </div>
-        <button className="bg-gradient-to-r from-[#00a2ff] to-[#4edea3] text-[#001d34] font-label-sm text-label-sm uppercase py-sm px-md rounded-lg mb-md hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.3)] transition-all duration-300 flex items-center justify-center gap-xs">
-          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
-          New Analysis
-        </button>
         <nav className="flex-1 flex flex-col gap-xs overflow-y-auto pr-sm">
           <Link className="relative flex items-center gap-sm text-primary-fixed-dim bg-gradient-to-r from-primary/10 to-transparent py-sm px-sm rounded-r-lg group" href="/">
             <div className="absolute left-[-24px] h-8 w-1 bg-primary shadow-[0_0_15px_rgba(0,162,255,0.8)] rounded-r-full"></div>

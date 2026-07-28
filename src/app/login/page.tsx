@@ -18,7 +18,7 @@ export default function LoginPage() {
   )
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden" style={{
+    <div className="w-full min-h-screen flex items-center justify-center bg-black relative overflow-hidden" style={{
       backgroundImage: "radial-gradient(circle at top right, rgba(0,162,255,0.1) 0%, transparent 40%), radial-gradient(circle at bottom left, rgba(182,0,248,0.1) 0%, transparent 40%)"
     }}>
       <div className="glass-panel max-w-md w-full rounded-2xl p-xl z-10 border border-white/5 relative">

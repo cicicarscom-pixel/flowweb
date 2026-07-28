@@ -1,31 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 import { logout } from "@/actions/auth";
 
 export default function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   return (
     <>
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" 
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
       {/* SideNavBar */}
-      <aside className={`flex flex-col bg-surface-container-lowest/90 backdrop-blur-md fixed left-0 top-0 h-screen w-[280px] border-r border-white/5 py-lg px-md gap-md z-50 transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* Close button inside sidebar for convenience */}
-        <button 
-          onClick={() => setIsSidebarOpen(false)}
-          className="absolute top-4 right-4 text-on-surface-variant hover:text-primary transition-colors"
-        >
-          <span className="material-symbols-outlined">close</span>
-        </button>
+      <aside className="hidden md:flex flex-col bg-surface-container-lowest/80 backdrop-blur-md fixed left-0 top-0 h-screen w-[280px] border-r border-white/5 py-lg px-md gap-md z-40">
         <div className="flex items-center justify-center mb-lg w-full">
           <img src="/logo.png" alt="Workigom Flow" className="h-[72px] w-auto object-contain drop-shadow-[0_0_10px_rgba(0,162,255,0.15)]" />
         </div>
@@ -36,28 +16,24 @@ export default function Dashboard() {
         <nav className="flex-1 flex flex-col gap-xs overflow-y-auto pr-sm">
           <Link className="relative flex items-center gap-sm text-primary-fixed-dim bg-gradient-to-r from-primary/10 to-transparent py-sm px-sm rounded-r-lg group" href="/">
             <div className="absolute left-[-24px] h-8 w-1 bg-primary shadow-[0_0_15px_rgba(0,162,255,0.8)] rounded-r-full"></div>
-            <span className="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
-            <span className="font-data-mono text-data-mono uppercase">Dashboard</span>
+            <span className="material-symbols-outlined group-hover:text-primary transition-colors">home</span>
+            <span className="font-data-mono text-data-mono uppercase">Anasayfa</span>
+          </Link>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/ai-asistan">
+            <span className="material-symbols-outlined group-hover:text-tertiary-fixed-dim transition-colors">memory</span>
+            <span className="font-data-mono text-data-mono uppercase">Ai Asistan</span>
           </Link>
           <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/accounting">
             <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">account_balance_wallet</span>
-            <span className="font-data-mono text-data-mono uppercase">AI Accounting</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/bot-management">
-            <span className="material-symbols-outlined group-hover:text-tertiary-fixed-dim transition-colors">smart_toy</span>
-            <span className="font-data-mono text-data-mono uppercase">Bot Management</span>
+            <span className="font-data-mono text-data-mono uppercase">Ai Muhasebe</span>
           </Link>
           <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/social-media">
             <span className="material-symbols-outlined group-hover:text-secondary-fixed-dim transition-colors">share</span>
-            <span className="font-data-mono text-data-mono uppercase">Social Media</span>
+            <span className="font-data-mono text-data-mono uppercase">Sosyal Medya</span>
           </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/appointments">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">calendar_today</span>
-            <span className="font-data-mono text-data-mono uppercase">Appointments</span>
-          </Link>
-          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="#">
-            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">settings</span>
-            <span className="font-data-mono text-data-mono uppercase">Settings</span>
+          <Link className="sidebar-item-hover flex items-center gap-sm text-on-surface-variant hover:text-on-surface py-sm px-sm rounded-lg group transition-colors" href="/analiz">
+            <span className="material-symbols-outlined group-hover:text-primary-fixed-dim transition-colors">bar_chart</span>
+            <span className="font-data-mono text-data-mono uppercase">Analiz</span>
           </Link>
         </nav>
         <div className="mt-auto pt-md border-t border-white/5 flex flex-col gap-xs">
@@ -73,18 +49,15 @@ export default function Dashboard() {
       </aside>
       
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden w-full">
+      <main className="flex-1 flex flex-col md:ml-[280px] h-screen overflow-hidden">
         {/* TopNavBar */}
         <header className="bg-surface/40 backdrop-blur-[20px] shadow-sm flex justify-between items-center w-full px-margin-desktop h-16 docked full-width top-0 sticky z-50 border-b border-white/5">
           <div className="flex items-center gap-md">
-            {/* Menu Toggle */}
-            <button 
-              onClick={() => setIsSidebarOpen(true)} 
-              className="text-on-surface-variant hover:text-primary transition-colors"
-            >
+            {/* Mobile Menu Toggle (Visible only on mobile) */}
+            <button className="md:hidden text-on-surface-variant hover:text-primary transition-colors">
               <span className="material-symbols-outlined">menu</span>
             </button>
-            <div className="font-headline-lg-mobile text-[24px] font-semibold text-primary tracking-tighter italic">FLOW</div>
+            <div className="md:hidden font-headline-lg-mobile text-[24px] font-semibold text-primary tracking-tighter italic">FLOW</div>
             {/* Search Bar */}
             <div className="hidden md:flex items-center bg-surface-container/50 border border-white/10 rounded-full px-sm py-xs focus-within:border-primary-fixed-dim focus-within:shadow-[0_0_10px_rgba(153,203,255,0.2)] transition-all w-64">
               <span className="material-symbols-outlined text-on-surface-variant text-[18px] mr-xs">search</span>

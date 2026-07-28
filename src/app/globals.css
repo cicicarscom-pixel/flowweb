@@ -217,3 +217,13 @@ body {
     box-shadow: 0 0 10px var(--color-primary);
 }
 
+
+.glow-cyan {
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.2);
+    border-color: rgba(0, 162, 255, 0.4);
+}
+.glow-magenta {
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+    border-color: rgba(255, 0, 255, 0.4);
+}
+

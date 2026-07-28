@@ -60,3 +60,15 @@ body {
     transition: background-color 0.2s ease;
 }
 
+
+.glass-panel-active {
+    border: 1px solid var(--color-primary);
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+}
+.neon-text-primary {
+    text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);
+}
+.scale-102:hover {
+    transform: scale(1.02);
+}
+

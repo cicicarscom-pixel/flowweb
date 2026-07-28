@@ -6,14 +6,8 @@ export default function Dashboard() {
     <>
       {/* SideNavBar */}
       <aside className="hidden md:flex flex-col bg-surface-container-lowest/80 backdrop-blur-md fixed left-0 top-0 h-screen w-[280px] border-r border-white/5 py-lg px-md gap-md z-40">
-        <div className="flex items-center gap-sm mb-lg">
-          <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
-            <img alt="Flow AI Terminal" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsSAp1so33UMczB0tlqeiUaiqbaFrMDkEKmDAkJvAX4S9pcqDN3xBuiX7TLzUzH3hdVAzMweK7DsPR0k5zk7xQ1H7UWacy1hVroPObcaHrtwRuza5AIaLheW4T3GOJJrl4baciXJwkvCRrO07k1APMj99ZiQeL3AzlwIVPLMYwl6wmMaMQNVyfXhe1u_smL2UlNMMaP71kq25lMTHQ8r9frQuK84KAqbihYz1kuoNGNIFLs7fegTcBNzH92s_RstdapE1ARYW7prc" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-headline-lg text-primary-fixed-dim text-[24px] font-semibold md:text-[32px] tracking-tighter italic">AI-ESNAF</span>
-            <span className="font-data-mono text-data-mono text-on-surface-variant uppercase text-[10px]">Command Center</span>
-          </div>
+        <div className="flex items-center justify-center mb-lg w-full">
+          <img src="/logo.png" alt="Workigom Flow" className="h-[72px] w-auto object-contain drop-shadow-[0_0_10px_rgba(0,162,255,0.15)]" />
         </div>
         <button className="bg-gradient-to-r from-[#00a2ff] to-[#4edea3] text-[#001d34] font-label-sm text-label-sm uppercase py-sm px-md rounded-lg mb-md hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(0,162,255,0.3)] transition-all duration-300 flex items-center justify-center gap-xs">
           <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>add</span>
@@ -94,7 +88,7 @@ export default function Dashboard() {
           {/* Page Header */}
           <div className="flex justify-between items-end">
             <div>
-              <h1 className="font-display-lg text-[48px] font-bold text-on-surface tracking-tight">AI-Esnaf Dashboard Command Center</h1>
+              <h1 className="font-display-lg text-[48px] font-bold text-on-surface tracking-tight">Workigom Flow Command Center</h1>
               <p className="font-data-mono text-data-mono text-on-surface-variant mt-2 uppercase tracking-wider">System Operational | Data Flow Nominal</p>
             </div>
             <div className="hidden md:flex gap-sm">

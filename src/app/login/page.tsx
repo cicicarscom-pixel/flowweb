@@ -23,12 +23,9 @@ export default function LoginPage() {
     }}>
       <div className="glass-panel max-w-md w-full rounded-2xl p-xl z-10 border border-white/5 relative">
         <div className="flex flex-col items-center mb-xl">
-          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 mb-sm">
-            <span className="material-symbols-outlined text-primary text-[32px]">
-              {mode === 'login' ? 'terminal' : 'person_add'}
-            </span>
+          <div className="mb-md flex justify-center">
+            <img src="/logo.png" alt="Workigom Flow" className="h-[120px] w-auto object-contain drop-shadow-[0_0_15px_rgba(0,162,255,0.2)]" />
           </div>
-          <h1 className="font-headline-lg text-white text-[28px] font-bold tracking-tight">AI-ESNAF</h1>
           <p className="font-label-sm text-on-surface-variant text-[14px]">
             {mode === 'login' ? 'Command Center Login' : 'Create an Account'}
           </p>

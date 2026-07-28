@@ -1,12 +1,14 @@
 'use client'
 
-import { useActionState } from 'react'
-import { login } from '@/actions/auth'
+import { useActionState, useState } from 'react'
+import { authenticate } from '@/actions/auth'
 
 export default function LoginPage() {
+  const [mode, setMode] = useState<'login' | 'signup'>('login')
+  
   const [state, formAction, isPending] = useActionState(
     async (prevState: any, formData: FormData) => {
-      const res = await login(formData)
+      const res = await authenticate(formData)
       if (res && !res.success) {
         return { message: res.message }
       }
@@ -23,14 +25,19 @@ export default function LoginPage() {
         <div className="flex flex-col items-center mb-xl">
           <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 mb-sm">
             <span className="material-symbols-outlined text-primary text-[32px]">
-              terminal
+              {mode === 'login' ? 'terminal' : 'person_add'}
             </span>
           </div>
           <h1 className="font-headline-lg text-white text-[28px] font-bold tracking-tight">AI-ESNAF</h1>
-          <p className="font-label-sm text-on-surface-variant text-[14px]">Command Center Login</p>
+          <p className="font-label-sm text-on-surface-variant text-[14px]">
+            {mode === 'login' ? 'Command Center Login' : 'Create an Account'}
+          </p>
         </div>
 
         <form action={formAction} className="flex flex-col gap-md">
+          {/* Hidden input to pass mode to server action */}
+          <input type="hidden" name="mode" value={mode} />
+
           {state?.message && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg text-sm text-center">
               {state.message}
@@ -68,12 +75,27 @@ export default function LoginPage() {
               <div className="w-5 h-5 border-2 border-on-primary-container border-t-transparent rounded-full animate-spin"></div>
             ) : (
               <>
-                <span>Secure Login</span>
-                <span className="material-symbols-outlined text-[20px]">login</span>
+                <span>{mode === 'login' ? 'Secure Login' : 'Create Account'}</span>
+                <span className="material-symbols-outlined text-[20px]">
+                  {mode === 'login' ? 'login' : 'how_to_reg'}
+                </span>
               </>
             )}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-on-surface-variant text-sm">
+            {mode === 'login' ? "Don't have an account?" : "Already have an account?"}{' '}
+            <button 
+              type="button" 
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              className="text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              {mode === 'login' ? 'Sign up' : 'Log in'}
+            </button>
+          </p>
+        </div>
       </div>
 
       {/* Decorative blurred blobs */}

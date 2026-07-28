@@ -171,3 +171,16 @@ body {
     box-shadow: 0 0 20px rgba(0, 162, 255, 0.4);
 }
 
+
+.neon-glow {
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+    border: 1px solid var(--color-primary);
+}
+.text-glow {
+    text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);
+}
+.magenta-glow {
+    box-shadow: 0 0 15px rgba(235, 178, 255, 0.3);
+    border: 1px solid var(--color-secondary);
+}
+

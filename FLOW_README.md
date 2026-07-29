@@ -12,14 +12,17 @@ src/
 │   ├── (dashboard)/            # Dashboard layout'unu (Sidebar & Header) paylaşan sayfalar
 │   │   ├── layout.tsx          # Ana Dashboard Layout'u (Tüm sayfaları sarmalar)
 │   │   ├── page.tsx            # Anasayfa (Dashboard)
-│   │   ├── accounting/         # Ai Muhasebe
 │   │   ├── ai-asistan/         # Ai Asistan
 │   │   ├── analiz/             # Analiz
-│   │   ├── appointments/       # Randevu Yönetimi
-│   │   ├── inbox/              # Inbox (Gelen Kutusu)
-│   │   ├── posts/              # Sosyal Medya Gönderileri
-│   │   ├── share/              # Paylaşım / Creator Hub
-│   │   └── social-media/       # Sosyal Medya Genel Bakış
+│   │   ├── ai-muhasebe/        # Ai Muhasebe (Ana Özet)
+│   │   │   ├── isletmem/       # Geçmiş
+│   │   │   ├── odeme-takvimi/  # Takvim
+│   │   │   └── veri-girisi/    # Gelir/Gider Girişi
+│   │   └── sosyal-medya/       # Sosyal Medya Genel Bakış
+│   │       ├── create-post/    # Gönderi Oluştur
+│   │       ├── inbox/          # Gelen Kutusu
+│   │       ├── posts/          # Tüm Gönderiler
+│   │       └── share/          # Paylaşım Merkezi
 │   └── login/                  # Dashboard dışı, bağımsız sayfalar (Auth)
 ├── components/
 │   ├── Header.tsx              # Standart Üst Menü

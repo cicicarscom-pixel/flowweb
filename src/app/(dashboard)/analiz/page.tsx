@@ -1,132 +1,210 @@
-import Image from "next/image";
-import Link from "next/link";
-import { getAnalyticsOverview } from "@/actions/insights";
+"use client";
+import React, { useState } from "react";
 
-export default async function InsightsPage() {
-  const stats = await getAnalyticsOverview();
+export default function AnalizPage() {
+  const [activeTab, setActiveTab] = useState<"gonderi" | "mesaj">("gonderi");
 
   return (
-    <>
-        {/* Scrollable Dashboard */}
-        <div className="flex-1 overflow-y-auto p-10 flex flex-col gap-8 custom-scrollbar">
-          
-          {/* Dashboard Controls */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-[var(--color-surface)]/40 p-2 rounded-xl border border-white/5 backdrop-blur-sm">
-            {/* Page Tabs */}
-            <div className="flex gap-2">
-              <button className="bg-[var(--color-surface-container-high)] px-6 py-2.5 rounded-md text-white font-medium text-sm border border-white/10 flex items-center gap-2 shadow-sm">
-                Sosyal Medya Perf.
-                <span className="material-symbols-outlined text-[16px] text-[var(--color-primary)]">check</span>
-              </button>
-              <button className="px-6 py-2.5 rounded-md text-[var(--color-on-surface-variant)] hover:text-white font-medium text-sm transition-all">
-                Gelen Mesaj Analizi
-              </button>
-            </div>
-            
-            {/* Filters */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <select className="appearance-none bg-[var(--color-surface-container)] border border-white/10 text-sm text-white rounded-md pl-4 pr-10 py-2.5 focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] cursor-pointer">
-                  <option>Tüm platformlar</option>
-                  <option>Instagram</option>
-                  <option>Facebook</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] pointer-events-none text-sm">expand_more</span>
-              </div>
-              <div className="relative">
-                <select className="appearance-none bg-[var(--color-surface-container)] border border-white/10 text-sm text-white rounded-md pl-4 pr-10 py-2.5 focus:outline-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] cursor-pointer">
-                  <option>Son 30 gün</option>
-                  <option>Son 7 gün</option>
-                  <option>Bu ay</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)] pointer-events-none text-sm">expand_more</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1 */}
-            <div className="glass-panel p-6 rounded-xl relative overflow-hidden group">
-              <div className="absolute inset-0 rounded-xl border border-[var(--color-primary)]/30 group-hover:glow-cyan transition-all duration-500 pointer-events-none"></div>
-              <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider mb-2">Toplam Gönderi</p>
-              <p className="text-4xl font-bold text-[var(--color-primary)] font-data-mono">{stats.totalPosts}</p>
-            </div>
-            {/* Card 2 */}
-            <div className="glass-panel p-6 rounded-xl relative overflow-hidden group">
-              <div className="absolute inset-0 rounded-xl border border-[var(--color-secondary)]/30 group-hover:glow-magenta transition-all duration-500 pointer-events-none"></div>
-              <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider mb-2">Toplam Yorum</p>
-              <p className="text-4xl font-bold text-[var(--color-secondary)] font-data-mono">{stats.totalComments}</p>
-            </div>
-            {/* Card 3 */}
-            <div className="glass-panel p-6 rounded-xl">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-[var(--color-on-surface-variant)] text-sm">group</span>
-                <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider">Toplam Takipçi</p>
-              </div>
-              <p className="text-3xl font-bold text-white">{stats.totalFollowers}</p>
-            </div>
-            {/* Card 4 */}
-            <div className="glass-panel p-6 rounded-xl">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-[var(--color-on-surface-variant)] text-sm">rate_review</span>
-                <p className="text-sm text-[var(--color-on-surface-variant)] font-data-mono uppercase tracking-wider">Değerlendirmeler</p>
-              </div>
-              <p className="text-3xl font-bold text-white">{stats.reviews}</p>
-            </div>
-          </div>
-
-          {/* Main Chart Area */}
-          <section className="glass-panel rounded-xl p-6 h-[400px] flex flex-col relative">
-            {/* Settings FAB over chart */}
-            <button className="absolute -right-4 -top-4 w-12 h-12 bg-[var(--color-surface-container-high)] rounded-full border border-white/10 flex items-center justify-center hover:bg-[var(--color-surface-bright)] transition-colors shadow-lg z-10 text-[var(--color-on-surface-variant)] hover:text-white">
-              <span className="material-symbols-outlined">settings</span>
-            </button>
-            <div className="flex justify-between items-start mb-6">
-              <div>
-                <h3 className="text-lg font-bold text-white">Etkileşim / Gösterim</h3>
-                <p className="text-sm text-[var(--color-on-surface-variant)]">Zaman içindeki değişim grafiği</p>
-              </div>
-              <div className="flex items-center gap-4 text-xs font-data-mono">
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[var(--color-primary)]"></span> Views</div>
-                <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[var(--color-secondary)]"></span> Likes</div>
-              </div>
-            </div>
-            {/* Empty State / Placeholder */}
-            <div className="flex-1 border border-white/5 rounded bg-black/50 relative flex items-center justify-center overflow-hidden">
-              {/* Decorative grid lines inside chart area */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[length:40px_40px]"></div>
-              <div className="relative z-10 flex flex-col items-center gap-4">
-                <span className="material-symbols-outlined text-4xl text-[var(--color-on-surface-variant)]/50">insights</span>
-                <p className="text-[var(--color-on-surface-variant)] text-sm font-data-mono tracking-widest uppercase">Yeterli grafik verisi yok.</p>
-                <p className="text-xs text-[var(--color-on-surface-variant)]/50 font-data-mono">Veri toplanıyor...</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Platform Overview */}
-          <section className="glass-panel rounded-xl p-6">
-            <h3 className="text-lg font-bold text-white mb-6">Platformlara Genel Bakış</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Instagram */}
-              <div className="flex flex-col items-center justify-center p-6 border border-white/5 rounded-lg bg-[var(--color-surface-container)]/50 hover:bg-[var(--color-surface-container)] transition-colors">
-                <div className="w-12 h-12 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center mb-3">
-                  <span className="material-symbols-outlined text-2xl text-white">camera_alt</span>
-                </div>
-                <span className="text-sm font-bold text-white mb-1">Instagram</span>
-                <span className="text-xs font-bold text-green-400 uppercase tracking-widest">Aktif</span>
-              </div>
-              {/* Facebook */}
-              <div className="flex flex-col items-center justify-center p-6 border border-white/5 rounded-lg bg-[var(--color-surface-container)]/50 hover:bg-[var(--color-surface-container)] transition-colors">
-                <div className="w-12 h-12 rounded-full bg-[var(--color-surface-container-high)] flex items-center justify-center mb-3">
-                  <span className="material-symbols-outlined text-2xl text-blue-500">facebook</span>
-                </div>
-                <span className="text-sm font-bold text-white mb-1">Facebook</span>
-                <span className="text-xs font-bold text-green-400 uppercase tracking-widest">Aktif</span>
-              </div>
-            </div>
-          </section>
+    <div className="p-6 lg:p-10 max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in pb-20">
+      
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-headline-lg font-bold text-on-surface">AI Nexus - Analiz (Canlı)</h1>
+          <p className="font-body-md text-sm text-on-surface-variant mt-1">Gerçek zamanlı {activeTab === 'gonderi' ? 'içerik performansı' : 'iletişim istatistikleri'} ve tahminleme modelleri.</p>
         </div>
-    </>
+        <div className="flex gap-2 bg-surface-container p-1 rounded-xl border border-outline-variant/30">
+          <button 
+            onClick={() => setActiveTab('gonderi')}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === 'gonderi' 
+                ? 'bg-secondary/20 text-secondary shadow-[0_0_10px_rgba(68,226,205,0.2)]' 
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            Gönderi Analizi
+          </button>
+          <button 
+            onClick={() => setActiveTab('mesaj')}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              activeTab === 'mesaj' 
+                ? 'bg-primary/20 text-primary shadow-[0_0_10px_rgba(168,85,247,0.2)]' 
+                : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            Gelen Mesaj Analizi
+          </button>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 shadow-sm">
+        <div className="flex gap-4">
+          <select className="bg-surface-container border border-outline-variant/50 rounded-lg px-4 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+            <option>Tüm Platformlar</option>
+            <option>Instagram</option>
+            <option>Facebook</option>
+          </select>
+          <select className="bg-surface-container border border-outline-variant/50 rounded-lg px-4 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
+            <option>Son 7 Gün</option>
+            <option>Son 30 Gün</option>
+            <option>Bu Ay</option>
+          </select>
+        </div>
+        <button className="px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px]">download</span> Rapor Al
+        </button>
+      </div>
+
+      {activeTab === 'gonderi' ? (
+        // GÖNDERİ ANALİZİ GÖRÜNÜMÜ
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="glass-panel p-6 rounded-2xl border border-secondary/30 neon-border-cyan group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Toplam Etkileşim</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-secondary">24.5K</span>
+                <span className="text-secondary bg-secondary/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+12%</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Erişim</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-on-surface">158K</span>
+                <span className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+5%</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Paylaşılan Gönderi</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-on-surface">42</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-error/50 transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Takipçi Kaybı</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-error">120</span>
+                <span className="text-error bg-error/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">-2%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-outline-variant/30">
+              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Etkileşim Trendi</h3>
+              {/* Mock Line Chart */}
+              <div className="h-64 w-full border-b border-l border-outline-variant/30 flex items-end justify-between px-2 pb-2 relative">
+                <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                  <polyline points="0,80 20,60 40,70 60,30 80,40 100,10" fill="none" stroke="var(--color-secondary)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                  <polyline points="0,90 20,80 40,85 60,60 80,75 100,50" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
+                </svg>
+                {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(d => (
+                  <div key={d} className="h-full flex flex-col justify-end">
+                    <span className="text-[10px] text-on-surface-variant font-code-sm mb-[-20px]">{d}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-4 mt-8 justify-center">
+                <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-secondary"></span><span className="text-xs text-on-surface-variant">Beğeni</span></div>
+                <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full border border-primary border-dashed"></span><span className="text-xs text-on-surface-variant">Yorum</span></div>
+              </div>
+            </div>
+
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
+              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6 text-center">Hedef Kitle</h3>
+              {/* Mock Donut Chart */}
+              <div className="flex justify-center items-center h-48">
+                <div className="w-32 h-32 rounded-full border-[16px] border-surface-container relative shadow-[0_0_20px_rgba(168,85,247,0.2)]">
+                  <div className="absolute inset-[-16px] rounded-full border-[16px] border-primary" style={{ clipPath: 'polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 75%)' }}></div>
+                  <div className="absolute inset-[-16px] rounded-full border-[16px] border-secondary" style={{ clipPath: 'polygon(50% 50%, 0 75%, 0 0, 50% 0)' }}></div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 mt-4">
+                 <div className="flex justify-between items-center text-sm"><span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-primary"></span>Kadın</span><span className="font-bold text-on-surface">65%</span></div>
+                 <div className="flex justify-between items-center text-sm"><span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-secondary"></span>Erkek</span><span className="font-bold text-on-surface">35%</span></div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        // GELEN MESAJ ANALİZİ GÖRÜNÜMÜ
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="glass-panel p-6 rounded-2xl border border-primary/30 neon-border-purple group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block text-primary">Toplam Mesaj</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-primary">1,245</span>
+                <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+24%</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-secondary/30 hover:border-secondary/50 neon-border-cyan transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block text-secondary">AI Yanıtlama Oranı</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-secondary">%85</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Ort. Yanıt Süresi</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-on-surface">2 dk</span>
+                <span className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">-1 dk</span>
+              </div>
+            </div>
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
+              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Çözülen Talepler</span>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-headline-lg font-bold text-on-surface">942</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-outline-variant/30">
+              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Mesaj Yoğunluk Haritası (Heatmap)</h3>
+              
+              {/* Mock Heatmap */}
+              <div className="grid grid-cols-8 gap-1 mb-4">
+                <div className="col-span-1"></div>
+                {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(d => <div key={d} className="text-center text-xs text-on-surface-variant font-code-sm">{d}</div>)}
+                
+                {['09:00', '12:00', '15:00', '18:00', '21:00'].map((time, rowIdx) => (
+                  <React.Fragment key={time}>
+                    <div className="text-right pr-2 text-xs text-on-surface-variant font-code-sm self-center">{time}</div>
+                    {[1,2,3,4,5,6,7].map((colIdx) => (
+                      <div key={colIdx} className={`h-8 rounded-sm transition-all hover:scale-110 cursor-pointer ${
+                        (rowIdx === 1 && colIdx === 3) || (rowIdx === 2 && colIdx === 5) ? 'bg-primary shadow-[0_0_10px_rgba(168,85,247,0.8)] z-10' :
+                        (rowIdx === 2 || colIdx === 6) ? 'bg-primary/60' :
+                        'bg-primary/20'
+                      }`}></div>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+
+            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
+              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Sıkça Sorulan Konular</h3>
+              <div className="flex flex-col gap-4">
+                {[
+                  { topic: "Fiyat Listesi", percent: 45, color: "bg-primary" },
+                  { topic: "Çalışma Saatleri", percent: 25, color: "bg-secondary" },
+                  { topic: "Randevu İptali", percent: 15, color: "bg-tertiary" },
+                  { topic: "Diğer", percent: 15, color: "bg-outline-variant" }
+                ].map((item, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between items-center text-sm mb-1">
+                      <span className="text-on-surface">{item.topic}</span>
+                      <span className="font-bold text-on-surface-variant">%{item.percent}</span>
+                    </div>
+                    <div className="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                      <div className={`h-full ${item.color}`} style={{ width: `${item.percent}%` }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+    </div>
   );
 }

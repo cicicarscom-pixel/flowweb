@@ -36,3 +36,10 @@ Geçmişte her sayfanın kendine has neon/cam tasarımlı karmaşık arkaplan s�
 
 ### 5. Routing Mantığı
 Navigasyonda aktif sekme (`active link`) stilini vermek için `Sidebar.tsx` içerisinde `usePathname` kullanılmıştır. Yeni eklenen sayfaların menüde aydınlanması bu standart üzerinden otomatik işler.
+
+### 6. HTML to Next.js Entegrasyonu (Temmuz 2026 - Son Aşama)
+**Karar:** 13 farklı statik HTML tasarımı (`Anasayfa`, `Ai Muhasebe` alt sayfaları, `Sosyal Medya` alt sayfaları, `Ai Asistan`, `Analiz`) mobil uygulama mimarisine (`C:\ai_esnaf`) %100 sadık kalınarak App Router yapısına dönüştürüldü.
+- **Tasarım Bütünlüğü:** Tüm statik tasarımlardaki 5 farklı glow (neon parlama) ve gradient efektleri global `tailwind.config.ts` altında token'laştırıldı.
+- **Alt Sayfa Navigasyonları:** Örneğin `/sosyal-medya` içindeki sekme yapıları ayrı React rotaları (`/sosyal-medya/posts`, vb.) olarak Next.js'e işlendi. Tasarımda bulunan tüm form öğeleri ve state'ler React standardında statik skeleton olarak kodlandı.
+- **Sonuç:** Vercel için build alındı (0 Hata).
+

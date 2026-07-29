@@ -1,164 +1,96 @@
-export default function Dashboard() {
+export default function DashboardHomePage() {
   return (
-    <>
-
-
-          {/* Metrics Bento Grid */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-md">
-            {/* Metric 1: Revenue */}
-            <div className="glass-panel rounded-xl p-md flex flex-col justify-between relative overflow-hidden neon-glow-primary group">
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-              <div className="flex justify-between items-start mb-lg">
-                <span className="font-data-mono text-[14px] font-medium text-on-surface-variant uppercase">Total AI Revenue</span>
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-[18px]">account_balance_wallet</span>
-                </div>
-              </div>
-              <div>
-                <div className="font-display-lg text-[40px] leading-[48px] font-bold text-primary-fixed-dim tracking-tight">₺142,500</div>
-                <div className="flex items-center gap-xs mt-xs text-tertiary-fixed-dim">
-                  <span className="material-symbols-outlined text-[16px]">trending_up</span>
-                  <span className="font-data-mono text-[12px]">+12.4% vs last week</span>
-                </div>
-              </div>
-            </div>
-            {/* Metric 2: Social Reach */}
-            <div className="glass-panel rounded-xl p-md flex flex-col justify-between relative overflow-hidden hover:shadow-[0_0_15px_rgba(235,178,255,0.3)] hover:border-secondary transition-all duration-300 group">
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-              <div className="flex justify-between items-start mb-lg">
-                <span className="font-data-mono text-[14px] font-medium text-on-surface-variant uppercase">Social Media Reach</span>
-                <div className="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-secondary text-[18px]">campaign</span>
-                </div>
-              </div>
-              <div>
-                <div className="font-display-lg text-[40px] leading-[48px] font-bold text-secondary-fixed-dim tracking-tight">84.2K</div>
-                <div className="flex items-center gap-xs mt-xs text-tertiary-fixed-dim">
-                  <span className="material-symbols-outlined text-[16px]">trending_up</span>
-                  <span className="font-data-mono text-[12px]">+5.1% vs last week</span>
-                </div>
-              </div>
-            </div>
-            {/* Metric 3: Bot Activity */}
-            <div className="glass-panel rounded-xl p-md flex flex-col justify-between relative overflow-hidden hover:shadow-[0_0_15px_rgba(78,222,163,0.3)] hover:border-tertiary transition-all duration-300 group">
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-tertiary to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-              <div className="flex justify-between items-start mb-lg">
-                <span className="font-data-mono text-[14px] font-medium text-on-surface-variant uppercase">Bot Activity (Interactions)</span>
-                <div className="w-8 h-8 rounded-full bg-tertiary/10 flex items-center justify-center">
-                  <span className="material-symbols-outlined text-tertiary text-[18px]">smart_toy</span>
-                </div>
-              </div>
-              <div>
-                <div className="font-display-lg text-[40px] leading-[48px] font-bold text-tertiary-fixed-dim tracking-tight">1,204</div>
-                <div className="flex items-center gap-xs mt-xs text-on-surface-variant">
-                  <span className="material-symbols-outlined text-[16px]">trending_flat</span>
-                  <span className="font-data-mono text-[12px]">Steady volume</span>
-                </div>
-              </div>
-            </div>
-          </section>
-          {/* Lower Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-md">
-            {/* Quick Actions (Spans 1 col) */}
-            <section className="glass-panel rounded-xl p-md flex flex-col gap-md">
-              <div className="border-b border-white/5 pb-sm">
-                <h2 className="font-headline-lg text-[24px] md:text-[32px] font-semibold text-on-surface">Quick Actions</h2>
-              </div>
-              <div className="flex flex-col gap-sm">
-                <button className="flex items-center gap-md p-sm rounded-lg border border-white/5 hover:border-primary/50 bg-white/[0.02] hover:bg-white/5 transition-all group">
-                  <div className="w-10 h-10 rounded bg-surface border border-white/10 flex items-center justify-center group-hover:border-primary/50 transition-colors">
-                    <span className="material-symbols-outlined text-primary">receipt_long</span>
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="font-body-md text-on-surface font-semibold">Upload Receipt</span>
-                    <span className="font-data-mono text-[10px] text-on-surface-variant uppercase">Auto-categorize via AI</span>
-                  </div>
-                  <span className="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
-                </button>
-                <button className="flex items-center gap-md p-sm rounded-lg border border-white/5 hover:border-tertiary/50 bg-white/[0.02] hover:bg-white/5 transition-all group">
-                  <div className="w-10 h-10 rounded bg-surface border border-white/10 flex items-center justify-center group-hover:border-tertiary/50 transition-colors">
-                    <span className="material-symbols-outlined text-tertiary">memory</span>
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="font-body-md text-on-surface font-semibold">Check Bot Status</span>
-                    <span className="font-data-mono text-[10px] text-on-surface-variant uppercase">Review active instances</span>
-                  </div>
-                  <span className="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-tertiary transition-colors">chevron_right</span>
-                </button>
-                <button className="flex items-center gap-md p-sm rounded-lg border border-white/5 hover:border-secondary/50 bg-white/[0.02] hover:bg-white/5 transition-all group">
-                  <div className="w-10 h-10 rounded bg-surface border border-white/10 flex items-center justify-center group-hover:border-secondary/50 transition-colors">
-                    <span className="material-symbols-outlined text-secondary">sync</span>
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="font-body-md text-on-surface font-semibold">Sync Social Accounts</span>
-                    <span className="font-data-mono text-[10px] text-on-surface-variant uppercase">Update data streams</span>
-                  </div>
-                  <span className="material-symbols-outlined ml-auto text-on-surface-variant group-hover:text-secondary transition-colors">chevron_right</span>
-                </button>
-              </div>
-            </section>
-            {/* Recent Activity Feed (Spans 2 cols) */}
-            <section className="glass-panel rounded-xl p-md lg:col-span-2 flex flex-col">
-              <div className="border-b border-white/5 pb-sm flex justify-between items-center mb-md">
-                <h2 className="font-headline-lg text-[24px] md:text-[32px] font-semibold text-on-surface">Live Data Stream</h2>
-                <span className="font-data-mono text-[12px] text-primary flex items-center gap-xs">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                  REAL-TIME
-                </span>
-              </div>
-              <div className="flex-1 overflow-y-auto pr-sm space-y-sm">
-                <div className="flex gap-md p-sm hover:bg-white/[0.02] rounded-lg transition-colors border-l-2 border-primary/50">
-                  <div className="mt-1">
-                    <span className="material-symbols-outlined text-primary text-[20px]">receipt</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <p className="font-body-md text-[16px] text-on-surface">Invoice #INV-2401 processed automatically.</p>
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">JUST NOW</span>
-                    </div>
-                    <p className="font-data-mono text-[12px] text-on-surface-variant mt-1">Categorized under "Software Subscriptions" (Confidence: 98%)</p>
-                  </div>
-                </div>
-                <div className="flex gap-md p-sm hover:bg-white/[0.02] rounded-lg transition-colors border-l-2 border-tertiary/50">
-                  <div className="mt-1">
-                    <span className="material-symbols-outlined text-tertiary text-[20px]">forum</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <p className="font-body-md text-[16px] text-on-surface">Customer Inquiry handled by Support Bot.</p>
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">2M AGO</span>
-                    </div>
-                    <p className="font-data-mono text-[12px] text-on-surface-variant mt-1">Resolved pricing question via Instagram DM. Sentiment: Positive.</p>
-                  </div>
-                </div>
-                <div className="flex gap-md p-sm hover:bg-white/[0.02] rounded-lg transition-colors border-l-2 border-secondary/50">
-                  <div className="mt-1">
-                    <span className="material-symbols-outlined text-secondary text-[20px]">thumb_up</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <p className="font-body-md text-[16px] text-on-surface">New Campaign reached 10k impressions.</p>
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">15M AGO</span>
-                    </div>
-                    <p className="font-data-mono text-[12px] text-on-surface-variant mt-1">Automated ad spend adjusted for optimal ROI on Twitter.</p>
-                  </div>
-                </div>
-                <div className="flex gap-md p-sm hover:bg-white/[0.02] rounded-lg transition-colors border-l-2 border-error/50">
-                  <div className="mt-1">
-                    <span className="material-symbols-outlined text-error text-[20px]">warning</span>
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <p className="font-body-md text-[16px] text-on-surface">Failed to sync bank feed (Ziraat Bankası).</p>
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">1H AGO</span>
-                    </div>
-                    <p className="font-data-mono text-[12px] text-error mt-1">API timeout. Retrying automatically in 15 mins...</p>
-                  </div>
-                </div>
-              </div>
-            </section>
+    <div className="p-6 lg:p-10 max-w-7xl mx-auto space-y-8 animate-fade-in">
+      {/* 1. AI Assistant Active Panel */}
+      <section className="glass-panel p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4 neon-border-purple relative overflow-hidden group">
+        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+            <span className="material-symbols-outlined text-on-primary-container text-[28px]">smart_toy</span>
           </div>
-    </>
+          <div>
+            <h2 className="text-xl font-headline-md font-bold text-primary text-glow">Yapay Zeka Asistanı</h2>
+            <p className="text-sm font-body-md text-on-surface-variant">Sistem aktif ve 7/24 izlemede.</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 bg-surface-container-highest px-4 py-2 rounded-full border border-primary/30 shadow-[0_0_10px_rgba(168,85,247,0.1)]">
+          <span className="w-2.5 h-2.5 bg-tertiary-fixed-dim rounded-full animate-pulse-glow"></span>
+          <span className="text-xs font-label-sm font-bold tracking-widest text-tertiary-fixed-dim">AKTİF</span>
+        </div>
+      </section>
+
+      {/* 2. Financial Summary (Gelir/Gider) */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-panel p-6 rounded-2xl border border-secondary/30 neon-border-cyan flex flex-col justify-center h-32 hover:bg-surface-container/60 transition-colors group cursor-pointer">
+          <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 group-hover:text-secondary transition-colors">BU AY GELİR</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-headline-lg font-bold text-surface-tint">12.500</span>
+            <span className="text-lg font-headline-md text-surface-tint">₺</span>
+          </div>
+        </div>
+        <div className="glass-panel p-6 rounded-2xl border border-error/30 hover:border-error/50 flex flex-col justify-center h-32 hover:bg-surface-container/60 transition-colors group cursor-pointer shadow-[0_0_10px_rgba(255,180,171,0.1)]">
+          <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 group-hover:text-error transition-colors">BU AY GİDER</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-headline-lg font-bold text-error">4.200</span>
+            <span className="text-lg font-headline-md text-error">₺</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* 3. Social Media Accounts Analysis */}
+        <section className="lg:col-span-2 space-y-4">
+          <h3 className="text-lg font-headline-md font-bold text-secondary">Tüm Hesaplar (Analiz)</h3>
+          <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-sm font-label-sm uppercase tracking-widest text-on-surface-variant">Takipçi Büyümesi</span>
+              <span className="text-xs font-bold text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 px-2 py-1 rounded-md">+ %12.4</span>
+            </div>
+            {/* Mock Chart Area */}
+            <div className="h-48 w-full border-b border-l border-outline-variant/30 flex items-end justify-between px-2 pb-2 relative">
+              <div className="w-8 bg-primary/40 rounded-t-sm h-[40%] hover:bg-primary/80 transition-all cursor-pointer"></div>
+              <div className="w-8 bg-primary/40 rounded-t-sm h-[55%] hover:bg-primary/80 transition-all cursor-pointer"></div>
+              <div className="w-8 bg-primary/50 rounded-t-sm h-[45%] hover:bg-primary/80 transition-all cursor-pointer"></div>
+              <div className="w-8 bg-primary/60 rounded-t-sm h-[70%] hover:bg-primary/80 transition-all cursor-pointer shadow-[0_0_10px_rgba(168,85,247,0.4)]"></div>
+              <div className="w-8 bg-primary/80 rounded-t-sm h-[60%] hover:bg-primary transition-all cursor-pointer"></div>
+              <div className="w-8 bg-primary rounded-t-sm h-[90%] hover:bg-primary transition-all cursor-pointer shadow-[0_0_15px_rgba(168,85,247,0.6)]"></div>
+            </div>
+            <div className="flex justify-between px-2 mt-2 text-[10px] text-on-surface-variant font-code-sm">
+              <span>Oca</span>
+              <span>Şub</span>
+              <span>Mar</span>
+              <span>Nis</span>
+              <span>May</span>
+              <span>Haz</span>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. Communication Reports */}
+        <section className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-headline-md font-bold text-primary">İletişim Raporları</h3>
+            <button className="text-xs text-primary hover:underline">Tümünü Gör</button>
+          </div>
+          <div className="flex flex-col gap-3">
+            {[
+              { title: "Yeni WhatsApp Mesajı", time: "10 dk önce", icon: "chat", color: "text-secondary" },
+              { title: "Instagram Yorumu", time: "1 saat önce", icon: "forum", color: "text-primary" },
+              { title: "Google Değerlendirmesi", time: "3 saat önce", icon: "star", color: "text-tertiary-fixed-dim" }
+            ].map((report, i) => (
+              <div key={i} className="glass-panel p-4 rounded-xl border border-outline-variant/20 hover:bg-surface-container-high transition-colors cursor-pointer flex items-center gap-4">
+                <div className={`w-10 h-10 rounded-full bg-surface-container flex items-center justify-center border border-outline-variant/30 ${report.color}`}>
+                  <span className="material-symbols-outlined text-[20px]">{report.icon}</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-bold text-on-surface">{report.title}</h4>
+                  <span className="text-[10px] font-code-sm text-on-surface-variant">{report.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }
-

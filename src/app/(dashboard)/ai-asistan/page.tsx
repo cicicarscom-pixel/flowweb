@@ -1,278 +1,173 @@
-import Link from "next/link";
-import { getBotSettings, updateBotSettings } from '@/actions/bots';
-
-export default async function BotManagement() {
-  const settings = await getBotSettings() || {
-    auto_reply_enabled: false,
-    custom_instruction: ''
-  };
-
+export default function AiAsistanPage() {
   return (
-    <>
+    <div className="p-6 lg:p-10 max-w-7xl mx-auto animate-fade-in">
+      <div className="flex flex-col gap-8">
+        
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-headline-lg font-bold text-primary text-glow">AI Asistan Manager</h1>
+            <p className="text-on-surface-variant mt-2 font-body-md">Yapay zeka asistanınızın kişiliğini, talimatlarını ve entegrasyonlarını yönetin.</p>
+          </div>
+          <div className="flex items-center gap-4 bg-surface-container-highest p-3 rounded-xl border border-outline-variant/30">
+            <span className="font-label-sm text-sm font-bold text-on-surface">Asistan Aktif</span>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer toggle-checkbox" defaultChecked />
+              <div className="w-11 h-6 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all toggle-label shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]"></div>
+            </label>
+          </div>
+        </div>
 
-        <div className="p-margin-mobile md:p-margin-desktop flex flex-col gap-lg max-w-7xl mx-auto w-full mt-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-lg">
-            {/* Left Column: Ayarlar */}
-            <form
-              action={updateBotSettings}
-              className="lg:col-span-7 flex flex-col gap-md"
-            >
-              {/* Temel Ayarlar */}
-              <div className="glass-panel rounded-xl p-md flex flex-col gap-md border-t-2 border-t-primary relative">
-                {/* Asistan Durumu Toggle */}
-                <div className="flex items-center justify-between p-sm bg-white/5 rounded-lg border border-white/10">
-                  <div>
-                    <h3 className="font-body-md text-[16px] text-on-surface font-semibold">
-                      Aktif Durum
-                    </h3>
-                    <p className="font-body-md text-[13px] text-on-surface-variant mt-1">
-                      Asistan gelen mesajlara otomatik yanıt versin.
-                    </p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="auto_reply_enabled"
-                      className="sr-only peer"
-                      defaultChecked={settings.auto_reply_enabled}
-                    />
-                    <div className="w-14 h-7 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-on-surface after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary shadow-inner"></div>
-                  </label>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Settings Column */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            
+            {/* Persona & Role */}
+            <section className="glass-panel p-6 rounded-2xl neon-border-purple">
+              <h2 className="text-xl font-headline-md font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">psychology</span>
+                AI Kişiliği & Rolü
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-xs font-label-sm text-on-surface-variant mb-2">İŞLETME ROLÜ</label>
+                  <select className="w-full bg-surface-container border border-outline-variant/50 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors">
+                    <option>Güzellik Salonu Asistanı</option>
+                    <option>E-Ticaret Müşteri Temsilcisi</option>
+                    <option>Emlak Danışmanı</option>
+                    <option>Genel AI Asistan</option>
+                  </select>
                 </div>
+                <div>
+                  <label className="block text-xs font-label-sm text-on-surface-variant mb-2">KARAKTER & ÜSLUP</label>
+                  <select className="w-full bg-surface-container border border-outline-variant/50 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors">
+                    <option>Profesyonel ve Kibar</option>
+                    <option>Samimi ve Eğlenceli</option>
+                    <option>Kısa ve Net</option>
+                    <option>İkna Edici (Satış Odaklı)</option>
+                  </select>
+                </div>
+              </div>
 
-                {/* Prompt Textarea */}
-                <div className="flex flex-col mt-sm">
-                  <div className="flex items-center gap-sm mb-sm">
-                    <span className="material-symbols-outlined text-primary text-[20px]">
-                      description
-                    </span>
-                    <h3 className="font-body-md text-[16px] text-on-surface font-semibold">
-                      Asistan Talimatı
-                    </h3>
+              <div>
+                <label className="block text-xs font-label-sm text-on-surface-variant mb-2 flex justify-between">
+                  <span>SİSTEM TALİMATI (PROMPT)</span>
+                  <span className="text-primary/70 cursor-pointer hover:text-primary transition-colors">Otomatik Oluştur</span>
+                </label>
+                <textarea 
+                  rows={6}
+                  className="w-full bg-surface-container border border-outline-variant/50 rounded-xl px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors custom-scrollbar resize-none"
+                  defaultValue={"Sen, 'Güzellik Salonu' için özel olarak tasarlanmış bir müşteri asistanısın. Müşterilere randevu alma, hizmet fiyatları ve çalışma saatleri konusunda yardımcı olmalısın. Her zaman nazik ol ve müşterinin sorularına en kısa sürede, net yanıtlar ver. Fiyat bilgisi verirken her zaman güncel fiyat listesini referans al."}
+                />
+              </div>
+            </section>
+
+            {/* Knowledge Base & Integrations */}
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Connected Services */}
+              <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
+                <h3 className="text-lg font-headline-md font-bold text-on-surface mb-4">Bağlı Servisler</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-high border border-outline-variant/20 hover:border-secondary/30 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#25D366]/20 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[#25D366] text-sm">chat</span>
+                      </div>
+                      <span className="text-sm font-bold text-on-surface">WhatsApp</span>
+                    </div>
+                    <span className="text-[10px] bg-secondary/10 text-secondary px-2 py-1 rounded-md font-bold">BAĞLI</span>
                   </div>
-                  <p className="font-body-md text-[14px] text-on-surface-variant mb-md">
-                    Yapay zekanın nasıl davranacağını ve hangi kurallara
-                    uyacağını belirleyin.
-                  </p>
-                  <textarea
-                    name="custom_instruction"
-                    className="w-full flex-1 bg-white/[0.03] border-0 border-b border-white/10 text-on-surface font-body-md text-[15px] focus:ring-0 focus:border-primary focus:bg-white/[0.05] transition-all rounded-t-lg p-sm resize-none custom-scrollbar outline-none"
-                    placeholder="Sen bir berber dükkanı asistanısın..."
-                    defaultValue={settings.custom_instruction}
-                    rows={5}
+                  
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container border border-dashed border-outline-variant/50 hover:border-primary/50 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-sm">add_to_drive</span>
+                      </div>
+                      <span className="text-sm font-bold text-on-surface-variant group-hover:text-on-surface transition-colors">Google Drive Bağla</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced Settings */}
+              <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
+                <h3 className="text-lg font-headline-md font-bold text-on-surface mb-4">İleri Seviye</h3>
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs font-label-sm text-on-surface-variant">Yaratıcılık (Temperature)</label>
+                      <span className="text-xs text-primary">0.7</span>
+                    </div>
+                    <input type="range" min="0" max="1" step="0.1" defaultValue="0.7" className="w-full accent-primary" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-on-surface">Uzun Yanıtlar</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer toggle-checkbox" />
+                      <div className="w-9 h-5 bg-surface-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all toggle-label shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+            
+            <div className="flex justify-end mt-2">
+              <button className="px-6 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:bg-primary transition-colors">
+                Ayarları Kaydet
+              </button>
+            </div>
+          </div>
+
+          {/* Right Column: Live Simulator */}
+          <div className="lg:col-span-1">
+            <div className="glass-panel rounded-2xl border border-secondary/30 neon-border-cyan h-[600px] flex flex-col overflow-hidden">
+              <div className="p-4 border-b border-outline-variant/30 bg-surface-container/50 backdrop-blur-md flex items-center gap-3">
+                <span className="material-symbols-outlined text-secondary">forum</span>
+                <h3 className="font-headline-md font-bold text-on-surface">Canlı Simülasyon</h3>
+              </div>
+              
+              <div className="flex-1 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+                {/* AI Message */}
+                <div className="flex gap-3">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0 border border-primary/30">
+                    <span className="material-symbols-outlined text-primary text-sm">smart_toy</span>
+                  </div>
+                  <div className="bg-surface-container-highest p-3 rounded-2xl rounded-tl-none border border-outline-variant/20 max-w-[85%] shadow-sm">
+                    <p className="text-sm text-on-surface">Merhaba! Ayarlarımı yeni kaydettiniz. Bana test amaçlı sorular sorabilirsiniz.</p>
+                  </div>
+                </div>
+                
+                {/* User Message */}
+                <div className="flex gap-3 flex-row-reverse">
+                  <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center shrink-0 border border-secondary/30">
+                    <span className="material-symbols-outlined text-secondary text-sm">person</span>
+                  </div>
+                  <div className="bg-secondary/10 p-3 rounded-2xl rounded-tr-none border border-secondary/20 max-w-[85%] shadow-sm">
+                    <p className="text-sm text-on-surface">Fiyat listeniz nerede?</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-4 border-t border-outline-variant/30 bg-surface-container/30">
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Test mesajı gönder..." 
+                    className="w-full bg-surface-container border border-outline-variant/50 rounded-full pl-4 pr-12 py-3 text-sm text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/50 transition-colors"
                   />
-                  <div className="flex justify-between items-center mt-sm">
-                    <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-2">
-                      <button
-                        type="button"
-                        className="px-3 py-1.5 rounded-full border border-primary/30 text-primary font-data-mono text-[11px] whitespace-nowrap hover:bg-primary/10 transition-colors"
-                      >
-                        Berber Şablonu
-                      </button>
-                      <button
-                        type="button"
-                        className="px-3 py-1.5 rounded-full border border-white/10 text-on-surface-variant font-data-mono text-[11px] whitespace-nowrap hover:bg-white/5 transition-colors"
-                      >
-                        Taksi Şablonu
-                      </button>
-                      <button
-                        type="button"
-                        className="px-3 py-1.5 rounded-full border border-white/10 text-on-surface-variant font-data-mono text-[11px] whitespace-nowrap hover:bg-white/5 transition-colors"
-                      >
-                        Kuaför Şablonu
-                      </button>
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-primary text-black font-semibold rounded px-4 py-2 hover:bg-primary/80 transition-colors"
-                    >
-                      Kaydet
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Connected Platforms */}
-              <div className="glass-panel rounded-xl p-md flex flex-col gap-md">
-                <div className="flex items-center gap-sm mb-xs">
-                  <span className="material-symbols-outlined text-tertiary text-[20px]">
-                    hub
-                  </span>
-                  <h3 className="font-body-md text-[16px] text-on-surface font-semibold">
-                    Bağlı Platformlar
-                  </h3>
-                </div>
-                <div className="grid grid-cols-2 gap-sm">
-                  <button className="flex items-center gap-3 p-3 rounded-lg border border-primary/50 bg-primary/10 hover:bg-primary/20 transition-colors">
-                    <img
-                      alt="Instagram"
-                      className="w-6 h-6 rounded"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcWIqatYFVLUofBtNWBHlD_MwEsS9aree8nFlknXUkYtW2zQID4Dp6jhYNc9iSpy6zLfmmDIZXp_Uylc-3QEfN41aeYFCPRkhFr3qHxY2_cskWWCQIJQM8e73M2Aaq4dV4ykjGfaY1wQP1nDaDND4kWhCBtXcl-4qheIlYKFUyXl1QXQkRTpRQbq_bihHpFdteGk7Hx_-w8_-9PncXkqNwEqqsgRYjX30jAukQnlw1lswuYUs8ja2XN7A7Aa3pRBzd-v50mj-szVc"
-                    />
-                    <span className="font-body-md text-[14px]">
-                      Instagram DM
-                    </span>
-                  </button>
-                  <button className="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-colors">
-                    <img
-                      alt="WhatsApp"
-                      className="w-6 h-6 rounded"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuS9s9aR-QM2SOTccNji2VscnXZlYhgTtBMiSNyzUBlkTDqVlg2xNEQycyBDZLgZmPCOhBeo-qkrivVKV0_xHGTsu9or08GQPWwED1Ke6SdEy90W_JcttyFse5IUZgq4njeu-YPxN4ZL8pS6RaKzEJPNVZviGvPL58NNIqWokT9hP4l4h5ZM8dZ1lJw52tQ6LxuLE2brU1EX_PNFOAP0sDo5SnXPcLTrHIHqUyHeWVqiMvQbip6JEI0IXnWmrcacAPgfNZ3FlXcv4"
-                    />
-                    <span className="font-body-md text-[14px]">
-                      WhatsApp QR (WAHA)
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Gelişmiş Ayarlar (Locked) */}
-              <div className="relative glass-panel rounded-xl p-md overflow-hidden min-h-[160px]">
-                {/* Lock Overlay */}
-                <div className="absolute inset-0 locked-overlay flex flex-col items-center justify-center border border-white/5 rounded-xl">
-                  <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center mb-sm shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-                    <span className="material-symbols-outlined text-on-surface-variant text-[24px]">
-                      lock
-                    </span>
-                  </div>
-                  <h4 className="font-body-md text-[15px] font-semibold text-on-surface mb-xs">
-                    Pro Sürüm Gerekli
-                  </h4>
-                  <p className="font-data-mono text-[11px] font-medium text-on-surface-variant uppercase tracking-wider text-center px-lg">
-                    AI Kişiliği ve Özel Prompt erişimi için yükseltin.
-                  </p>
-                </div>
-              </div>
-            </form>
-
-            {/* Right Column: Simülatör */}
-            <div className="lg:col-span-5 flex flex-col h-[600px] lg:h-auto border-t-2 border-t-secondary-container rounded-xl overflow-hidden glass-panel">
-              {/* Simülatör Header */}
-              <div className="p-sm border-b border-white/10 bg-surface/50 backdrop-blur-md flex items-center justify-between">
-                <div className="flex items-center gap-sm">
-                  <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center border border-secondary-container/50 shadow-[0_0_10px_rgba(188,19,254,0.2)]">
-                    <span className="material-symbols-outlined text-secondary-container">
-                      smart_toy
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-body-md text-[15px] text-on-surface font-semibold">
-                      Canlı Test Simülatörü
-                    </h3>
-                    <p className="font-data-mono text-[11px] font-medium text-tertiary-fixed-dim uppercase tracking-wider">
-                      Çevrimiçi
-                    </p>
-                  </div>
-                </div>
-                <button className="text-on-surface-variant hover:text-white transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">
-                    refresh
-                  </span>
-                </button>
-              </div>
-
-              {/* Chat Area */}
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-md flex flex-col gap-md bg-[#0e0e10]/80">
-                {/* Date divider */}
-                <div className="flex justify-center my-xs">
-                  <span className="px-sm py-xs rounded-full bg-white/5 text-on-surface-variant font-data-mono text-[10px] tracking-wider uppercase border border-white/5">
-                    Bugün
-                  </span>
-                </div>
-
-                {/* User Message */}
-                <div className="flex justify-end w-full">
-                  <div className="max-w-[80%] bg-surface-container-high border border-white/5 rounded-2xl rounded-tr-sm p-sm text-on-surface font-body-md text-[14px] shadow-sm">
-                    Merhaba, yarın öğleden sonra saç kesimi için boş yeriniz var
-                    mı?
-                    <div className="text-right mt-1">
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">
-                        14:22
-                      </span>
-                      <span
-                        className="material-symbols-outlined text-[14px] text-primary align-middle ml-1"
-                        style={{ fontVariationSettings: '"FILL" 1' }}
-                      >
-                        done_all
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bot Message */}
-                <div className="flex justify-start w-full">
-                  <div className="max-w-[85%] bg-[#2a103c]/40 bot-message-glow rounded-2xl rounded-tl-sm p-sm text-on-surface font-body-md text-[14px]">
-                    Merhaba abi, hoş geldin! Yarın öğleden sonra 14:30 ve 16:00
-                    saatlerimiz saç kesimi için müsait. Hangisi sana daha uygun
-                    olur?
-                    <div className="text-right mt-1">
-                      <span className="font-data-mono text-[10px] text-on-secondary-container/60">
-                        14:22
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* User Message */}
-                <div className="flex justify-end w-full">
-                  <div className="max-w-[80%] bg-surface-container-high border border-white/5 rounded-2xl rounded-tr-sm p-sm text-on-surface font-body-md text-[14px] shadow-sm">
-                    16:00 olsun lütfen. Fiyat nedir şu an?
-                    <div className="text-right mt-1">
-                      <span className="font-data-mono text-[10px] text-on-surface-variant">
-                        14:24
-                      </span>
-                      <span
-                        className="material-symbols-outlined text-[14px] text-primary align-middle ml-1"
-                        style={{ fontVariationSettings: '"FILL" 1' }}
-                      >
-                        done_all
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bot Typing Indicator */}
-                <div className="flex justify-start w-full">
-                  <div className="bg-[#2a103c]/40 border border-secondary-container/30 rounded-2xl rounded-tl-sm p-sm py-2 flex items-center gap-1 w-16">
-                    <div
-                      className="w-1.5 h-1.5 rounded-full bg-secondary-container animate-bounce"
-                      style={{ animationDelay: "0ms" }}
-                    ></div>
-                    <div
-                      className="w-1.5 h-1.5 rounded-full bg-secondary-container animate-bounce"
-                      style={{ animationDelay: "150ms" }}
-                    ></div>
-                    <div
-                      className="w-1.5 h-1.5 rounded-full bg-secondary-container animate-bounce"
-                      style={{ animationDelay: "300ms" }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Input Area */}
-              <div className="p-sm border-t border-white/10 bg-surface/50 backdrop-blur-md">
-                <div className="flex items-end gap-sm bg-surface-container-low border border-white/10 rounded-xl p-xs pl-sm focus-within:border-secondary-container/50 focus-within:shadow-[0_0_10px_rgba(188,19,254,0.1)] transition-all">
-                  <button className="text-on-surface-variant hover:text-white p-1 mb-1">
-                    <span className="material-symbols-outlined text-[20px]">
-                      add_circle
-                    </span>
-                  </button>
-                  <textarea
-                    className="flex-1 bg-transparent border-0 text-on-surface font-body-md text-[14px] focus:ring-0 resize-none py-2 max-h-24 custom-scrollbar placeholder-on-surface-variant/50 outline-none"
-                    placeholder="Simülatörde test et..."
-                    rows={1}
-                  ></textarea>
-                  <button className="w-8 h-8 rounded-full bg-secondary-container/20 text-secondary-container hover:bg-secondary-container hover:text-white flex items-center justify-center mb-1 transition-colors">
-                    <span className="material-symbols-outlined text-[18px]">
-                      send
-                    </span>
+                  <button className="absolute right-1 top-1 w-10 h-10 rounded-full bg-secondary text-[#003731] flex items-center justify-center hover:scale-105 transition-transform shadow-[0_0_10px_rgba(68,226,205,0.3)]">
+                    <span className="material-symbols-outlined text-sm">send</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
-    </>
+      </div>
+    </div>
   );
 }

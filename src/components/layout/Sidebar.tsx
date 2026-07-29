@@ -28,7 +28,7 @@ export default function Sidebar() {
       </div>
       
       {/* Main Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 flex flex-col gap-2 custom-scrollbar">
+      <nav className="flex-1 py-4 flex flex-col gap-2">
         {links.map((link) => {
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
           return (
@@ -48,11 +48,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* CTA & Footer */}
+      {/* Footer */}
       <div className="px-6 pt-4 border-t border-outline-variant/30 flex flex-col gap-4">
-        <button className="w-full py-2 px-4 bg-primary-container text-on-primary-container font-label-sm text-label-sm rounded-lg hover:bg-primary transition-colors duration-300 shadow-[0_0_10px_rgba(221,183,255,0.3)]">
-          UPGRADE PROTOCOL
-        </button>
         <div className="flex flex-col gap-1 mt-2">
           <a className="flex items-center gap-3 text-on-surface-variant opacity-70 hover:text-primary transition-colors py-2" href="#">
             <span className="material-symbols-outlined text-[18px]">terminal</span>

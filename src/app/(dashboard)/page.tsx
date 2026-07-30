@@ -29,20 +29,7 @@ export default function DashboardHomePage() {
               <div className="w-14 h-7 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[#00E5FF]"></div>
             </label>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <button className={`${styles.actionBtn} py-3 px-4 rounded-lg text-sm font-semibold text-white flex items-center justify-center space-x-2`}>
-              <span className="material-symbols-outlined text-[#00E5FF]">analytics</span>
-              <span>Derin Analiz</span>
-            </button>
-            <button className={`${styles.actionBtn} py-3 px-4 rounded-lg text-sm font-semibold text-white flex items-center justify-center space-x-2`}>
-              <span className="material-symbols-outlined text-[#00E5FF]">bolt</span>
-              <span>Hızlı Yanıt</span>
-            </button>
-            <button className={`${styles.actionBtn} py-3 px-4 rounded-lg text-sm font-semibold text-white flex items-center justify-center space-x-2`}>
-              <span className="material-symbols-outlined text-[#00E5FF]">auto_awesome</span>
-              <span>Yaratıcı Mod</span>
-            </button>
-          </div>
+
         </div>
         <div className={styles.mechanicalCover}>
           <div className={styles.coverTop}></div>

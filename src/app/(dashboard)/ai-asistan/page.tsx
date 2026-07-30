@@ -106,7 +106,7 @@ export default function AiAsistanPage() {
       <div>
       <p className="text-xs text-[#cfc2d6] uppercase tracking-widest mb-3">İşletme Rolü</p>
       
-      <div className="flex flex-wrap gap-2">
+      <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
         {[
           { id: 'Kebapçı', icon: 'restaurant' },
           { id: 'Berber', icon: 'content_cut' },
@@ -116,7 +116,7 @@ export default function AiAsistanPage() {
           <button 
             key={role.id}
             onClick={() => setSelectedRole(role.id)}
-            className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
               selectedRole === role.id 
                 ? 'bg-[#27272a] border border-[#a855f7] font-bold text-[#e5e1e4]' 
                 : 'bg-[#1c1b1d] border border-[#27272a] text-[#cfc2d6] hover:bg-[#27272a]'
@@ -125,13 +125,13 @@ export default function AiAsistanPage() {
             <span className="material-symbols-outlined text-sm">{role.icon}</span> {role.id}
           </button>
         ))}
-        <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Rol</button>
+        <button className="shrink-0 px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Rol</button>
       </div>
       </div>
       <div>
       <p className="text-xs text-[#cfc2d6] uppercase tracking-widest mb-3">Karakter</p>
       
-      <div className="flex flex-wrap gap-2">
+      <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
         {[
           { id: 'Albert Einstein', icon: '🧠' },
           { id: 'William Shakespeare', icon: '📜' }
@@ -139,7 +139,7 @@ export default function AiAsistanPage() {
           <button 
             key={char.id}
             onClick={() => setSelectedChar(char.id)}
-            className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
               selectedChar === char.id 
                 ? 'bg-[#27272a] border border-[#a855f7] font-bold text-[#e5e1e4]' 
                 : 'bg-[#1c1b1d] border border-[#27272a] text-[#cfc2d6] hover:bg-[#27272a]'
@@ -148,7 +148,7 @@ export default function AiAsistanPage() {
             {char.icon} {char.id}
           </button>
         ))}
-        <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Karakter</button>
+        <button className="shrink-0 px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Karakter</button>
       </div>
       </div>
       

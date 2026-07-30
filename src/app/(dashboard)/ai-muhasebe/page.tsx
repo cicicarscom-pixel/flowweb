@@ -3,7 +3,7 @@ import styles from './page.module.css';
 
 export default function AiMuhasebePage() {
   return (
-    <div className="max-w-6xl mx-auto space-y-6 p-6 pb-24">
+    <div className="w-full space-y-6 p-6 pb-24">
       {/* Page Title */}
       <div className="flex items-center gap-4 mb-8">
         <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">

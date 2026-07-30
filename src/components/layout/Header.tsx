@@ -13,7 +13,7 @@ export default function Header() {
   if (pathname.includes("analiz")) pageTitle = "Analiz";
 
   return (
-    <header className="h-16 flex items-center justify-between px-8 border-b border-[#2d3748] bg-[#0b0c10] flex-shrink-0">
+    <header className="h-16 w-full flex items-center justify-between px-8 border-b border-[#2d3748] bg-[#0b0c10] flex-shrink-0">
       <div className="flex items-center gap-4">
         <button className="md:hidden text-[#94a3b8] hover:text-white transition-colors">
           <span className="material-symbols-outlined">menu</span>
@@ -23,17 +23,6 @@ export default function Header() {
         </h1>
       </div>
       <div className="flex items-center gap-6">
-        {/* Status Indicators */}
-        <div className="hidden lg:flex items-center gap-5 border-r border-[#2d3748] pr-6 mr-2">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.8)] animate-pulse"></div>
-            <span className="text-[11px] font-bold tracking-widest text-[#14b8a6]">SYS.ON</span>
-          </div>
-          <div className="flex items-center gap-2 text-[#94a3b8]">
-            <span className="material-symbols-outlined text-[16px]">sync</span>
-            <span className="text-[11px] font-bold tracking-widest">SYNCED</span>
-          </div>
-        </div>
         {/* Trailing Actions */}
         <div className="flex items-center gap-4">
           <button className="w-9 h-9 rounded-full flex items-center justify-center text-[#94a3b8] hover:text-white hover:bg-[#1d1e24] transition-colors border border-transparent hover:border-[#2d3748]">

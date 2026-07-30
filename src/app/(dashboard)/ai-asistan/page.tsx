@@ -37,11 +37,11 @@ export default function AiAsistanPage() {
       const particle = document.createElement('div');
       particle.className = styles.particle;
       const size = Math.random() * 20 + 10;
-      particle.style.width = \`\${size}px\`;
-      particle.style.height = \`\${size}px\`;
-      particle.style.left = \`calc(50% + \${Math.random() * 40 - 20}px)\`;
-      particle.style.top = \`\${Math.random() * 100}%\`;
-      particle.style.animation = \`steam \${Math.random() * 1 + 0.5}s ease-out forwards\`;
+      particle.style.width = `\${size}px`;
+      particle.style.height = `\${size}px`;
+      particle.style.left = `calc(50% + \${Math.random() * 40 - 20}px)`;
+      particle.style.top = `\${Math.random() * 100}%`;
+      particle.style.animation = `steam \${Math.random() * 1 + 0.5}s ease-out forwards`;
       particlesRef.current.appendChild(particle);
       
       setTimeout(() => {
@@ -131,14 +131,14 @@ export default function AiAsistanPage() {
       </div>
 
       {/* MAGIC PANEL SECTION */}
-      <div className={\`\${styles.safeContainer} w-full mt-4\`}>
+      <div className={`\${styles.safeContainer} w-full mt-4`}>
         {/* Background Shader */}
         <div className="absolute inset-0 w-full h-full opacity-60 pointer-events-none z-0">
           <ShaderBackground />
         </div>
 
         {/* The Actual Content (Hidden under vault initially) */}
-        <div className={\`\${styles.safeContent} grid grid-cols-1 xl:grid-cols-2 gap-6 p-6 h-full bg-[#201f22]/70 backdrop-blur-md\`}>
+        <div className={`\${styles.safeContent} grid grid-cols-1 xl:grid-cols-2 gap-6 p-6 h-full bg-[#201f22]/70 backdrop-blur-md`}>
           {/* AI Personality Left */}
           <div className="flex flex-col gap-6">
             <h2 className="text-lg font-semibold text-[#ddb7ff]">AI Kişiliği</h2>
@@ -248,12 +248,12 @@ export default function AiAsistanPage() {
         </div>
 
         {/* The Mechanical Cover (Overlay) */}
-        <div className={\`absolute inset-0 z-20 flex overflow-hidden \${isPointerEventsNone ? 'pointer-events-none' : 'pointer-events-auto'} \${isVibrating ? styles.vibrating : ''}\`}>
+        <div className={`absolute inset-0 z-20 flex overflow-hidden \${isPointerEventsNone ? 'pointer-events-none' : 'pointer-events-auto'} \${isVibrating ? styles.vibrating : ''}`}>
           {/* Blue Seam Glow */}
-          <div className={\`\${styles.seamGlow} \${isOpen ? styles.hiddenGlow : ''}\`}></div>
+          <div className={`\${styles.seamGlow} \${isOpen ? styles.hiddenGlow : ''}`}></div>
           
           {/* Left Door */}
-          <div className={\`\${styles.vaultDoor} \${styles.vaultLeft} \${styles.brushedMetal} \${isOpen ? styles.open : ''} w-1/2 h-full flex items-center justify-end pr-1 border-r-2 border-[#131315] z-20\`}>
+          <div className={`\${styles.vaultDoor} \${styles.vaultLeft} \${styles.brushedMetal} \${isOpen ? styles.open : ''} w-1/2 h-full flex items-center justify-end pr-1 border-r-2 border-[#131315] z-20`}>
             <div className="w-16 h-32 bg-[#131315]/50 border border-[#4d4354] rounded-l-md mr-4 flex flex-col justify-around items-center py-4">
               <div className="w-2 h-2 rounded-full bg-[#4ae176] opacity-50"></div>
               <div className="w-2 h-2 rounded-full bg-[#4ae176] opacity-50"></div>
@@ -261,7 +261,7 @@ export default function AiAsistanPage() {
           </div>
           
           {/* Right Door */}
-          <div className={\`\${styles.vaultDoor} \${styles.vaultRight} \${styles.brushedMetal} \${isOpen ? styles.open : ''} w-1/2 h-full flex items-center justify-start pl-1 border-l-2 border-[#131315] z-20\`}>
+          <div className={`\${styles.vaultDoor} \${styles.vaultRight} \${styles.brushedMetal} \${isOpen ? styles.open : ''} w-1/2 h-full flex items-center justify-start pl-1 border-l-2 border-[#131315] z-20`}>
             <div className="w-16 h-32 bg-[#131315]/50 border border-[#4d4354] rounded-r-md ml-4 flex flex-col justify-around items-center py-4">
               <div className="w-2 h-2 rounded-full bg-[#4ae176] opacity-50"></div>
               <div className="w-2 h-2 rounded-full bg-[#4ae176] opacity-50"></div>
@@ -269,9 +269,9 @@ export default function AiAsistanPage() {
           </div>
           
           {/* Center Magic Button (Attached to cover) */}
-          <div className={\`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 transition-opacity duration-300 \${isOpen || isVibrating ? 'opacity-0' : 'opacity-100'}\`}>
+          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 transition-opacity duration-300 \${isOpen || isVibrating ? 'opacity-0' : 'opacity-100'}`}>
             <button 
-              className={\`\${styles.magicPulse} bg-[#131315] border-2 border-[#b76dff] text-[#b76dff] text-lg font-semibold px-8 py-4 rounded-full flex items-center gap-3 hover:bg-[#b76dff]/10 transition-colors\`}
+              className={`\${styles.magicPulse} bg-[#131315] border-2 border-[#b76dff] text-[#b76dff] text-lg font-semibold px-8 py-4 rounded-full flex items-center gap-3 hover:bg-[#b76dff]/10 transition-colors`}
               onClick={handleOpenVault}
             >
               <span className="material-symbols-outlined text-3xl">auto_awesome</span>

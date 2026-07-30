@@ -6,6 +6,8 @@ import styles from './page.module.css';
 
 export default function AiAsistanPage() {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('Kebapçı');
+  const [selectedChar, setSelectedChar] = useState('Albert Einstein');
 
   const handleOpenVault = () => {
     setIsOpen(true);
@@ -99,30 +101,57 @@ export default function AiAsistanPage() {
       {/* Hidden Content */}
       <div className={`${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} transition-all duration-1000 flex flex-col md:flex-row gap-6 mt-4`}>
       {/* AI Personality */}
-      <div className={`flex-1 space-y-6 ${styles.magicFloat}`}>
+      <div className={`flex-1 space-y-6 `}>
       <h3 className="text-lg font-semibold text-[#a855f7]">AI Kişiliği</h3>
       <div>
       <p className="text-xs text-[#cfc2d6] uppercase tracking-widest mb-3">İşletme Rolü</p>
+      
       <div className="flex flex-wrap gap-2">
-      <span className="px-3 py-1.5 bg-[#27272a] border border-[#a855f7] rounded-full text-xs font-bold text-[#e5e1e4] flex items-center gap-2"><span className="material-symbols-outlined text-sm">restaurant</span> Kebapçı</span>
-      <span className="px-3 py-1.5 bg-[#1c1b1d] border border-[#27272a] rounded-full text-xs text-[#cfc2d6] flex items-center gap-2"><span className="material-symbols-outlined text-sm">content_cut</span> Berber</span>
-      <span className="px-3 py-1.5 bg-[#1c1b1d] border border-[#27272a] rounded-full text-xs text-[#cfc2d6] flex items-center gap-2"><span className="material-symbols-outlined text-sm">build</span> Oto Tamir</span>
-      <span className="px-3 py-1.5 bg-[#1c1b1d] border border-[#27272a] rounded-full text-xs text-[#cfc2d6] flex items-center gap-2"><span className="material-symbols-outlined text-sm">shopping_cart</span> E-Ticaret</span>
-      <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7]">+ Özel Rol</button>
+        {[
+          { id: 'Kebapçı', icon: 'restaurant' },
+          { id: 'Berber', icon: 'content_cut' },
+          { id: 'Oto Tamir', icon: 'build' },
+          { id: 'E-Ticaret', icon: 'shopping_cart' }
+        ].map(role => (
+          <button 
+            key={role.id}
+            onClick={() => setSelectedRole(role.id)}
+            className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
+              selectedRole === role.id 
+                ? 'bg-[#27272a] border border-[#a855f7] font-bold text-[#e5e1e4]' 
+                : 'bg-[#1c1b1d] border border-[#27272a] text-[#cfc2d6] hover:bg-[#27272a]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-sm">{role.icon}</span> {role.id}
+          </button>
+        ))}
+        <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Rol</button>
       </div>
       </div>
       <div>
       <p className="text-xs text-[#cfc2d6] uppercase tracking-widest mb-3">Karakter</p>
+      
       <div className="flex flex-wrap gap-2">
-      <span className="px-3 py-1.5 bg-[#27272a] border border-[#a855f7] rounded-full text-xs font-bold text-[#e5e1e4] flex items-center gap-2">🧠 Albert Einstein</span>
-      <span className="px-3 py-1.5 bg-[#1c1b1d] border border-[#27272a] rounded-full text-xs text-[#cfc2d6] flex items-center gap-2">📜 William Shakespeare</span>
-      <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7]">+ Özel Karakter</button>
+        {[
+          { id: 'Albert Einstein', icon: '🧠' },
+          { id: 'William Shakespeare', icon: '📜' }
+        ].map(char => (
+          <button 
+            key={char.id}
+            onClick={() => setSelectedChar(char.id)}
+            className={`px-3 py-1.5 rounded-full text-xs flex items-center gap-2 transition-all ${
+              selectedChar === char.id 
+                ? 'bg-[#27272a] border border-[#a855f7] font-bold text-[#e5e1e4]' 
+                : 'bg-[#1c1b1d] border border-[#27272a] text-[#cfc2d6] hover:bg-[#27272a]'
+            }`}
+          >
+            {char.icon} {char.id}
+          </button>
+        ))}
+        <button className="px-3 py-1.5 bg-[#a855f7]/10 border border-[#a855f7]/30 rounded-full text-xs text-[#a855f7] hover:bg-[#a855f7]/20 transition-colors">+ Özel Karakter</button>
       </div>
       </div>
-      <div className="flex gap-4">
-      <button className="flex-1 py-3 bg-[#a855f7] text-[#ffffff] font-bold rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] transition-all">Derin Analiz</button>
-      <button className="flex-1 py-3 bg-[#22c55e] text-[#ffffff] font-bold rounded-xl shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_30px_rgba(34,197,94,0.6)] transition-all">Hızlı Yanıt</button>
-      </div>
+      
       </div>
       {/* Advanced Settings */}
       <div className="flex-1 space-y-6">

@@ -1,0 +1,14 @@
+.chartPath {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 0;
+  animation: draw 2s ease-out forwards;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

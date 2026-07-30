@@ -1,210 +1,299 @@
-"use client";
-import React, { useState } from "react";
+import Link from 'next/link';
+import styles from './page.module.css';
 
 export default function AnalizPage() {
-  const [activeTab, setActiveTab] = useState<"gonderi" | "mesaj">("gonderi");
-
   return (
-    <div className="p-6 lg:p-10 max-w-7xl mx-auto flex flex-col gap-8 animate-fade-in pb-20">
-      
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-headline-lg font-bold text-on-surface">AI Nexus - Analiz (Canlı)</h1>
-          <p className="font-body-md text-sm text-on-surface-variant mt-1">Gerçek zamanlı {activeTab === 'gonderi' ? 'içerik performansı' : 'iletişim istatistikleri'} ve tahminleme modelleri.</p>
-        </div>
-        <div className="flex gap-2 bg-surface-container p-1 rounded-xl border border-outline-variant/30">
-          <button 
-            onClick={() => setActiveTab('gonderi')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-              activeTab === 'gonderi' 
-                ? 'bg-secondary/20 text-secondary shadow-[0_0_10px_rgba(68,226,205,0.2)]' 
-                : 'text-on-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Gönderi Analizi
-          </button>
-          <button 
-            onClick={() => setActiveTab('mesaj')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-              activeTab === 'mesaj' 
-                ? 'bg-primary/20 text-primary shadow-[0_0_10px_rgba(168,85,247,0.2)]' 
-                : 'text-on-surface-variant hover:text-on-surface'
-            }`}
-          >
-            Gelen Mesaj Analizi
-          </button>
-        </div>
-      </div>
+    <div className={`flex-1 flex flex-col bg-[#0b0c10] overflow-hidden ${styles.customScrollbar} text-sm h-full`}>
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto p-8 space-y-6">
+        
+        {/* Page Title (Added since global header is omitted) */}
+        <h1 className="text-2xl font-semibold text-white mb-6">Analiz (Canlı)</h1>
 
-      <div className="flex justify-between items-center bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 shadow-sm">
-        <div className="flex gap-4">
-          <select className="bg-surface-container border border-outline-variant/50 rounded-lg px-4 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
-            <option>Tüm Platformlar</option>
-            <option>Instagram</option>
-            <option>Facebook</option>
-          </select>
-          <select className="bg-surface-container border border-outline-variant/50 rounded-lg px-4 py-2 text-sm text-on-surface focus:outline-none focus:border-secondary transition-colors">
-            <option>Son 7 Gün</option>
-            <option>Son 30 Gün</option>
-            <option>Bu Ay</option>
-          </select>
+        {/* Tabs & Filters */}
+        <div className="flex flex-col space-y-4">
+          {/* Tabs */}
+          <div className="flex space-x-2">
+            <Link href="/analiz" className="px-6 py-2.5 bg-[#1d1e24] text-[#0d9488] font-medium rounded-lg border border-[#0d9488]/30 hover:bg-[#15232d] transition-colors">
+              Gönderi Analizi
+            </Link>
+            <Link href="/analiz/gelen-mesaj-analizi" className="px-6 py-2.5 bg-[#14151a] text-[#94a3b8] font-medium rounded-lg hover:text-white hover:bg-[#1d1e24] transition-colors">
+              Gelen Mesaj Analizi
+            </Link>
+          </div>
+          {/* Filter Row */}
+          <div className="flex items-center justify-between">
+            <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors text-white">
+              <i className="fa-solid fa-globe mr-2 text-[#94a3b8]"></i>
+              Tüm platformlar
+              <i className="fa-solid fa-chevron-down ml-3 text-xs text-[#94a3b8]"></i>
+            </button>
+            <div className="flex items-center space-x-3 text-white">
+              <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors">
+                <i className="fa-regular fa-calendar mr-2 text-[#94a3b8]"></i>
+                Son 30 gün
+                <i className="fa-solid fa-chevron-down ml-3 text-xs text-[#94a3b8]"></i>
+              </button>
+              <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors">
+                <i className="fa-solid fa-download mr-2 text-[#94a3b8]"></i>
+                Dışa Aktar
+              </button>
+            </div>
+          </div>
         </div>
-        <button className="px-4 py-2 bg-surface-container border border-outline-variant/30 rounded-lg text-sm text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-2">
-          <span className="material-symbols-outlined text-[18px]">download</span> Rapor Al
-        </button>
-      </div>
 
-      {activeTab === 'gonderi' ? (
-        // GÖNDERİ ANALİZİ GÖRÜNÜMÜ
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="glass-panel p-6 rounded-2xl border border-secondary/30 neon-border-cyan group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Toplam Etkileşim</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-secondary">24.5K</span>
-                <span className="text-secondary bg-secondary/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+12%</span>
+        {/* Top Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1 */}
+          <div className="bg-[#14151a] border border-[#0d9488]/20 rounded-xl p-5 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0d9488]/5 to-transparent pointer-events-none"></div>
+            <div className="flex items-start space-x-4 relative z-10">
+              <div className="p-3 bg-[#0d9488]/10 rounded-lg text-[#0d9488]">
+                <i className="fa-regular fa-paper-plane text-xl"></i>
               </div>
-            </div>
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Erişim</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-on-surface">158K</span>
-                <span className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+5%</span>
-              </div>
-            </div>
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Paylaşılan Gönderi</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-on-surface">42</span>
-              </div>
-            </div>
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-error/50 transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Takipçi Kaybı</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-error">120</span>
-                <span className="text-error bg-error/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">-2%</span>
+              <div>
+                <div className="text-[#94a3b8] text-sm mb-1">Toplam Gönderi</div>
+                <div className="flex items-baseline space-x-2">
+                  <span className="text-2xl font-semibold text-white">0</span>
+                  <span className="text-[#0d9488] text-xs font-medium">%0</span>
+                </div>
+                <div className="text-xs text-[#94a3b8] mt-1">Önceki 30 güne göre</div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-outline-variant/30">
-              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Etkileşim Trendi</h3>
-              {/* Mock Line Chart */}
-              <div className="h-64 w-full border-b border-l border-outline-variant/30 flex items-end justify-between px-2 pb-2 relative">
-                <svg className="absolute inset-0 h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                  <polyline points="0,80 20,60 40,70 60,30 80,40 100,10" fill="none" stroke="var(--color-secondary)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-                  <polyline points="0,90 20,80 40,85 60,60 80,75 100,50" fill="none" stroke="var(--color-primary)" strokeWidth="2" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
-                </svg>
-                {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(d => (
-                  <div key={d} className="h-full flex flex-col justify-end">
-                    <span className="text-[10px] text-on-surface-variant font-code-sm mb-[-20px]">{d}</span>
-                  </div>
-                ))}
+          {/* Card 2 */}
+          <div className="bg-[#14151a] border border-[#a855f7]/20 rounded-xl p-5 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#a855f7]/5 to-transparent pointer-events-none"></div>
+            <div className="flex items-start space-x-4 relative z-10">
+              <div className="p-3 bg-[#a855f7]/10 rounded-lg text-[#a855f7]">
+                <i className="fa-regular fa-comment-dots text-xl"></i>
               </div>
-              <div className="flex gap-4 mt-8 justify-center">
-                <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-secondary"></span><span className="text-xs text-on-surface-variant">Beğeni</span></div>
-                <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full border border-primary border-dashed"></span><span className="text-xs text-on-surface-variant">Yorum</span></div>
+              <div>
+                <div className="text-[#94a3b8] text-sm mb-1">Toplam Yorum</div>
+                <div className="flex items-baseline space-x-2">
+                  <span className="text-2xl font-semibold text-white">0</span>
+                  <span className="text-[#a855f7] text-xs font-medium">%0</span>
+                </div>
+                <div className="text-xs text-[#94a3b8] mt-1">Önceki 30 güne göre</div>
               </div>
             </div>
+          </div>
 
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
-              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6 text-center">Hedef Kitle</h3>
-              {/* Mock Donut Chart */}
-              <div className="flex justify-center items-center h-48">
-                <div className="w-32 h-32 rounded-full border-[16px] border-surface-container relative shadow-[0_0_20px_rgba(168,85,247,0.2)]">
-                  <div className="absolute inset-[-16px] rounded-full border-[16px] border-primary" style={{ clipPath: 'polygon(50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%, 0 75%)' }}></div>
-                  <div className="absolute inset-[-16px] rounded-full border-[16px] border-secondary" style={{ clipPath: 'polygon(50% 50%, 0 75%, 0 0, 50% 0)' }}></div>
+          {/* Card 3 */}
+          <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-blue-500/10 rounded-lg text-blue-400">
+                <i className="fa-solid fa-user-group text-xl"></i>
+              </div>
+              <div>
+                <div className="text-[#94a3b8] text-sm mb-1">Toplam Takipçi</div>
+                <div className="text-2xl font-semibold text-white mb-1">--</div>
+                <div className="text-xs text-[#94a3b8]">Veri yok</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4 */}
+          <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5">
+            <div className="flex items-start space-x-4">
+              <div className="p-3 bg-indigo-500/10 rounded-lg text-indigo-400">
+                <i className="fa-solid fa-clipboard-list text-xl"></i>
+              </div>
+              <div>
+                <div className="text-[#94a3b8] text-sm mb-1">Değerlendirmeler</div>
+                <div className="flex items-baseline space-x-2">
+                  <span className="text-2xl font-semibold text-white">0</span>
+                  <span className="text-[#a855f7] text-xs font-medium">%0</span>
+                </div>
+                <div className="text-xs text-[#94a3b8] mt-1">Önceki 30 güne göre</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Chart Area */}
+        <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5">
+          <div className="flex justify-between items-center mb-6 text-white">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-lg font-medium text-white">Etkileşim / Gösterim</h2>
+              <i className="fa-regular fa-circle-question text-[#94a3b8] text-xs"></i>
+            </div>
+            <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-4 text-sm">
+                <div className="flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0d9488] mr-2"></span>
+                  Views
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#a855f7] mr-2"></span>
+                  Likes
                 </div>
               </div>
-              <div className="flex flex-col gap-2 mt-4">
-                 <div className="flex justify-between items-center text-sm"><span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-primary"></span>Kadın</span><span className="font-bold text-on-surface">65%</span></div>
-                 <div className="flex justify-between items-center text-sm"><span className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-secondary"></span>Erkek</span><span className="font-bold text-on-surface">35%</span></div>
-              </div>
+              <button className="flex items-center px-3 py-1.5 bg-[#0b0c10] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors text-white">
+                Günlük
+                <i className="fa-solid fa-chevron-down ml-2 text-xs text-[#94a3b8]"></i>
+              </button>
             </div>
           </div>
-        </>
-      ) : (
-        // GELEN MESAJ ANALİZİ GÖRÜNÜMÜ
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="glass-panel p-6 rounded-2xl border border-primary/30 neon-border-purple group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block text-primary">Toplam Mesaj</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-primary">1,245</span>
-                <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">+24%</span>
-              </div>
+          <div className="text-xs text-[#94a3b8] mb-4">Zaman içindeki değişim grafiği</div>
+          
+          {/* Chart Placeholder */}
+          <div className="relative h-64 border-l border-b border-[#2d3748] flex flex-col justify-between pt-4 pb-1 pl-2">
+            {/* Y Axis Labels */}
+            <div className="absolute left-[-20px] top-0 bottom-8 flex flex-col justify-between text-xs text-[#94a3b8] h-full py-2">
+              <span>1</span>
+              <span>0.5</span>
+              <span>0</span>
             </div>
-            <div className="glass-panel p-6 rounded-2xl border border-secondary/30 hover:border-secondary/50 neon-border-cyan transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block text-secondary">AI Yanıtlama Oranı</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-secondary">%85</span>
-              </div>
+            {/* Empty State */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-[#94a3b8]">
+              <i className="fa-solid fa-chart-line text-4xl mb-3 opacity-50"></i>
+              <p>Bu aralık için yeterli grafik verisi yok.</p>
             </div>
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Ort. Yanıt Süresi</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-on-surface">2 dk</span>
-                <span className="text-tertiary-fixed-dim bg-tertiary-fixed-dim/10 px-2 py-0.5 rounded-md text-xs font-bold mb-1">-1 dk</span>
-              </div>
+            {/* Grid Lines (Horizontal) */}
+            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
+              <div className="border-t border-white w-full h-0"></div>
+              <div className="border-t border-white w-full h-0"></div>
+              <div className="border-t border-white w-full h-0"></div>
             </div>
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30 hover:border-primary/50 transition-colors group">
-              <span className="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mb-2 block">Çözülen Talepler</span>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-headline-lg font-bold text-on-surface">942</span>
-              </div>
+            {/* X Axis Labels */}
+            <div className="absolute bottom-[-24px] left-0 right-0 flex justify-between text-xs text-[#94a3b8] px-4">
+              <span>23 Nis</span>
+              <span>26 Nis</span>
+              <span>29 Nis</span>
+              <span>2 May</span>
+              <span>5 May</span>
+              <span>8 May</span>
+              <span>11 May</span>
+              <span>14 May</span>
+              <span>17 May</span>
+              <span>20 May</span>
+              <span>22 May</span>
             </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-outline-variant/30">
-              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Mesaj Yoğunluk Haritası (Heatmap)</h3>
-              
-              {/* Mock Heatmap */}
-              <div className="grid grid-cols-8 gap-1 mb-4">
-                <div className="col-span-1"></div>
-                {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map(d => <div key={d} className="text-center text-xs text-on-surface-variant font-code-sm">{d}</div>)}
-                
-                {['09:00', '12:00', '15:00', '18:00', '21:00'].map((time, rowIdx) => (
-                  <React.Fragment key={time}>
-                    <div className="text-right pr-2 text-xs text-on-surface-variant font-code-sm self-center">{time}</div>
-                    {[1,2,3,4,5,6,7].map((colIdx) => (
-                      <div key={colIdx} className={`h-8 rounded-sm transition-all hover:scale-110 cursor-pointer ${
-                        (rowIdx === 1 && colIdx === 3) || (rowIdx === 2 && colIdx === 5) ? 'bg-primary shadow-[0_0_10px_rgba(168,85,247,0.8)] z-10' :
-                        (rowIdx === 2 || colIdx === 6) ? 'bg-primary/60' :
-                        'bg-primary/20'
-                      }`}></div>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-
-            <div className="glass-panel p-6 rounded-2xl border border-outline-variant/30">
-              <h3 className="text-lg font-headline-md font-bold text-on-surface mb-6">Sıkça Sorulan Konular</h3>
-              <div className="flex flex-col gap-4">
-                {[
-                  { topic: "Fiyat Listesi", percent: 45, color: "bg-primary" },
-                  { topic: "Çalışma Saatleri", percent: 25, color: "bg-secondary" },
-                  { topic: "Randevu İptali", percent: 15, color: "bg-tertiary" },
-                  { topic: "Diğer", percent: 15, color: "bg-outline-variant" }
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between items-center text-sm mb-1">
-                      <span className="text-on-surface">{item.topic}</span>
-                      <span className="font-bold text-on-surface-variant">%{item.percent}</span>
-                    </div>
-                    <div className="w-full h-2 bg-surface-container rounded-full overflow-hidden">
-                      <div className={`h-full ${item.color}`} style={{ width: `${item.percent}%` }}></div>
-                    </div>
+        {/* Platform Overview */}
+        <div>
+          <h2 className="text-lg font-medium text-white mb-4">Platformlara Genel Bakış</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Instagram */}
+            <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 rounded-xl p-[2px]">
+                  <div className="bg-[#14151a] w-full h-full rounded-[10px] flex items-center justify-center">
+                    <i className="fa-brands fa-instagram text-2xl text-transparent bg-clip-text bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600"></i>
                   </div>
-                ))}
+                </div>
+                <div>
+                  <div className="font-medium text-white">Instagram</div>
+                  <div className="flex items-center text-xs text-green-500 mt-1">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                    Aktif
+                  </div>
+                </div>
+              </div>
+              <div className="flex space-x-8 text-center">
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Gönderi</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Yorum</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Beğeni</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Takipçi</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Web/Blog */}
+            <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5 flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500">
+                  <i className="fa-solid fa-building text-2xl"></i>
+                </div>
+                <div>
+                  <div className="font-medium text-white">Web / Blog</div>
+                  <div className="flex items-center text-xs text-green-500 mt-1">
+                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                    Aktif
+                  </div>
+                </div>
+              </div>
+              <div className="flex space-x-8 text-center">
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Gönderi</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Yorum</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Beğeni</div>
+                </div>
+                <div>
+                  <div className="text-lg font-semibold text-white">0</div>
+                  <div className="text-xs text-[#94a3b8]">Takipçi</div>
+                </div>
               </div>
             </div>
           </div>
-        </>
-      )}
+        </div>
 
+        {/* Bottom Tables Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-8">
+          {/* Gönderi Performansı */}
+          <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5">
+            <h3 className="font-medium text-white mb-4">Gönderi Performansı</h3>
+            <div className="grid grid-cols-6 gap-2 text-xs text-[#94a3b8] border-b border-[#2d3748] pb-2 mb-8">
+              <div>Gönderi</div>
+              <div>Platform</div>
+              <div>Tarih</div>
+              <div>Gösterim</div>
+              <div>Beğeni</div>
+              <div>Yorum</div>
+            </div>
+            <div className="flex flex-col items-center justify-center py-8 text-[#94a3b8]">
+              <div className="w-12 h-12 bg-[#1d1e24] rounded-lg flex items-center justify-center mb-3">
+                <i className="fa-solid fa-table-cells text-xl"></i>
+              </div>
+              <p className="text-sm">Bu aralıkta gönderi bulunamadı.</p>
+            </div>
+          </div>
+
+          {/* En Çok Etkileşim Alan Gönderiler */}
+          <div className="bg-[#14151a] border border-[#2d3748] rounded-xl p-5">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-medium text-white">En Çok Etkileşim Alan Gönderiler</h3>
+              <button className="px-3 py-1 text-xs border border-[#2d3748] text-white rounded-lg hover:bg-[#1d1e24] transition-colors">Tümünü Gör</button>
+            </div>
+            <div className="grid grid-cols-5 gap-2 text-xs text-[#94a3b8] border-b border-[#2d3748] pb-2 mb-8">
+              <div>Gönderi</div>
+              <div>Platform</div>
+              <div>Etkileşim</div>
+              <div>Gösterim</div>
+              <div>Oran</div>
+            </div>
+            <div className="flex flex-col items-center justify-center py-8 text-[#94a3b8]">
+              <div className="w-12 h-12 bg-[#1d1e24] rounded-lg flex items-center justify-center mb-3">
+                <i className="fa-solid fa-trophy text-xl"></i>
+              </div>
+              <p className="text-sm">Bu aralıkta veri bulunamadı.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

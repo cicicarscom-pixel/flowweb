@@ -1,0 +1,5 @@
+.heroBg {
+  background: linear-gradient(to right, rgba(17,24,39,1) 30%, rgba(17,24,39,0) 100%), url('https://placehold.co/1200x300/111827/333?text=Wave+Graphic');
+  background-size: cover;
+  background-position: center;
+}

@@ -1,109 +1,204 @@
+import styles from './page.module.css';
+
 export default function OdemeTakvimiPage() {
   return (
-    <div className="p-6 lg:p-10 max-w-4xl mx-auto flex flex-col gap-6 animate-fade-in pb-20">
-      
-      {/* Calendar Header & Navigation */}
-      <div className="flex items-center justify-between bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 shadow-lg backdrop-blur-sm">
+    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden bg-[#131315] text-sm" data-purpose="main-content">
+      {/* Top Header */}
+      <header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-[#39393b]">
+        <h1 className="text-2xl font-semibold text-[#e3e2e5]">Ödeme Takvimi</h1>
         <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-outline-variant/20">
-            <span className="material-symbols-outlined">chevron_left</span>
+          <button className="flex items-center gap-2 px-4 py-2 rounded bg-[#262628] hover:bg-[#39393b] border border-[#39393b] text-[#e3e2e5] transition-colors">
+            <i className="fa-solid fa-sliders w-4 h-4 text-center"></i>
+            <span>Ayarlar</span>
           </button>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-wide drop-shadow-md">Haziran 2024</h1>
-          <button className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-outline-variant/20">
-            <span className="material-symbols-outlined">chevron_right</span>
+          <button className="flex items-center gap-2 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors border border-emerald-500/20">
+            <i className="fa-solid fa-plus w-4 h-4 text-center"></i>
+            <span>İşlem Ekle</span>
           </button>
         </div>
-        <div className="font-label-sm text-xs text-secondary uppercase tracking-widest px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20 shadow-[0_0_10px_rgba(68,226,205,0.1)]">
-          Ödeme Takvimi
+      </header>
+
+      {/* Sub-header: Controls */}
+      <div className="flex-shrink-0 flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-4">
+          <button className="p-2 rounded bg-[#262628] hover:bg-[#39393b] border border-[#39393b] text-[#e3e2e5] transition-colors">
+            <i className="fa-solid fa-chevron-left w-5 h-5 flex items-center justify-center"></i>
+          </button>
+          <h2 className="text-lg font-medium text-[#e3e2e5] w-32 text-center">Haziran 2024</h2>
+          <button className="p-2 rounded bg-[#262628] hover:bg-[#39393b] border border-[#39393b] text-[#e3e2e5] transition-colors">
+            <i className="fa-solid fa-chevron-right w-5 h-5 flex items-center justify-center"></i>
+          </button>
+        </div>
+        <div className="flex bg-[#262628] rounded border border-[#39393b] p-1">
+          <button className="px-4 py-1.5 rounded text-[#c8c6c9] hover:text-[#e3e2e5] transition-colors text-sm font-medium">Bugün</button>
+          <button className="px-4 py-1.5 rounded bg-[#39393b] text-[#e3e2e5] transition-colors text-sm font-medium shadow-sm">Ay</button>
+          <button className="px-4 py-1.5 rounded text-[#c8c6c9] hover:text-[#e3e2e5] transition-colors text-sm font-medium">Hafta</button>
+          <button className="px-4 py-1.5 rounded text-[#c8c6c9] hover:text-[#e3e2e5] transition-colors text-sm font-medium">Liste</button>
         </div>
       </div>
 
-      {/* Column Headers */}
-      <div className="grid grid-cols-[80px_1fr_1fr] gap-4 px-4 py-2 border-b border-secondary/30 mb-2">
-        <div className="text-center font-label-sm text-xs text-on-surface-variant opacity-60 uppercase">Gün</div>
-        <div className="text-center font-label-sm text-xs text-secondary tracking-widest drop-shadow-[0_0_5px_rgba(68,226,205,0.5)]">GELİR</div>
-        <div className="text-center font-label-sm text-xs text-primary tracking-widest drop-shadow-[0_0_5px_rgba(221,183,255,0.5)]">GİDER</div>
-      </div>
-
-      {/* Calendar Grid */}
-      <div className="flex flex-col gap-3">
-        
-        {/* Day 1 - Empty */}
-        <div className="group relative grid grid-cols-[80px_1fr_1fr] gap-4 bg-surface-container/50 hover:bg-surface-container p-4 rounded-xl border border-outline-variant/20 hover:border-secondary/40 transition-all duration-300 backdrop-blur-md shadow-sm">
-          <div className="flex flex-col items-center justify-center border-r border-outline-variant/20 pr-4">
-            <span className="font-headline-lg text-[28px] font-bold text-secondary group-hover:drop-shadow-[0_0_8px_rgba(68,226,205,0.6)] transition-all">1</span>
-            <span className="font-code-sm text-[10px] text-on-surface-variant uppercase tracking-wider">HAZ</span>
+      {/* Calendar Area */}
+      <div className="flex-1 flex flex-col overflow-hidden px-6 pb-6">
+        {/* Calendar Headers (Gelir / Gider Legend) */}
+        <div className="grid grid-cols-7 gap-px bg-[#39393b] border-t border-l border-r border-[#39393b] rounded-t overflow-hidden shrink-0">
+          <div className="col-span-3 bg-[#1a1a1c] p-2 text-xs font-semibold text-[#4ade80] uppercase tracking-wider text-center">
+            GELİR (ALACAK)
           </div>
-          <div className="border-r border-outline-variant/20 pr-4 flex items-center justify-center min-h-[60px]">
-            <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-              <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-            </div>
-          </div>
-          <div className="flex items-center justify-center min-h-[60px] pl-4">
-            <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-              <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-            </div>
+          <div className="col-span-4 bg-[#1a1a1c] p-2 text-xs font-semibold text-[#f87171] uppercase tracking-wider text-center border-l border-[#39393b]">
+            GİDER (BORÇ)
           </div>
         </div>
 
-        {/* Day 2 - Has Income */}
-        <div className="group relative grid grid-cols-[80px_1fr_1fr] gap-4 bg-surface-container/50 hover:bg-surface-container p-4 rounded-xl border border-secondary/30 neon-border-cyan transition-all duration-300 backdrop-blur-md">
-          <div className="flex flex-col items-center justify-center border-r border-secondary/20 pr-4">
-            <span className="font-headline-lg text-[28px] font-bold text-secondary drop-shadow-[0_0_8px_rgba(68,226,205,0.6)]">2</span>
-            <span className="font-code-sm text-[10px] text-secondary uppercase tracking-wider">HAZ</span>
-          </div>
-          <div className="border-r border-secondary/20 pr-4 flex flex-col gap-2 min-h-[60px] justify-center">
-            <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-2 flex justify-between items-center">
-              <span className="font-code-sm text-sm text-on-surface">Client Retainer</span>
-              <span className="font-headline-md text-sm text-secondary">₺12,500</span>
+        {/* Calendar Grid */}
+        <div className="flex-1 bg-[#39393b] border border-[#39393b] rounded-b overflow-hidden grid grid-cols-7 grid-rows-5 gap-px">
+          {/* Row 1 */}
+          {/* Day 1 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">1</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Cum</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">ABC Ltd. Şti.</span><span>+1.250</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">XYZ A.Ş.</span><span>+850</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Demo Ticaret</span><span>+1.000</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Techno Yazılım</span><span>+2.400</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Ofis Kırtasiye</span><span>-320</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Enerji A.Ş.</span><span>-1.150</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">İnternet Sağlayıcı</span><span>-150</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Akaryakıt Ltd.</span><span>-780</span></div>
             </div>
           </div>
-          <div className="flex items-center justify-center min-h-[60px] pl-4">
-            <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-              <span className="material-symbols-outlined text-outline text-[18px]">add</span>
+          {/* Day 2 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">2</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Cmt</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Global Danışmanlık</span><span>+3.500</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Mavi Tekstil</span><span>+1.200</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Yıldız Gıda</span><span>+900</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Beta Yazılım</span><span>+2.100</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Kargo Firması</span><span>-450</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Ofis Kırtasiye</span><span>-210</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Personel Yemek</span><span>-600</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Akaryakıt Ltd.</span><span>-950</span></div>
             </div>
           </div>
-        </div>
+          {/* Day 3 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">3</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Pzr</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Delta Enerji</span><span>+2.000</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Omega İnşaat</span><span>+4.750</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Smart Medya</span><span>+950</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Lider Otomotiv</span><span>+1.300</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Enerji A.Ş.</span><span>-1.200</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Kargo Firması</span><span>-380</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Ofis Kırtasiye</span><span>-160</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Yazılım Lisansı</span><span>-920</span></div>
+            </div>
+          </div>
+          {/* Day 4 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">4</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Pzt</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">ABC Ltd. Şti.</span><span>+1.100</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Epsilon Tarım</span><span>+800</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Data Sistem</span><span>+1.450</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Netsoft</span><span>+950</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Personel Maaş</span><span>-25.000</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">SGK Ödemesi</span><span>-4.500</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Vergi Dairesi</span><span>-3.200</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Kira Ödemesi</span><span>-6.000</span></div>
+            </div>
+          </div>
+          {/* Day 5 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">5</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Sal</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Mavi Tekstil</span><span>+1.600</span></div>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Global Danışmanlık</span><span>+2.500</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Akaryakıt Ltd.</span><span>-1.100</span></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Kargo Firması</span><span>-420</span></div>
+            </div>
+          </div>
+          {/* Day 6 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">6</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Çar</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">Omega İnşaat</span><span>+3.250</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Enerji A.Ş.</span><span>-1.300</span></div>
+            </div>
+          </div>
+          {/* Day 7 */}
+          <div className="bg-[#1a1a1c] p-2 flex flex-col h-full overflow-hidden group hover:bg-[#202022]">
+            <div className="flex justify-between items-baseline mb-2">
+              <span className="font-medium text-[#e3e2e5] text-base">7</span>
+              <span className="text-[10px] text-[#c8c6c9] uppercase">Per</span>
+            </div>
+            <div className={`flex-1 overflow-y-auto ${styles.calendarCellScroll} space-y-1 pr-1`}>
+              <div className="flex justify-between text-[11px] text-[#4ade80]"><span className="truncate pr-1">XYZ A.Ş.</span><span>+1.900</span></div>
+              <div className="h-px bg-[#39393b] my-1"></div>
+              <div className="flex justify-between text-[11px] text-[#f87171]"><span className="truncate pr-1">Ofis Kırtasiye</span><span>-260</span></div>
+            </div>
+          </div>
 
-        {/* Day 3 - Has Expense */}
-        <div className="group relative grid grid-cols-[80px_1fr_1fr] gap-4 bg-surface-container/50 hover:bg-surface-container p-4 rounded-xl border border-error/30 transition-all duration-300 backdrop-blur-md shadow-[0_0_10px_rgba(255,180,171,0.05)]">
-          <div className="flex flex-col items-center justify-center border-r border-outline-variant/20 pr-4">
-            <span className="font-headline-lg text-[28px] font-bold text-error group-hover:drop-shadow-[0_0_8px_rgba(255,180,171,0.6)] transition-all">3</span>
-            <span className="font-code-sm text-[10px] text-error uppercase tracking-wider">HAZ</span>
-          </div>
-          <div className="border-r border-outline-variant/20 pr-4 flex items-center justify-center min-h-[60px]">
-             <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-              <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-2 min-h-[60px] justify-center pl-4">
-            <div className="bg-error/10 border border-error/30 rounded-lg p-2 flex justify-between items-center">
-              <span className="font-code-sm text-sm text-on-surface">Server Costs</span>
-              <span className="font-headline-md text-sm text-error">-₺850</span>
-            </div>
-          </div>
+          {/* Row 2 */}
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">8</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">9</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">10</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">11</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">12</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">13</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">14</div></div>
+          
+          {/* Row 3 */}
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">15</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">16</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">17</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">18</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">19</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">20</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">21</div></div>
+          
+          {/* Row 4 */}
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">22</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">23</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">24</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">25</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">26</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">27</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">28</div></div>
+          
+          {/* Row 5 */}
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">29</div></div>
+          <div className="bg-[#1a1a1c] p-2 h-full"><div className="font-medium text-[#e3e2e5] text-base">30</div></div>
+          <div className="bg-[#1a1a1c] opacity-30 p-2 h-full pointer-events-none"></div>
+          <div className="bg-[#1a1a1c] opacity-30 p-2 h-full pointer-events-none"></div>
+          <div className="bg-[#1a1a1c] opacity-30 p-2 h-full pointer-events-none"></div>
+          <div className="bg-[#1a1a1c] opacity-30 p-2 h-full pointer-events-none"></div>
+          <div className="bg-[#1a1a1c] opacity-30 p-2 h-full pointer-events-none"></div>
         </div>
-
-        {/* Render empty days 4 to 8 for preview */}
-        {[4, 5, 6, 7, 8].map((day) => (
-          <div key={day} className="group relative grid grid-cols-[80px_1fr_1fr] gap-4 bg-surface-container/50 hover:bg-surface-container p-4 rounded-xl border border-outline-variant/20 hover:border-secondary/40 transition-all duration-300 backdrop-blur-md shadow-sm">
-            <div className="flex flex-col items-center justify-center border-r border-outline-variant/20 pr-4">
-              <span className="font-headline-lg text-[28px] font-bold text-secondary group-hover:drop-shadow-[0_0_8px_rgba(68,226,205,0.6)] transition-all">{day}</span>
-              <span className="font-code-sm text-[10px] text-on-surface-variant uppercase tracking-wider">HAZ</span>
-            </div>
-            <div className="border-r border-outline-variant/20 pr-4 flex items-center justify-center min-h-[60px]">
-              <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-                <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-center min-h-[60px] pl-4">
-              <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-                <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-              </div>
-            </div>
-          </div>
-        ))}
-        
       </div>
     </div>
   );

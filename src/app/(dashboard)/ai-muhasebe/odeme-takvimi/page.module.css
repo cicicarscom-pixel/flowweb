@@ -1,0 +1,10 @@
+.calendarCellScroll::-webkit-scrollbar {
+  width: 4px;
+}
+.calendarCellScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.calendarCellScroll::-webkit-scrollbar-thumb {
+  background-color: #39393b;
+  border-radius: 4px;
+}

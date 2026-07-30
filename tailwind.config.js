@@ -10,6 +10,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        app: {
+          bg: '#0F131A',
+          sidebar: '#141A23',
+          card: '#1A212D',
+          input: '#121721',
+          text: '#9BA3AF',
+          textDark: '#5E6A7A',
+          textLight: '#E2E8F0',
+          primary: '#0F9B6E',
+          primaryHover: '#0d825c',
+          border: '#2C3545',
+          hover: '#1F2937',
+          accent: '#6366F1'
+        },
         surface: "#0c1322",
         "surface-bright": "#323949",
         "surface-container": "#141b2b",

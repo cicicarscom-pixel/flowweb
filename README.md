@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Workigom FlowWeb - Dashboard UI
 
-## Getting Started
+Bu proje, Workigom AI platformunun gelişmiş statik HTML dashboard arayüzlerinin **Next.js (App Router)** mimarisine entegre edilmiş halidir. Tüm tasarım konfigürasyonları mobil uygulama mimarisine sadık kalınarak yeniden uyarlanmış ve performans odaklı bileşenlere dönüştürülmüştür.
 
-First, run the development server:
+## 🚀 Proje Hakkında
+Temmuz 2026 kararlarına istinaden, dashboard içerisindeki ekranların her biri (`Anasayfa`, `Ai Muhasebe`, `Sosyal Medya`, `Ai Asistan`, `Analiz`) React ve Next.js App Router yapısına çevrilmiştir.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Route Groups (`(dashboard)`):** Projedeki tüm dashboard sayfaları merkezi bir `layout.tsx` yapısı üzerinden servis edilmektedir. Böylece sayfalar arası geçişlerde sidebar ve header tekrarlarının önüne geçilerek asimetrik tasarım hataları giderilmiştir.
+- **Tasarım İzolasyonu:** Sayfalara özgü neon (glow) ve degrade (gradient) efektleri, `.module.css` dosyaları ile izole edilmiştir.
+- **Modülerlik:** Her statik ekran (`create-post`, `gelen-mesaj-analizi`, vb.) alt rotalar halinde ayrıştırılmıştır. Tasarımdaki öğeler statik iskelet (skeleton) standartlarına oturtulmuştur.
+
+## 🛠 Kullanılan Teknolojiler
+- **Framework:** Next.js 16 (App Router)
+- **Styling:** Tailwind CSS + Custom CSS Modules (Neon/Glow/Gradient efektleri için)
+- **Paket Yöneticisi:** npm
+- **İkonlar:** FontAwesome & Lucide
+
+## 📁 Sayfa Yapısı
+
+```
+src/app/(dashboard)/
+├── page.tsx (Anasayfa)
+├── ai-asistan/
+│   ├── page.tsx
+│   ├── isletme-hizmetleri/
+│   └── randevu/
+├── ai-muhasebe/
+│   ├── page.tsx
+│   ├── isletmem/
+│   ├── odeme-takvimi/
+│   └── veri-girisi/
+├── analiz/
+│   ├── page.tsx (Gönderi Analizi)
+│   └── gelen-mesaj-analizi/
+└── sosyal-medya/
+    ├── page.tsx
+    ├── create-post/ (AI Paylaşım)
+    ├── inbox/
+    ├── posts/
+    └── share/
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ⚙️ Kurulum ve Çalıştırma
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Projeyi lokalinizde çalıştırmak için:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Bağımlılıkları yükleyin:
+   ```bash
+   npm install
+   ```
+2. Geliştirme sunucusunu başlatın:
+   ```bash
+   npm run dev
+   ```
+3. Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresine gidin.
 
-## Learn More
+## 📝 Önemli Geliştirme Kuralları (AGENTS.md)
+Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
+1. Hiçbir sayfa (`page.tsx`) kendi `<nav>` (sidebar) veya `<header>` elemanını oluşturmamalıdır. Global `layout.tsx` zaten bu öğeleri içermektedir.
+2. Sayfalara özgü özel efektler ve scrollbar'lar, global `tailwind.config` dosyasını kirletmemek adına `.module.css` olarak tasarlanmalıdır.
+3. Tasarımdaki form öğeleri ve dinamik chart verileri, dış kütüphanelere yük bindirmemek için statik arayüz iskeletleri (React skeleton) olarak kodlanmalıdır.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📌 Son Güncellemeler
+- 13 farklı statik HTML tasarımı Next.js'e başarıyla uyarlandı.
+- Vercel üretim ortamı derleme testleri (Build) 0 hata ile tamamlandı.

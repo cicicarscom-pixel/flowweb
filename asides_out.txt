@@ -1,0 +1,270 @@
+<USER_REQUEST>
+ai muhasebe sayfası <!DOCTYPE html>
+
+<html lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Workigom AI - AI Muhasebe</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'app-bg': '#0B0F19',
+            'sidebar-bg': '#0B0F19',
+            'panel-bg': '#111827',
+            'card-bg': '#111827',
+            'primary': '#00D1FF',
+            'secondary': '#B534B2',
+            'text-main': '#F3F4F6',
+            'text-muted': '#9CA3AF',
+            'border-color': '#1F2937'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-styles">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0B0F19;
+      color: #F3F4F6;
+    }
+
+    .glass-effect {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-bg {
+      background: linear-gradient(to right, rgba(17,24,39,1) 30%, rgba(17,24,39,0) 100%), url('https://placehold.co/1200x300/111827/333?text=Wave+Graphic');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .menu-item-active {
+      background: linear-gradient(90deg, rgba(0, 209, 255, 0.1) 0%, rgba(17, 24, 39, 0) 100%);
+      border-left: 4px solid #00D1FF;
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-app-bg text-text-main">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 flex flex-col border-r border-border-color bg-sidebar-bg h-full flex-shrink-0 z-20">
+<!-- Logo -->
+<div class="h-16 flex items-center px-6 border-b border-border-color">
+<div class="flex items-center gap-2">
+<div clas
+<truncated 8239 bytes>
+nded-xl border border-primary/30 bg-card-bg p-5 hover:bg-gray-800 transition-colors flex items-center justify-between group" href="#">
+<div class="flex items-center gap-4">
+<i class="fa-solid fa-clock-rotate-left text-primary text-xl w-6 text-center"></i>
+<div>
+<h3 class="text-sm font-semibold text-primary tracking-wide mb-1 uppercase">İŞLETMEM (GEÇMİŞ DÖNEMLER)</h3>
+<p class="text-xs text-text-muted">Geçmiş dönemlerin gelir, gider ve finansal raporlarına erişin.</p>
+</div>
+</div>
+<i class="fa-solid fa-chevron-right text-text-muted group-hover:text-primary transition-colors"></i>
+</a>
+<!-- Calendar -->
+<a class="block rounded-xl border border-green-500/30 bg-card-bg p-5 hover:bg-gray-800 transition-colors flex items-center justify-between group" href="#">
+<div class="flex items-center gap-4">
+<i class="fa-solid fa-calendar-days text-green-400 text-xl w-6 text-center"></i>
+<div>
+<h3 class="text-sm font-semibold text-
+==========================
+<USER_REQUEST>
+randevu yönetimi ve randevu oluşturma sayfası                      <!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Randevu Oluştur - Workigom AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#0F131A',
+              sidebar: '#141A23',
+              card: '#1A212D',
+              input: '#121721',
+              text: '#9BA3AF',
+              textDark: '#5E6A7A',
+              textLight: '#E2E8F0',
+              primary: '#0F9B6E',
+              primaryHover: '#0d825c',
+              border: '#2C3545',
+              hover: '#1F2937',
+              accent: '#6366F1'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F131A;
+      color: #E2E8F0;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2C3545;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4B5563;
+    }
+  </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" data-snapdom="injected-import"></head>
+<body class="h-screen w-full flex overflow-hidden text-sm">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-app-sidebar border-r border-app-border flex flex-col justify-between h-full flex-shrink-0">
+<div class="flex flex-col
+<truncated 18750 bytes>
+noloji A.Ş.</div>
+<div class="text-xs text-app-text truncate">14:00 - 15:00</div>
+</div>
+<button class="text-app-textDark hover:text-white p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<i class="fa-solid fa-ellipsis-vertical"></i>
+</button>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-3 p-3 rounded-lg hover:bg-app-hover group transition-colors cursor-pointer">
+<div class="w-12 h-12 rounded bg-app-input border border-app-border flex flex-col items-center justify-center shrink-0">
+<span class="text-lg font-bold text-white leading-none mb-0.5">04</span>
+<span class="text-[10px] text-app-text uppercase tracking-wide">Tem</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="font-medium text-white truncate">Mehmet Yılmaz</div>
+<div class="text-xs text-app-text truncate">10:30 - 11:30</div>
+</div>
+<button class="text-app-textDark hover:text-white p-2 opacity-0 group-hover:opacity-100 transition-opa
+==========================
+<USER_REQUEST>
+analiz sayfası (gönderi analizi)                                <!DOCTYPE html>
+
+<html lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Analiz (Canlı) Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bgPrimary: '#0b0c10',
+            bgSecondary: '#14151a',
+            bgTertiary: '#1d1e24',
+            textPrimary: '#e2e8f0',
+            textSecondary: '#94a3b8',
+            accentTeal: '#0d9488',
+            accentPurple: '#a855f7',
+            borderDark: '#2d3748',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-styles">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    body {
+      background-color: #0b0c10;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #14151a; 
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3748; 
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4a5568; 
+    }
+
+    .sidebar-menu-item {
+      @apply flex items-center px-4 py-2 text-sm text-textSecondary hover:text-white rounded-lg transition-colors cursor-pointer;
+    }
+    .sidebar-menu-item.active {
+      @apply text-white bg-bgTertiary;
+    }
+    .sidebar-menu-item svg {
+      @apply w-5 h-5 mr-3;
+    }
+    
+    .card-panel {
+      @apply bg-bgSecondary border border-borderDark rounded-xl p-5;
+    }
+  </style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body class="flex h-screen overflow-hidden text-sm">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 flex
+<truncated 13230 bytes>
+g font-semibold text-white">0</div>
+<div class="text-xs text-textSecondary">Beğeni</div>
+</div>
+<div>
+<div class="text-lg font-semibold text-white">0</div>
+<div class="text-xs text-textSecondary">Takipçi</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Tables Section -->
+<div class="grid grid-cols-2 gap-4 pb-8">
+<!-- Gönderi Performansı -->
+<div class="card-panel">
+<h3 class="font-medium text-white mb-4">Gönderi Performansı</h3>
+<div class="grid grid-cols-6 gap-2 text-xs text-textSecondary border-b border-borderDark pb-2 mb-8">
+<div>Gönderi</div>
+<div>Platform</div>
+<div>Tarih</div>
+<div>Gösterim</div>
+<div>Beğeni</div>
+<div>Yorum</div>
+</div>
+<div class="flex flex-col items-center justify-center py-8 text-textSecondary">
+<div class="w-12 h-12 bg-bgTertiary rounded-lg flex items-center justify-center mb-3">
+<i class="fa-solid fa-table-cells text-xl"></i>
+</div>
+<p class="text-sm">Bu aralıkta gönderi bulunamadı.</
+==========================

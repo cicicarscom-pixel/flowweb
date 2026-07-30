@@ -13,18 +13,18 @@ export default function Header() {
   if (pathname.includes("analiz")) pageTitle = "Analiz";
 
   return (
-    <header className="h-20 flex items-center justify-between px-8 border-b border-[#1e2038]/50 bg-[#070714] flex-shrink-0">
+    <header className="h-16 flex items-center justify-between px-8 border-b border-[#2d3748] bg-[#0b0c10] flex-shrink-0">
       <div className="flex items-center gap-4">
         <button className="md:hidden text-[#94a3b8] hover:text-white transition-colors">
           <span className="material-symbols-outlined">menu</span>
         </button>
-        <h1 className="text-xl font-bold tracking-wide text-[#a855f7] drop-shadow-[0_0_8px_rgba(168,85,247,0.4)] hidden md:block">
+        <h1 className="text-xl font-bold tracking-wide text-white hidden md:block">
           {pageTitle}
         </h1>
       </div>
       <div className="flex items-center gap-6">
         {/* Status Indicators */}
-        <div className="hidden lg:flex items-center gap-5 border-r border-[#1e2038] pr-6 mr-2">
+        <div className="hidden lg:flex items-center gap-5 border-r border-[#2d3748] pr-6 mr-2">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.8)] animate-pulse"></div>
             <span className="text-[11px] font-bold tracking-widest text-[#14b8a6]">SYS.ON</span>
@@ -36,13 +36,13 @@ export default function Header() {
         </div>
         {/* Trailing Actions */}
         <div className="flex items-center gap-4">
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-[#1e2038]/50 text-[#94a3b8] hover:text-white hover:bg-[#1e2038] transition-colors">
+          <button className="w-9 h-9 rounded-full flex items-center justify-center text-[#94a3b8] hover:text-white hover:bg-[#1d1e24] transition-colors border border-transparent hover:border-[#2d3748]">
             <span className="material-symbols-outlined text-[20px]">notifications</span>
           </button>
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-[#1e2038]/50 text-[#94a3b8] hover:text-white hover:bg-[#1e2038] transition-colors">
+          <button className="w-9 h-9 rounded-full flex items-center justify-center text-[#94a3b8] hover:text-white hover:bg-[#1d1e24] transition-colors border border-transparent hover:border-[#2d3748]">
             <span className="material-symbols-outlined text-[20px]">settings</span>
           </button>
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-[#1e2038] ml-2">
+          <div className="w-9 h-9 rounded-full overflow-hidden border border-[#2d3748] ml-2">
             <img 
               alt="User profile" 
               className="w-full h-full object-cover" 

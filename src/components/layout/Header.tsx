@@ -5,43 +5,44 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
   
-  let pageTitle = "CYBER_CORE";
-  if (pathname.includes("ai-asistan")) pageTitle = "AI Asistan";
-  if (pathname.includes("ai-muhasebe")) pageTitle = "AI Muhasebe";
+  let pageTitle = "Homepage";
+  if (pathname === "/") pageTitle = "Homepage";
+  if (pathname.includes("ai-asistan")) pageTitle = "Ai Asistan";
+  if (pathname.includes("ai-muhasebe")) pageTitle = "Ai Muhasebe";
   if (pathname.includes("sosyal-medya")) pageTitle = "Sosyal Medya";
   if (pathname.includes("analiz")) pageTitle = "Analiz";
 
   return (
-    <header className="bg-surface text-primary font-headline-md text-headline-md font-label-sm text-label-sm docked full-width top-0 bg-surface-container-low border-b border-outline-variant flat no shadows flex justify-between items-center w-full px-6 h-16 shrink-0 z-10 glass-card">
+    <header className="h-20 flex items-center justify-between px-8 border-b border-[#1e2038]/50 bg-[#070714] flex-shrink-0">
       <div className="flex items-center gap-4">
-        <button className="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+        <button className="md:hidden text-[#94a3b8] hover:text-white transition-colors">
           <span className="material-symbols-outlined">menu</span>
         </button>
-        <div className="font-headline-lg text-headline-lg font-black tracking-tighter text-primary drop-shadow-[0_0_8px_rgba(221,183,255,0.6)] hidden md:block">
+        <h1 className="text-xl font-bold tracking-wide text-[#a855f7] drop-shadow-[0_0_8px_rgba(168,85,247,0.4)] hidden md:block">
           {pageTitle}
-        </div>
+        </h1>
       </div>
       <div className="flex items-center gap-6">
         {/* Status Indicators */}
-        <div className="hidden lg:flex items-center gap-4 border-r border-outline-variant/30 pr-6 mr-2">
+        <div className="hidden lg:flex items-center gap-5 border-r border-[#1e2038] pr-6 mr-2">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-secondary shadow-[0_0_5px_rgba(68,226,205,0.8)] animate-pulse"></div>
-            <span className="font-code-sm text-code-sm text-secondary">SYS.ON</span>
+            <div className="w-2 h-2 rounded-full bg-[#14b8a6] shadow-[0_0_8px_rgba(20,184,166,0.8)] animate-pulse"></div>
+            <span className="text-[11px] font-bold tracking-widest text-[#14b8a6]">SYS.ON</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px] text-on-surface-variant">sync</span>
-            <span className="font-code-sm text-code-sm text-on-surface-variant">SYNCED</span>
+          <div className="flex items-center gap-2 text-[#94a3b8]">
+            <span className="material-symbols-outlined text-[16px]">sync</span>
+            <span className="text-[11px] font-bold tracking-widest">SYNCED</span>
           </div>
         </div>
         {/* Trailing Actions */}
-        <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-variant text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors active:scale-95">
-            <span className="material-symbols-outlined">notifications</span>
+        <div className="flex items-center gap-4">
+          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-[#1e2038]/50 text-[#94a3b8] hover:text-white hover:bg-[#1e2038] transition-colors">
+            <span className="material-symbols-outlined text-[20px]">notifications</span>
           </button>
-          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-surface-variant text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors active:scale-95">
-            <span className="material-symbols-outlined">settings</span>
+          <button className="w-10 h-10 rounded-full flex items-center justify-center bg-[#1e2038]/50 text-[#94a3b8] hover:text-white hover:bg-[#1e2038] transition-colors">
+            <span className="material-symbols-outlined text-[20px]">settings</span>
           </button>
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/50 ml-2 shadow-[0_0_8px_rgba(221,183,255,0.2)]">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-[#1e2038] ml-2">
             <img 
               alt="User profile" 
               className="w-full h-full object-cover" 

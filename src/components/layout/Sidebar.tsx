@@ -7,57 +7,57 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const links = [
-    { href: "/", label: "Homepage", icon: "grid_view" },
-    { href: "/ai-asistan", label: "AI Assistant", icon: "smart_toy" },
-    { href: "/ai-muhasebe", label: "AI Accounting", icon: "account_balance_wallet" },
-    { href: "/sosyal-medya", label: "Social Media", icon: "share" },
-    { href: "/analiz", label: "Analysis", icon: "analytics" },
+    { href: "/", label: "Anasayfa", icon: "grid_view" },
+    { href: "/ai-asistan", label: "Ai Asistan", icon: "smart_toy" },
+    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "account_balance_wallet" },
+    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "share" },
+    { href: "/analiz", label: "Analiz", icon: "analytics" },
   ];
 
   return (
-    <aside className="bg-surface-container text-primary font-label-sm text-label-sm font-headline-md text-headline-md docked left h-screen w-64 bg-surface-container-low border-r border-outline-variant flat no shadows flex flex-col h-full py-container-padding hidden md:flex shrink-0">
-      {/* Header */}
-      <div className="px-6 pb-6 border-b border-outline-variant/30 flex items-center gap-4">
-        <div className="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(221,183,255,0.4)]">
-          <span className="material-symbols-outlined text-on-primary-container">memory</span>
+    <aside className="w-64 h-screen bg-[#0b0b1d] border-r border-[#1e2038] flex flex-col shrink-0">
+      {/* Header / Logo */}
+      <div className="px-6 py-6 border-b border-[#1e2038]/50 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-900 flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+          <span className="material-symbols-outlined text-white text-[20px]">memory</span>
         </div>
         <div>
-          <h2 className="font-headline-md text-headline-md text-primary">NEURAL_NET</h2>
-          <span className="font-code-sm text-code-sm text-on-surface-variant">V.2.0.4-BETA</span>
+          <h2 className="font-bold text-[#a855f7] tracking-wider text-sm">NEURAL_NET</h2>
+          <span className="text-[#94a3b8] text-[10px] tracking-widest">V.2.0.4-BETA</span>
         </div>
       </div>
       
       {/* Main Navigation */}
-      <nav className="flex-1 py-4 flex flex-col gap-2">
+      <nav className="flex-1 py-6 flex flex-col gap-2">
         {links.map((link) => {
           const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-element-gap px-4 py-3 transition-all duration-200 active:translate-x-1 mx-2 rounded-r-lg ${
+              className={`flex items-center gap-3 px-6 py-3 transition-all duration-200 ${
                 isActive
-                  ? "bg-surface-bright text-secondary border-l-4 border-secondary shadow-[0_0_15px_rgba(68,226,205,0.2)]"
-                  : "text-on-surface-variant opacity-70 hover:bg-surface-container-high hover:text-primary"
+                  ? "bg-gradient-to-r from-[#14b8a6]/10 to-transparent text-[#14b8a6] border-l-2 border-[#14b8a6]"
+                  : "text-[#94a3b8] hover:bg-[#1e2038]/50 hover:text-white border-l-2 border-transparent"
               }`}
             >
-              <span className="material-symbols-outlined">{link.icon}</span>
-              <span>{link.label}</span>
+              <span className="material-symbols-outlined text-[20px]">{link.icon}</span>
+              <span className="text-sm font-medium">{link.label}</span>
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="px-6 pt-4 border-t border-outline-variant/30 flex flex-col gap-4">
-        <div className="flex flex-col gap-1 mt-2">
-          <a className="flex items-center gap-3 text-on-surface-variant opacity-70 hover:text-primary transition-colors py-2" href="#">
+      <div className="px-6 py-6 border-t border-[#1e2038]/50 flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <a className="flex items-center gap-3 text-[#94a3b8] hover:text-white transition-colors" href="#">
             <span className="material-symbols-outlined text-[18px]">terminal</span>
-            <span className="font-code-sm text-code-sm">System Logs</span>
+            <span className="text-xs font-medium">System Logs</span>
           </a>
-          <a className="flex items-center gap-3 text-error opacity-70 hover:opacity-100 transition-opacity py-2" href="#">
+          <a className="flex items-center gap-3 text-[#ef4444]/70 hover:text-[#ef4444] transition-colors" href="#">
             <span className="material-symbols-outlined text-[18px]">logout</span>
-            <span className="font-code-sm text-code-sm">Logout</span>
+            <span className="text-xs font-medium">Logout</span>
           </a>
         </div>
       </div>

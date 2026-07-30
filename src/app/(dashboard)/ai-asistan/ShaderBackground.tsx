@@ -41,34 +41,38 @@ varying vec2 v_texCoord;
 uniform float u_time;
 uniform vec2 u_resolution;
 
+float sdRoundRect(vec2 p, vec2 b, float r) {
+    vec2 d = abs(p) - b + r;
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - r;
+}
+
 void main() {
     vec2 uv = v_texCoord;
+    vec2 p = uv - 0.5;
     float time = u_time * 0.8;
     
-    // Center coordinates
-    vec2 p = uv - 0.5;
-    float angle = atan(p.y, p.x);
+    vec2 size = vec2(0.48, 0.48);
+    float radius = 0.05;
     
-    // Rotating rainbow effect
+    float d = sdRoundRect(p, size, radius);
+    
+    float thickness = 0.005;
+    float border = smoothstep(thickness, 0.0, abs(d));
+    
+    float glow = exp(-pow(d, 2.0) / 0.002) * 0.6;
+    vec3 glowColor = vec3(0.0, 0.5, 1.0);
+    
+    float angle = atan(p.y, p.x);
+    float chaserPos = mod(angle - time * 2.0, 6.28318);
+    float chaserMask = smoothstep(0.8, 0.0, chaserPos);
+    
     vec3 rainbow = 0.5 + 0.5 * cos(time + angle + vec3(0.0, 2.0, 4.0));
     
-    // Create a thin flowing border effect for the panel edge
-    vec2 q = abs(uv - 0.5) * 2.0;
-    float box = max(q.x, q.y);
-    float borderMask = smoothstep(0.96, 0.98, box) * smoothstep(1.0, 0.98, box);
+    vec3 finalColor = glowColor * glow;
+    finalColor += rainbow * border * chaserMask * 2.0;
     
-    // Add some pulsing glow
-    float glow = exp(-pow(box - 0.98, 2.0) / 0.002) * (0.5 + 0.5 * sin(time * 2.0));
+    float alpha = clamp(glow + border * chaserMask, 0.0, 1.0);
     
-    vec3 finalColor = rainbow * (borderMask + glow * 0.6);
-    
-    // Static blue led line
-    float blueLed = smoothstep(0.94, 0.95, box) * smoothstep(0.96, 0.95, box);
-    vec3 blueColor = vec3(0.0, 0.5, 1.0) * blueLed * 2.0;
-    
-    finalColor += blueColor;
-    
-    float alpha = clamp(borderMask + glow * 0.5 + blueLed, 0.0, 1.0);
     gl_FragColor = vec4(finalColor, alpha);
 }`;
 

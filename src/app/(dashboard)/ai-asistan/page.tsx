@@ -202,7 +202,7 @@ export default function AiAsistanPage() {
       </div>
       {/* Side Widgets */}
       <div className="col-span-12 lg:col-span-4 space-y-4">
-      <div className="p-6 bg-[#1c1b1d] border border-[#27272a] rounded-xl flex items-center justify-between group cursor-pointer hover:bg-[#27272a] transition-all">
+      <Link href="/ai-asistan/randevu" className="block p-6 bg-[#1c1b1d] border border-[#27272a] rounded-xl flex items-center justify-between group cursor-pointer hover:bg-[#27272a] transition-all">
       <div className="flex items-center gap-4">
       <div className="w-12 h-12 bg-[#22c55e]/10 text-[#22c55e] rounded-lg flex items-center justify-center">
       <span className="material-symbols-outlined">calendar_month</span>
@@ -213,7 +213,7 @@ export default function AiAsistanPage() {
       </div>
       </div>
       <span className="material-symbols-outlined text-[#e5e1e4] opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
-      </div>
+      </Link>
       <div className="p-6 bg-[#1c1b1d] border border-[#27272a] rounded-xl flex items-center justify-between group cursor-pointer hover:bg-[#27272a] transition-all">
       <div className="flex items-center gap-4">
       <div className="w-12 h-12 bg-[#a855f7]/10 text-[#a855f7] rounded-lg flex items-center justify-center">

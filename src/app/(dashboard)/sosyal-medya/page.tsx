@@ -58,13 +58,13 @@ export default function SosyalMedyaPage() {
               <svg className="w-5 h-5 text-teal-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path></svg>
             </div>
             
-            <div className={`${styles.gradientBorderPurple} ${styles.neonGlowPurple} p-6 rounded-2xl flex items-center justify-between cursor-pointer group hover:opacity-90 transition-opacity`}>
+            <Link href="/sosyal-medya/share" className={`block ${styles.gradientBorderPurple} ${styles.neonGlowPurple} p-6 rounded-2xl flex items-center justify-between cursor-pointer group hover:opacity-90 transition-opacity`}>
               <div className="flex items-center gap-4">
                 <span className="text-xl">✨ 🌌</span>
                 <span className="text-lg font-bold tracking-[0.2em] text-purple-400 uppercase">Paylaşım Merkezi</span>
               </div>
               <svg className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path></svg>
-            </div>
+            </Link>
           </section>
 
           {/* Account Connection Section */}

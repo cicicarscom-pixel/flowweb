@@ -43,3 +43,11 @@ Navigasyonda aktif sekme (`active link`) stilini vermek için `Sidebar.tsx` içe
 - **Alt Sayfa Navigasyonları:** Örneğin `/sosyal-medya` içindeki sekme yapıları ayrı React rotaları (`/sosyal-medya/posts`, vb.) olarak Next.js'e işlendi. Tasarımda bulunan tüm form öğeleri ve state'ler React standardında statik skeleton olarak kodlandı.
 - **Sonuç:** Vercel için build alındı (0 Hata).
 
+### 7. Layout ve Ölçeklendirme Kuralları (Temmuz 2026)
+**Karar:** `globals.css` içerisinde bulunan `html { font-size: 14px; }` küçültme (zoom) ayarı **tamamen silinmiştir** ve tekrar eklenmemelidir. Ekranların (örneğin Ai Muhasebe) sağ tarafında boşluk kalmasını engellemek için `layout.tsx` içerisindeki ana taşıyıcı `div` nesnesi `w-full` sınıfı ile tam genişliğe zorlanmıştır. Bütün yeni alt sayfalar `flex-1` veya `w-full` kurallarına uymalıdır.
+
+### 8. Header ve Sidebar Minimalizmi
+**KURAL:** Sidebar ve Header bileşenlerinde gereksiz logolar ("Neural Net", mor çip ikonu vb.), bildirim metinleri ("SYS.ON", "sync", "SYNCED" gibi sistem statüleri) kesinlikle **kullanılmamalıdır.** Tasarım tamamen sade (minimalist), siyah zemin (`#0b0c10`) ve koyu gri (`#1d1e24`) kombinasyonları üzerinde şekillendirilmelidir.
+
+### 9. Ai Asistan Sihirli Kasa (Vault) Standardı
+**KURAL:** Ai Asistan sayfası statik bir ayarlar sayfası değil, etkileşimli bir **"Sihirli Kasa"** (Magic Panel) konseptine sahiptir. Kapak açılma animasyonları, duman (steam) parçacıkları, `vibrating` efektleri, `brushed-metal` CSS dokusu ve WebGL (Shader) altyapısı mevcuttur. Bu sayfaya yapılacak yeni bir eklenti veya değişiklik, kesinlikle bu kasa `z-index` hiyerarşisine ve `isPointerEventsNone` state kurallarına sadık kalınarak yapılmalıdır. Alt planda siyah ve kapağı taklit eden koyu gölgeler (`background-color: rgba(24, 24, 27, 0.9)`) **kullanılmamalıdır**, saydam bırakılmalıdır.

@@ -52,10 +52,10 @@ export default function Sidebar() {
             <span className="material-symbols-outlined text-[18px]">terminal</span>
             <span className="text-xs font-medium">System Logs</span>
           </a>
-          <a className="flex items-center gap-3 text-[#94a3b8] hover:text-red-400 transition-colors" href="#">
+          <Link className="flex items-center gap-3 text-[#94a3b8] hover:text-red-400 transition-colors" href="/login">
             <span className="material-symbols-outlined text-[18px]">logout</span>
             <span className="text-xs font-medium">Logout</span>
-          </a>
+          </Link>
         </div>
       </div>
     </aside>

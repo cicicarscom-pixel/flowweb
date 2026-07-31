@@ -10,7 +10,9 @@ export default function DashboardHomePage() {
   return (
     <div className="flex-1 overflow-y-auto p-8 space-y-6 pb-24">
       {/* AI Assistant Toggle - Modified with Magic Container */}
-      <div className={`${styles.panel} p-0 ${styles.magicContainer} h-[104px] ${isMagicPanelOpen ? styles.isOpen : ''}`}>
+      <div className={styles.magicAuraContainer}>
+          <div className={styles.magicAuraSpinner}></div>
+          <div className={`${styles.panel} p-0 ${styles.magicContainer} h-[104px] ${isMagicPanelOpen ? styles.isOpen : '}`}>
         <div className={`${styles.magicContent} p-6 flex flex-col justify-center w-full`}>
           <div className="flex items-center justify-between w-full mb-4">
             <div className="flex items-center">
@@ -36,9 +38,10 @@ export default function DashboardHomePage() {
           <div className={styles.coverBottom}></div>
           <div className={styles.magicButtonWrapper} onClick={() => setIsMagicPanelOpen(true)}>
             <button className={styles.magicButton}>Sihri Başlat</button>
+            </div>
           </div>
         </div>
-      </div>
+        </div>
 
       {/* Income / Expense Grid */}
       <div className="grid grid-cols-2 gap-6">
@@ -199,3 +202,5 @@ export default function DashboardHomePage() {
     </div>
   );
 }
+
+

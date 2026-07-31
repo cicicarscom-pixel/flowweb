@@ -19,7 +19,7 @@ export default function Sidebar() {
       {/* Header / Logo */}
       <div className="h-16 px-6 border-b border-[#2d3748] flex items-center">
         <Link href="/" className="flex items-center">
-          <img src="/logo.png" alt="Workigom Flow" className="h-11 object-contain" />
+          <img src="/logo.png" alt="Workigom AI" className="h-11 object-contain" />
         </Link>
       </div>
       
@@ -47,10 +47,6 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="px-6 py-6 border-t border-[#2d3748] flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <a className="flex items-center gap-3 text-[#94a3b8] hover:text-white transition-colors" href="#">
-            <span className="material-symbols-outlined text-[18px]">terminal</span>
-            <span className="text-xs font-medium">System Logs</span>
-          </a>
           <Link className="flex items-center gap-3 text-[#94a3b8] hover:text-red-400 transition-colors" href="/login">
             <span className="material-symbols-outlined text-[18px]">logout</span>
             <span className="text-xs font-medium">Logout</span>
@@ -60,3 +56,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

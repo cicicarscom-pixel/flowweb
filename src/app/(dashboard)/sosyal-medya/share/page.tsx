@@ -2,9 +2,9 @@ import React from "react";
 
 export default function SharePage() {
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#0e0e10] overflow-hidden text-white">
+    <div className="flex-1 flex flex-col h-full bg-transparent overflow-hidden text-white">
       {/* Top Header */}
-      <header className="h-20 flex items-center justify-between px-8 border-b border-surface-container-high bg-surface-container-lowest flex-shrink-0">
+      <div className="h-20 flex items-center justify-between px-8 border-b border-surface-container-high bg-surface-container-lowest flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500">
             <span className="material-symbols-outlined text-xl">
@@ -33,7 +33,7 @@ export default function SharePage() {
             <span className="material-symbols-outlined">help</span>
           </button>
         </div>
-      </header>
+      </div>
       {/* Content Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
@@ -537,3 +537,5 @@ export default function SharePage() {
     </div>
   );
 }
+
+

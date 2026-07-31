@@ -73,7 +73,7 @@ export default function GelenKutusuPage() {
   };
 
   return (
-    <div className="flex-1 flex h-full w-full bg-[#0A0A0B] relative">
+    <div className="flex-1 flex h-full w-full bg-transparent relative">
       {/* Background image overlay */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
@@ -82,7 +82,7 @@ export default function GelenKutusuPage() {
             "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUpjAKmMNnHDAuGn7KDAmiX4BVuWBLEG-5a7fHFVu_x7Jxrfh8UzY6rM-oy3AiqN0b1h6_K5iobCNsv2B4iHnz_lPjQ6QXfGvJ4UZmCcQLcr6H8o6m3I1JVFmgqk7UubXZx96-wpkV8-ScZZBzzkpl4-_WMzeHLyFljEKugxDZQXZgdkjst86sxa7hU95rBimeOBSnqHbdwH9bj_yj1tbla3T_HPG2xI6XkgTpyJRiDhmg9Po0q7NWy9DKn3JnR0b5tcpUj4Vcxr3w')",
         }}
       ></div>
-      <div className="absolute inset-0 z-0 bg-[#0A0A0B]/80"></div>
+      <div className="absolute inset-0 z-0 bg-transparent/80"></div>
 
       {/* Main Container */}
       <div className="relative z-10 flex w-full h-full">
@@ -236,3 +236,4 @@ export default function GelenKutusuPage() {
     </div>
   );
 }
+

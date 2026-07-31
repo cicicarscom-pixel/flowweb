@@ -5,7 +5,7 @@ export default function IsletmemPage() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden" data-purpose="main-content">
       {/* BEGIN: Header */}
-      <header className="px-8 py-6 flex items-center justify-between flex-shrink-0" data-purpose="header">
+      <div className="px-8 py-6 flex items-center justify-between flex-shrink-0" data-purpose="page-header">
         <div>
           <h1 className="text-2xl font-bold text-[#E2E8F0]">İşletmem</h1>
           <p className="text-[#94A3B8] text-sm mt-1">İşletmenizin finansal durumunu takip edin.</p>
@@ -28,7 +28,7 @@ export default function IsletmemPage() {
             <i className="fa-solid fa-gear"></i>
           </button>
         </div>
-      </header>
+      </div>
       {/* END: Header */}
 
       {/* BEGIN: Dashboard Content Scrollable Area */}
@@ -196,3 +196,4 @@ export default function IsletmemPage() {
     </div>
   );
 }
+

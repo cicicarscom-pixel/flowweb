@@ -3,7 +3,7 @@ import styles from './page.module.css';
 
 export default function SosyalMedyaPage() {
   return (
-    <div className="flex-1 p-8 min-h-screen bg-[#070714] text-white">
+    <div className="flex-1 p-8 min-h-screen bg-transparent text-white">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8">
         
         {/* Left Content Area */}
@@ -241,3 +241,4 @@ export default function SosyalMedyaPage() {
     </div>
   );
 }
+

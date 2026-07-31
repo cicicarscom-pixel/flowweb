@@ -11,35 +11,33 @@ export default function AnalizPage() {
         <h1 className="text-2xl font-semibold text-white mb-6">Analiz (Canlı)</h1>
 
         {/* Tabs & Filters */}
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           {/* Tabs */}
-          <div className="flex space-x-2">
-            <Link href="/analiz" className="px-6 py-2.5 bg-[#1d1e24] text-[#0d9488] font-medium rounded-lg border border-[#0d9488]/30 hover:bg-[#15232d] transition-colors">
-              Gönderi Analizi
-            </Link>
-            <Link href="/analiz/gelen-mesaj-analizi" className="px-6 py-2.5 bg-[#14151a] text-[#94a3b8] font-medium rounded-lg hover:text-white hover:bg-[#1d1e24] transition-colors">
-              Gelen Mesaj Analizi
-            </Link>
-          </div>
-          {/* Filter Row */}
-          <div className="flex items-center justify-between">
-            <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors text-white">
-              <i className="fa-solid fa-globe mr-2 text-[#94a3b8]"></i>
-              Tüm platformlar
-              <i className="fa-solid fa-chevron-down ml-3 text-xs text-[#94a3b8]"></i>
-            </button>
-            <div className="flex items-center space-x-3 text-white">
-              <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors">
-                <i className="fa-regular fa-calendar mr-2 text-[#94a3b8]"></i>
-                Son 30 gün
-                <i className="fa-solid fa-chevron-down ml-3 text-xs text-[#94a3b8]"></i>
+          <div className="flex p-1 bg-[#1f1f22] rounded-lg border border-[#454548] w-max">
+              <Link href="/analiz" className="px-6 py-2 rounded-md text-sm font-medium bg-[#a855f7]/20 text-[#d8b4fe] border border-[#a855f7]/30 transition-colors">
+                Gönderi Analizi
+              </Link>
+              <Link href="/analiz/gelen-mesaj-analizi" className="px-6 py-2 rounded-md text-sm font-medium text-[#c6c5c8] hover:text-[#e2e2e4] transition-colors">
+                Gelen Mesaj Analizi
+              </Link>
+            </div>
+            {/* Filter Row */}
+          <div className="flex items-center gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 bg-[#1f1f22] border border-[#454548] rounded-lg text-sm text-[#c6c5c8] hover:text-[#e2e2e4] transition-colors">
+                <i className="fa-solid fa-globe w-4 h-4 flex items-center justify-center"></i>
+                Tüm platformlar
+                <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
               </button>
-              <button className="flex items-center px-4 py-2 bg-[#14151a] border border-[#2d3748] rounded-lg text-sm hover:bg-[#1d1e24] transition-colors">
-                <i className="fa-solid fa-download mr-2 text-[#94a3b8]"></i>
+              <button className="flex items-center gap-2 px-4 py-2 bg-[#1f1f22] border border-[#454548] rounded-lg text-sm text-[#c6c5c8] hover:text-[#e2e2e4] transition-colors">
+                <i className="fa-regular fa-calendar w-4 h-4 flex items-center justify-center"></i>
+                Son 30 gün
+                <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 bg-[#1f1f22] border border-[#454548] rounded-lg text-sm text-[#c6c5c8] hover:text-[#e2e2e4] transition-colors">
+                <i className="fa-solid fa-download w-4 h-4 flex items-center justify-center"></i>
                 Dışa Aktar
               </button>
             </div>
-          </div>
         </div>
 
         {/* Top Metrics Cards */}
@@ -297,3 +295,8 @@ export default function AnalizPage() {
     </div>
   );
 }
+
+
+
+
+

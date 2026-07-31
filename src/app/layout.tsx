@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "AI-Esnaf Dashboard Command Center",
+  title: "AI Esnaf Dashboard",
   description: "Web frontend for Flow AI",
 };
 
@@ -17,10 +17,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
       </head>
-      <body className="font-body-md text-body-md h-screen overflow-hidden flex">
+      <body className="font-body-md text-body-md min-h-screen w-full flex bg-background text-on-background overflow-hidden">
         {children}
       </body>
     </html>
   );
 }
+
 

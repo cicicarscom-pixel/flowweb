@@ -48,22 +48,32 @@
 .magicAuraContainer {
   position: relative;
   border-radius: 1rem;
-  border: 2px solid #0055ff;
-  overflow: hidden;
-  padding: 4px;
   z-index: 10;
+}
+
+.magicAuraClipper {
+  position: absolute;
+  inset: -16px;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .magicAuraSpinner {
   position: absolute;
-  top: -150%;
-  bottom: -150%;
-  left: -50%;
-  right: -50%;
-  background: conic-gradient(from 0deg, transparent 70%, #0055ff 85%, #bc13fe 95%, #ff0050 100%);
-  animation: rotateAura 4s linear infinite;
+  top: 50%;
+  left: 50%;
+  width: 1500px;
+  height: 1500px;
+  transform-origin: center;
+  margin-top: -750px;
+  margin-left: -750px;
+  background: conic-gradient(from 0deg, #00a2ff, #001f3f, #00e5ff, #001f3f, #00a2ff);
+  animation: rotateAura 8s linear infinite;
   z-index: 0;
-  filter: blur(4px);
+  filter: blur(12px);
+  opacity: 0.8;
 }
 
 @keyframes rotateAura {
@@ -73,9 +83,10 @@
 
 .magicContainer {
   position: relative;
-  border-radius: 0.8rem;
+  border-radius: 1rem;
   overflow: hidden;
-  background: #0b0c10;
+  background: #1c1b1d;
+  border: 1.5px solid #00a2ff;
   z-index: 1;
   height: 100%;
 }
@@ -154,20 +165,20 @@
 }
 
 .magicButton {
-  background: #0B0E14;
-  border: 2px solid #0055ff;
-  color: #0055ff;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 12px 32px;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 85, 255, 0.4), inset 0 0 10px rgba(0, 85, 255, 0.4);
-  animation: pulseNeon 2s infinite;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
+    background: #0B0E14;
+    border: 2px solid #0055ff;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 12px 32px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 85, 255, 0.4), inset 0 0 10px rgba(0, 85, 255, 0.4);
+    animation: pulseNeon 2s infinite;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
 
 .magicButton::after {
   content: '';
@@ -225,6 +236,9 @@
   box-shadow: 0 0 15px rgba(0, 85, 255, 0.3);
   background: rgba(0, 85, 255, 0.1);
 }
+
+
+
 
 
 

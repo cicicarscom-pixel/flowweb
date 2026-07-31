@@ -32,12 +32,12 @@ export default function AiChatInput({
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setAttachedFile(file);
-      
+
       // Create preview URL if it's an image
       if (file.type.startsWith("image/")) {
         setFilePreview(URL.createObjectURL(file));
       } else {
-        setFilePreview(null); // Document icon or something else could be used
+        setFilePreview(null);
       }
     }
   };
@@ -77,62 +77,55 @@ export default function AiChatInput({
       />
 
       {/* Input Container (Gemini Style) */}
-      <div className="flex flex-col bg-[#1e1f20] rounded-3xl mx-4 border border-white/5 relative z-40 transition-all duration-300">
-        
+      <div className="flex flex-col bg-[#1e1f20] rounded-[32px] mx-4 border border-white/5 relative z-40 transition-all duration-300">
         {/* File Preview Area */}
         {attachedFile && (
-          <div className="px-4 pt-4 pb-2">
+          <div className="px-5 pt-4 pb-1">
             <div className="relative w-16 h-16 rounded-xl border border-white/10 bg-[#131314] overflow-hidden group">
               {filePreview ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
+                <img
+                  src={filePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-gray-400">description</span>
+                  <span className="material-symbols-outlined text-gray-400">
+                    description
+                  </span>
                 </div>
               )}
               <button
                 onClick={clearAttachment}
                 className="absolute -top-1 -right-1 w-5 h-5 bg-[#1e1f20] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-white/20"
               >
-                <span className="material-symbols-outlined text-[14px] text-white">close</span>
+                <span className="material-symbols-outlined text-[14px] text-white">
+                  close
+                </span>
               </button>
             </div>
           </div>
         )}
 
-        {/* Text Area */}
-        <div className="px-4 pt-4 pb-2 flex-1 min-h-[60px]">
-          <textarea
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder={placeholder}
-            className="w-full text-[#e3e3e3] text-base bg-transparent focus:outline-none resize-none max-h-[150px] placeholder-[#8e9194]"
-            rows={1}
-            style={{
-              height: inputText.length > 50 ? "auto" : "24px",
-            }}
-          />
-        </div>
-
-        {/* Bottom Toolbar */}
-        <div className="px-3 pb-3 flex justify-between items-end relative">
-          
+        {/* Text Area & Buttons Row */}
+        <div className="flex flex-row items-end px-3 py-3 min-h-[64px]">
           {/* Left Actions (Add Button) */}
-          <div className="relative">
+          <div className="relative pr-2 shrink-0 pb-[2px]">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors"
             >
-              <span className={`material-symbols-outlined text-[24px] transition-transform duration-200 ${isMenuOpen ? "text-[#e3e3e3] rotate-45" : "text-[#c4c7c5] rotate-0"}`}>
+              <span
+                className={`material-symbols-outlined text-[24px] transition-transform duration-200 ${isMenuOpen ? "text-[#e3e3e3] rotate-45" : "text-[#c4c7c5] rotate-0"}`}
+              >
                 add
               </span>
             </button>
 
             {/* Floating Menu anchored to Add button */}
             <div
-              className={`absolute bottom-12 left-0 bg-[#282a2c] rounded-2xl py-2 w-48 shadow-xl border border-white/5 transition-all duration-200 z-50 ${
+              className={`absolute bottom-14 left-0 bg-[#282a2c] rounded-2xl py-2 w-48 shadow-xl border border-white/5 transition-all duration-200 z-50 ${
                 isMenuOpen
                   ? "opacity-100 translate-y-0 pointer-events-auto"
                   : "opacity-0 translate-y-2 pointer-events-none"
@@ -156,26 +149,42 @@ export default function AiChatInput({
                 <span className="material-symbols-outlined text-[#c4c7c5] text-[20px]">
                   picture_as_pdf
                 </span>
-                <span className="text-[#e3e3e3] text-sm ml-3">
-                  Belge seçin
-                </span>
+                <span className="text-[#e3e3e3] text-sm ml-3">Belge seçin</span>
               </button>
             </div>
           </div>
 
-          {/* Right Actions (Send Button) */}
-          <button
-            onClick={onSend}
-            disabled={!inputText.trim() && !attachedFile}
-            className={`w-10 h-10 shrink-0 rounded-full flex items-center justify-center transition-colors ${
-              inputText.trim() || attachedFile
-                ? "bg-white/10 text-[#e3e3e3] hover:bg-white/20"
-                : "text-[#444746]"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[20px]">arrow_upward</span>
-          </button>
+          {/* Text Area */}
+          <div className="flex-1 pb-1">
+            <textarea
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={onKeyDown}
+              placeholder={placeholder}
+              className="w-full text-[#e3e3e3] text-[18px] leading-[28px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none max-h-[150px] placeholder-[#8e9194] px-1"
+              rows={1}
+              style={{
+                height: inputText.length > 30 ? "auto" : "28px",
+              }}
+            />
+          </div>
 
+          {/* Right Actions (Send Button) */}
+          <div className="pl-2 shrink-0 pb-[2px]">
+            <button
+              onClick={onSend}
+              disabled={!inputText.trim() && !attachedFile}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                inputText.trim() || attachedFile
+                  ? "bg-white/10 text-[#e3e3e3] hover:bg-white/20"
+                  : "text-[#444746]"
+              }`}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                arrow_upward
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>

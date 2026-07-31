@@ -23,7 +23,6 @@ export default function DashboardHomePage() {
                 }}
               ></div>
             ))}
-          </div>
           <div className={`${styles.panel} p-0 ${styles.magicContainer} h-[104px] ${isMagicPanelOpen ? styles.isOpen : ''}`}>
         <div className={`${styles.magicContent} p-6 flex flex-col justify-center w-full`}>
           <div className="flex items-center justify-between w-full mb-4">
@@ -214,6 +213,10 @@ export default function DashboardHomePage() {
     </div>
   );
 }
+
+
+
+
 
 
 

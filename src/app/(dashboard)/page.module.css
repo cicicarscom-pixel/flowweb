@@ -75,7 +75,7 @@
     #ffff00 98%, 
     #00ff00 100%
   );
-  animation: rotateAura 10s linear infinite;
+  animation: rotateAura 12s linear infinite;
   z-index: 0;
   filter: blur(4px);
 }

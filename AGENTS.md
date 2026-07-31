@@ -51,3 +51,6 @@ Navigasyonda aktif sekme (`active link`) stilini vermek için `Sidebar.tsx` içe
 
 ### 9. Ai Asistan Sihirli Kasa (Vault) Standardı
 **KURAL:** Ai Asistan sayfası statik bir ayarlar sayfası değil, etkileşimli bir **"Sihirli Kasa"** (Magic Panel) konseptine sahiptir. Kapak açılma animasyonları, duman (steam) parçacıkları, `vibrating` efektleri, `brushed-metal` CSS dokusu ve WebGL (Shader) altyapısı mevcuttur. Bu sayfaya yapılacak yeni bir eklenti veya değişiklik, kesinlikle bu kasa `z-index` hiyerarşisine ve `isPointerEventsNone` state kurallarına sadık kalınarak yapılmalıdır. Alt planda siyah ve kapağı taklit eden koyu gölgeler (`background-color: rgba(24, 24, 27, 0.9)`) **kullanılmamalıdır**, saydam bırakılmalıdır.
+
+### 10. Animasyon ve Neon Efekt Kuralları (Ağustos 2026)
+**KURAL:** Magic Container (Ai Asistan sihirli çerçevesi) etrafına eklenen yörünge tabanlı dönen ışık (offset-path veya conic-gradient) animasyonları, hız dengesizlikleri ve köşelerde kopma sorunlarına sebep olduğundan tamamen iptal edilmiştir. Gelecekte herhangi bir bileşene ""Neon Aura"" ekleneceği zaman hareketli parçalar (dönen top vs.) YERİNE, bileşenin ""border"" ve ""box-shadow"" özelliklerini (@keyframes ile) yavaş yavaş değiştirerek nefes alma (breathing) veya renk geçişi (color shifting) yapan tasarımlar tercih edilmelidir.

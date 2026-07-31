@@ -68,10 +68,15 @@ function ChatScreen() {
     }, 2000);
   };
 
-  const handleSendText = () => {
-    if (!inputText.trim()) return;
-    addMessage(inputText, "user");
-    processTextWithAI(inputText);
+  const handleSendText = (text: string, file: File | null) => {
+    if (file) {
+      processFileWithAI(file);
+    }
+    
+    if (text.trim()) {
+      addMessage(text, "user");
+      processTextWithAI(text);
+    }
     setInputText("");
   };
 
@@ -159,8 +164,7 @@ function ChatScreen() {
           inputText={inputText}
           setInputText={setInputText}
           handleSend={handleSendText}
-          onAttachFile={processFileWithAI}
-          placeholder="Örn: Yemek gideri 350 TL"
+          placeholder="Gemini'ye mesaj gönderin..."
         />
       </div>
     </div>

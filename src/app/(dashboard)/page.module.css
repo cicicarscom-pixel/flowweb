@@ -69,8 +69,7 @@
   0% { offset-distance: 0%; }
   100% { offset-distance: 100%; }
 }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
+
 
 .magicContainer {
   position: relative;

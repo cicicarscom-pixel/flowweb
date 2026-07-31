@@ -1,6 +1,37 @@
+"use client";
+
+import { useRef, useState } from "react";
 import React from "react";
 
 export default function OdemeTakvimiPage() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDown(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+  };
+
+  const onMouseLeave = () => {
+    setIsDown(false);
+  };
+
+  const onMouseUp = () => {
+    setIsDown(false);
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDown || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2; // scroll-fast
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface">
       {/* Top Header */}
@@ -54,7 +85,14 @@ export default function OdemeTakvimiPage() {
         </div>
       </div>
       {/* Calendar Area */}
-      <div className="flex-1 flex flex-col overflow-hidden px-6 pb-6 overflow-x-auto">
+      <div
+        className="flex-1 flex flex-col overflow-hidden px-6 pb-6 overflow-x-auto cursor-grab active:cursor-grabbing select-none"
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseLeave={onMouseLeave}
+        onMouseUp={onMouseUp}
+        onMouseMove={onMouseMove}
+      >
         {/* Calendar Headers (Gelir / Gider Legend) */}
         <div
           className="grid grid-cols-2 bg-surface-bright border border-surface-bright rounded-t overflow-hidden shrink-0"
@@ -78,7 +116,7 @@ export default function OdemeTakvimiPage() {
               1
             </div>
             {/* Income Column */}
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">ABC Ltd. Şti.</span>
                 <span className="shrink-0">+1.250</span>
@@ -97,7 +135,7 @@ export default function OdemeTakvimiPage() {
               </div>
             </div>
             {/* Expense Column */}
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span>
                 <span className="shrink-0">-320</span>
@@ -123,7 +161,7 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               2
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">
                   Global Danışmanlık
@@ -143,7 +181,7 @@ export default function OdemeTakvimiPage() {
                 <span className="shrink-0">+2.100</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Kargo Firması</span>
                 <span className="shrink-0">-450</span>
@@ -167,7 +205,7 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               3
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">Delta Enerji</span>
                 <span className="shrink-0">+2.000</span>
@@ -185,7 +223,7 @@ export default function OdemeTakvimiPage() {
                 <span className="shrink-0">+1.300</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Enerji A.Ş.</span>
                 <span className="shrink-0">-1.200</span>
@@ -211,7 +249,7 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               4
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">ABC Ltd. Şti.</span>
                 <span className="shrink-0">+1.100</span>
@@ -229,7 +267,7 @@ export default function OdemeTakvimiPage() {
                 <span className="shrink-0">+950</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Personel Maaş</span>
                 <span className="shrink-0">-25.000</span>
@@ -253,7 +291,7 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               5
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">Mavi Tekstil</span>
                 <span className="shrink-0">+1.600</span>
@@ -265,7 +303,7 @@ export default function OdemeTakvimiPage() {
                 <span className="shrink-0">+2.500</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Akaryakıt Ltd.</span>
                 <span className="shrink-0">-1.100</span>
@@ -277,13 +315,13 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               6
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">Omega İnşaat</span>
                 <span className="shrink-0">+3.250</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Enerji A.Ş.</span>
                 <span className="shrink-0">-1.300</span>
@@ -295,13 +333,13 @@ export default function OdemeTakvimiPage() {
             <div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">
               7
             </div>
-            <div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 border-r border-surface-bright space-y-1">
               <div className="flex justify-between text-income">
                 <span className="truncate pr-1 text-[9px]">XYZ A.Ş.</span>
                 <span className="shrink-0">+1.900</span>
               </div>
             </div>
-            <div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
+            <div className="p-2 pt-6 space-y-1">
               <div className="flex justify-between text-expense">
                 <span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span>
                 <span className="shrink-0">-260</span>

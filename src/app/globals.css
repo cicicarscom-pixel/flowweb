@@ -103,3 +103,14 @@ body {
 }
 
 @layer utilities { .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; } }
+/* Custom Scrollbar for Calendar Cells */
+.calendar-cell-scroll::-webkit-scrollbar {
+  width: 2px;
+}
+.calendar-cell-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.calendar-cell-scroll::-webkit-scrollbar-thumb {
+  background-color: #39393b;
+  border-radius: 4px;
+}

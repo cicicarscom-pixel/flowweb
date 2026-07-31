@@ -69,7 +69,7 @@ export default function OdemeTakvimiPage() {
         </div>
         {/* Calendar Grid */}
         <div
-          className="flex-1 calendar-grid-container border border-t-0 border-surface-bright rounded-b overflow-x-auto"
+          className="flex-1 grid grid-cols-7 gap-[1px] bg-surface-bright border border-t-0 border-surface-bright rounded-b overflow-x-auto"
           style={{ minWidth: "2362px", gridAutoRows: "minmax(120px, auto)" }}
         >
           {/* Day 1 */}

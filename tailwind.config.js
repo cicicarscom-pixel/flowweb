@@ -61,6 +61,9 @@ module.exports = {
         "neon-green": "#4ade80",
         "neon-red": "#ef4444",
         "neon-pink": "#f43f5e",
+        income: "#4ade80",
+        expense: "#f43f5e",
+        sidebar: "#1a1a1c",
       },
       spacing: {
         "element-gap": "0.75rem",

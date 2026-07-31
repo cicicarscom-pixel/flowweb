@@ -156,17 +156,17 @@ export default function AiChatInput({
 
           {/* Text Area */}
           <div className="flex-1 pb-1">
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={onKeyDown}
-              placeholder={placeholder}
-              className="w-full text-[#e3e3e3] text-[18px] leading-[28px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none max-h-[150px] placeholder-[#8e9194] px-1"
-              rows={1}
-              style={{
-                height: inputText.length > 30 ? "auto" : "28px",
-              }}
-            />
+              <textarea
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={onKeyDown}
+                placeholder={placeholder}
+                className="w-full text-[#e3e3e3] text-[20px] leading-[30px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none overflow-hidden max-h-[150px] placeholder-[#8e9194] px-1"
+                rows={1}
+                style={{
+                  height: inputText.length > 30 ? "auto" : "30px",
+                }}
+              />
           </div>
 
           {/* Right Actions (Send Button) */}

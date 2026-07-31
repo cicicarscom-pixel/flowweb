@@ -113,7 +113,7 @@ function ChatScreen() {
         className="relative z-10 flex-1 overflow-y-auto px-4 pt-6 pb-20"
         ref={scrollRef}
       >
-        <div className="flex flex-col space-y-4 w-full max-w-3xl mx-auto">
+        <div className="flex flex-col space-y-4 w-full max-w-5xl mx-auto">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -131,7 +131,7 @@ function ChatScreen() {
                   className="w-48 h-48 object-cover rounded-lg"
                 />
               ) : (
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-[18px] leading-relaxed whitespace-pre-wrap">
                   {msg.text}
                 </p>
               )}
@@ -159,7 +159,7 @@ function ChatScreen() {
       </div>
 
       {/* Input Area */}
-      <div className="relative z-20 shrink-0 pb-4 max-w-3xl w-full mx-auto">
+      <div className="relative z-20 shrink-0 pb-4 max-w-5xl w-full mx-auto">
         <AiChatInput
           inputText={inputText}
           setInputText={setInputText}

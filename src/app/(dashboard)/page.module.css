@@ -48,20 +48,27 @@
 .magicAuraContainer {
   position: relative;
   border-radius: 1rem;
-  padding: 2px;
+  z-index: 10;
+}
+
+.magicAuraClipper {
+  position: absolute;
+  inset: -15px;
   overflow: hidden;
-  box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
+  border-radius: 1.5rem;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .magicAuraSpinner {
   position: absolute;
-  top: -100%;
-  left: -50%;
-  width: 200%;
-  height: 300%;
-  background: conic-gradient(from 0deg, transparent 70%, #00e5ff 90%, #bc13fe 100%);
+  top: -1500px;
+  bottom: -1500px;
+  left: -1500px;
+  right: -1500px;
+  background: conic-gradient(from 0deg, transparent 60%, rgba(0, 229, 255, 0.6) 80%, rgba(188, 19, 254, 0.6) 100%);
   animation: rotateAura 6s linear infinite;
-  z-index: 0;
+  filter: blur(12px);
 }
 
 @keyframes rotateAura {
@@ -71,9 +78,11 @@
 
 .magicContainer {
   position: relative;
-  border-radius: 0.9rem;
+  border-radius: 1rem;
   overflow: hidden;
   background: #0b0c10;
+  border: 2px solid #00e5ff;
+  box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.3);
   z-index: 1;
   height: 100%;
 }
@@ -223,4 +232,5 @@
   box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
   background: rgba(0, 229, 255, 0.1);
 }
+
 

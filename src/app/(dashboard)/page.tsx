@@ -11,15 +11,16 @@ export default function DashboardHomePage() {
     <div className="flex-1 overflow-y-auto p-8 space-y-6 pb-24">
       {/* AI Assistant Toggle - Modified with Magic Container */}
       <div className={styles.magicAuraContainer}>
-          {Array.from({ length: 30 }).map((_, i) => (
+          {Array.from({ length: 60 }).map((_, i) => (
               <div 
                 key={i} 
                 className={styles.magicAuraDot} 
                 style={{
-                  animationDelay: `-${i * 0.08}s`,
-                  opacity: Math.max(0, 1 - (i * 0.033)),
-                  transform: `scale(${Math.max(0.2, 1 - (i * 0.03))})`,
-                  background: i < 5 ? "#00ff00" : i < 12 ? "#ffff00" : i < 19 ? "#ff0050" : i < 25 ? "#bc13fe" : "#0055ff"
+                  animationDelay: `-${i * 0.02}s`,
+                  opacity: Math.max(0, 1 - (i * 0.015)),
+                  transform: `scale(${Math.max(0.1, 1 - (i * 0.015))})`,
+                  background: i < 5 ? "#00ff00" : i < 15 ? "#ffff00" : i < 30 ? "#ff0050" : i < 45 ? "#bc13fe" : "#0055ff",
+                  boxShadow: `0 0 10px ${i < 5 ? "#00ff00" : i < 15 ? "#ffff00" : i < 30 ? "#ff0050" : i < 45 ? "#bc13fe" : "#0055ff"}`
                 }}
               ></div>
             ))}
@@ -213,6 +214,7 @@ export default function DashboardHomePage() {
     </div>
   );
 }
+
 
 
 

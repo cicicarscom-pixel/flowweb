@@ -12,7 +12,7 @@ export default function DashboardHomePage() {
       {/* AI Assistant Toggle - Modified with Magic Container */}
       <div className={styles.magicAuraContainer}>
           <div className={styles.magicAuraSpinner}></div>
-          <div className={`${styles.panel} p-0 ${styles.magicContainer} h-[104px] ${isMagicPanelOpen ? styles.isOpen : '}`}>
+          <div className={`${styles.panel} p-0 ${styles.magicContainer} h-[104px] ${isMagicPanelOpen ? styles.isOpen : ''}`}>
         <div className={`${styles.magicContent} p-6 flex flex-col justify-center w-full`}>
           <div className="flex items-center justify-between w-full mb-4">
             <div className="flex items-center">

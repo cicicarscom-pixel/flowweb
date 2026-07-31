@@ -39,7 +39,6 @@ export default function DashboardHomePage() {
             </div>
           </div>
         </div>
-        </div>
 
       {/* Income / Expense Grid */}
       <div className="grid grid-cols-2 gap-6">

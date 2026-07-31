@@ -15,12 +15,19 @@ interface Message {
 function ChatScreen() {
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type");
-  const transactionType = typeParam === "gelir" ? "gelir" : "gider";
+  let transactionType = typeParam === "gelir" ? "gelir" : "gider";
+  if (typeParam === "asistan") {
+    transactionType = "asistan";
+  }
+
+  const initialMessage = transactionType === "asistan" 
+    ? "Merhaba! Finansal konularda size nasıl yardımcı olabilirim?" 
+    : `Merhaba! Bir ${transactionType} belgesi yükleyerek veya yazarak işlemi kaydedebilirsiniz.`;
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: `Merhaba! Bir ${transactionType} belgesi yükleyerek veya yazarak işlemi kaydedebilirsiniz.`,
+      text: initialMessage,
       sender: "ai",
     },
   ]);

@@ -93,7 +93,7 @@ export default function AiMuhasebePage() {
           <i className="fa-solid fa-chevron-right text-gray-400 group-hover:text-green-400 transition-colors"></i>
         </Link>
         {/* AI Assistant */}
-        <Link href="/ai-asistan" className="block rounded-xl border border-emerald-500/30 bg-[#111827] p-5 hover:bg-gray-800 transition-colors flex items-center justify-between group">
+        <Link href="/ai-muhasebe/veri-girisi?type=asistan" className="block rounded-xl border border-emerald-500/30 bg-[#111827] p-5 hover:bg-gray-800 transition-colors flex items-center justify-between group">
           <div className="flex items-center gap-4">
             <i className="fa-solid fa-wand-magic-sparkles text-emerald-400 text-xl w-6 text-center"></i>
             <div>

@@ -19,7 +19,7 @@ export default function Sidebar() {
       {/* Header / Logo */}
       <div className="h-16 px-6 border-b border-[#2d3748] flex items-center">
         <Link href="/" className="flex items-center">
-          <img src="/logo.png" alt="Workigom Flow" className="h-8 object-contain" />
+          <img src="/logo.png" alt="Workigom Flow" className="h-11 object-contain" />
         </Link>
       </div>
       

@@ -17,11 +17,10 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-[#0b0c10] border-r border-[#2d3748] flex flex-col shrink-0">
       {/* Header / Logo */}
-      <div className="h-16 px-6 border-b border-[#2d3748] flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-          <span className="text-white font-bold text-lg leading-none">W</span>
-        </div>
-        <span className="text-white font-semibold text-lg tracking-wide">Workigom</span>
+      <div className="h-16 px-6 border-b border-[#2d3748] flex items-center">
+        <Link href="/" className="flex items-center">
+          <img src="/logo.png" alt="Workigom Flow" className="h-8 object-contain" />
+        </Link>
       </div>
       
       {/* Main Navigation */}

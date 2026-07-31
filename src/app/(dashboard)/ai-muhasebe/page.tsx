@@ -47,14 +47,14 @@ export default function AiMuhasebePage() {
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <button className="w-full py-4 rounded-xl border border-[#1F2937] bg-[#111827]/50 hover:bg-[#111827] flex items-center justify-center gap-3 transition-colors group">
+        <Link href="/ai-muhasebe/veri-girisi?type=gelir" className="w-full py-4 rounded-xl border border-[#1F2937] bg-[#111827]/50 hover:bg-[#111827] flex items-center justify-center gap-3 transition-colors group">
           <i className="fa-solid fa-circle-plus text-primary text-xl group-hover:scale-110 transition-transform"></i>
           <span className="text-primary font-semibold tracking-wide">GELİR GİR</span>
-        </button>
-        <button className="w-full py-4 rounded-xl border border-[#1F2937] bg-[#111827]/50 hover:bg-[#111827] flex items-center justify-center gap-3 transition-colors group">
+        </Link>
+        <Link href="/ai-muhasebe/veri-girisi?type=gider" className="w-full py-4 rounded-xl border border-[#1F2937] bg-[#111827]/50 hover:bg-[#111827] flex items-center justify-center gap-3 transition-colors group">
           <i className="fa-solid fa-circle-minus text-[#B534B2] text-xl group-hover:scale-110 transition-transform"></i>
           <span className="text-[#B534B2] font-semibold tracking-wide">GİDER GİR</span>
-        </button>
+        </Link>
       </div>
 
       {/* List Items */}

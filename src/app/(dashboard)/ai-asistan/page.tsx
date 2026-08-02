@@ -301,40 +301,6 @@ export default function AiAsistanPage() {
             </button>
           </section>
 
-          {/* Quick Tools */}
-          <section>
-            <h3 className="font-semibold text-lg mb-4 pl-2 text-on-surface">Hızlı Araçlar</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-4 hover:border-[#a855f7]/50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 rounded-lg bg-[#a855f7]/10 flex items-center justify-center mb-3 group-hover:bg-[#a855f7]/20 transition-colors">
-                  <span className="material-symbols-outlined text-[#a855f7]">activity</span>
-                </div>
-                <div className="font-medium text-sm mb-1 text-on-surface">Bilanço Analizi</div>
-                <div className="text-[10px] text-on-surface-variant">Finansal durum analizi</div>
-              </div>
-              <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-4 hover:border-green-500/50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center mb-3 group-hover:bg-green-500/20 transition-colors">
-                  <span className="material-symbols-outlined text-green-500">trending_up</span>
-                </div>
-                <div className="font-medium text-sm mb-1 text-on-surface">Nakit Akış Tahmini</div>
-                <div className="text-[10px] text-on-surface-variant">Gelecek nakit akışı tahmini</div>
-              </div>
-              <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-4 hover:border-red-500/50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center mb-3 group-hover:bg-red-500/20 transition-colors">
-                  <span className="material-symbols-outlined text-red-400">warning</span>
-                </div>
-                <div className="font-medium text-sm mb-1 text-on-surface">Risk Değerlendirme</div>
-                <div className="text-[10px] text-on-surface-variant">Finansal risk analizi</div>
-              </div>
-              <div className="bg-surface-container border border-outline-variant/20 rounded-xl p-4 hover:border-blue-500/50 transition-colors cursor-pointer group">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center mb-3 group-hover:bg-blue-500/20 transition-colors">
-                  <span className="material-symbols-outlined text-blue-400">description</span>
-                </div>
-                <div className="font-medium text-sm mb-1 text-on-surface">Vergi Hesaplama</div>
-                <div className="text-[10px] text-on-surface-variant">Tahmini vergi hesaplama</div>
-              </div>
-            </div>
-          </section>
 
         </div>
       </div>

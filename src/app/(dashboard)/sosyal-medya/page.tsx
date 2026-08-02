@@ -378,7 +378,7 @@ export default function SosyalMedyaPage() {
         {/* LOWER SECTION: CHARTS & MANAGEMENT */}
         <div className="grid grid-cols-12 gap-6 pb-8">
           {/* Left Column: Main Charts */}
-          <div className="col-span-12 lg:col-span-9 space-y-6">
+          <div className="col-span-12 lg:col-span-7 space-y-6">
             
             {/* InteractionChart */}
             <div className="bg-dark-card p-6 rounded-2xl border border-dark-border relative h-[400px]">
@@ -423,7 +423,7 @@ export default function SosyalMedyaPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
               {/* RecentPosts */}
               <div className="bg-dark-card p-6 rounded-2xl border border-dark-border flex flex-col h-full">
                 <div className="flex items-center justify-between mb-6">
@@ -599,7 +599,7 @@ export default function SosyalMedyaPage() {
           </div>
 
           {/* Right Column: Account Management */}
-          <div className="col-span-12 lg:col-span-3 space-y-6">
+          <div className="col-span-12 lg:col-span-5 space-y-6">
             
             {/* AccountsSection */}
             <div className="bg-dark-card p-5 rounded-2xl border border-dark-border">

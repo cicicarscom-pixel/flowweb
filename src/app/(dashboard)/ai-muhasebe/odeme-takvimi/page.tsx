@@ -5,21 +5,6 @@ import React from "react";
 export default function OdemeTakvimiPage() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden">
-      {/* Top Bar (formerly header) */}
-      <div className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-surface-bright">
-        <h1 className="text-2xl font-semibold text-on-surface">Ödeme Takvimi</h1>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 rounded bg-surface-container hover:bg-surface-bright border border-surface-bright text-on-surface transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
-            <span>Ayarlar</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors border border-emerald-500/20">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
-            <span>İşlem Ekle</span>
-          </button>
-        </div>
-      </div>
-
       {/* Sub-header: Controls */}
       <div className="flex-shrink-0 flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
@@ -31,11 +16,23 @@ export default function OdemeTakvimiPage() {
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m9 18 6-6-6-6"></path></svg>
           </button>
         </div>
-        <div className="flex bg-surface-container rounded border border-surface-bright p-1">
-          <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Bugün</button>
-          <button className="px-4 py-1.5 rounded bg-surface-bright text-on-surface transition-colors text-sm font-medium shadow-sm">Ay</button>
-          <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Hafta</button>
-          <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Liste</button>
+        <div className="flex items-center gap-4">
+          <div className="flex bg-surface-container rounded border border-surface-bright p-1">
+            <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Bugün</button>
+            <button className="px-4 py-1.5 rounded bg-surface-bright text-on-surface transition-colors text-sm font-medium shadow-sm">Ay</button>
+            <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Hafta</button>
+            <button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Liste</button>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="flex items-center gap-2 px-4 py-2 rounded bg-surface-container hover:bg-surface-bright border border-surface-bright text-on-surface transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
+              <span>Ayarlar</span>
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors border border-emerald-500/20">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+              <span>İşlem Ekle</span>
+            </button>
+          </div>
         </div>
       </div>
 

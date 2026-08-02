@@ -8,7 +8,9 @@ export default function Header() {
   let pageTitle = "Homepage";
   if (pathname === "/") pageTitle = "Homepage";
   if (pathname.includes("ai-asistan")) pageTitle = "Ai Asistan";
-  if (pathname.includes("ai-muhasebe")) pageTitle = "Ai Muhasebe";
+  if (pathname.includes("ai-muhasebe")) {
+    pageTitle = pathname.includes("odeme-takvimi") ? "Ai Muhasebe / Ödeme Takvimi" : "Ai Muhasebe";
+  }
   if (pathname.includes("sosyal-medya")) pageTitle = "Sosyal Medya";
   if (pathname.includes("analiz")) pageTitle = "Analiz";
 

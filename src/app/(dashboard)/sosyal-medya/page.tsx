@@ -109,22 +109,6 @@ export default function SosyalMedyaPage() {
 
   return (
     <div className="p-8 pb-24 scrollbar-hide text-white">
-      {/* GreetingAndDate */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h2 className="text-xl font-semibold mb-1">Merhaba Volkan! 👋</h2>
-          <p className="text-dark-muted text-sm">Tüm hesaplarınızın performansını tek yerden yönetin.</p>
-        </div>
-        <button className="flex items-center gap-2 px-4 py-2.5 bg-dark-card border border-dark-border rounded-xl text-sm font-medium hover:bg-dark-border transition-colors">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-          </svg>
-          21 Mayıs - 22 Mayıs 2024
-          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-          </svg>
-        </button>
-      </div>
 
       <div className="space-y-8">
         {/* UPPER SECTION: METRICS & PLATFORM PERFORMANCE */}

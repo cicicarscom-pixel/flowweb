@@ -10,6 +10,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          primary: '#8b5cf6',
+          secondary: '#6366f1',
+        },
+        dark: {
+          surface: '#0e0e13',
+          card: '#1b1b20',
+          border: '#2e2d33',
+          muted: '#94a3b8',
+        },
         "secondary-fixed-dim": "#4edea3",
         "on-secondary-fixed-variant": "#005236",
         "secondary-fixed": "#6ffbbe",

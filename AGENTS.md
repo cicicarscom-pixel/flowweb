@@ -54,3 +54,6 @@ Navigasyonda aktif sekme (`active link`) stilini vermek için `Sidebar.tsx` içe
 
 ### 10. Animasyon ve Neon Efekt Kuralları (Ağustos 2026)
 **KURAL:** Magic Container (Ai Asistan sihirli çerçevesi) etrafına eklenen yörünge tabanlı dönen ışık (offset-path veya conic-gradient) animasyonları, hız dengesizlikleri ve köşelerde kopma sorunlarına sebep olduğundan tamamen iptal edilmiştir. Gelecekte herhangi bir bileşene ""Neon Aura"" ekleneceği zaman hareketli parçalar (dönen top vs.) YERİNE, bileşenin ""border"" ve ""box-shadow"" özelliklerini (@keyframes ile) yavaş yavaş değiştirerek nefes alma (breathing) veya renk geçişi (color shifting) yapan tasarımlar tercih edilmelidir.
+
+### 11. Ai Asistan Sihirli Kasa İptali ve Yeni Layout (Ağustos 2026)
+**KURAL:** Kullanıcı talebi üzerine 'Sihirli Kasa (Magic Vault)' konsepti tamamen İPTAL EDİLMİŞTİR (Madde 9 geçersizdir). Yeni tasarımda grid yapısı (yan yana dizilim) kullanılmamalıdır. Bunun yerine 'WhatsApp Asistanı (Şalter)', 'Asistan Talimatı', 'İleri Seviye Ayarlar' ve 'AI Kişiliği' bileşenleri sayfada tam genişlikte, dikey olarak alt alta (stack) sıralanmalıdır.

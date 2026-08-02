@@ -46,10 +46,9 @@ export default function AiAsistanPage() {
             </div>
           </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* WhatsApp Assistant Config */}
-            <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-6 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-6">
+          {/* WhatsApp Assistant Config */}
+          <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 rounded-full bg-green-500"></div>
                   <h3 className="font-semibold text-lg text-on-surface">AI Asistan</h3>
@@ -70,7 +69,7 @@ export default function AiAsistanPage() {
             </section>
 
             {/* Advanced Settings */}
-            <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-6 flex flex-col h-full">
+            <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-6 flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3 text-[#a855f7]">
                   <span className="material-symbols-outlined">code</span>
@@ -101,7 +100,6 @@ export default function AiAsistanPage() {
                 </ul>
               </div>
             </section>
-          </div>
 
           {/* AI Personality */}
           <section className="bg-surface-container-high border border-[#a855f7]/20 rounded-xl p-6 shadow-[0_0_15px_rgba(168,85,247,0.1)]">

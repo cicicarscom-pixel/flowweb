@@ -15,94 +15,9 @@ export default function AiAsistanPage() {
         <div className="xl:col-span-2 space-y-6">
           
           {/* Hero Section */}
-          <section className="bg-[#0b0c10] border border-outline-variant/10 rounded-2xl p-8 relative overflow-hidden flex flex-col md:flex-row items-start justify-between min-h-[160px]">
-            {/* Wave Background */}
-            <div className="absolute inset-y-0 right-0 w-1/2 pointer-events-none opacity-60 flex items-center justify-end overflow-hidden">
-               <svg viewBox="0 0 800 400" className="w-full h-[250%] object-cover object-right-center" preserveAspectRatio="none">
-                 <defs>
-                   <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                     <stop offset="0%" stopColor="rgba(168, 85, 247, 0)" />
-                     <stop offset="50%" stopColor="rgba(168, 85, 247, 0.6)" />
-                     <stop offset="100%" stopColor="rgba(59, 130, 246, 0.8)" />
-                   </linearGradient>
-                 </defs>
-                 {[...Array(10)].map((_, i) => (
-                   <path 
-                     key={i}
-                     d={`M0,200 C300,${150 + i * 20} 500,${250 - i * 20} 800,200`}
-                     fill="none" 
-                     stroke="url(#waveGrad)" 
-                     strokeWidth="1.5" 
-                     style={{
-                       opacity: 1 - (i * 0.08),
-                       transform: `translateY(${i * 5 - 25}px)`
-                     }}
-                   />
-                 ))}
-                 {[...Array(10)].map((_, i) => (
-                   <path 
-                     key={`b-${i}`}
-                     d={`M0,200 C200,${250 - i * 15} 600,${150 + i * 15} 800,200`}
-                     fill="none" 
-                     stroke="url(#waveGrad)" 
-                     strokeWidth="1" 
-                     style={{
-                       opacity: 0.6 - (i * 0.05),
-                       transform: `translateY(${i * -3 + 15}px)`
-                     }}
-                   />
-                 ))}
-               </svg>
-            </div>
-
-            <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start w-full">
-              {/* Robot Icon */}
-              <div className="relative shrink-0 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-[#a855f7] opacity-20 blur-xl"></div>
-                <div className="relative w-24 h-24 rounded-full border border-[#a855f7]/30 bg-[#0b0c10] flex items-center justify-center overflow-hidden shadow-[0_0_30px_rgba(168,85,247,0.3)]">
-                  <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                    <div className="w-full h-full rounded-full border border-[#a855f7]/40 scale-75"></div>
-                    <div className="absolute w-[1px] h-full bg-[#a855f7]/40 rotate-0"></div>
-                    <div className="absolute w-[1px] h-full bg-[#a855f7]/40 rotate-45"></div>
-                    <div className="absolute w-[1px] h-full bg-[#a855f7]/40 rotate-90"></div>
-                    <div className="absolute w-[1px] h-full bg-[#a855f7]/40 rotate-[135deg]"></div>
-                  </div>
-                  <div className="relative z-10 w-14 h-14 bg-gradient-to-br from-[#8b5cf6] to-[#3b82f6] rounded-[24px] flex flex-col items-center justify-center p-2 shadow-inner">
-                     {/* Eyes */}
-                     <div className="flex gap-2.5 mb-1.5">
-                       <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
-                       <div className="w-3 h-3 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"></div>
-                     </div>
-                     {/* Smile */}
-                     <div className="w-4 h-1.5 border-b-2 border-white rounded-full opacity-80"></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 flex flex-col">
-                <h2 className="text-2xl font-bold mb-3 flex items-center gap-2 text-white">
-                  AI Asistanınız Yanınızda <span className="text-2xl">👋</span>
-                </h2>
-                <p className="text-on-surface-variant text-sm max-w-lg leading-relaxed mb-6">
-                  Finansal analizlerden içerik üretimine, raporlamadan önerilere kadar birçok konuda size yardımcı olabilirim.
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  <button className="px-4 py-2 bg-transparent border border-outline-variant/30 rounded-lg text-sm transition-colors text-on-surface-variant hover:text-white hover:border-outline-variant/50 hover:bg-white/5">Finansal özet çıkar</button>
-                  <button className="px-4 py-2 bg-transparent border border-outline-variant/30 rounded-lg text-sm transition-colors text-on-surface-variant hover:text-white hover:border-outline-variant/50 hover:bg-white/5">Bugünkü ödemeleri analiz et</button>
-                  <button className="px-4 py-2 bg-transparent border border-outline-variant/30 rounded-lg text-sm transition-colors text-on-surface-variant hover:text-white hover:border-outline-variant/50 hover:bg-white/5">Sosyal medya için içerik öner</button>
-                </div>
-              </div>
-
-              {/* Status Badge */}
-              <div className="absolute top-0 right-0 md:relative md:top-auto md:right-auto self-start shrink-0">
-                <div className="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-transparent border border-green-500/30 text-green-500 text-xs font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.8)]"></div>
-                  <span>Aktif</span>
-                </div>
-              </div>
-            </div>
-          </section>
+          <div className="w-full rounded-2xl overflow-hidden border border-outline-variant/20 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
+            <img src="/ai-asistan-banner.png" alt="Ai Asistan Banner" className="w-full h-auto object-cover" />
+          </div>
 
           {/* WhatsApp Assistant Config */}
           <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-6 flex flex-col">

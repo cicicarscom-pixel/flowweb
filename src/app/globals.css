@@ -4,14 +4,14 @@
 
 @layer base {
   :root {
-    --color-surface: #0c1322;
+    --color-surface: #000000;
     --color-surface-bright: #323949;
     --color-surface-container: #141b2b;
     --color-surface-container-highest: #2e3545;
     --color-surface-container-high: #232a3a;
     --color-surface-container-low: #141b2b;
     --color-surface-container-lowest: #070e1d;
-    --color-surface-dim: #0c1322;
+    --color-surface-dim: #000000;
     --color-primary: #a855f7;
     --color-secondary: #44e2cd;
     --color-tertiary: #fabc4e;

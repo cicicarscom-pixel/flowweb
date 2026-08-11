@@ -1,199 +1,56 @@
 const fs = require('fs');
 
-let html = `
-<div className="flex-1 flex flex-col h-full overflow-hidden bg-surface">
-<!-- Top Header -->
-<header className="h-16 flex-shrink-0 flex items-center justify-between px-6 border-b border-surface-bright">
-<h1 className="text-2xl font-semibold text-on-surface">Ödeme Takvimi</h1>
-<div className="flex items-center gap-3">
-<button className="flex items-center gap-2 px-4 py-2 rounded bg-surface-container hover:bg-surface-bright border border-surface-bright text-on-surface transition-colors">
-<span className="material-symbols-outlined text-[16px]">settings</span>
-<span>Ayarlar</span>
-</button>
-<button className="flex items-center gap-2 px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-medium transition-colors border border-emerald-500/20">
-<span className="material-symbols-outlined text-[16px]">add</span>
-<span>İşlem Ekle</span>
-</button>
-</div>
-</header>
-<!-- Sub-header: Controls -->
-<div className="flex-shrink-0 flex items-center justify-between px-6 py-4">
-<div className="flex items-center gap-4">
-<button className="p-2 rounded bg-surface-container hover:bg-surface-bright border border-surface-bright text-on-surface transition-colors">
-<span className="material-symbols-outlined text-[20px]">chevron_left</span>
-</button>
-<h2 className="text-lg font-medium text-on-surface w-32 text-center">Haziran 2024</h2>
-<button className="p-2 rounded bg-surface-container hover:bg-surface-bright border border-surface-bright text-on-surface transition-colors">
-<span className="material-symbols-outlined text-[20px]">chevron_right</span>
-</button>
-</div>
-<div className="flex bg-surface-container rounded border border-surface-bright p-1">
-<button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Bugün</button>
-<button className="px-4 py-1.5 rounded bg-surface-bright text-on-surface transition-colors text-sm font-medium shadow-sm">Ay</button>
-<button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Hafta</button>
-<button className="px-4 py-1.5 rounded text-on-surface-variant hover:text-on-surface transition-colors text-sm font-medium">Liste</button>
-</div>
-</div>
-<!-- Calendar Area -->
-<div className="flex-1 flex flex-col overflow-hidden px-6 pb-6 overflow-x-auto">
-<!-- Calendar Headers (Gelir / Gider Legend) -->
-<div className="grid grid-cols-2 bg-surface-bright border border-surface-bright rounded-t overflow-hidden shrink-0" style={{minWidth: '2362px'}}>
-<div className="bg-sidebar p-2 text-[10px] font-bold text-income uppercase tracking-widest text-center border-r border-surface-bright">
-            GELİR (ALACAK)
-         </div>
-<div className="bg-sidebar p-2 text-[10px] font-bold text-expense uppercase tracking-widest text-center">
-            GİDER (BORÇ)
-         </div>
-</div>
-<!-- Calendar Grid -->
-<div className="flex-1 calendar-grid-container border border-t-0 border-surface-bright rounded-b overflow-x-auto" style={{minWidth: '2362px', gridAutoRows: 'minmax(120px, auto)'}}>
-<!-- Day 1 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">1</div>
-<!-- Income Column -->
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">ABC Ltd. Şti.</span><span className="shrink-0">+1.250</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">XYZ A.Ş.</span><span className="shrink-0">+850</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Demo Ticaret</span><span className="shrink-0">+1.000</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Techno Yazılım</span><span className="shrink-0">+2.400</span></div>
-</div>
-<!-- Expense Column -->
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span><span className="shrink-0">-320</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Enerji A.Ş.</span><span className="shrink-0">-1.150</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">İnternet Sağlayıcı</span><span className="shrink-0">-150</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Akaryakıt Ltd.</span><span className="shrink-0">-780</span></div>
-</div>
-</div>
-<!-- Day 2 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">2</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Global Danışmanlık</span><span className="shrink-0">+3.500</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Mavi Tekstil</span><span className="shrink-0">+1.200</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Yıldız Gıda</span><span className="shrink-0">+900</span></div>
-<div className="flex justify-between text-income"><span class="truncate pr-1 text-[9px]">Beta Yazılım</span><span class="shrink-0">+2.100</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Kargo Firması</span><span className="shrink-0">-450</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span><span className="shrink-0">-210</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Personel Yemek</span><span className="shrink-0">-600</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Akaryakıt Ltd.</span><span className="shrink-0">-950</span></div>
-</div>
-</div>
-<!-- Day 3 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">3</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Delta Enerji</span><span className="shrink-0">+2.000</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Omega İnşaat</span><span className="shrink-0">+4.750</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Smart Medya</span><span className="shrink-0">+950</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Lider Otomotiv</span><span className="shrink-0">+1.300</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Enerji A.Ş.</span><span className="shrink-0">-1.200</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Kargo Firması</span><span className="shrink-0">-380</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span><span className="shrink-0">-160</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Yazılım Lisansı</span><span className="shrink-0">-920</span></div>
-</div>
-</div>
-<!-- Day 4 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">4</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">ABC Ltd. Şti.</span><span className="shrink-0">+1.100</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Epsilon Tarım</span><span className="shrink-0">+800</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Data Sistem</span><span className="shrink-0">+1.450</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Netsoft</span><span className="shrink-0">+950</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Personel Maaş</span><span className="shrink-0">-25.000</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">SGK Ödemesi</span><span className="shrink-0">-4.500</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Vergi Dairesi</span><span className="shrink-0">-3.200</span></div>
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Kira Ödemesi</span><span className="shrink-0">-6.000</span></div>
-</div>
-</div>
-<!-- Day 5 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">5</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Mavi Tekstil</span><span className="shrink-0">+1.600</span></div>
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Global Danışmanlık</span><span className="shrink-0">+2.500</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Akaryakıt Ltd.</span><span className="shrink-0">-1.100</span></div>
-</div>
-</div>
-<!-- Day 6 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">6</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">Omega İnşaat</span><span className="shrink-0">+3.250</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Enerji A.Ş.</span><span className="shrink-0">-1.300</span></div>
-</div>
-</div>
-<!-- Day 7 -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative">
-<div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">7</div>
-<div className="p-2 pt-6 border-r border-surface-bright overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-income"><span className="truncate pr-1 text-[9px]">XYZ A.Ş.</span><span className="shrink-0">+1.900</span></div>
-</div>
-<div className="p-2 pt-6 overflow-y-auto calendar-cell-scroll space-y-1">
-<div className="flex justify-between text-expense"><span className="truncate pr-1 text-[9px]">Ofis Kırtasiye</span><span className="shrink-0">-260</span></div>
-</div>
-</div>
-<!-- Repeated Structure for Rows 2-5 (Minimal Diff Principle: Adding visual fillers for structure) -->
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">8</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">9</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">10</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">11</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">12</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div className="bg-sidebar grid grid-cols-2 min-h-0 relative"><div className="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">13</div><div className="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">14</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">15</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">16</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">17</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">18</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">19</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">20</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">21</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">22</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">23</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">24</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">25</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">26</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">27</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">28</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">29</div><div class="border-r border-surface-bright"></div><div></div></div>
-<div class="bg-sidebar grid grid-cols-2 min-h-0 relative"><div class="absolute top-1 left-2 z-10 text-[10px] font-bold text-on-surface">30</div><div class="border-r border-surface-bright"></div><div></div></div>
-<!-- Fillers for empty grid slots -->
-<div class="bg-sidebar opacity-30 pointer-events-none"></div>
-<div class="bg-sidebar opacity-30 pointer-events-none"></div>
-<div class="bg-sidebar opacity-30 pointer-events-none"></div>
-<div class="bg-sidebar opacity-30 pointer-events-none"></div>
-<div class="bg-sidebar opacity-30 pointer-events-none"></div>
-</div>
-</div>
-</div>
-`;
+const data = {
+  1: { income: [["ABC Ltd. Şti.", "+1.250"], ["XYZ A.Ş.", "+850"], ["Demo Ticaret", "+1.000"], ["Techno Yazılım", "+2.400"]], expense: [["Ofis Kırtasiye", "-320"], ["Enerji A.Ş.", "-1.150"], ["İnternet Sağlayıcı", "-150"], ["Akaryakıt Ltd.", "-780"]] },
+  2: { income: [["Global Danışmanlık", "+3.500"], ["Mavi Tekstil", "+1.200"], ["Yıldız Gıda", "+900"], ["Beta Yazılım", "+2.100"]], expense: [["Kargo Firması", "-450"], ["Ofis Kırtasiye", "-210"], ["Personel Yemek", "-600"], ["Akaryakıt Ltd.", "-950"]] },
+  3: { income: [["Delta Enerji", "+2.000"], ["Omega İnşaat", "+4.750"], ["Smart Medya", "+950"], ["Lider Otomotiv", "+1.300"]], expense: [["Enerji A.Ş.", "-1.200"], ["Kargo Firması", "-380"], ["Ofis Kırtasiye", "-160"], ["Yazılım Lisansı", "-920"]] },
+  4: { income: [["ABC Ltd. Şti.", "+1.100"], ["Epsilon Tarım", "+800"], ["Data Sistem", "+1.450"], ["Netsoft", "+950"]], expense: [["Personel Maaş", "-25.000"], ["SGK Ödemesi", "-4.500"], ["Vergi Dairesi", "-3.200"], ["Kira Ödemesi", "-6.000"]] },
+  5: { income: [["Mavi Tekstil", "+1.600"], ["Global Danışmanlık", "+2.500"]], expense: [["Akaryakıt Ltd.", "-1.100"]] },
+  6: { income: [["Omega İnşaat", "+3.250"]], expense: [["Enerji A.Ş.", "-1.300"]] },
+  7: { income: [["XYZ A.Ş.", "+1.900"]], expense: [["Ofis Kırtasiye", "-260"]] }
+};
 
-html = html.replace(/class=/g, 'className=');
+let content = '        {/* Calendar Grid */}\\n';
+content += '        <div className="flex-1 border border-t-0 border-surface-bright rounded-b overflow-x-auto" style={{ display: \\'grid\\', gridTemplateColumns: \\'repeat(7, 1fr)\\', gap: \\'1px\\', backgroundColor: \\'#39393b\\', minWidth: \\'1200px\\', gridAutoRows: \\'minmax(120px, auto)\\' }}>\\n';
 
-// Fix HTML comments
-html = html.replace(/<!--([\s\S]*?)-->/g, '{/*$1*/}');
-
-const component = `import React from 'react';
-
-export default function OdemeTakvimiPage() {
-  return (
-    ${html}
-  );
+for (let i = 1; i <= 30; i++) {
+  content += '          {/* Day ' + i + ' */}\\n';
+  content += '          <div className="bg-[#1a1a1c] min-h-[120px] relative p-2 pt-8 overflow-y-auto calendar-cell-scroll space-y-1.5 flex flex-col">\\n';
+  content += '            <div className="absolute top-2 right-3 z-10 text-xs font-bold text-gray-300">' + i + '</div>\\n';
+  
+  if (data[i]) {
+    for (const [name, amount] of data[i].income) {
+      content += '            <div className="flex justify-between items-center rounded border border-green-900/60 bg-green-950/20 px-1.5 py-1">\\n';
+      content += '              <span className="truncate pr-2 text-[10px] text-white font-medium">' + name + '</span>\\n';
+      content += '              <span className="shrink-0 text-[10px] text-green-500 font-bold">' + amount + '</span>\\n';
+      content += '            </div>\\n';
+    }
+    for (const [name, amount] of data[i].expense) {
+      content += '            <div className="flex justify-between items-center rounded border border-rose-900/60 bg-rose-950/20 px-1.5 py-1">\\n';
+      content += '              <span className="truncate pr-2 text-[10px] text-white font-medium">' + name + '</span>\\n';
+      content += '              <span className="shrink-0 text-[10px] text-rose-300 font-bold">' + amount + '</span>\\n';
+      content += '            </div>\\n';
+    }
+  }
+  content += '          </div>\\n';
 }
-`;
 
-fs.mkdirSync('c:/Users/roman/flowweb/src/app/(dashboard)/ai-muhasebe/odeme-takvimi', { recursive: true });
-fs.writeFileSync('c:/Users/roman/flowweb/src/app/(dashboard)/ai-muhasebe/odeme-takvimi/page.tsx', component);
+content += '          {/* Fillers for empty grid slots */}\\n';
+content += '          {Array.from({ length: 5 }).map((_, i) => (\\n';
+content += '            <div key={`empty-${i}`} className="bg-[#1a1a1c] opacity-30 pointer-events-none"></div>\\n';
+content += '          ))}\\n';
+content += '        </div>\\n';
 
-console.log("Successfully generated Odeme Takvimi page.");
+const targetFile = 'c:\\\\Users\\\\roman\\\\flowweb\\\\src\\\\app\\\\(dashboard)\\\\ai-muhasebe\\\\odeme-takvimi\\\\page.tsx';
+let fileContent = fs.readFileSync(targetFile, 'utf8');
+
+const startIdx = fileContent.indexOf('        {/* Calendar Headers (Gelir / Gider Legend) */}');
+const endIdx = fileContent.indexOf('        </div>\\r\\n      </div>\\r\\n    </div>');
+
+if (startIdx !== -1 && endIdx !== -1) {
+    const newFileContent = fileContent.substring(0, startIdx) + content.trimStart() + fileContent.substring(endIdx);
+    fs.writeFileSync(targetFile, newFileContent, 'utf8');
+    console.log("Updated odeme-takvimi successfully.");
+} else {
+    console.log("Could not find start or end index.");
+}

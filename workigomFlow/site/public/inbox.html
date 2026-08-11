@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>workigomFlow — Gelen Kutusu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+  <div class="ambient"></div>
+
+  <div class="phone" id="app">
+    <header class="page-header">
+      <h1>Gelen Kutusu</h1>
+      <div class="header-actions">
+        <button class="icon-btn" aria-label="Ara">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="icon-btn" id="selectToggle" aria-label="Çoklu seçim">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12l2 2 4-4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="glass select-bar" id="selectBar">
+      <span><span class="count" id="selectCount">0</span> seçildi</span>
+      <button class="delete-btn" id="deleteBtn">Sil</button>
+    </div>
+
+    <nav class="glass tab-bar" role="tablist">
+      <button class="tab-btn active" data-tab="messages" role="tab">Mesajlar</button>
+      <button class="tab-btn" data-tab="comments" role="tab">Yorumlar</button>
+      <button class="tab-btn" data-tab="reviews" role="tab">Değerlendirmeler</button>
+    </nav>
+
+    <!-- Mesajlar -->
+    <section class="tab-panel active" id="panel-messages">
+      <div class="conversation-list">
+        <div class="conv-row unread" data-id="1">
+          <div class="row-checkbox"></div>
+          <div class="avatar-wrap">
+            <div class="avatar ad">AD</div>
+            <span class="platform-badge insta">IG</span>
+          </div>
+          <div class="conv-content">
+            <div class="conv-top">
+              <span class="conv-name">Ayşe Demir</span>
+              <span class="conv-time">14:32</span>
+            </div>
+            <div class="conv-preview">Merhaba, ürününüz hakkında bilgi alabilir miyim?</div>
+          </div>
+        </div>
+
+        <div class="conv-row" data-id="2">
+          <div class="row-checkbox"></div>
+          <div class="avatar-wrap">
+            <div class="avatar mk">MK</div>
+            <span class="platform-badge whatsapp">WA</span>
+          </div>
+          <div class="conv-content">
+            <div class="conv-top">
+              <span class="conv-name">Mehmet K.</span>
+              <span class="conv-time">13:15</span>
+            </div>
+            <div class="conv-preview">Randevu alabilir miyim?</div>
+          </div>
+        </div>
+
+        <div class="conv-row unread" data-id="3">
+          <div class="row-checkbox"></div>
+          <div class="avatar-wrap">
+            <div class="avatar za">ZA</div>
+            <span class="platform-badge tiktok">TT</span>
+          </div>
+          <div class="conv-content">
+            <div class="conv-top">
+              <span class="conv-name">Zeynep A.</span>
+              <span class="conv-time">12:40</span>
+            </div>
+            <div class="conv-preview">Harika video! 🔥</div>
+          </div>
+        </div>
+
+        <div class="conv-row" data-id="4">
+          <div class="row-checkbox"></div>
+          <div class="avatar-wrap">
+            <div class="avatar ct">CT</div>
+            <span class="platform-badge facebook">FB</span>
+          </div>
+          <div class="conv-content">
+            <div class="conv-top">
+              <span class="conv-name">Can T.</span>
+              <span class="conv-time">11:20</span>
+            </div>
+            <div class="conv-preview">Fiyat bilgisi alabilir miyim?</div>
+          </div>
+        </div>
+
+        <div class="conv-row" data-id="5">
+          <div class="row-checkbox"></div>
+          <div class="avatar-wrap">
+            <div class="avatar bs">BS</div>
+            <span class="platform-badge youtube">YT</span>
+          </div>
+          <div class="conv-content">
+            <div class="conv-top">
+              <span class="conv-name">Burak S.</span>
+              <span class="conv-time">Dün</span>
+            </div>
+            <div class="conv-preview">Yeni videonuz ne zaman gelecek?</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Yorumlar -->
+    <section class="tab-panel" id="panel-comments">
+      <div class="comment-thread">
+        <div class="comment-row parent">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div class="avatar-wrap">
+              <div class="avatar ad" style="width:36px;height:36px;font-size:13px;">AD</div>
+              <span class="platform-badge insta">IG</span>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">Ayşe Demir</div>
+              <div class="mono" style="font-size:11px;color:var(--text-muted);">2 saat önce</div>
+            </div>
+          </div>
+          <div class="comment-text">Bu ürün gerçekten harika görünüyor! Kargo ne kadar sürer?</div>
+        </div>
+
+        <div class="comment-row reply">
+          <div class="reply-prefix">↳ @AyşeDemir</div>
+          <div class="comment-text">Teşekkürler! Kargo genellikle 1-2 iş günü içinde teslim edilir. 🚀</div>
+          <div class="comment-meta">
+            <span class="platform-badge insta" style="position:static;width:16px;height:16px;font-size:7px;">IG</span>
+            <span>Bot yanıtı · 1 saat önce</span>
+          </div>
+        </div>
+
+        <div class="comment-row parent" style="margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <div class="avatar-wrap">
+              <div class="avatar za" style="width:36px;height:36px;font-size:13px;">ZA</div>
+              <span class="platform-badge tiktok">TT</span>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">Zeynep A.</div>
+              <div class="mono" style="font-size:11px;color:var(--text-muted);">5 saat önce</div>
+            </div>
+          </div>
+          <div class="comment-text">Fiyatı öğrenebilir miyim? 💫</div>
+        </div>
+
+        <div class="comment-row reply">
+          <div class="reply-prefix">↳ @ZeynepA</div>
+          <div class="comment-text">Merhaba! Detaylı fiyat bilgisi için DM'den ulaşabilirsiniz.</div>
+          <div class="comment-meta">
+            <span class="platform-badge tiktok" style="position:static;width:16px;height:16px;font-size:7px;">TT</span>
+            <span>Manuel yanıt · 4 saat önce</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Değerlendirmeler -->
+    <section class="tab-panel" id="panel-reviews">
+      <div class="conversation-list">
+        <div class="review-row glass">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div class="avatar-wrap">
+              <div class="avatar sk" style="width:36px;height:36px;font-size:13px;">SK</div>
+              <span class="platform-badge google">G</span>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">Selin K.</div>
+              <div class="review-stars">★★★★★</div>
+            </div>
+          </div>
+          <div class="review-text">Çok hızlı ve profesyonel hizmet. Kesinlikle tavsiye ederim!</div>
+          <div class="review-author mono">Google Business · 1 gün önce</div>
+        </div>
+
+        <div class="review-row glass">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div class="avatar-wrap">
+              <div class="avatar ct" style="width:36px;height:36px;font-size:13px;">CT</div>
+              <span class="platform-badge facebook">FB</span>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;">Can T.</div>
+              <div class="review-stars">★★★★☆</div>
+            </div>
+          </div>
+          <div class="review-text">Güzel deneyimdi, sadece bekleme süresi biraz uzundu.</div>
+          <div class="review-author mono">Facebook · 3 gün önce</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Floating Pill Input -->
+  <div class="floating-input">
+    <input type="text" placeholder="Mesaj yaz...">
+    <button class="ai-sparkle" aria-label="AI öneri">✦</button>
+    <button class="send-btn" aria-label="Gönder">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+      Ana Sayfa
+    </a>
+    <a href="inbox.html" class="nav-item active">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+      Gelen Kutusu
+    </a>
+    <a href="publish.html" class="nav-item">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      AI Paylaş
+    </a>
+    <a href="analytics.html" class="nav-item">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+      Analitik
+    </a>
+    <a href="bot.html" class="nav-item">
+      <span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg></span>
+      Bot
+    </a>
+  </nav>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    const selectToggle = document.getElementById('selectToggle');
+    const selectBar = document.getElementById('selectBar');
+    const selectCount = document.getElementById('selectCount');
+    const app = document.getElementById('app');
+    let selectMode = false;
+    let selected = new Set();
+
+    selectToggle.addEventListener('click', () => {
+      selectMode = !selectMode;
+      selectToggle.classList.toggle('active', selectMode);
+      app.classList.toggle('select-mode', selectMode);
+      selectBar.classList.toggle('visible', selectMode);
+      if (!selectMode) {
+        selected.clear();
+        document.querySelectorAll('.row-checkbox').forEach(cb => cb.classList.remove('checked'));
+        selectCount.textContent = '0';
+      }
+    });
+
+    document.querySelectorAll('.conv-row').forEach(row => {
+      row.addEventListener('click', () => {
+        if (!selectMode) return;
+        const cb = row.querySelector('.row-checkbox');
+        const id = row.dataset.id;
+        if (selected.has(id)) {
+          selected.delete(id);
+          cb.classList.remove('checked');
+        } else {
+          selected.add(id);
+          cb.classList.add('checked');
+        }
+        selectCount.textContent = selected.size;
+      });
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click', () => {
+      selected.forEach(id => {
+        document.querySelector(`.conv-row[data-id="${id}"]`)?.remove();
+      });
+      selected.clear();
+      selectCount.textContent = '0';
+    });
+  </script>
+</body>
+</html>

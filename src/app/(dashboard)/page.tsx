@@ -47,7 +47,7 @@ export default function DashboardHomePage() {
             style={{ width: "100%", height: "100%", objectFit: "cover" }} 
           />
         </div>
-        <div>
+        <div style={{ flex: 1 }}>
           <p style={{ fontSize: 11, color: "rgba(0,240,255,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
             Bugün <strong style={{ color: "#00f0ff" }}>47 mesaj</strong> ve <strong style={{ color: "#4edea3" }}>128 yorum</strong> otomatik yanıtlandı.
@@ -55,14 +55,19 @@ export default function DashboardHomePage() {
             Öğleden sonra <strong style={{ color: "#bc13fe" }}>3 randevunuz</strong> var.
           </p>
         </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingLeft: 20, borderLeft: "1px solid rgba(255,255,255,0.1)", justifyContent: "center" }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#00f0ff", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>AKTİF</span>
+          <div style={{ width: 44, height: 24, borderRadius: 12, background: "rgba(0, 240, 255, 0.2)", border: "1.5px solid rgba(0, 240, 255, 0.4)", position: "relative", cursor: "pointer" }}>
+            <div style={{ width: 18, height: 18, borderRadius: 9, background: "#fff", position: "absolute", top: 1.5, right: 2, boxShadow: "0 0 10px #00f0ff" }} />
+          </div>
+        </div>
       </div>
 
       {/* Financial Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {[
           { label: "Aylık Gelir", value: "₺128,450", change: "+12.4%", up: true, color: "#4edea3" },
           { label: "Aylık Gider", value: "₺34,820", change: "-3.1%", up: false, color: "#ff6b6b" },
-          { label: "Net Kar", value: "₺93,630", change: "+18.7%", up: true, color: "#ffb95f" },
         ].map(m => (
           <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   return (
@@ -368,30 +369,34 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           </div>
 
           {/* Ai Randevu Yönetimi */}
-          <div className="glass" style={{ 
-            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(78,222,163,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-            background: "rgba(78,222,163,0.05)", marginTop: 8
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#4edea3" }}>📅</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#4edea3" }}>Ai Randevu Yönetimi</span>
+          <Link href="/ai-asistan/randevu" style={{ textDecoration: 'none' }}>
+            <div className="glass" style={{ 
+              borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(78,222,163,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
+              background: "rgba(78,222,163,0.05)", marginTop: 8
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 20, color: "#4edea3" }}>📅</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "#4edea3" }}>Ai Randevu Yönetimi</span>
+              </div>
+              <span style={{ color: "#4edea3", fontSize: 24, lineHeight: 1 }}>›</span>
             </div>
-            <span style={{ color: "#4edea3", fontSize: 24, lineHeight: 1 }}>›</span>
-          </div>
+          </Link>
 
           {/* Ai İşletme Hizmetleri */}
-          <div className="glass" style={{ 
-            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(0,162,255,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-            background: "rgba(0,162,255,0.05)"
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#00a2ff" }}>💼</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#00a2ff" }}>Ai İşletme Hizmetleri</span>
+          <Link href="/ai-asistan/isletme-hizmetleri" style={{ textDecoration: 'none' }}>
+            <div className="glass" style={{ 
+              borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(0,162,255,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
+              background: "rgba(0,162,255,0.05)"
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 20, color: "#00a2ff" }}>💼</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "#00a2ff" }}>Ai İşletme Hizmetleri</span>
+              </div>
+              <span style={{ color: "#00a2ff", fontSize: 24, lineHeight: 1 }}>›</span>
             </div>
-            <span style={{ color: "#00a2ff", fontSize: 24, lineHeight: 1 }}>›</span>
-          </div>
+          </Link>
         </div>
       </div>
       

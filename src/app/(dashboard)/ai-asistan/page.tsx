@@ -80,25 +80,85 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         {/* Left Column */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {/* Platform toggles */}
-      <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 16 }}>BOT AKTIFLIK</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-          {[
-            { key: "whatsapp" as const, label: "WhatsApp Botu", icon: "💬", color: "#25D366" },
-            { key: "social" as const, label: "Sosyal Medya Botu", icon: "📱", color: "#bc13fe" },
-            { key: "autoReply" as const, label: "Oto Yanıt", icon: "⚡", color: "#00f0ff" },
-            { key: "smartRouting" as const, label: "Akıllı Yönlendirme", icon: "🔀", color: "#ffb95f" },
-          ].map(item => (
-            <div key={item.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 18 }}>{item.icon}</span>
+      {/* Bot Aktiflik & Bağlı Servisler (New Mobile Layout) */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+        {/* Ai Asistan Main Toggle */}
+        <div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, padding: "0 4px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 10px #4edea3" }} />
+              <span style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ai Asistan</span>
+            </div>
+            <Toggle on={botConfig.social} onChange={() => setBotConfig(c => ({ ...c, social: !c.social }))} />
+          </div>
+          
+          <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 20, color: "#25D366" }}>💬</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
+              <Toggle on={botConfig.whatsapp} onChange={() => setBotConfig(c => ({ ...c, whatsapp: !c.whatsapp }))} />
+            </div>
+          </div>
+        </div>
+
+        {/* Asistan Talimatı Oluştur */}
+        <div>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
+          <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <textarea
+              placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
+              style={{
+                width: "100%", minHeight: 80, background: "transparent", border: "none",
+                color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Bağlı Servisler */}
+        <div style={{ position: "relative" }}>
+          <div style={{ position: "absolute", right: -4, top: -20, width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>
+            <span style={{ fontSize: 22, filter: "grayscale(1) brightness(1.5)", opacity: 0.8 }}>⚙️</span>
+          </div>
+          
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Bağlı Servisler</h3>
+          <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(0,162,255,0.3)", background: "rgba(0,162,255,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
+            
+            {/* Google Drive */}
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span style={{ fontSize: 22 }}>G</span>
                 <div>
-                  <p style={{ fontSize: 13, fontWeight: 500, color: botConfig[item.key] ? "#fff" : "var(--text-secondary)" }}>{item.label}</p>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
+                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+                  </div>
                 </div>
               </div>
-              <Toggle on={botConfig[item.key]} onChange={() => setBotConfig(c => ({ ...c, [item.key]: !c[item.key] }))} />
+              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                Bağla
+              </button>
             </div>
-          ))}
+
+            {/* WhatsApp */}
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <span style={{ fontSize: 22, color: "#25D366" }}>💬</span>
+                <div>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
+                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+                  </div>
+                </div>
+              </div>
+              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                Bağla
+              </button>
+            </div>
+            
+          </div>
         </div>
       </div>
 

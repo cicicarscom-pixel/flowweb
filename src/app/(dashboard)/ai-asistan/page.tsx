@@ -45,6 +45,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   const [selectedCharacter, setSelectedCharacter] = useState("Albert Einstein");
   const [selectedTone, setSelectedTone] = useState("Standart");
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [isSimulationActive, setIsSimulationActive] = useState(false);
 
   const roles = [
     { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
@@ -277,34 +278,90 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     {/* Right Column (New Features) */}
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {/* Canlı Test */}
-          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden" }}>
+          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", height: 500 }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ fontSize: 18 }}>💬</span>
-                <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Canlı Test</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Canlı Test</span>
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#4edea3", letterSpacing: "0.06em" }}>SİMÜLASYON</span>
+              <div 
+                onClick={() => setIsSimulationActive(!isSimulationActive)}
+                style={{ cursor: "pointer", opacity: 0.6, transition: "opacity 0.2s" }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+              >
+                <span style={{ fontSize: 16, filter: "grayscale(1) brightness(2)" }}>↻</span>
               </div>
             </div>
-            <div style={{ height: 420, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "16px" }}>
+            
+            <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
+              {!isSimulationActive ? (
+                <>
+                  <div style={{ textAlign: "center", marginBottom: 8 }}>
+                    <span style={{ 
+                      fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", 
+                      letterSpacing: "0.1em", border: "1px solid rgba(255,255,255,0.05)",
+                      padding: "4px 12px", borderRadius: 99
+                    }}>SİMÜLASYON BAŞLADI</span>
+                  </div>
+                  
+                  {/* User message */}
+                  <div style={{ alignSelf: "flex-end", maxWidth: "85%" }}>
+                    <div style={{ 
+                      background: "rgba(255,255,255,0.1)", borderRadius: "16px 16px 2px 16px", 
+                      padding: "12px 16px", color: "rgba(255,255,255,0.9)", fontSize: 13, lineHeight: 1.5 
+                    }}>
+                      Merhaba, stoklarınızda mavi renk M beden kışlık mont var mı? Fiyatı nedir?
+                    </div>
+                  </div>
+
+                  {/* Loading indicator */}
+                  <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+                  </div>
+
+                  {/* Bot message */}
+                  <div style={{ alignSelf: "flex-start", maxWidth: "90%" }}>
+                    <div style={{ 
+                      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+                      borderRadius: "16px 16px 16px 2px", padding: "14px 16px", 
+                      color: "rgba(255,255,255,0.85)", fontSize: 13, lineHeight: 1.6 
+                    }}>
+                      Merhaba! 👋 Evet, mavi renk M beden kışlık montumuz stoklarımızda mevcuttur. 
+                      Güncel fiyatımız <span style={{color: "#fff", fontWeight: 600}}>1.450 TL</span>'dir. 
+                      Hemen sipariş oluşturmak isterseniz size bir bağlantı gönderebilirim. 
+                      Başka yardımcı olabileceğim bir konu var mı?
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
+                </div>
+              )}
+            </div>
+
+            <div style={{ padding: "16px", background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(255,255,255,0.03)" }}>
               <div style={{ position: "relative" }}>
                 <input 
                   type="text" 
-                  placeholder="Test mesajı gönder..." 
+                  placeholder="Asistan ile konuşun..." 
+                  onFocus={() => setIsSimulationActive(true)}
                   style={{ 
-                    width: "100%", padding: "12px 48px 12px 16px", borderRadius: 99, 
-                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                    width: "100%", padding: "14px 48px 14px 20px", borderRadius: 99, 
+                    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
                     color: "#fff", fontSize: 13, outline: "none"
                   }} 
                 />
                 <div style={{ 
                   position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
-                  width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.1)",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
+                  width: 36, height: 36, borderRadius: "50%", background: "rgba(0,162,255,0.15)",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+                  border: "1px solid rgba(0,162,255,0.3)"
                 }}>
-                  <span style={{ fontSize: 16, filter: "grayscale(1) brightness(2)" }}>▶</span>
+                  <span style={{ fontSize: 16, color: "#00a2ff" }}>➤</span>
                 </div>
               </div>
             </div>

@@ -34,7 +34,7 @@ export default function DashboardHomePage() {
       {/* AI Summary Bubble */}
       <div className="glass neon-cyan" style={{ borderRadius: 20, padding: "20px 24px", display: "flex", gap: 16, alignItems: "flex-start" }}>
         <div style={{
-          width: 57, height: 57, borderRadius: 18, background: "linear-gradient(135deg,#00f0ff22,#4edea322)",
+          width: 74, height: 74, borderRadius: 23, background: "linear-gradient(135deg,#00f0ff22,#4edea322)",
           border: "1.5px solid rgba(0,240,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
           flexShrink: 0, overflow: "hidden"
         }}>

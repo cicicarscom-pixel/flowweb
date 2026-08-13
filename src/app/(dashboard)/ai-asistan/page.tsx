@@ -41,12 +41,29 @@ Eğer bir konuyu çözemiyorsan, insan temsilcisine yönlendirirsin.
 
 Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
 
-  const [activePreset, setActivePreset] = useState("customer");
-  const presets = [
-    { id: "customer", label: "Müşteri Hizmetleri", icon: "🎯" },
-    { id: "sales", label: "Satış Asistanı", icon: "💰" },
-    { id: "support", label: "Teknik Destek", icon: "🔧" },
-    { id: "custom", label: "Özel Rol", icon: "⚙️" },
+  const [selectedRole, setSelectedRole] = useState("Kebapçı");
+  const [selectedCharacter, setSelectedCharacter] = useState("Albert Einstein");
+  const [selectedTone, setSelectedTone] = useState("Standart");
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+
+  const roles = [
+    { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
+    { id: "Berber", label: "Berber", icon: "💈" },
+    { id: "Oto Tamir", label: "Oto Tamir", icon: "🔧" },
+    { id: "Market", label: "Market", icon: "🛍️" },
+  ];
+
+  const characters = [
+    { id: "Albert Einstein", label: "Albert Einstein", icon: "😎" },
+    { id: "William Shakespeare", label: "William Shakespeare", icon: "📜" },
+    { id: "Mimar Sinan", label: "Mimar Sinan", icon: "📐" },
+  ];
+
+  const tones = [
+    { id: "Standart", label: "Standart", icon: "😐" },
+    { id: "Komik", label: "Komik", icon: "😆" },
+    { id: "Resmi", label: "Resmi", icon: "👔" },
+    { id: "Samimi", label: "Samimi", icon: "🤗" },
   ];
 
   return (
@@ -80,64 +97,161 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         </div>
       </div>
 
-      {/* Role presets */}
-      <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 14 }}>HAZIR ROLLER</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
-          {presets.map(p => (
-            <button
-              key={p.id}
-              onClick={() => setActivePreset(p.id)}
-              style={{
-                width: "100%", display: "flex", alignItems: "center", gap: 10,
-                padding: "10px 12px", borderRadius: 12,
-                background: activePreset === p.id ? "rgba(0,240,255,0.1)" : "rgba(255,255,255,0.02)",
-                border: activePreset === p.id ? "1px solid rgba(0,240,255,0.3)" : "1px solid rgba(255,255,255,0.04)",
-                cursor: "pointer", color: activePreset === p.id ? "#fff" : "var(--text-secondary)",
-                fontSize: 13, fontWeight: 500, fontFamily: "Inter, sans-serif",
-              }}
-            >
-              <span style={{ fontSize: 16 }}>{p.icon}</span>
-              {p.label}
-              {activePreset === p.id && <span style={{ marginLeft: "auto", color: "#00f0ff", fontSize: 12 }}>●</span>}
-            </button>
-          ))}
+      {/* AI Kişiliği (Purple Box) */}
+      <div className="glass" style={{ 
+        borderRadius: 24, 
+        padding: "24px 28px", 
+        border: "2px solid #bc13fe",
+        boxShadow: "0 0 20px rgba(188,19,254,0.15)",
+        background: "rgba(188,19,254,0.03)"
+      }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: "#fff" }}>AI Kişiliği</h3>
+        
+        {/* İşletme Rolü */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+            <span>🏢</span> İŞLETME ROLÜ
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {roles.map(r => (
+              <button
+                key={r.id}
+                onClick={() => setSelectedRole(r.id)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "10px 16px", borderRadius: 99,
+                  background: selectedRole === r.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
+                  border: selectedRole === r.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                  cursor: "pointer", color: selectedRole === r.id ? "#bc13fe" : "var(--text-secondary)",
+                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{r.icon}</span>
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Karakter */}
+        <div style={{ marginBottom: 24 }}>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+            <span>🧠</span> KARAKTER
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {characters.map(c => (
+              <button
+                key={c.id}
+                onClick={() => setSelectedCharacter(c.id)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "10px 16px", borderRadius: 99,
+                  background: selectedCharacter === c.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
+                  border: selectedCharacter === c.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                  cursor: "pointer", color: selectedCharacter === c.id ? "#bc13fe" : "var(--text-secondary)",
+                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{c.icon}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Üslup */}
+        <div>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+            <span>🎭</span> ÜSLUP
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {tones.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setSelectedTone(t.id)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "10px 16px", borderRadius: 99,
+                  background: selectedTone === t.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
+                  border: selectedTone === t.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                  cursor: "pointer", color: selectedTone === t.id ? "#bc13fe" : "var(--text-secondary)",
+                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{t.icon}</span>
+                {t.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* System prompt card with cyan aura */}
-      <div style={{ position: "relative" }}>
-        <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(0,162,255,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
-        <div className="glass" style={{
-          borderRadius: 20, padding: "22px", position: "relative",
-          border: "1.5px solid rgba(0,162,255,0.5)",
-          boxShadow: "0 0 40px rgba(0,162,255,0.1), inset 0 0 20px rgba(0,162,255,0.03)",
+      {/* İleri Seviye Ayarlar Accordion Toggle */}
+      <div 
+        onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+        className="glass" 
+        style={{ 
+          borderRadius: 99, 
+          padding: "12px 16px 12px 24px", 
+          border: "2px solid #bc13fe",
+          boxShadow: "0 0 20px rgba(188,19,254,0.15)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          cursor: "pointer",
+          background: "rgba(188,19,254,0.03)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ color: "#00f0ff", fontWeight: "bold", fontSize: 18 }}>{'</>'}</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>İleri Seviye Ayarlar</span>
+        </div>
+        <div style={{
+          width: 40, height: 40, borderRadius: "50%",
+          background: "rgba(255,255,255,0.1)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transform: isAdvancedOpen ? "rotate(180deg)" : "rotate(0deg)",
+          transition: "transform 0.3s ease",
         }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <p style={{ fontSize: 12, color: "#00a2ff", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
-            <span style={{ fontSize: 11, color: "rgba(0,162,255,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
-          </div>
-          <textarea
-            value={systemPrompt}
-            onChange={e => setSystemPrompt(e.target.value)}
-            style={{
-              width: "100%", minHeight: 200, background: "rgba(0,162,255,0.04)",
-              border: "1px solid rgba(0,162,255,0.15)", borderRadius: 12,
-              padding: "14px", color: "rgba(255,255,255,0.85)", fontSize: 13,
-              lineHeight: 1.7, resize: "vertical", outline: "none",
-              fontFamily: "Inter, sans-serif",
-            }}
-          />
-          <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-            <button className="fab" style={{ background: "linear-gradient(135deg,rgba(0,162,255,0.2),rgba(0,240,255,0.2))", color: "#00f0ff", border: "1.5px solid rgba(0,240,255,0.3)", fontSize: 13 }}>
-              🤖 AI ile Optimize Et
-            </button>
-            <button className="fab" style={{ background: "rgba(78,222,163,0.12)", color: "#4edea3", border: "1.5px solid rgba(78,222,163,0.3)", fontSize: 13 }}>
-              ✓ Kaydet
-            </button>
-          </div>
+          <span style={{ color: "#fff", fontSize: 20 }}>⚙️</span>
         </div>
       </div>
+
+      {/* System prompt card (Advanced Settings) */}
+      {isAdvancedOpen && (
+        <div style={{ position: "relative", marginTop: -8, animation: "fadeIn 0.3s ease" }}>
+          <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(0,162,255,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
+          <div className="glass" style={{
+            borderRadius: 20, padding: "22px", position: "relative",
+            border: "1.5px solid rgba(0,162,255,0.5)",
+            boxShadow: "0 0 40px rgba(0,162,255,0.1), inset 0 0 20px rgba(0,162,255,0.03)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <p style={{ fontSize: 12, color: "#00a2ff", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
+              <span style={{ fontSize: 11, color: "rgba(0,162,255,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
+            </div>
+            <textarea
+              value={systemPrompt}
+              onChange={e => setSystemPrompt(e.target.value)}
+              style={{
+                width: "100%", minHeight: 200, background: "rgba(0,162,255,0.04)",
+                border: "1px solid rgba(0,162,255,0.15)", borderRadius: 12,
+                padding: "14px", color: "rgba(255,255,255,0.85)", fontSize: 13,
+                lineHeight: 1.7, resize: "vertical", outline: "none",
+                fontFamily: "Inter, sans-serif",
+              }}
+            />
+            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+              <button className="fab" style={{ background: "linear-gradient(135deg,rgba(0,162,255,0.2),rgba(0,240,255,0.2))", color: "#00f0ff", border: "1.5px solid rgba(0,240,255,0.3)", fontSize: 13 }}>
+                🤖 AI ile Optimize Et
+              </button>
+              <button className="fab" style={{ background: "rgba(78,222,163,0.12)", color: "#4edea3", border: "1.5px solid rgba(78,222,163,0.3)", fontSize: 13 }}>
+                ✓ Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Bot performance */}
       <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
@@ -155,6 +269,13 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           ))}
         </div>
       </div>
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}} />
     </div>
   );
 }

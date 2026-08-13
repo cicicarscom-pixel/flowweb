@@ -1,291 +1,384 @@
-import Link from 'next/link';
+"use client";
 
-export default function AiRandevuPage() {
- return (
- <div className="flex-1 overflow-y-auto p-6 flex flex-col xl:flex-row gap-6 relative">
- {/* Left Column (Calendar & Availability) */}
- <div className="flex-1 flex flex-col min-w-0">
- {/* Header Section */}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
- <div>
- <h1 className="text-2xl font-bold text-on-surface mb-1">Randevu Oluştur</h1>
- <p className="text-app-text">Müsaitlik durumunuzu görüntüleyin ve yeni randevu oluşturun.</p>
- </div>
- <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-app-primary text-app-primary hover:bg-app-primary hover:bg-opacity-10 transition-colors whitespace-nowrap">
- <i className="fa-solid fa-rotate-left"></i>
- <span>Bugüne Dön</span>
- </button>
- </div>
+import React, { useState, useMemo, useEffect } from 'react';
 
- {/* Date Selector (Horizontal) */}
- <div className="mb-6">
- <div className="flex items-center gap-2 mb-4">
- <button className="w-8 h-8 flex items-center justify-center rounded bg-app-input border border-app-border text-app-text hover:text-on-surface transition-colors">
- <i className="fa-solid fa-chevron-left"></i>
- </button>
- <button className="flex items-center justify-between gap-4 px-4 py-1.5 rounded bg-app-input border border-app-border text-on-surface min-w-[150px]">
- <span>Temmuz, 2026</span>
- <i className="fa-regular fa-calendar"></i>
- </button>
- <button className="w-8 h-8 flex items-center justify-center rounded bg-app-input border border-app-border text-app-primary hover:text-app-primaryHover transition-colors">
- <i className="fa-solid fa-chevron-right"></i>
- </button>
- </div>
- <div className="flex gap-2 overflow-x-auto pb-2">
- {/* Day Cards */}
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Çar</span>
- <span className="text-xl font-bold text-on-surface">01</span>
- </button>
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Per</span>
- <span className="text-xl font-bold text-on-surface">02</span>
- </button>
- <button className="relative flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-primary bg-secondary transition-colors">
- <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-app-primary"></div>
- <span className="text-xs text-app-primary mb-1">Cum</span>
- <span className="text-xl font-bold text-on-surface">03</span>
- </button>
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Cmt</span>
- <span className="text-xl font-bold text-on-surface">04</span>
- </button>
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Paz</span>
- <span className="text-xl font-bold text-on-surface">05</span>
- </button>
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Pzt</span>
- <span className="text-xl font-bold text-on-surface">06</span>
- </button>
- <button className="flex-1 min-w-[70px] max-w-[100px] flex flex-col items-center justify-center py-3 rounded-xl border border-app-border bg-app-input hover:bg-app-hover transition-colors">
- <span className="text-xs text-app-text mb-1">Sal</span>
- <span className="text-xl font-bold text-on-surface">07</span>
- </button>
- </div>
- </div>
+const TIME_SLOTS = (() => {
+  const slots = [];
+  const fullSlots = new Set(['09:00', '09:30', '11:00', '13:00', '13:30', '16:00']);
+  for (let h = 8; h < 24; h++) {
+    ['00', '30'].forEach(m => {
+      const time = `${String(h).padStart(2, '0')}:${m}`;
+      slots.push({ time, full: fullSlots.has(time) });
+    });
+  }
+  slots.push({ time: '00:00', full: false });
+  return slots;
+})();
 
- {/* Availability Grid */}
- <div className="bg-app-card rounded-xl border border-app-border flex-1 flex flex-col">
- <div className="p-4 border-b border-app-border flex justify-between items-center">
- <h2 className="font-bold text-on-surface">Günlük Müsaitlik</h2>
- <div className="flex items-center gap-4 text-xs">
- <div className="flex items-center gap-1">
- <div className="w-2.5 h-2.5 rounded-full bg-app-primary"></div>
- <span className="text-app-textLight">Dolu</span>
- </div>
- <div className="flex items-center gap-1">
- <div className="w-2.5 h-2.5 rounded-full bg-app-textDark"></div>
- <span className="text-app-textLight">Boş</span>
- </div>
- </div>
- </div>
- 
- <div className="p-6 space-y-8 flex-1">
- {/* Sabah */}
- <div className="flex flex-col sm:flex-row gap-4">
- <div className="w-24 shrink-0">
- <div className="font-semibold text-on-surface">Sabah</div>
- <div className="text-xs text-app-textDark">(08:00 - 12:00)</div>
- </div>
- <div className="flex-1 flex flex-wrap gap-2">
- <button className="px-4 py-2 rounded-lg bg-secondary text-on-surface border border-secondary">08:00</button>
- <button className="px-4 py-2 rounded-lg bg-secondary text-on-surface border border-secondary">08:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">09:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">09:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">10:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">10:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">11:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">11:30</button>
- </div>
- </div>
+const CARD_COLORS = [
+  { bg: 'rgba(78,222,163,0.1)', border: 'rgba(78,222,163,0.3)', text: '#4edea3', icon: '✂️' },
+  { bg: 'rgba(255,185,95,0.1)', border: 'rgba(255,185,95,0.3)', text: '#ffb95f', icon: '✨' },
+  { bg: 'rgba(192,193,255,0.1)', border: 'rgba(192,193,255,0.3)', text: '#c0c1ff', icon: '🌿' },
+  { bg: 'rgba(0,162,255,0.1)', border: 'rgba(0,162,255,0.3)', text: '#00a2ff', icon: '🖌️' },
+];
 
- {/* Öğle */}
- <div className="flex flex-col sm:flex-row gap-4">
- <div className="w-24 shrink-0">
- <div className="font-semibold text-on-surface">Öğle</div>
- <div className="text-xs text-app-textDark">(13:00 - 17:00)</div>
- </div>
- <div className="flex-1 flex flex-wrap gap-2">
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">13:30</button>
- <button className="px-4 py-2 rounded-lg bg-secondary text-on-surface border border-secondary">14:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">14:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">15:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">15:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">16:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">16:30</button>
- </div>
- </div>
+export default function RandevuPage() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '10:00', service: '' });
+  const [isSaving, setIsSaving] = useState(false);
 
- {/* Akşam */}
- <div className="flex flex-col sm:flex-row gap-4">
- <div className="w-24 shrink-0">
- <div className="font-semibold text-on-surface">Akşam</div>
- <div className="text-xs text-app-textDark">(19:00 - 22:00)</div>
- </div>
- <div className="flex-1 flex flex-wrap gap-2">
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">19:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">19:30</button>
- <button className="px-4 py-2 rounded-lg bg-secondary text-on-surface border border-secondary">20:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">20:30</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">21:00</button>
- <button className="px-4 py-2 rounded-lg bg-app-input text-app-text border border-app-border hover:border-app-text transition-colors">21:30</button>
- </div>
- </div>
+  useEffect(() => {
+    const d = new Date();
+    setSelectedDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`);
+  }, []);
 
- <div className="flex items-center gap-2 text-xs text-app-textDark mt-4 pt-4 border-t border-app-border border-opacity-50">
- <i className="fa-solid fa-circle-info -tertiary"></i>
- <span>Yeşil olan saatler dolu, koyu olan saatler müsaittir.</span>
- </div>
+  const dynamicDays = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const numDays = new Date(year, month + 1, 0).getDate();
+    const days = [];
+    const trDays = ['Pzr', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+    
+    for (let i = 1; i <= numDays; i++) {
+      const d = new Date(year, month, i);
+      days.push({
+        name: trDays[d.getDay()],
+        date: String(i).padStart(2, '0'),
+        fullDate: `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`
+      });
+    }
+    return days;
+  }, [currentDate]);
 
- {/* Empty State Placeholder inside Grid Area */}
- <div className="flex-1 flex flex-col items-center justify-center text-center mt-8 pb-12">
- <i className="fa-regular fa-calendar text-4xl text-app-textDark mb-4 opacity-50"></i>
- <h3 className="text-lg font-medium text-app-text mb-1">Bugün için randevu yok</h3>
- <p className="text-app-textDark">Sağ taraftan yeni randevu oluşturabilirsiniz.</p>
- </div>
- </div>
- </div>
- </div>
+  // Fake appointments for presentation
+  const [appointments, setAppointments] = useState([
+    { id: 1, customerName: 'Ayşe Yılmaz', time: '10:00', service: 'Cilt Bakımı' },
+    { id: 2, customerName: 'Mehmet Kaya', time: '13:30', service: 'Saç Kesimi' },
+    { id: 3, customerName: 'Zeynep Demir', time: '16:00', service: 'Manikür & Pedikür' },
+  ]);
 
- {/* Right Column (Form & Upcoming) */}
- <div className="w-full xl:w-[380px] shrink-0 flex flex-col gap-6">
- {/* Appointment Details Form */}
- <div className="bg-app-card rounded-xl border border-app-border flex flex-col">
- <div className="p-4 border-b border-app-border flex items-center gap-2">
- <i className="fa-regular fa-calendar-plus text-app-primary"></i>
- <h2 className="font-bold text-on-surface">Randevu Detayları</h2>
- </div>
- <div className="p-5 space-y-4">
- {/* Tarih */}
- <div>
- <label className="block text-sm font-medium text-app-text mb-1.5">Tarih</label>
- <div className="relative">
- <input 
- className="w-full bg-app-input border border-app-border text-on-surface rounded-lg pl-3 pr-10 py-2.5 focus:ring-1 focus:ring-app-primary focus:border-app-primary outline-none" 
- readOnly 
- type="text" 
- value="03.07.2026 (Cuma)" 
- />
- <i className="fa-regular fa-calendar absolute right-3 top-1/2 -translate-y-1/2 text-app-text"></i>
- </div>
- </div>
- 
- {/* Saat */}
- <div>
- <label className="block text-sm font-medium text-app-text mb-1.5">Saat</label>
- <div className="relative">
- <select className="w-full bg-app-input border border-app-border text-app-text rounded-lg pl-3 pr-10 py-2.5 appearance-none focus:ring-1 focus:ring-app-primary focus:border-app-primary outline-none" defaultValue="">
- <option disabled value="">Müsait bir saat seçin</option>
- <option value="09:00">09:00</option>
- <option value="10:00">10:00</option>
- </select>
- <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-app-text text-xs pointer-events-none"></i>
- </div>
- </div>
+  const handlePrevMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+  
+  const handleNextMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
 
- {/* Randevu Türü */}
- <div>
- <label className="block text-sm font-medium text-app-text mb-1.5">Randevu Türü</label>
- <div className="relative">
- <select className="w-full bg-app-input border border-app-border text-app-text rounded-lg pl-3 pr-10 py-2.5 appearance-none focus:ring-1 focus:ring-app-primary focus:border-app-primary outline-none" defaultValue="">
- <option disabled value="">Randevu türünü seçin</option>
- <option value="online">Online Görüşme</option>
- <option value="yüzyüze">Yüz Yüze Görüşme</option>
- </select>
- <i className="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-app-text text-xs pointer-events-none"></i>
- </div>
- </div>
+  const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const monthYearStr = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
 
- {/* Kişi / Firma */}
- <div>
- <label className="block text-sm font-medium text-app-text mb-1.5">Kişi / Firma</label>
- <input 
- className="w-full bg-app-input border border-app-border text-on-surface placeholder-app-textDark rounded-lg px-3 py-2.5 focus:ring-1 focus:ring-app-primary focus:border-app-primary outline-none" 
- placeholder="Kişi veya firma adı girin" 
- type="text" 
- />
- </div>
+  const isSlotBusy = (time: string) => TIME_SLOTS.find(s => s.time === time)?.full || false;
 
- {/* Açıklama */}
- <div>
- <label className="block text-sm font-medium text-app-text mb-1.5">Açıklama (Opsiyonel)</label>
- <textarea 
- className="w-full bg-app-input border border-app-border text-on-surface placeholder-app-textDark rounded-lg px-3 py-2.5 focus:ring-1 focus:ring-app-primary focus:border-app-primary outline-none resize-none" 
- placeholder="Randevu hakkında not ekleyin..." 
- rows={3}
- ></textarea>
- </div>
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setAppointments([...appointments, {
+        id: Math.random(),
+        customerName: newAppt.name || 'Yeni Müşteri',
+        time: newAppt.time,
+        service: newAppt.service || 'Genel Hizmet'
+      }].sort((a,b) => a.time.localeCompare(b.time)));
+      setIsModalOpen(false);
+      setNewAppt({ name: '', phone: '', time: '10:00', service: '' });
+      setIsSaving(false);
+    }, 800);
+  };
 
- {/* Actions */}
- <div className="flex gap-3 pt-2">
- <button className="px-4 py-2.5 rounded-lg border border-app-border text-app-text hover:bg-app-hover hover:text-on-surface transition-colors w-1/3 text-center" type="button">
- Temizle
- </button>
- <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-app-primary text-on-surface hover:bg-app-primaryHover transition-colors font-medium" type="button">
- <i className="fa-solid fa-plus"></i>
- <span>Randevu Oluştur</span>
- </button>
- </div>
- </div>
- </div>
+  return (
+    <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto", paddingBottom: 100 }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(78,222,163,0.15)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(78,222,163,0.3)" }}>
+            <span style={{ fontSize: 20 }}>📅</span>
+          </div>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>Ai Randevu Yönetimi</h1>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, marginTop: 4 }}>Tüm randevularınız sevimli asistanınızın kontrolünde! ✨</p>
+          </div>
+        </div>
 
- {/* Upcoming Appointments */}
- <div className="bg-app-card rounded-xl border border-app-border flex flex-col flex-1 min-h-[250px]">
- <div className="p-4 border-b border-app-border flex items-center justify-between">
- <div className="flex items-center gap-2">
- <i className="fa-regular fa-calendar-check text-app-primary"></i>
- <h2 className="font-bold text-on-surface">Yaklaşan Randevular</h2>
- </div>
- <Link href="#" className="text-xs text-app-primary hover:underline">Tümünü Gör</Link>
- </div>
- 
- <div className="p-2 space-y-1 overflow-y-auto">
- {/* Item 1 */}
- <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-app-hover group transition-colors cursor-pointer">
- <div className="w-12 h-12 rounded bg-app-input border border-app-border flex flex-col items-center justify-center shrink-0">
- <span className="text-lg font-bold text-on-surface leading-none mb-0.5">03</span>
- <span className="text-[10px] text-app-text uppercase tracking-wide">Tem</span>
- </div>
- <div className="flex-1 min-w-0">
- <div className="font-medium text-on-surface truncate">ABC Teknoloji A.Ş.</div>
- <div className="text-xs text-app-text truncate">14:00 - 15:00</div>
- </div>
- <button className="text-app-textDark hover:text-on-surface p-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <i className="fa-solid fa-ellipsis-vertical"></i>
- </button>
- </div>
- {/* Item 2 */}
- <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-app-hover group transition-colors cursor-pointer">
- <div className="w-12 h-12 rounded bg-app-input border border-app-border flex flex-col items-center justify-center shrink-0">
- <span className="text-lg font-bold text-on-surface leading-none mb-0.5">04</span>
- <span className="text-[10px] text-app-text uppercase tracking-wide">Tem</span>
- </div>
- <div className="flex-1 min-w-0">
- <div className="font-medium text-on-surface truncate">Mehmet Yılmaz</div>
- <div className="text-xs text-app-text truncate">10:30 - 11:30</div>
- </div>
- <button className="text-app-textDark hover:text-on-surface p-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <i className="fa-solid fa-ellipsis-vertical"></i>
- </button>
- </div>
- {/* Item 3 */}
- <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-app-hover group transition-colors cursor-pointer">
- <div className="w-12 h-12 rounded bg-app-input border border-app-border flex flex-col items-center justify-center shrink-0">
- <span className="text-lg font-bold text-on-surface leading-none mb-0.5">06</span>
- <span className="text-[10px] text-app-text uppercase tracking-wide">Tem</span>
- </div>
- <div className="flex-1 min-w-0">
- <div className="font-medium text-on-surface truncate">XYZ İnşaat Ltd. Şti.</div>
- <div className="text-xs text-app-text truncate">20:00 - 21:00</div>
- </div>
- <button className="text-app-textDark hover:text-on-surface p-2 opacity-0 group-hover:opacity-100 transition-opacity">
- <i className="fa-solid fa-ellipsis-vertical"></i>
- </button>
- </div>
- </div>
- </div>
- </div>
- </div>
- );
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div className="glass" style={{ display: "flex", alignItems: "center", gap: 16, padding: "8px 16px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <button onClick={handlePrevMonth} style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 18, padding: 4 }}>&lsaquo;</button>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", minWidth: 90, textAlign: "center" }}>{monthYearStr}</span>
+            <button onClick={handleNextMonth} style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 18, padding: 4 }}>&rsaquo;</button>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            style={{ 
+              background: "linear-gradient(135deg, #4edea3, #00c6ff)", 
+              border: "none", borderRadius: 99, padding: "10px 20px", 
+              color: "#0b0c10", fontWeight: 700, fontSize: 14, cursor: "pointer",
+              boxShadow: "0 0 20px rgba(78,222,163,0.4)",
+              display: "flex", alignItems: "center", gap: 8, transition: "transform 0.2s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+          >
+            <span>✨</span>
+            Yeni Randevu
+          </button>
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 7fr) minmax(0, 5fr)", gap: 28, alignItems: "start" }}>
+        
+        {/* Left Column (Calendar & Appointments) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          
+          {/* Calendar Strip */}
+          <div className="glass" style={{ borderRadius: 24, padding: "20px 10px", border: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
+            <div style={{ display: "flex", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10 }}>
+              {dynamicDays.map((day, i) => {
+                const isActive = selectedDate === day.fullDate;
+                return (
+                  <div
+                    key={i}
+                    onClick={() => setSelectedDate(day.fullDate)}
+                    style={{
+                      flex: "0 0 auto",
+                      width: 56, height: 72, borderRadius: 18,
+                      background: isActive ? "linear-gradient(135deg, #4edea3 0%, #00c6ff 100%)" : "rgba(255,255,255,0.03)",
+                      border: isActive ? "none" : "1px solid rgba(255,255,255,0.05)",
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer", transition: "all 0.2s",
+                      boxShadow: isActive ? "0 8px 16px rgba(78,222,163,0.3)" : "none",
+                      transform: isActive ? "translateY(-4px)" : "none"
+                    }}
+                  >
+                    <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? "#0b0c10" : "var(--text-secondary)", marginBottom: 4 }}>{day.name}</span>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: isActive ? "#0b0c10" : "#fff" }}>{day.date}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 10 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: "0 0 8px 0" }}>🗓️ {selectedDate.split('-').reverse().join('.')} Randevuları</h3>
+            
+            {appointments.length === 0 ? (
+              <div className="glass" style={{ borderRadius: 24, padding: "40px", textAlign: "center", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                <span style={{ fontSize: 48, filter: "grayscale(1) opacity(0.5)" }}>😴</span>
+                <p style={{ color: "var(--text-secondary)", fontSize: 14, fontWeight: 600, marginTop: 16 }}>Bugün için henüz planlanmış bir randevu yok.</p>
+              </div>
+            ) : (
+              appointments.map((appt, i) => {
+                const palette = CARD_COLORS[i % CARD_COLORS.length];
+                return (
+                  <div key={appt.id} style={{ display: "flex", gap: 16 }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 44, paddingTop: 4 }}>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: palette.text }}>{appt.time}</span>
+                      <div style={{ flex: 1, width: 2, background: "rgba(255,255,255,0.05)", borderRadius: 2, marginTop: 8 }} />
+                    </div>
+                    
+                    <div className="glass" style={{ 
+                      flex: 1, borderRadius: 20, padding: 16,
+                      background: "rgba(255,255,255,0.02)",
+                      border: `1px solid ${palette.border}`, borderLeft: `6px solid ${palette.text}`,
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      transition: "transform 0.2s", cursor: "pointer"
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.transform = "translateX(4px)"}
+                    onMouseLeave={e => e.currentTarget.style.transform = "translateX(0)"}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{ width: 48, height: 48, borderRadius: 16, background: palette.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>
+                          {palette.icon}
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customerName}</h4>
+                          <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{appt.service}</span>
+                        </div>
+                      </div>
+                      <button style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", padding: 8 }}>
+                        <span style={{ fontSize: 18 }}>⋮</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Right Column (Heatmap) */}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className="glass" style={{ borderRadius: 24, padding: "24px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff", margin: 0 }}>📊 Günlük Yoğunluk Haritası</h3>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>DOLU</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "transparent", border: "1px solid var(--text-secondary)" }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>BOŞ</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 12 }}>
+              {/* Row Labels */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", paddingBottom: 6 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>SABAH</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>ÖĞLE</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>AKŞAM</span>
+              </div>
+              
+              {/* Heatmap Grid */}
+              <div style={{ flex: 1, overflowX: "auto", paddingBottom: 6 }}>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {Array.from({ length: 11 }).map((_, col) => (
+                    <div key={col} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      {[0, 1, 2].map(row => {
+                        const slot = TIME_SLOTS[row * 11 + col];
+                        if (!slot) return <div key={row} style={{ width: 44, height: 32 }} />;
+                        const busy = isSlotBusy(slot.time);
+                        return (
+                          <div
+                            key={row}
+                            style={{
+                              width: 44, height: 32, borderRadius: 8,
+                              background: busy ? "#4edea3" : "rgba(255,255,255,0.03)",
+                              border: busy ? "none" : "1px solid rgba(255,255,255,0.06)",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              boxShadow: busy ? "0 0 10px rgba(78,222,163,0.3)" : "none",
+                              cursor: "pointer", transition: "all 0.2s"
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
+                            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                          >
+                            <span style={{ fontSize: 10, fontWeight: 800, color: busy ? "#0b0c10" : "var(--text-secondary)" }}>
+                              {slot.time}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div style={{ marginTop: 24, padding: "16px", background: "rgba(0,162,255,0.05)", borderRadius: 16, border: "1px dashed rgba(0,162,255,0.3)", display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 24 }}>💡</span>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.5 }}>
+                Ai asistanınız, bu takvimi dikkate alarak müşterilerinizle yazışır ve boş saatlerinize otomatik randevu planlar.
+              </p>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      {/* Cute Modal */}
+      {isModalOpen && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999,
+          animation: "fadeIn 0.2s ease"
+        }}>
+          <div className="glass" style={{
+            width: 440, borderRadius: 32, padding: 32, position: "relative",
+            border: "1px solid rgba(255,255,255,0.1)",
+            boxShadow: "0 24px 48px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05)",
+            animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+          }}>
+            <button 
+              onClick={() => setIsModalOpen(false)}
+              style={{ position: "absolute", top: 24, right: 24, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+              ✕
+            </button>
+            
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 28 }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, rgba(78,222,163,0.2), rgba(0,198,255,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 12 }}>
+                🧸
+              </div>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>Yeni Randevu Ekle</h2>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>Manuel olarak takvime bir kayıt girin</p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Müşteri Adı</label>
+                <input 
+                  type="text" 
+                  value={newAppt.name}
+                  onChange={e => setNewAppt({...newAppt, name: e.target.value})}
+                  placeholder="Örn: Ahmet Yılmaz"
+                  style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
+                />
+              </div>
+              
+              <div>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Telefon Numarası</label>
+                <input 
+                  type="text" 
+                  value={newAppt.phone}
+                  onChange={e => setNewAppt({...newAppt, phone: e.target.value})}
+                  placeholder="+90 555 123 4567"
+                  style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: 16 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Saat</label>
+                  <input 
+                    type="time" 
+                    value={newAppt.time}
+                    onChange={e => setNewAppt({...newAppt, time: e.target.value})}
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Hizmet Türü</label>
+                  <input 
+                    type="text" 
+                    value={newAppt.service}
+                    onChange={e => setNewAppt({...newAppt, service: e.target.value})}
+                    placeholder="Genel Bakım"
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                style={{
+                  width: "100%", padding: "16px", borderRadius: 16, marginTop: 8,
+                  background: isSaving ? "rgba(78,222,163,0.5)" : "#4edea3",
+                  color: "#0b0c10", fontWeight: 700, fontSize: 15, border: "none",
+                  cursor: isSaving ? "default" : "pointer",
+                  boxShadow: "0 8px 16px rgba(78,222,163,0.2)",
+                  transition: "transform 0.2s"
+                }}
+              >
+                {isSaving ? "Kaydediliyor..." : "Sihirli Takvime Ekle ✨"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        
+        /* Hide scrollbar for neatness */
+        ::-webkit-scrollbar { height: 4px; width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+      `}} />
+    </div>
+  );
 }

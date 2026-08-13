@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 const platforms = [
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥", followers: "5.2K", connected: true, avatar: null },
@@ -12,6 +12,49 @@ const platforms = [
   { id: "google", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢", followers: "—", connected: false, avatar: null },
 ];
 
+function ScrollableContainer({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDown(true);
+    if (containerRef.current) {
+      setStartX(e.pageX - containerRef.current.offsetLeft);
+      setScrollLeft(containerRef.current.scrollLeft);
+    }
+  };
+  const handleMouseLeave = () => setIsDown(false);
+  const handleMouseUp = () => setIsDown(false);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown || !containerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onMouseLeave={handleMouseLeave}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      style={{ 
+        display: "flex", overflowX: "auto", gap: 16, paddingBottom: 16, 
+        cursor: isDown ? "grabbing" : "grab",
+        scrollbarWidth: "none", msOverflowStyle: "none"
+      }}
+    >
+      {/* Hide scrollbar with inline styles for webkit */}
+      <style dangerouslySetInnerHTML={{__html: `div::-webkit-scrollbar { display: none; }`}} />
+      {children}
+    </div>
+  );
+}
+
 export default function SosyalMedyaPage() {
   const [connected, setConnected] = useState<Record<string, boolean>>(
     Object.fromEntries(platforms.map(p => [p.id, p.connected]))
@@ -19,59 +62,80 @@ export default function SosyalMedyaPage() {
 
   return (
     <div style={{ padding: "28px 32px" }}>
-      {/* Hesabınızı Ekleyin (Bağlı Olmayanlar) */}
+      {/* Hesabınızı Ekleyin (Tüm Hesaplar) */}
       <div style={{ marginBottom: 40 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Hesabınızı Ekleyin</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>Bağlamak istediğiniz hesapları seçin</p>
         
-        <div style={{ display: "flex", overflowX: "auto", gap: 16, paddingBottom: 16 }}>
-          {platforms.filter(p => !connected[p.id]).map(p => (
+        <ScrollableContainer>
+          {platforms.map(p => (
             <div
               key={p.id}
               className="glass platform-card"
               style={{
-                minWidth: 260,
+                minWidth: 220,
                 flex: "0 0 auto",
-                borderRadius: 20, padding: "22px",
-                border: "1px solid rgba(255,255,255,0.06)",
-                boxShadow: "none",
+                borderRadius: 20, padding: "16px",
+                border: `1px solid ${connected[p.id] ? p.glow.replace("0.3","0.35") : "rgba(255,255,255,0.06)"}`,
+                boxShadow: connected[p.id] ? `0 0 24px ${p.glow}` : "none",
+                userSelect: "none"
               }}
             >
               {/* Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div style={{
-                  width: 48, height: 48, borderRadius: 14,
+                  width: 40, height: 40, borderRadius: 12,
                   background: p.id === "instagram" ? "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)" : p.color,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 22,
-                  boxShadow: "none",
+                  fontSize: 18,
+                  boxShadow: connected[p.id] ? `0 0 16px ${p.glow}` : "none",
                 }}>
                   {p.icon}
                 </div>
                 <div style={{
                   padding: "4px 10px", borderRadius: 99, fontSize: 11, fontWeight: 600,
-                  background: "rgba(255,255,255,0.07)",
-                  color: "var(--text-muted)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: connected[p.id] ? "rgba(78,222,163,0.15)" : "rgba(255,255,255,0.07)",
+                  color: connected[p.id] ? "#4edea3" : "var(--text-muted)",
+                  border: `1px solid ${connected[p.id] ? "rgba(78,222,163,0.3)" : "rgba(255,255,255,0.1)"}`,
                   display: "flex", alignItems: "center", gap: 4,
                 }}>
-                  ○ Bağlı Değil
+                  {connected[p.id] ? <>✓ Bağlı</> : <>○ Bağlı Değil</>}
                 </div>
               </div>
 
-              <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4, fontFamily: "Outfit, sans-serif" }}>{p.name}</p>
-              <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 14 }}>
-                Henüz bağlanmadı
-              </p>
+              <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, fontFamily: "Outfit, sans-serif" }}>{p.name}</p>
+              {connected[p.id] && p.followers !== "—" && (
+                <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 12, fontFamily: "JetBrains Mono, monospace" }}>
+                  {p.followers} takipçi
+                </p>
+              )}
+              {(!connected[p.id] || p.followers === "—") && (
+                <p style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 12 }}>
+                  {connected[p.id] ? "Bağlı" : "Henüz bağlanmadı"}
+                </p>
+              )}
 
-              <button className="fab" style={{ width: "100%", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 13 }}
-                onClick={() => setConnected(c => ({ ...c, [p.id]: true }))}
-              >
-                + Hesap Bağla
-              </button>
+              {connected[p.id] ? (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "6px" }}
+                    onClick={(e) => { e.stopPropagation(); setConnected(c => ({ ...c, [p.id]: false })) }}
+                  >
+                    Ayır
+                  </button>
+                  <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: `${p.glow.replace("0.3","0.15")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, padding: "6px" }}>
+                    Yönet
+                  </button>
+                </div>
+              ) : (
+                <button className="fab" style={{ width: "100%", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px" }}
+                  onClick={(e) => { e.stopPropagation(); setConnected(c => ({ ...c, [p.id]: true })) }}
+                >
+                  + Hesap Bağla
+                </button>
+              )}
             </div>
           ))}
-        </div>
+        </ScrollableContainer>
       </div>
 
       {/* Eklediğiniz Hesaplarınız (Bağlı Olanlar) */}
@@ -86,26 +150,27 @@ export default function SosyalMedyaPage() {
           </button>
         </div>
 
-        <div style={{ display: "flex", overflowX: "auto", gap: 16, paddingBottom: 16 }}>
+        <ScrollableContainer>
           {platforms.filter(p => connected[p.id]).map(p => (
             <div
               key={p.id}
               className="glass platform-card"
               style={{
-                minWidth: 260,
+                minWidth: 220,
                 flex: "0 0 auto",
-                borderRadius: 20, padding: "22px",
+                borderRadius: 20, padding: "16px",
                 border: `1px solid ${p.glow.replace("0.3","0.35")}`,
                 boxShadow: `0 0 24px ${p.glow}`,
+                userSelect: "none"
               }}
             >
               {/* Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div style={{
-                  width: 48, height: 48, borderRadius: 14,
+                  width: 40, height: 40, borderRadius: 14,
                   background: p.id === "instagram" ? "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)" : p.color,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 22,
+                  fontSize: 18,
                   boxShadow: `0 0 16px ${p.glow}`,
                 }}>
                   {p.icon}
@@ -121,28 +186,28 @@ export default function SosyalMedyaPage() {
                 </div>
               </div>
 
-              <p style={{ fontWeight: 700, fontSize: 16, marginBottom: 4, fontFamily: "Outfit, sans-serif" }}>{p.name}</p>
+              <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, fontFamily: "Outfit, sans-serif" }}>{p.name}</p>
               {p.followers !== "—" ? (
-                <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 12, fontFamily: "JetBrains Mono, monospace" }}>
                   {p.followers} takipçi
                 </p>
               ) : (
-                <p style={{ color: "var(--text-muted)", fontSize: 13, marginBottom: 14 }}>Bağlı</p>
+                <p style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 12 }}>Bağlı</p>
               )}
 
               <div style={{ display: "flex", gap: 8 }}>
-                <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)" }}
-                  onClick={() => setConnected(c => ({ ...c, [p.id]: false }))}
+                <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "6px" }}
+                  onClick={(e) => { e.stopPropagation(); setConnected(c => ({ ...c, [p.id]: false })) }}
                 >
                   Ayır
                 </button>
-                <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: `${p.glow.replace("0.3","0.15")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}` }}>
+                <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: `${p.glow.replace("0.3","0.15")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, padding: "6px" }}>
                   Yönet
                 </button>
               </div>
             </div>
           ))}
-        </div>
+        </ScrollableContainer>
       </div>
     </div>
   );

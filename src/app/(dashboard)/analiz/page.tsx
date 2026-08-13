@@ -1,302 +1,143 @@
-import Link from 'next/link';
-import styles from './page.module.css';
+"use client";
 
-export default function AnalizPage() {
- return (
- <div className={`flex-1 flex flex-col overflow-hidden ${styles.customScrollbar} text-sm h-full`}>
- {/* Scrollable Content Area */}
- <div className="flex-1 overflow-y-auto p-8 space-y-6">
- 
- {/* Page Title (Added since global header is omitted) */}
- <h1 className="text-2xl font-semibold text-on-surface mb-6">Analiz (Canlı)</h1>
+import React, { useState } from "react";
+import {
+  BarChart, Bar, XAxis, YAxis,
+  CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart
+} from "recharts";
 
- {/* Tabs & Filters */}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
- {/* Tabs */}
- <div className="flex p-1 bg-surface-container rounded-lg border border-outline-variant/10 w-max">
- <Link href="/analiz" className="px-6 py-2 rounded-md text-sm font-medium bg-primary/20 text-primary border border-primary/30 transition-colors">
- Gönderi Analizi
- </Link>
- <Link href="/analiz/gelen-mesaj-analizi" className="px-6 py-2 rounded-md text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">
- Gelen Mesaj Analizi
- </Link>
- </div>
- {/* Filter Row */}
- <div className="flex items-center gap-3">
- <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
- <i className="fa-solid fa-globe w-4 h-4 flex items-center justify-center"></i>
- Tüm platformlar
- <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
- </button>
- <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
- <i className="fa-regular fa-calendar w-4 h-4 flex items-center justify-center"></i>
- Son 30 gün
- <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
- </button>
- <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
- <i className="fa-solid fa-download w-4 h-4 flex items-center justify-center"></i>
- Dışa Aktar
- </button>
- </div>
- </div>
+const analyticsData = [
+  { date: "28 Oca", instagram: 4200, tiktok: 8100, linkedin: 1800, facebook: 2900 },
+  { date: "29 Oca", instagram: 5100, tiktok: 9400, linkedin: 2100, facebook: 3200 },
+  { date: "30 Oca", instagram: 4800, tiktok: 7200, linkedin: 2400, facebook: 3600 },
+  { date: "31 Oca", instagram: 6300, tiktok: 11000, linkedin: 2700, facebook: 4100 },
+  { date: "1 Şub", instagram: 7200, tiktok: 13500, linkedin: 3100, facebook: 4800 },
+  { date: "2 Şub", instagram: 6800, tiktok: 12800, linkedin: 3400, facebook: 5200 },
+  { date: "3 Şub", instagram: 8400, tiktok: 15200, linkedin: 3900, facebook: 5900 },
+];
 
- {/* Top Metrics Cards */}
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
- {/* Card 1 */}
- <div className="bg-surface-container border border-secondary/20 rounded-xl p-5 relative overflow-hidden">
- <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent pointer-events-none"></div>
- <div className="flex items-start space-x-4 relative z-10">
- <div className="p-3 bg-secondary/10 rounded-lg text-secondary">
- <i className="fa-regular fa-paper-plane text-xl"></i>
- </div>
- <div>
- <div className="text-on-surface-variant text-sm mb-1">Toplam Gönderi</div>
- <div className="flex items-baseline space-x-2">
- <span className="text-2xl font-semibold text-on-surface">0</span>
- <span className="text-secondary text-xs font-medium">%0</span>
- </div>
- <div className="text-xs text-on-surface-variant mt-1">Önceki 30 güne göre</div>
- </div>
- </div>
- </div>
+const barData = [
+  { name: "Pzt", value: 340 },
+  { name: "Sal", value: 520 },
+  { name: "Çar", value: 410 },
+  { name: "Per", value: 680 },
+  { name: "Cum", value: 920 },
+  { name: "Cmt", value: 780 },
+  { name: "Paz", value: 430 },
+];
 
- {/* Card 2 */}
- <div className="bg-surface-container border border-primary/20 rounded-xl p-5 relative overflow-hidden">
- <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
- <div className="flex items-start space-x-4 relative z-10">
- <div className="p-3 bg-primary/10 rounded-lg text-primary">
- <i className="fa-regular fa-comment-dots text-xl"></i>
- </div>
- <div>
- <div className="text-on-surface-variant text-sm mb-1">Toplam Yorum</div>
- <div className="flex items-baseline space-x-2">
- <span className="text-2xl font-semibold text-on-surface">0</span>
- <span className="text-primary text-xs font-medium">%0</span>
- </div>
- <div className="text-xs text-on-surface-variant mt-1">Önceki 30 güne göre</div>
- </div>
- </div>
- </div>
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="glass-strong" style={{ padding: "12px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(10,10,12,0.9)", backdropFilter: "blur(12px)" }}>
+        <p style={{ color: "var(--text-secondary)", fontSize: 11, marginBottom: 8, fontFamily: "JetBrains Mono, monospace" }}>{label}</p>
+        {payload.map((p: any, i: number) => (
+          <div key={i} style={{ display: "flex", gap: 12, justifyContent: "space-between", marginBottom: 4, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: p.color }} />
+              <span style={{ fontSize: 13, color: "#fff" }}>{p.name}</span>
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 700, color: p.color, fontFamily: "JetBrains Mono, monospace" }}>{p.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
- {/* Card 3 */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5">
- <div className="flex items-start space-x-4">
- <div className="p-3 -primary/10 rounded-lg -primary">
- <i className="fa-solid fa-user-group text-xl"></i>
- </div>
- <div>
- <div className="text-on-surface-variant text-sm mb-1">Toplam Takipçi</div>
- <div className="text-2xl font-semibold text-on-surface mb-1">--</div>
- <div className="text-xs text-on-surface-variant">Veri yok</div>
- </div>
- </div>
- </div>
+export default function AnalyticsScreen() {
+  const [period, setPeriod] = useState("7g");
+  const periods = [{ id: "7g", label: "Son 7 Gün" }, { id: "30g", label: "Son 30 Gün" }, { id: "all", label: "Tüm Zamanlar" }];
 
- {/* Card 4 */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5">
- <div className="flex items-start space-x-4">
- <div className="p-3 -primary/10 rounded-lg -primary">
- <i className="fa-solid fa-clipboard-list text-xl"></i>
- </div>
- <div>
- <div className="text-on-surface-variant text-sm mb-1">Değerlendirmeler</div>
- <div className="flex items-baseline space-x-2">
- <span className="text-2xl font-semibold text-on-surface">0</span>
- <span className="text-primary text-xs font-medium">%0</span>
- </div>
- <div className="text-xs text-on-surface-variant mt-1">Önceki 30 güne göre</div>
- </div>
- </div>
- </div>
- </div>
+  return (
+    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 20, maxWidth: 1100 }}>
+      {/* Period filter */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2 style={{ fontSize: 22, fontWeight: 700 }}>Analitik & İstatistikler</h2>
+        <div style={{ display: "flex", gap: 6, background: "rgba(255,255,255,0.04)", padding: 4, borderRadius: 12, border: "1px solid rgba(255,255,255,0.06)" }}>
+          {periods.map(p => (
+            <button
+              key={p.id}
+              onClick={() => setPeriod(p.id)}
+              className="pill-btn"
+              style={{
+                background: period === p.id ? "rgba(0,240,255,0.15)" : "transparent",
+                color: period === p.id ? "#00f0ff" : "var(--text-secondary)",
+                border: period === p.id ? "1px solid rgba(0,240,255,0.3)" : "1px solid transparent",
+                fontSize: 12,
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
- {/* Main Chart Area */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5">
- <div className="flex justify-between items-center mb-6 text-on-surface">
- <div className="flex items-center space-x-2">
- <h2 className="text-lg font-medium text-on-surface">Etkileşim / Gösterim</h2>
- <i className="fa-regular fa-circle-question text-on-surface-variant text-xs"></i>
- </div>
- <div className="flex items-center space-x-6">
- <div className="flex items-center space-x-4 text-sm">
- <div className="flex items-center">
- <span className="w-2.5 h-2.5 rounded-full bg-secondary mr-2"></span>
- Views
- </div>
- <div className="flex items-center">
- <span className="w-2.5 h-2.5 rounded-full bg-primary mr-2"></span>
- Likes
- </div>
- </div>
- <button className="flex items-center px-3 py-1.5 border border-outline-variant/10 rounded-lg text-sm hover:bg-surface-container-high transition-colors text-on-surface">
- Günlük
- <i className="fa-solid fa-chevron-down ml-2 text-xs text-on-surface-variant"></i>
- </button>
- </div>
- </div>
- <div className="text-xs text-on-surface-variant mb-4">Zaman içindeki değişim grafiği</div>
- 
- {/* Chart Placeholder */}
- <div className="relative h-64 border-l border-b border-outline-variant/10 flex flex-col justify-between pt-4 pb-1 pl-2">
- {/* Y Axis Labels */}
- <div className="absolute left-[-20px] top-0 bottom-8 flex flex-col justify-between text-xs text-on-surface-variant h-full py-2">
- <span>1</span>
- <span>0.5</span>
- <span>0</span>
- </div>
- {/* Empty State */}
- <div className="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant">
- <i className="fa-solid fa-chart-line text-4xl mb-3 opacity-50"></i>
- <p>Bu aralık için yeterli grafik verisi yok.</p>
- </div>
- {/* Grid Lines (Horizontal) */}
- <div className="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-10">
- <div className="border-t border-white w-full h-0"></div>
- <div className="border-t border-white w-full h-0"></div>
- <div className="border-t border-white w-full h-0"></div>
- </div>
- {/* X Axis Labels */}
- <div className="absolute bottom-[-24px] left-0 right-0 flex justify-between text-xs text-on-surface-variant px-4">
- <span>23 Nis</span>
- <span>26 Nis</span>
- <span>29 Nis</span>
- <span>2 May</span>
- <span>5 May</span>
- <span>8 May</span>
- <span>11 May</span>
- <span>14 May</span>
- <span>17 May</span>
- <span>20 May</span>
- <span>22 May</span>
- </div>
- </div>
- </div>
+      {/* KPI cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+        {[
+          { label: "Toplam Erişim", value: "284K", change: "+22.4%", color: "#00f0ff" },
+          { label: "Takipçi Artışı", value: "+1,847", change: "+8.1%", color: "#4edea3" },
+          { label: "Etkileşim Oranı", value: "18.4%", change: "+3.2%", color: "#bc13fe" },
+          { label: "Yanıt Süresi", value: "1.2dk", change: "-40%", color: "#ffb95f" },
+        ].map(k => (
+          <div key={k.label} className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 10 }}>{k.label.toUpperCase()}</p>
+            <p style={{ fontSize: 26, fontWeight: 700, color: k.color, fontFamily: "Outfit, sans-serif", marginBottom: 6 }}>{k.value}</p>
+            <span style={{ fontSize: 11, color: "#4edea3", background: "rgba(78,222,163,0.12)", padding: "3px 8px", borderRadius: 99, fontFamily: "JetBrains Mono, monospace" }}>{k.change}</span>
+          </div>
+        ))}
+      </div>
 
- {/* Platform Overview */}
- <div>
- <h2 className="text-lg font-medium text-on-surface mb-4">Platformlara Genel Bakış</h2>
- <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
- {/* Instagram */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5 flex items-center justify-between">
- <div className="flex items-center space-x-4">
- <div className="w-12 h-12 bg-gradient-to-tr -tertiary -tertiary -primary rounded-xl p-[2px]">
- <div className="bg-surface-container w-full h-full rounded-[10px] flex items-center justify-center">
- <i className="fa-brands fa-instagram text-2xl text-transparent bg-clip-text bg-gradient-to-tr -tertiary -tertiary -primary"></i>
- </div>
- </div>
- <div>
- <div className="font-medium text-on-surface">Instagram</div>
- <div className="flex items-center text-xs -secondary mt-1">
- <span className="w-1.5 h-1.5 -secondary rounded-full mr-1.5"></span>
- Aktif
- </div>
- </div>
- </div>
- <div className="flex space-x-8 text-center">
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Gönderi</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Yorum</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Beğeni</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Takipçi</div>
- </div>
- </div>
- </div>
+      {/* Area chart */}
+      <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: 280 }}>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 18 }}>PLATFORM ERİŞİM TRENDİ</p>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={analyticsData}>
+            <defs>
+              <linearGradient id="ig" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#E1306C" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#E1306C" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="tk" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#00f0ff" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="li" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#0A66C2" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="#0A66C2" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="fb" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#bc13fe" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#bc13fe" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+            <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11, fontFamily: "JetBrains Mono, monospace" }} />
+            <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11, fontFamily: "JetBrains Mono, monospace" }} />
+            <Tooltip content={<CustomTooltip />} />
+            <Area type="monotone" dataKey="instagram" name="Instagram" stroke="#E1306C" fill="url(#ig)" strokeWidth={2} />
+            <Area type="monotone" dataKey="tiktok" name="TikTok" stroke="#00f0ff" fill="url(#tk)" strokeWidth={2} />
+            <Area type="monotone" dataKey="linkedin" name="LinkedIn" stroke="#4edea3" fill="url(#li)" strokeWidth={2} />
+            <Area type="monotone" dataKey="facebook" name="Facebook" stroke="#bc13fe" fill="url(#fb)" strokeWidth={2} />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
 
- {/* Web/Blog */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5 flex items-center justify-between">
- <div className="flex items-center space-x-4">
- <div className="w-12 h-12 -secondary/10 rounded-xl flex items-center justify-center -secondary">
- <i className="fa-solid fa-building text-2xl"></i>
- </div>
- <div>
- <div className="font-medium text-on-surface">Web / Blog</div>
- <div className="flex items-center text-xs -secondary mt-1">
- <span className="w-1.5 h-1.5 -secondary rounded-full mr-1.5"></span>
- Aktif
- </div>
- </div>
- </div>
- <div className="flex space-x-8 text-center">
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Gönderi</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Yorum</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Beğeni</div>
- </div>
- <div>
- <div className="text-lg font-semibold text-on-surface">0</div>
- <div className="text-xs text-on-surface-variant">Takipçi</div>
- </div>
- </div>
- </div>
- </div>
- </div>
-
- {/* Bottom Tables Section */}
- <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-8">
- {/* Gönderi Performansı */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5">
- <h3 className="font-medium text-on-surface mb-4">Gönderi Performansı</h3>
- <div className="grid grid-cols-6 gap-2 text-xs text-on-surface-variant border-b border-outline-variant/10 pb-2 mb-8">
- <div>Gönderi</div>
- <div>Platform</div>
- <div>Tarih</div>
- <div>Gösterim</div>
- <div>Beğeni</div>
- <div>Yorum</div>
- </div>
- <div className="flex flex-col items-center justify-center py-8 text-on-surface-variant">
- <div className="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center mb-3">
- <i className="fa-solid fa-table-cells text-xl"></i>
- </div>
- <p className="text-sm">Bu aralıkta gönderi bulunamadı.</p>
- </div>
- </div>
-
- {/* En Çok Etkileşim Alan Gönderiler */}
- <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5">
- <div className="flex justify-between items-center mb-4">
- <h3 className="font-medium text-on-surface">En Çok Etkileşim Alan Gönderiler</h3>
- <button className="px-3 py-1 text-xs border border-outline-variant/10 text-on-surface rounded-lg hover:bg-surface-container-high transition-colors">Tümünü Gör</button>
- </div>
- <div className="grid grid-cols-5 gap-2 text-xs text-on-surface-variant border-b border-outline-variant/10 pb-2 mb-8">
- <div>Gönderi</div>
- <div>Platform</div>
- <div>Etkileşim</div>
- <div>Gösterim</div>
- <div>Oran</div>
- </div>
- <div className="flex flex-col items-center justify-center py-8 text-on-surface-variant">
- <div className="w-12 h-12 bg-surface-container-high rounded-lg flex items-center justify-center mb-3">
- <i className="fa-solid fa-trophy text-xl"></i>
- </div>
- <p className="text-sm">Bu aralıkta veri bulunamadı.</p>
- </div>
- </div>
- </div>
-
- </div>
- </div>
- );
+      {/* Bar chart */}
+      <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: 240 }}>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 18 }}>GÜNLÜK ETKİLEŞİM</p>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={barData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+            <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11, fontFamily: "JetBrains Mono, monospace" }} />
+            <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11, fontFamily: "JetBrains Mono, monospace" }} />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" name="Etkileşim" fill="rgba(188,19,254,0.5)" radius={[4,4,0,0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 }
-
-
-
-
-

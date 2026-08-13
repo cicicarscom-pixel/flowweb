@@ -1,46 +1,45 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
+  const [dateStr, setDateStr] = useState("");
+
+  useEffect(() => {
+    setDateStr(new Date().toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+  }, []);
   
-  let pageTitle = "Homepage";
-  if (pathname === "/") pageTitle = "Homepage";
-  if (pathname.includes("ai-asistan")) pageTitle = "Ai Asistan";
-  if (pathname.includes("ai-muhasebe")) {
+  let pageTitle = "Anasayfa";
+  if (pathname === "/") pageTitle = "Anasayfa";
+  else if (pathname.includes("ai-asistan")) pageTitle = "Ai Asistan";
+  else if (pathname.includes("ai-muhasebe")) {
     pageTitle = pathname.includes("odeme-takvimi") ? "Ai Muhasebe / Ödeme Takvimi" : "Ai Muhasebe";
   }
-  if (pathname.includes("sosyal-medya")) pageTitle = "Sosyal Medya";
-  if (pathname.includes("analiz")) pageTitle = "Analiz";
+  else if (pathname.includes("sosyal-medya")) pageTitle = "Sosyal Medya";
+  else if (pathname.includes("analiz")) pageTitle = "Analiz";
 
   return (
-    <header className="h-16 w-full flex items-center justify-between px-8 border-b border-[#2d3748] bg-[#0b0c10] flex-shrink-0">
-      <div className="flex items-center gap-4">
-        <button className="md:hidden text-[#94a3b8] hover:text-white transition-colors">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <h1 className="text-xl font-bold tracking-wide text-white hidden md:block">
+    <header className="glass-strong" style={{
+      position: "sticky", top: 0, zIndex: 20,
+      padding: "14px 32px", borderBottom: "1px solid rgba(255,255,255,0.05)",
+      display: "flex", justifyContent: "space-between", alignItems: "center",
+      flexShrink: 0, background: "#0b0c10"
+    }}>
+      <div>
+        <h1 style={{ fontSize: 18, fontWeight: 700, fontFamily: "Outfit, sans-serif", marginBottom: 1, color: "#fff" }}>
           {pageTitle}
         </h1>
+        <p style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
+          {dateStr}
+        </p>
       </div>
-      <div className="flex items-center gap-6">
-        {/* Trailing Actions */}
-        <div className="flex items-center gap-4">
-          <button className="w-9 h-9 rounded-full flex items-center justify-center text-[#94a3b8] hover:text-white hover:bg-[#1d1e24] transition-colors border border-transparent hover:border-[#2d3748]">
-            <span className="material-symbols-outlined text-[20px]">notifications</span>
-          </button>
-          <button className="w-9 h-9 rounded-full flex items-center justify-center text-[#94a3b8] hover:text-white hover:bg-[#1d1e24] transition-colors border border-transparent hover:border-[#2d3748]">
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-          </button>
-          <div className="w-9 h-9 rounded-full overflow-hidden border border-[#2d3748] ml-2">
-            <img 
-              alt="User profile" 
-              className="w-full h-full object-cover" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVYqFO_sRDM7A72VhBQf3c9y-URq2n_84R3oSlOl3uhBauak5oq4NCFZGjEK0zvdNNYM6j2H10ll2xqt6p2MyFTDvHQrbFG4TCOpdCqIY7Z3Hz_3YX67I_rV1Mrip1X89qdTkfENKnkSZEu9MLNDzIiqZ4lyMMePJCghvmx4FoHqLL2tqaDh2ovx5Nph5EJ_WnIqUoo4wPbSQSL9pJyNfWWCvxsVQA7WNvQpOt5Buz35KB6SCR7D_-Ew" 
-            />
-          </div>
-        </div>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <button className="pill-btn" style={{ position: "relative", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 12 }}>
+          🔔
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#bc13fe", position: "absolute", top: 4, right: 4, boxShadow: "0 0 6px #bc13fe" }} />
+        </button>
       </div>
     </header>
   );

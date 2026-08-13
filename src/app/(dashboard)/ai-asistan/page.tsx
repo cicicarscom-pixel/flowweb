@@ -1,471 +1,268 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import { useState } from 'react';
+import Link from 'next/link';
 
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <div
-      onClick={onChange}
-      style={{
-        width: 44, height: 24, borderRadius: 99,
-        background: on ? "#4edea3" : "rgba(255,255,255,0.1)",
-        display: "flex", alignItems: "center", cursor: "pointer",
-        padding: 3, transition: "background 0.3s",
-      }}
-    >
-      <div
-        style={{
-          width: 18, height: 18, borderRadius: "50%",
-          background: "#fff",
-          transform: on ? "translateX(20px)" : "translateX(0)",
-          transition: "transform 0.3s",
-          boxShadow: on ? "0 0 10px rgba(0,0,0,0.2)" : "none",
-        }}
-      />
-    </div>
-  );
-}
+export default function AiAsistanPage() {
+ const [selectedRole, setSelectedRole] = useState('Kebapçı');
+ const [selectedChar, setSelectedChar] = useState('Albert Einstein');
+ const [selectedTone, setSelectedTone] = useState('Standart');
 
-export default function BotScreen() {
-  const [botConfig, setBotConfig] = useState({
-    whatsapp: true,
-    social: true,
-    autoReply: true,
-    smartRouting: false,
-  });
-  
-  const [systemPrompt, setSystemPrompt] = useState(`Sen workigomFlow işletmesinin AI asistanısın. Müşterilere samimi, profesyonel ve yardımsever bir şekilde yanıt verirsin.
+ return (
+ <div className="flex-1 overflow-y-auto p-8 scroll-hide">
+ <div className="max-w-[1000px] mx-auto flex flex-col space-y-8 pb-20">
+ 
+ {/* Header */}
+ <div>
+ <h1 className="text-2xl font-bold text-on-surface mb-1">Bot Karakter Yönetimi</h1>
+ <p className="text-sm text-on-surface-variant">Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
+ </div>
 
-Müşteri soruları için: fiyat, ürün, stok, kargo bilgileri hakkında yönlendirme yaparsın.
-Eğer bir konuyu çözemiyorsan, insan temsilcisine yönlendirirsin.
+ {/* Toggles Section */}
+ <section className="space-y-4">
+ <div className="flex items-center justify-between">
+ <div className="flex items-center space-x-3">
+ <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+ <h3 className="font-semibold text-lg text-on-surface">Ai Asistan</h3>
+ </div>
+ <label className="relative inline-flex items-center cursor-pointer">
+ <input defaultChecked className="sr-only peer" type="checkbox" />
+ <div className="w-11 h-6 bg-surface-container-high rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-400"></div>
+ </label>
+ </div>
+ 
+ <div className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between">
+ <div className="flex items-center space-x-3">
+ <span className="material-symbols-outlined text-on-surface-variant">chat</span>
+ <span className="text-sm font-medium text-on-surface">WhatsApp Asistanı</span>
+ </div>
+ <label className="relative inline-flex items-center cursor-pointer">
+ <input defaultChecked className="sr-only peer" type="checkbox" />
+ <div className="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-400"></div>
+ </label>
+ </div>
+ </section>
 
-Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
+ {/* Instructions Section */}
+ <section className="flex flex-col">
+ <label className="text-sm font-semibold text-on-surface mb-3">Asistan Talimatı Oluştur</label>
+ <textarea className="w-full bg-[#0b0c10] border border-outline-variant/20 rounded-xl p-4 text-sm text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-[#a855f7]/50 resize-none min-h-[120px]" placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."></textarea>
+ </section>
 
-  const [selectedRole, setSelectedRole] = useState("Kebapçı");
-  const [selectedCharacter, setSelectedCharacter] = useState("Albert Einstein");
-  const [selectedTone, setSelectedTone] = useState("Standart");
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [isSimulationActive, setIsSimulationActive] = useState(false);
+ {/* Connected Services */}
+ <section className="flex flex-col space-y-4">
+ <div className="flex items-center justify-between">
+ <h3 className="font-semibold text-sm text-on-surface">Bağlı Servisler</h3>
+ <button className="w-8 h-8 bg-surface-container-high border border-outline-variant/20 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors">
+ <span className="material-symbols-outlined text-on-surface-variant text-[18px]">settings</span>
+ </button>
+ </div>
+ <div className="space-y-3">
+ <div className="bg-[#0b0c10] border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between">
+ <div className="flex items-center space-x-4">
+ <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/20">
+ <span className="text-on-surface font-bold text-lg">G</span>
+ </div>
+ <div>
+ <div className="text-sm font-medium text-on-surface">Google Drive <span className="text-on-surface-variant font-normal">(Bilgi Bankası)</span></div>
+ <div className="text-xs text-rose-500 flex items-center mt-0.5"><div className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></div>Bağlı değil</div>
+ </div>
+ </div>
+ <button className="px-4 py-2 bg-surface-container-high border border-outline-variant/20 rounded-lg text-xs font-medium hover:bg-surface-container transition-colors text-on-surface">Bağla</button>
+ </div>
+ <div className="bg-[#0b0c10] border border-outline-variant/20 rounded-xl p-4 flex items-center justify-between">
+ <div className="flex items-center space-x-4">
+ <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-outline-variant/20">
+ <span className="material-symbols-outlined text-on-surface-variant">chat</span>
+ </div>
+ <div>
+ <div className="text-sm font-medium text-on-surface">WhatsApp</div>
+ <div className="text-xs text-rose-500 flex items-center mt-0.5"><div className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></div>Bağlı değil</div>
+ </div>
+ </div>
+ <button className="px-4 py-2 bg-surface-container-high border border-outline-variant/20 rounded-lg text-xs font-medium hover:bg-surface-container transition-colors text-on-surface">Bağla</button>
+ </div>
+ </div>
+ </section>
 
-  const roles = [
-    { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
-    { id: "Berber", label: "Berber", icon: "💈" },
-    { id: "Oto Tamir", label: "Oto Tamir", icon: "🔧" },
-    { id: "Market", label: "Market", icon: "🛍️" },
-  ];
+ {/* AI Personality and Live Test Grid */}
+ <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+ {/* Left Column: AI Personality & Advanced Settings */}
+ <div className="flex flex-col space-y-6">
+ {/* AI Personality */}
+ <section className="bg-surface-container-high border border-primary/50 rounded-xl p-6 shadow-[0_0_15px_rgba(168,85,247,0.15)] relative overflow-hidden">
+ <div className="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+ <h3 className="font-semibold text-lg text-on-surface mb-6 relative">AI Kişiliği</h3>
+ 
+ <div className="mb-6 relative">
+ <label className="text-xs text-on-surface-variant mb-3 block uppercase tracking-wider flex items-center space-x-2">
+ <span className="material-symbols-outlined text-[14px]">storefront</span>
+ <span>İŞLETME ROLÜ</span>
+ </label>
+ <div className="flex flex-wrap gap-3">
+ {[
+ { id: 'Kebapçı', icon: '🥙' },
+ { id: 'Berber', icon: '💈' },
+ { id: 'Oto Tamir', icon: '🔧' }
+ ].map(role => (
+ <button 
+ key={role.id}
+ onClick={() => setSelectedRole(role.id)}
+ className={`px-4 py-2 border rounded-full text-sm transition-colors flex items-center gap-2 ${
+ selectedRole === role.id 
+ ? 'bg-primary/20 border-primary text-primary' 
+ : 'bg-[#0b0c10] hover:bg-outline-variant/20 border-outline-variant/20 text-on-surface-variant hover:text-on-surface'
+ }`}
+ >
+ <span>{role.icon}</span> {role.id}
+ </button>
+ ))}
+ </div>
+ </div>
 
-  const characters = [
-    { id: "Albert Einstein", label: "Albert Einstein", icon: "😎" },
-    { id: "William Shakespeare", label: "William Shakespeare", icon: "📜" },
-    { id: "Mimar Sinan", label: "Mimar Sinan", icon: "📐" },
-  ];
+ <div className="mb-6 relative">
+ <label className="text-xs text-on-surface-variant mb-3 block uppercase tracking-wider flex items-center space-x-2">
+ <span className="material-symbols-outlined text-[14px]">psychology</span>
+ <span>KARAKTER</span>
+ </label>
+ <div className="flex flex-wrap gap-3">
+ {[
+ { id: 'Albert Einstein', icon: '🧠' },
+ { id: 'William Shakespeare', icon: '📜' }
+ ].map(char => (
+ <button 
+ key={char.id}
+ onClick={() => setSelectedChar(char.id)}
+ className={`px-4 py-2 border rounded-full text-sm transition-colors flex items-center gap-2 ${
+ selectedChar === char.id 
+ ? 'bg-primary/20 border-primary text-primary' 
+ : 'bg-[#0b0c10] hover:bg-outline-variant/20 border-outline-variant/20 text-on-surface-variant hover:text-on-surface'
+ }`}
+ >
+ <span>{char.icon}</span> {char.id}
+ </button>
+ ))}
+ </div>
+ </div>
 
-  const tones = [
-    { id: "Standart", label: "Standart", icon: "😐" },
-    { id: "Komik", label: "Komik", icon: "😆" },
-    { id: "Resmi", label: "Resmi", icon: "👔" },
-    { id: "Samimi", label: "Samimi", icon: "🤗" },
-  ];
+ <div className="relative">
+ <label className="text-xs text-on-surface-variant mb-3 block uppercase tracking-wider flex items-center space-x-2">
+ <span className="material-symbols-outlined text-[14px]">record_voice_over</span>
+ <span>ÜSLUP</span>
+ </label>
+ <div className="flex flex-wrap gap-3">
+ {[
+ { id: 'Standart', icon: '😌' },
+ { id: 'Komik', icon: '😂' },
+ { id: 'Gündelik', icon: '👖' }
+ ].map(tone => (
+ <button 
+ key={tone.id}
+ onClick={() => setSelectedTone(tone.id)}
+ className={`px-4 py-2 border rounded-full text-sm transition-colors flex items-center gap-2 ${
+ selectedTone === tone.id 
+ ? 'bg-primary/20 border-primary text-primary' 
+ : 'bg-[#0b0c10] hover:bg-outline-variant/20 border-outline-variant/20 text-on-surface-variant hover:text-on-surface'
+ }`}
+ >
+ <span>{tone.icon}</span> {tone.id}
+ </button>
+ ))}
+ </div>
+ </div>
+ </section>
 
-  return (
-    <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
-      </div>
+ {/* Advanced Settings */}
+ <div className="bg-[#0b0c10] border border-primary/50 rounded-xl p-4 flex items-center justify-between shadow-[0_0_15px_rgba(168,85,247,0.15)] cursor-pointer hover:bg-surface-container transition-colors relative overflow-hidden">
+ <div className="absolute inset-0 bg-primary/5 pointer-events-none"></div>
+ <div className="flex items-center space-x-3 text-on-surface relative">
+ <span className="material-symbols-outlined text-primary">code</span>
+ <h3 className="font-semibold text-[15px]">İleri Seviye Ayarlar</h3>
+ </div>
+ <div className="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center border border-outline-variant/20 relative">
+ <span className="material-symbols-outlined text-on-surface-variant text-[18px]">settings</span>
+ </div>
+ </div>
+ </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", gap: 28, alignItems: "start" }}>
-        {/* Left Column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          {/* Platform toggles */}
-      {/* Bot Aktiflik & Bağlı Servisler (New Mobile Layout) */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-        {/* Ai Asistan Main Toggle */}
-        <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, padding: "0 4px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 10px #4edea3" }} />
-              <span style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ai Asistan</span>
-            </div>
-            <Toggle on={botConfig.social} onChange={() => setBotConfig(c => ({ ...c, social: !c.social }))} />
-          </div>
-          
-          <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#25D366" }}>💬</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
-              <Toggle on={botConfig.whatsapp} onChange={() => setBotConfig(c => ({ ...c, whatsapp: !c.whatsapp }))} />
-            </div>
-          </div>
-        </div>
+ {/* Right Column: Live Test Section */}
+ <div className="flex flex-col">
+ <section className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-5 flex-1 flex flex-col">
+ <div className="flex items-center justify-between mb-4">
+ <div className="flex items-center space-x-2 text-emerald-400">
+ <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></div>
+ <h3 className="font-semibold text-sm">Canlı Test</h3>
+ </div>
+ <span className="text-[10px] text-on-surface-variant uppercase tracking-widest">SİMÜLASYON HAZIR</span>
+ </div>
+ <div className="bg-[#0b0c10] border border-outline-variant/10 rounded-lg flex-1 mb-4 relative overflow-hidden p-4 flex flex-col min-h-[250px]">
+ <div className="flex-1 flex flex-col space-y-4">
+ {/* User Message */}
+ <div className="self-end bg-surface-container-high border border-outline-variant/20 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+ <p className="text-[13px] text-on-surface font-light">Merhaba, stoklarınızda mavi renk M beden kışlık mont var mı? Fiyatı nedir?</p>
+ </div>
+ {/* Typing Indicator */}
+ <div className="self-start flex space-x-2">
+ <div className="bg-surface-container-high border border-outline-variant/20 rounded-full px-3 py-1.5 flex items-center space-x-1.5">
+ <div className="w-1.5 h-1.5 rounded-full bg-on-surface-variant animate-bounce"></div>
+ <div className="w-1.5 h-1.5 rounded-full bg-on-surface-variant animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+ <div className="w-1.5 h-1.5 rounded-full bg-on-surface-variant animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+ </div>
+ </div>
+ {/* Bot Message */}
+ <div className="self-start bg-surface-container-high border border-primary/20 shadow-[0_0_10px_rgba(168,85,247,0.05)] rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] mt-1">
+ <p className="text-[13px] text-on-surface font-light">Merhaba! 👋 Evet, mavi renk M beden kışlık montumuz stoklarımızda mevcuttur.</p>
+ </div>
+ </div>
+ </div>
+ <div className="relative mt-auto">
+ <input className="w-full bg-[#0b0c10] border border-outline-variant/20 rounded-xl py-3 pl-4 pr-12 text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-[#a855f7]/50 text-on-surface placeholder-on-surface-variant" placeholder="Asistan ile konuşun..." type="text" />
+ <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors flex items-center justify-center">
+ <span className="material-symbols-outlined text-[18px]">send</span>
+ </button>
+ </div>
+ </section>
+ </div>
+ </div>
 
-        {/* Asistan Talimatı Oluştur */}
-        <div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
-          <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <textarea
-              placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
-              style={{
-                width: "100%", minHeight: 80, background: "transparent", border: "none",
-                color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none"
-              }}
-            />
-          </div>
-        </div>
+ {/* BOT PERFORMANSI */}
+ <section className="flex flex-col space-y-3 pt-4">
+ <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">BOT PERFORMANSI - BUGÜN</label>
+ <div className="grid grid-cols-3 gap-4">
+ <div className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-5 flex flex-col items-center justify-center">
+ <span className="text-2xl font-bold text-emerald-400 mb-1">94%</span>
+ <span className="text-xs text-on-surface-variant">Otomatik Yanıt</span>
+ </div>
+ <div className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-5 flex flex-col items-center justify-center">
+ <span className="text-2xl font-bold text-amber-400 mb-1">47</span>
+ <span className="text-xs text-on-surface-variant">Yönlendirilen</span>
+ </div>
+ <div className="bg-surface-container-high border border-outline-variant/20 rounded-xl p-5 flex flex-col items-center justify-center">
+ <span className="text-2xl font-bold text-sky-400 mb-1">0.8s</span>
+ <span className="text-xs text-on-surface-variant">Ort. Yanıt Süresi</span>
+ </div>
+ </div>
+ </section>
 
-        {/* Bağlı Servisler */}
-        <div style={{ position: "relative" }}>
-          <div style={{ position: "absolute", right: -4, top: -20, width: 44, height: 44, borderRadius: "50%", background: "rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>
-            <span style={{ fontSize: 22, filter: "grayscale(1) brightness(1.5)", opacity: 0.8 }}>⚙️</span>
-          </div>
-          
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Bağlı Servisler</h3>
-          <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(0,162,255,0.3)", background: "rgba(0,162,255,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
-            
-            {/* Google Drive */}
-            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <span style={{ fontSize: 22 }}>G</span>
-                <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
-                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
-                  </div>
-                </div>
-              </div>
-              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Bağla
-              </button>
-            </div>
+ {/* Bottom Service Cards */}
+ <section className="space-y-3">
+ <div className="bg-[#0b0c10] border border-emerald-500/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-surface-container-high transition-colors">
+ <div className="flex items-center space-x-3 text-emerald-400">
+ <span className="material-symbols-outlined">calendar_month</span>
+ <span className="font-semibold text-[15px]">AI Randevu Yönetimi</span>
+ </div>
+ <span className="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+ </div>
+ <div className="bg-[#0b0c10] border border-amber-500/30 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-surface-container-high transition-colors">
+ <div className="flex items-center space-x-3 text-amber-400">
+ <span className="material-symbols-outlined">work</span>
+ <span className="font-semibold text-[15px]">AI İşletme Hizmetleri</span>
+ </div>
+ <span className="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+ </div>
+ </section>
 
-            {/* WhatsApp */}
-            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <span style={{ fontSize: 22, color: "#25D366" }}>💬</span>
-                <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
-                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
-                  </div>
-                </div>
-              </div>
-              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Bağla
-              </button>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-
-      {/* AI Kişiliği (Purple Box) */}
-      <div className="glass" style={{ 
-        borderRadius: 24, 
-        padding: "24px 28px", 
-        border: "2px solid #bc13fe",
-        boxShadow: "0 0 20px rgba(188,19,254,0.15)",
-        background: "rgba(188,19,254,0.03)"
-      }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: "#fff" }}>AI Kişiliği</h3>
-        
-        {/* İşletme Rolü */}
-        <div style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-            <span>🏢</span> İŞLETME ROLÜ
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {roles.map(r => (
-              <button
-                key={r.id}
-                onClick={() => setSelectedRole(r.id)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "10px 16px", borderRadius: 99,
-                  background: selectedRole === r.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                  border: selectedRole === r.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                  cursor: "pointer", color: selectedRole === r.id ? "#bc13fe" : "var(--text-secondary)",
-                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                }}
-              >
-                <span style={{ fontSize: 16 }}>{r.icon}</span>
-                {r.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Karakter */}
-        <div style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-            <span>🧠</span> KARAKTER
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {characters.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setSelectedCharacter(c.id)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "10px 16px", borderRadius: 99,
-                  background: selectedCharacter === c.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                  border: selectedCharacter === c.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                  cursor: "pointer", color: selectedCharacter === c.id ? "#bc13fe" : "var(--text-secondary)",
-                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                }}
-              >
-                <span style={{ fontSize: 16 }}>{c.icon}</span>
-                {c.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Üslup */}
-        <div>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-            <span>🎭</span> ÜSLUP
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-            {tones.map(t => (
-              <button
-                key={t.id}
-                onClick={() => setSelectedTone(t.id)}
-                style={{
-                  display: "flex", alignItems: "center", gap: 8,
-                  padding: "10px 16px", borderRadius: 99,
-                  background: selectedTone === t.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                  border: selectedTone === t.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                  cursor: "pointer", color: selectedTone === t.id ? "#bc13fe" : "var(--text-secondary)",
-                  fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                }}
-              >
-                <span style={{ fontSize: 16 }}>{t.icon}</span>
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* İleri Seviye Ayarlar Accordion Toggle */}
-      <div 
-        onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-        className="glass" 
-        style={{ 
-          borderRadius: 99, 
-          padding: "12px 16px 12px 24px", 
-          border: "2px solid #bc13fe",
-          boxShadow: "0 0 20px rgba(188,19,254,0.15)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          cursor: "pointer",
-          background: "rgba(188,19,254,0.03)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ color: "#00f0ff", fontWeight: "bold", fontSize: 18 }}>{'</>'}</span>
-          <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>İleri Seviye Ayarlar</span>
-        </div>
-        <div style={{
-          width: 40, height: 40, borderRadius: "50%",
-          background: "rgba(255,255,255,0.1)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          transform: isAdvancedOpen ? "rotate(180deg)" : "rotate(0deg)",
-          transition: "transform 0.3s ease",
-        }}>
-          <span style={{ color: "#fff", fontSize: 20 }}>⚙️</span>
-        </div>
-      </div>
-
-      {/* System prompt card (Advanced Settings) */}
-      {isAdvancedOpen && (
-        <div style={{ position: "relative", marginTop: -8, animation: "fadeIn 0.3s ease" }}>
-          <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(0,162,255,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
-          <div className="glass" style={{
-            borderRadius: 20, padding: "22px", position: "relative",
-            border: "1.5px solid rgba(0,162,255,0.5)",
-            boxShadow: "0 0 40px rgba(0,162,255,0.1), inset 0 0 20px rgba(0,162,255,0.03)",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-              <p style={{ fontSize: 12, color: "#00a2ff", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
-              <span style={{ fontSize: 11, color: "rgba(0,162,255,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
-            </div>
-            <textarea
-              value={systemPrompt}
-              onChange={e => setSystemPrompt(e.target.value)}
-              style={{
-                width: "100%", minHeight: 200, background: "rgba(0,162,255,0.04)",
-                border: "1px solid rgba(0,162,255,0.15)", borderRadius: 12,
-                padding: "14px", color: "rgba(255,255,255,0.85)", fontSize: 13,
-                lineHeight: 1.7, resize: "vertical", outline: "none",
-                fontFamily: "Inter, sans-serif",
-              }}
-            />
-            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-              <button className="fab" style={{ background: "linear-gradient(135deg,rgba(0,162,255,0.2),rgba(0,240,255,0.2))", color: "#00f0ff", border: "1.5px solid rgba(0,240,255,0.3)", fontSize: 13 }}>
-                🤖 AI ile Optimize Et
-              </button>
-              <button className="fab" style={{ background: "rgba(78,222,163,0.12)", color: "#4edea3", border: "1.5px solid rgba(78,222,163,0.3)", fontSize: 13 }}>
-                ✓ Kaydet
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bot performance */}
-      <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 14 }}>BOT PERFORMANSI · BUGÜN</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-          {[
-            { label: "Otonom Yanıt", value: "94%", color: "#4edea3" },
-            { label: "Yönlendirilen", value: "47", color: "#ffb95f" },
-            { label: "Ort. Yanıt Süresi", value: "0.8s", color: "#00f0ff" },
-          ].map(s => (
-            <div key={s.label} style={{ textAlign: "center", padding: "14px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 12 }}>
-              <p style={{ fontSize: 22, fontWeight: 700, color: s.color, fontFamily: "Outfit, sans-serif" }}>{s.value}</p>
-              <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-
-    {/* Right Column (New Features) */}
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {/* Canlı Test */}
-          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", height: 500 }}>
-            <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
-                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Canlı Test</span>
-              </div>
-              <div 
-                onClick={() => setIsSimulationActive(!isSimulationActive)}
-                style={{ cursor: "pointer", opacity: 0.6, transition: "opacity 0.2s" }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
-              >
-                <span style={{ fontSize: 16, filter: "grayscale(1) brightness(2)" }}>↻</span>
-              </div>
-            </div>
-            
-            <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
-              {!isSimulationActive ? (
-                <>
-                  <div style={{ textAlign: "center", marginBottom: 8 }}>
-                    <span style={{ 
-                      fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", 
-                      letterSpacing: "0.1em", border: "1px solid rgba(255,255,255,0.05)",
-                      padding: "4px 12px", borderRadius: 99
-                    }}>SİMÜLASYON BAŞLADI</span>
-                  </div>
-                  
-                  {/* User message */}
-                  <div style={{ alignSelf: "flex-end", maxWidth: "85%" }}>
-                    <div style={{ 
-                      background: "rgba(255,255,255,0.1)", borderRadius: "16px 16px 2px 16px", 
-                      padding: "12px 16px", color: "rgba(255,255,255,0.9)", fontSize: 13, lineHeight: 1.5 
-                    }}>
-                      Merhaba, stoklarınızda mavi renk M beden kışlık mont var mı? Fiyatı nedir?
-                    </div>
-                  </div>
-
-                  {/* Loading indicator */}
-                  <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
-                  </div>
-
-                  {/* Bot message */}
-                  <div style={{ alignSelf: "flex-start", maxWidth: "90%" }}>
-                    <div style={{ 
-                      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: "16px 16px 16px 2px", padding: "14px 16px", 
-                      color: "rgba(255,255,255,0.85)", fontSize: 13, lineHeight: 1.6 
-                    }}>
-                      Merhaba! 👋 Evet, mavi renk M beden kışlık montumuz stoklarımızda mevcuttur. 
-                      Güncel fiyatımız <span style={{color: "#fff", fontWeight: 600}}>1.450 TL</span>'dir. 
-                      Hemen sipariş oluşturmak isterseniz size bir bağlantı gönderebilirim. 
-                      Başka yardımcı olabileceğim bir konu var mı?
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
-                </div>
-              )}
-            </div>
-
-            <div style={{ padding: "16px", background: "rgba(0,0,0,0.3)", borderTop: "1px solid rgba(255,255,255,0.03)" }}>
-              <div style={{ position: "relative" }}>
-                <input 
-                  type="text" 
-                  placeholder="Asistan ile konuşun..." 
-                  onFocus={() => setIsSimulationActive(true)}
-                  style={{ 
-                    width: "100%", padding: "14px 48px 14px 20px", borderRadius: 99, 
-                    background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                    color: "#fff", fontSize: 13, outline: "none"
-                  }} 
-                />
-                <div style={{ 
-                  position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
-                  width: 36, height: 36, borderRadius: "50%", background: "rgba(0,162,255,0.15)",
-                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                  border: "1px solid rgba(0,162,255,0.3)"
-                }}>
-                  <span style={{ fontSize: 16, color: "#00a2ff" }}>➤</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Ai Randevu Yönetimi */}
-          <Link href="/ai-asistan/randevu" style={{ textDecoration: 'none' }}>
-            <div className="glass" style={{ 
-              borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(78,222,163,0.3)",
-              display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-              background: "rgba(78,222,163,0.05)", marginTop: 8
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: 20, color: "#4edea3" }}>📅</span>
-                <span style={{ fontSize: 15, fontWeight: 600, color: "#4edea3" }}>Ai Randevu Yönetimi</span>
-              </div>
-              <span style={{ color: "#4edea3", fontSize: 24, lineHeight: 1 }}>›</span>
-            </div>
-          </Link>
-
-          {/* Ai İşletme Hizmetleri */}
-          <Link href="/ai-asistan/isletme-hizmetleri" style={{ textDecoration: 'none' }}>
-            <div className="glass" style={{ 
-              borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(0,162,255,0.3)",
-              display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-              background: "rgba(0,162,255,0.05)"
-            }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: 20, color: "#00a2ff" }}>💼</span>
-                <span style={{ fontSize: 15, fontWeight: 600, color: "#00a2ff" }}>Ai İşletme Hizmetleri</span>
-              </div>
-              <span style={{ color: "#00a2ff", fontSize: 24, lineHeight: 1 }}>›</span>
-            </div>
-          </Link>
-        </div>
-      </div>
-      
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}} />
-    </div>
-  );
+ </div>
+ </div>
+ );
 }

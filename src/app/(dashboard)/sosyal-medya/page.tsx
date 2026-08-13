@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 
 const platforms = [
-  { id: "instagram", name: "Instagram", color: "#E1306C", glow: "rgba(225,48,108,0.3)", icon: "📸", followers: "12.4K", connected: true, avatar: "https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=40&h=40&fit=crop&auto=format" },
-  { id: "tiktok", name: "TikTok", color: "#010101", glow: "rgba(105,201,208,0.3)", icon: "🎵", followers: "8.9K", connected: true, avatar: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=40&h=40&fit=crop&auto=format" },
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥", followers: "5.2K", connected: true, avatar: null },
-  { id: "youtube", name: "YouTube", color: "#FF0000", glow: "rgba(255,0,0,0.3)", icon: "▶️", followers: "3.1K", connected: true, avatar: null },
+  { id: "instagram", name: "Instagram", color: "#E1306C", glow: "rgba(225,48,108,0.3)", icon: "📸", followers: "12.4K", connected: true, avatar: "https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=40&h=40&fit=crop&auto=format" },
   { id: "linkedin", name: "LinkedIn", color: "#0A66C2", glow: "rgba(10,102,194,0.3)", icon: "💼", followers: "2.8K", connected: false, avatar: null },
-  { id: "google", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢", followers: "—", connected: false, avatar: null },
+  { id: "tiktok", name: "TikTok", color: "#010101", glow: "rgba(105,201,208,0.3)", icon: "🎵", followers: "8.9K", connected: true, avatar: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=40&h=40&fit=crop&auto=format" },
+  { id: "youtube", name: "YouTube", color: "#FF0000", glow: "rgba(255,0,0,0.3)", icon: "▶️", followers: "3.1K", connected: true, avatar: null },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬", followers: "—", connected: true, avatar: null },
+  { id: "google", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢", followers: "—", connected: false, avatar: null },
 ];
 
 export default function SosyalMedyaPage() {
@@ -24,12 +24,14 @@ export default function SosyalMedyaPage() {
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Hesabınızı Ekleyin</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>Bağlamak istediğiniz hesapları seçin</p>
         
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+        <div style={{ display: "flex", overflowX: "auto", gap: 16, paddingBottom: 16 }}>
           {platforms.filter(p => !connected[p.id]).map(p => (
             <div
               key={p.id}
               className="glass platform-card"
               style={{
+                minWidth: 260,
+                flex: "0 0 auto",
                 borderRadius: 20, padding: "22px",
                 border: "1px solid rgba(255,255,255,0.06)",
                 boxShadow: "none",
@@ -84,12 +86,14 @@ export default function SosyalMedyaPage() {
           </button>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+        <div style={{ display: "flex", overflowX: "auto", gap: 16, paddingBottom: 16 }}>
           {platforms.filter(p => connected[p.id]).map(p => (
             <div
               key={p.id}
               className="glass platform-card"
               style={{
+                minWidth: 260,
+                flex: "0 0 auto",
                 borderRadius: 20, padding: "22px",
                 border: `1px solid ${p.glow.replace("0.3","0.35")}`,
                 boxShadow: `0 0 24px ${p.glow}`,

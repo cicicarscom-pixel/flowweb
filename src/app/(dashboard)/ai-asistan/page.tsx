@@ -67,14 +67,17 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   ];
 
   return (
-    <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 24, maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto" }}>
       {/* Header */}
-      <div>
+      <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
       </div>
 
-      {/* Platform toggles */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", gap: 28, alignItems: "start" }}>
+        {/* Left Column */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {/* Platform toggles */}
       <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
         <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 16 }}>BOT AKTIFLIK</p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
@@ -267,6 +270,71 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>{s.label}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+
+    {/* Right Column (New Features) */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Canlı Test */}
+          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden" }}>
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 18 }}>💬</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>Canlı Test</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#4edea3", letterSpacing: "0.06em" }}>SİMÜLASYON</span>
+              </div>
+            </div>
+            <div style={{ height: 420, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "16px" }}>
+              <div style={{ position: "relative" }}>
+                <input 
+                  type="text" 
+                  placeholder="Test mesajı gönder..." 
+                  style={{ 
+                    width: "100%", padding: "12px 48px 12px 16px", borderRadius: 99, 
+                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                    color: "#fff", fontSize: 13, outline: "none"
+                  }} 
+                />
+                <div style={{ 
+                  position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
+                  width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.1)",
+                  display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer"
+                }}>
+                  <span style={{ fontSize: 16, filter: "grayscale(1) brightness(2)" }}>▶</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Ai Randevu Yönetimi */}
+          <div className="glass" style={{ 
+            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(78,222,163,0.3)",
+            display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
+            background: "rgba(78,222,163,0.05)", marginTop: 8
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 20, color: "#4edea3" }}>📅</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#4edea3" }}>Ai Randevu Yönetimi</span>
+            </div>
+            <span style={{ color: "#4edea3", fontSize: 24, lineHeight: 1 }}>›</span>
+          </div>
+
+          {/* Ai İşletme Hizmetleri */}
+          <div className="glass" style={{ 
+            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(0,162,255,0.3)",
+            display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
+            background: "rgba(0,162,255,0.05)"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 20, color: "#00a2ff" }}>💼</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#00a2ff" }}>Ai İşletme Hizmetleri</span>
+            </div>
+            <span style={{ color: "#00a2ff", fontSize: 24, lineHeight: 1 }}>›</span>
+          </div>
         </div>
       </div>
       

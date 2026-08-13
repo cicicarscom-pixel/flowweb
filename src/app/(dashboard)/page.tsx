@@ -36,8 +36,17 @@ export default function DashboardHomePage() {
         <div style={{
           width: 44, height: 44, borderRadius: 14, background: "linear-gradient(135deg,#00f0ff22,#4edea322)",
           border: "1.5px solid rgba(0,240,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 22, flexShrink: 0
-        }}>🤖</div>
+          flexShrink: 0, overflow: "hidden"
+        }}>
+          <video 
+            src="/video1.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+          />
+        </div>
         <div>
           <p style={{ fontSize: 11, color: "rgba(0,240,255,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>

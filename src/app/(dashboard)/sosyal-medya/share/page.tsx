@@ -1,541 +1,144 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
 
 export default function SharePage() {
- return (
- <div className="flex-1 flex flex-col h-full bg-transparent overflow-hidden text-on-surface">
- {/* Top Header */}
- <div className="h-20 flex items-center justify-between px-8 border-b border-surface-container-high bg-surface-container-lowest flex-shrink-0">
- <div className="flex items-center gap-3">
- <div className="w-10 h-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500">
- <span className="material-symbols-outlined text-xl">
- magic_button
- </span>
- </div>
- <div>
- <h1 className="text-xl font-bold text-on-surface leading-tight">
- AI Paylaşım
- </h1>
- <p className="text-sm text-on-surface-variant">
- AI destekli içerik oluşturun, düzenleyin ve seçtiğiniz
- platformlarda paylaşın.
- </p>
- </div>
- </div>
- <div className="flex items-center gap-3">
- <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-surface-container-highest text-gray-300 hover:bg-surface-container hover:text-on-surface transition-colors text-sm font-medium">
- <span className="material-symbols-outlined">history</span>
- <span>Geçmiş</span>
- </button>
- <button className="w-10 h-10 rounded-lg border border-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
- <span className="material-symbols-outlined">settings</span>
- </button>
- <button className="w-10 h-10 rounded-lg border border-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors">
- <span className="material-symbols-outlined">help</span>
- </button>
- </div>
- </div>
- {/* Content Scrollable Area */}
- <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
- <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8">
- {/* Left Column: Creation Flow */}
- <div className="space-y-6">
- {/* Step 1 */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <div className="flex items-center gap-2 mb-4">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase">
- 1. NE PAYLAŞALIM?
- </h2>
- <span className="material-symbols-outlined text-gray-500 text-sm">
- help
- </span>
- </div>
- <textarea
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg p-4 text-sm text-gray-200 placeholder-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-shadow resize-none"
- placeholder="Örn: Yeni yaz koleksiyonumuz için enerjik bir post..."
- rows={3}
- ></textarea>
- </section>
- {/* Step 2 */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase mb-4">
- 2. GÖRSEL &amp; VİDEO
- </h2>
- <div className="relative w-full h-[240px] bg-surface-container/50 border border-dashed border-outline-variant/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container/80 transition-colors group">
- <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant hover:text-on-surface z-10">
- <span className="material-symbols-outlined text-sm">
- settings
- </span>
- </div>
- <div className="w-16 h-16 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
- <div className="relative">
- <span className="material-symbols-outlined text-3xl">
- image
- </span>
- <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-secondary rounded-full flex items-center justify-center text-surface border-2 border-surface-container-lowest">
- <span className="material-symbols-outlined text-[10px]">
- add
- </span>
- </div>
- </div>
- </div>
- <h3 className="text-base font-semibold text-on-surface mb-2">
- Görsel &amp; video seç ya da sadece görsel üret
- </h3>
- <p className="text-sm text-on-surface-variant text-center max-w-sm">
- Galerinden eklemek için dokunun veya AI'ın benzersiz görsel
- üretmesini bekleyin.
- </p>
- </div>
- </section>
- {/* Step 3 */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <div className="flex items-center justify-between mb-4">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase">
- 3. İÇERİK METNİ
- </h2>
- <button className="text-primary-400 hover:text-primary-300 transition-colors">
- <span className="material-symbols-outlined">edit</span>
- </button>
- </div>
- <div className="bg-surface-container border border-surface-container-highest rounded-lg p-4 mb-4 min-h-[120px]">
- <p className="text-sm text-gray-300 leading-relaxed">
- Yapay zeka tarafından oluşturulan içerik metni burada
- görünecek. Gelişmiş dil modelleri ile hedef kitlenize uygun,
- etkileşimi yüksek metinler hazırlanıyor...
- </p>
- </div>
- <div className="relative flex items-center gap-3">
- <input
- className="flex-1 bg-surface-container border border-surface-container-highest rounded-full py-3 px-5 text-sm text-gray-200 placeholder-gray-500 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
- placeholder="Görselle uyumlu bir metin üret..."
- type="text"
- />
- <button className="w-10 h-10 rounded-full bg-primary-600 text-on-surface flex items-center justify-center hover:bg-primary-500 transition-colors flex-shrink-0 glow-purple shadow-[0_0_15px_rgba(168,85,247,0.4)]">
- <span className="material-symbols-outlined">
- magic_button
- </span>
- </button>
- </div>
- <div className="flex flex-wrap items-center gap-2 mt-4">
- <span className="px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-medium">
- #yaz
- </span>
- <span className="px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-medium">
- #yenisezon
- </span>
- <button className="px-3 py-1.5 rounded-full border border-dashed border-gray-600 text-on-surface-variant text-xs font-medium hover:text-on-surface hover:border-gray-400 transition-colors flex items-center gap-1">
- <span className="material-symbols-outlined text-[14px]">
- add
- </span>{" "}
- Etiket ekle
- </button>
- </div>
- </section>
- {/* Step 4 */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase mb-6">
- 4. GÖNDERİ AYARLARI
- </h2>
- {/* Account Selection */}
- <div className="mb-6">
- <label className="block text-xs font-medium text-on-surface-variant mb-2">
- Profil / Hesap
- </label>
- <div className="relative">
- <button className="w-full flex items-center justify-between bg-surface-container border border-surface-container-highest rounded-lg px-4 py-3 text-sm text-on-surface focus:outline-none focus:border-primary-500">
- <div className="flex items-center gap-3">
- <img
- alt="Profile"
- className="w-6 h-6 rounded-full"
- src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH_ka25kuypvedDP_EzrGvo567hkykIE61gJdOp7tyYDZNq7J0pcBjgPENXQx3iNASw76nSf_3wGdXAtzTz84C58gg4mUsw4eDr7Pjw11yrCCIxdyQo7N8xZi8RTpN5AJNB7IklEVF0tvXYHG8lPvELV4zjo-thOgJ4_bj9ROt_I2mu_WEBPK6Eb7n1A20lR9N2q5LOXFWs1c7QBTz0imsg0DTu5F7Eecdy03PDyS22MAZ0zlV3rwu"
- />
- <span>AI Esnaf Profil</span>
- </div>
- <span className="material-symbols-outlined text-gray-500 text-sm">
- expand_more
- </span>
- </button>
- </div>
- </div>
- {/* Platform Selection */}
- <div className="mb-6">
- <label className="block text-xs font-medium text-on-surface-variant mb-2">
- Seçilen platformlarda paylaş
- </label>
- <div className="grid grid-cols-2 gap-4">
- <label className="flex items-center gap-3 bg-surface-container border border-primary-500/50 rounded-lg p-3 cursor-pointer">
- <div className="w-8 h-8 rounded-lg bg-gradient-to-tr -tertiary -tertiary -primary flex items-center justify-center text-on-surface">
- <span className="material-symbols-outlined">
- photo_camera
- </span>
- </div>
- <div className="flex-1 min-w-0">
- <p className="text-sm font-medium text-on-surface truncate">
- Instagram
- </p>
- <p className="text-[10px] text-gray-500 truncate">
- @ai.esnaf.profil
- </p>
- </div>
- <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center text-surface-lowest flex-shrink-0">
- <span className="material-symbols-outlined text-xs">
- check
- </span>
- </div>
- </label>
- <label className="flex items-center gap-3 bg-surface-container border border-surface-container-highest rounded-lg p-3 cursor-pointer opacity-70 hover:opacity-100 transition-opacity">
- <div className="w-8 h-8 rounded-lg bg-[#25D366] flex items-center justify-center text-on-surface">
- <span className="material-symbols-outlined">chat</span>
- </div>
- <div className="flex-1 min-w-0">
- <p className="text-sm font-medium text-on-surface truncate">
- Whatsapp
- </p>
- <p className="text-[10px] text-gray-500 truncate">
- +90 555 123 45 67
- </p>
- </div>
- <div className="w-5 h-5 rounded-full border border-gray-600 flex-shrink-0"></div>
- </label>
- </div>
- </div>
- {/* Platform Specific Options (Instagram) */}
- <div className="border-t border-surface-container-high pt-6">
- <div className="flex items-center gap-2 mb-4">
- <div className="w-5 h-5 rounded bg-gradient-to-tr -tertiary -tertiary -primary flex items-center justify-center text-on-surface">
- <span className="material-symbols-outlined text-[10px]">
- photo_camera
- </span>
- </div>
- <h3 className="text-sm font-medium text-on-surface">Instagram</h3>
- </div>
- {/* Post Types Tabs */}
- <div className="flex p-1 bg-surface-container-low rounded-lg mb-4">
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface bg-surface-container-highest rounded-md shadow-sm">
- Feed
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Story
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Reel
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Carousel
- </button>
- </div>
- <p className="text-[11px] text-gray-500 mb-6">
- İçerik 24 saat sonra kaybolur. Sınırlandırma detayı.
- </p>
- {/* AI Label Toggle */}
- <div className="flex items-start gap-3 mb-6">
- <input
- className="mt-1 w-4 h-4 rounded border-gray-600 bg-surface-container text-primary-500 focus:ring-primary-500 focus:ring-offset-surface-lowest"
- id="ai-label"
- type="checkbox"
- />
- <div>
- <label
- className="text-sm font-medium text-on-surface cursor-pointer"
- htmlFor="ai-label"
- >
- AI ile üretildi olarak işaretle
- </label>
- <p className="text-xs text-on-surface-variant mt-1">
- Instagram'ın AI içerik etiketleme ilkelerine uygun olarak
- bu içeriğin AI ile oluşturulduğunu belirtir.
- </p>
- </div>
- </div>
- {/* First Comment */}
- <div className="mb-4">
- <label className="block text-xs font-medium text-on-surface-variant mb-2">
- İlk yorum (isteğe bağlı)
- </label>
- <div className="relative">
- <textarea
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg p-3 text-sm text-gray-200 placeholder-gray-600 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"
- placeholder="Örn: Yazın enerjisini birlikte yaşayalım! ☀️"
- rows={2}
- ></textarea>
- <span className="absolute bottom-2 right-3 text-[10px] text-gray-500">
- 0/2200
- </span>
- </div>
- </div>
- {/* Caption */}
- <div className="mb-4">
- <label className="block text-xs font-medium text-on-surface-variant mb-2">
- Alt yazı (caption)
- </label>
- <div className="relative">
- <textarea
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg p-3 text-sm text-gray-200 placeholder-gray-600 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 resize-none"
- placeholder="İsteğe bağlı... (Leave blank to use main content)"
- rows={3}
- ></textarea>
- <span className="absolute bottom-2 right-3 text-[10px] text-gray-500">
- 0/2200
- </span>
- </div>
- </div>
- {/* Location */}
- <div>
- <label className="block text-xs font-medium text-on-surface-variant mb-2">
- Konum ekle (isteğe bağlı)
- </label>
- <div className="relative">
- <input
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg pl-3 pr-10 py-2.5 text-sm text-gray-200 placeholder-gray-600 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
- placeholder="Konum seçin..."
- type="text"
- />
- <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-[16px]">
- expand_more
- </span>
- </div>
- </div>
- </div>
- </section>
- </div>
- {/* Right Column: Preview & Publish */}
- <div className="space-y-6">
- {/* Step 5: Preview Panel */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase mb-4">
- 5. ÖNİZLEME
- </h2>
- <div className="flex p-1 bg-surface-container rounded-lg mb-6">
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface bg-primary-600 rounded-md shadow-sm">
- Feed
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Story
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Reel
- </button>
- <button className="flex-1 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface">
- Carousel
- </button>
- </div>
- {/* Fake Instagram Post */}
- <div className="bg-black border border-surface-container-high rounded-xl overflow-hidden max-w-[320px] mx-auto">
- {/* Post Header */}
- <div className="flex items-center justify-between p-3">
- <div className="flex items-center gap-2">
- <div className="w-8 h-8 rounded-full bg-gradient-to-tr -tertiary -tertiary -primary p-[2px]">
- <img
- alt="Profile"
- className="w-full h-full rounded-full border border-black"
- src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfeEfU0YIy0WSnYgBqMbEDUbotJ0-CZypClnAWUIYnip2sDVCAwtDK-GiasJT_4tgjpJYP1QXWZS5i8L8Yx06by6Rvq1jx3FZXKTz7M4ppxTY_87hjvonXom97T0DEA156G9zZwem20CRj4zE1wWoSB_MGo2IVG86G5BFrxJkNYJi4GT8HrpqKLznY07Zd_WywS_h28rKVhNnMkfy-urQNSbOo65GrQG4-t3yU15R22ynojwAft2Xd"
- />
- </div>
- <div>
- <p className="text-xs font-bold text-on-surface leading-tight">
- ai.esnaf.profil
- </p>
- <p className="text-[10px] text-on-surface-variant">
- İstanbul, Türkiye
- </p>
- </div>
- </div>
- <span className="material-symbols-outlined text-on-surface text-[18px]">
- more_vert
- </span>
- </div>
- {/* Post Image */}
- <div className="aspect-square bg-surface-container">
- <img
- alt="Post Preview"
- className="w-full h-full object-cover"
- src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhHj0ckuQIh-Q-YI12q4MkcvOPILIRGads_W7V-IpqiDQ_0OvVH_i8TN-ctSU5gbha17MEg44eNWUsUuJVT3ut_thWpu3bw31FePIyGAGgKk4O4CMwZeXZq46yaVOqS8H2LT_0AUUkxJvT2LL6V48Kli6yaf6r5XlHHh7GMl7Mg9hC9PKCSNkob0BoD5tCpJbdHDGvQkqjFgKr9vdC4JvrAe0uVkzSrmHcMbiV7gNIMvx3KMCvnN6z"
- />
- </div>
- {/* Post Actions */}
- <div className="p-3">
- <div className="flex items-center justify-between mb-2">
- <div className="flex items-center gap-4">
- <span
- className="material-symbols-outlined -tertiary text-xl"
- style={{ fontVariationSettings: "'FILL' 1" }}
- >
- favorite
- </span>
- <span className="material-symbols-outlined text-on-surface text-xl">
- chat
- </span>
- <span className="material-symbols-outlined text-on-surface text-xl">
- send
- </span>
- </div>
- <div className="flex gap-1">
- <div className="w-1.5 h-1.5 rounded-full -primary"></div>
- <div className="w-1.5 h-1.5 rounded-full bg-gray-600"></div>
- <div className="w-1.5 h-1.5 rounded-full bg-gray-600"></div>
- <div className="w-1.5 h-1.5 rounded-full bg-gray-600"></div>
- </div>
- <span className="material-symbols-outlined text-on-surface text-xl">
- bookmark
- </span>
- </div>
- {/* Post Caption */}
- <div className="text-sm">
- <p className="text-on-surface">
- <span className="font-bold mr-1">ai.esnaf.profil</span>☀️
- Yaz koleksiyonumuz ile enerjinizi yansıtın! ☀️
- </p>
- <p className="text-on-surface mt-1">
- Renkli, rahat ve şık parçalar sizi bekliyor. Bu yaz
- stilinizle fark yaratın.
- </p>
- <p className="-primary mt-2 text-xs">
- #yaz #yenisezon #koleksiyon #stil
- </p>
- </div>
- </div>
- </div>
- </section>
- {/* Step 6: Publishing */}
- <section className="bg-surface-container-lowest border border-surface-container-high rounded-xl p-6">
- <h2 className="text-sm font-bold text-on-surface tracking-wide uppercase mb-6">
- 6. YAYINCILIK
- </h2>
- {/* Publish Type Toggle */}
- <div className="flex p-1 bg-surface-container rounded-lg mb-6">
- <button className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium text-on-surface border border-primary-500 bg-primary-900/20 rounded-md">
- <span className="material-symbols-outlined text-[16px] text-primary-400">
- schedule
- </span>{" "}
- Planlı
- </button>
- <button className="flex-1 flex items-center justify-center gap-2 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
- <span className="material-symbols-outlined text-[16px]">
- bolt
- </span>{" "}
- Şimdi
- </button>
- </div>
- {/* Date/Time Inputs */}
- <div className="space-y-4 mb-6">
- <div>
- <label className="block text-xs font-medium text-on-surface-variant mb-1.5">
- Tarih
- </label>
- <div className="relative">
- <input
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg pl-4 pr-10 py-2.5 text-sm text-on-surface focus:border-primary-500 focus:ring-1 focus:ring-primary-500 cursor-pointer"
- readOnly
- type="text"
- value="22 Mayıs 2024"
- />
- <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">
- calendar_month
- </span>
- </div>
- </div>
- <div>
- <label className="block text-xs font-medium text-on-surface-variant mb-1.5">
- Saat
- </label>
- <div className="relative">
- <input
- className="w-full bg-surface-container border border-surface-container-highest rounded-lg pl-4 pr-10 py-2.5 text-sm text-on-surface focus:border-primary-500 focus:ring-1 focus:ring-primary-500 cursor-pointer"
- readOnly
- type="text"
- value="14:30"
- />
- <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">
- schedule
- </span>
- </div>
- </div>
- <div>
- <label className="block text-xs font-medium text-on-surface-variant mb-1.5">
- Zaman dilimi
- </label>
- <div className="relative">
- <select className="w-full bg-surface-container border border-surface-container-highest rounded-lg pl-4 pr-10 py-2.5 text-sm text-on-surface focus:border-primary-500 focus:ring-1 focus:ring-primary-500 appearance-none">
- <option>Europe/Istanbul (GMT +03:00)</option>
- </select>
- <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs pointer-events-none text-[18px]">
- expand_more
- </span>
- </div>
- </div>
- </div>
- {/* Info Notice */}
- <div className="flex gap-3 bg-secondary/10 border border-secondary/20 rounded-lg p-4 mb-6">
- <span className="material-symbols-outlined text-secondary mt-0.5 text-[18px]">
- info
- </span>
- <p className="text-xs text-gray-300 leading-relaxed">
- Gönderi, seçilen tüm platformlarda planlanan tarihte
- yayınlanacaktır.
- </p>
- </div>
- {/* Main Action Button */}
- <button className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 -primary to-primary-500 text-on-surface font-bold text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
- <span className="material-symbols-outlined text-[18px]">
- send
- </span>{" "}
- Seçili Platformlarda Paylaş
- </button>
- {/* Summary Section */}
- <div className="mt-8">
- <h3 className="text-sm font-bold text-on-surface mb-4">
- Gönderi Özeti
- </h3>
- <div className="space-y-3">
- <div className="flex justify-between items-center text-sm">
- <span className="text-on-surface-variant">Platformlar</span>
- <span className="text-on-surface font-medium">2 platform</span>
- </div>
- <div className="flex justify-between items-center text-sm">
- <span className="text-on-surface-variant">Format</span>
- <span className="text-on-surface font-medium">Feed</span>
- </div>
- <div className="flex justify-between items-center text-sm">
- <span className="text-on-surface-variant">Planlanma</span>
- <span className="text-on-surface font-medium">
- 22 May 2024 14:30
- </span>
- </div>
- <div className="flex justify-between items-center text-sm">
- <span className="text-on-surface-variant">Tahmini Erişim</span>
- <span className="text-on-surface font-medium">1.2K - 2.4K</span>
- </div>
- <div className="flex justify-between items-center text-sm">
- <span className="text-on-surface-variant">Tahmini Etkileşim</span>
- <span className="text-on-surface font-medium">120 - 250</span>
- </div>
- </div>
- </div>
- </section>
- {/* AI Suggestion Box */}
- <div className="bg-primary-900/20 border border-primary-500/30 rounded-xl p-5 relative overflow-hidden">
- {/* Decorative background glow */}
- <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-500/20 blur-xl rounded-full"></div>
- <div className="relative z-10 flex items-start gap-3">
- <span className="material-symbols-outlined text-primary-400 mt-1">
- magic_button
- </span>
- <div>
- <h4 className="text-sm font-bold text-primary-100 mb-1">
- AI Önerisi
- </h4>
- <p className="text-xs text-primary-200/80 leading-relaxed">
- Gönderiniz için en iyi etkileşim zamanı Cuma günü 18:00 -
- 20:00 arasıdır.
- </p>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
- );
+  return (
+    <div className="flex-1 flex flex-col h-full overflow-hidden p-6 lg:p-8">
+      {/* Header */}
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/sosyal-medya" className="w-10 h-10 rounded-xl glass border border-app-border flex items-center justify-center text-app-muted hover:text-on-surface transition-colors">
+            <i className="fa-solid fa-arrow-left"></i>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-on-surface mb-1">Paylaşım Merkezi</h1>
+            <p className="text-app-muted text-sm">Tüm sosyal medya kanallarınızın etkileşim analizleri ve raporları.</p>
+          </div>
+        </div>
+        <button className="px-4 py-2 rounded-lg glass border border-app-border text-on-surface hover:bg-white/5 transition-colors text-sm font-medium flex items-center gap-2">
+          <i className="fa-solid fa-download"></i> Rapor İndir
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-6">
+        
+        {/* Top Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { title: "Toplam Takipçi", value: "24.6K", change: "+12%", up: true, icon: "fa-users", color: "#4edea3" },
+            { title: "Gönderi Etkileşimi", value: "8.2K", change: "+5.4%", up: true, icon: "fa-heart", color: "#bc13fe" },
+            { title: "Profil Ziyareti", value: "14.1K", change: "-2.1%", up: false, icon: "fa-eye", color: "#00f0ff" },
+            { title: "Yeni Gönderiler", value: "24", change: "+8", up: true, icon: "fa-layer-group", color: "#f59e0b" },
+          ].map((stat, idx) => (
+            <div key={idx} className="glass p-5 rounded-2xl border border-app-border flex flex-col justify-between">
+              <div className="flex justify-between items-start mb-4">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-app-bg border border-app-border" style={{ color: stat.color }}>
+                  <i className={`fa-solid ${stat.icon} text-lg`}></i>
+                </div>
+                <span className={`text-xs font-bold px-2 py-1 rounded-full ${stat.up ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                  <i className={`fa-solid ${stat.up ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} mr-1`}></i>
+                  {stat.change}
+                </span>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-on-surface mb-1">{stat.value}</p>
+                <p className="text-sm text-app-muted">{stat.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Main Chart Area */}
+          <div className="lg:col-span-2 glass p-6 rounded-2xl border border-app-border">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-on-surface">Etkileşim Analizi</h3>
+              <select className="bg-app-bg border border-app-border rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none">
+                <option>Son 7 Gün</option>
+                <option>Son 30 Gün</option>
+                <option>Bu Yıl</option>
+              </select>
+            </div>
+            
+            <div className="h-[250px] w-full flex items-end justify-between gap-2 border-b border-app-border/50 pb-2 relative">
+              {/* Sahte Grafik (Barlar) */}
+              {[40, 70, 45, 90, 60, 100, 80].map((h, i) => (
+                <div key={i} className="w-full flex justify-center group relative">
+                  <div 
+                    className="w-[60%] rounded-t-sm bg-gradient-to-t from-[#bc13fe]/20 to-[#00f0ff] opacity-80 group-hover:opacity-100 transition-all cursor-pointer relative" 
+                    style={{ height: `${h}%` }}
+                  >
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-app-card border border-app-border px-2 py-1 rounded text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                      {h}K
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-2 px-2">
+              {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((day, i) => (
+                <span key={i} className="text-xs text-app-muted w-full text-center">{day}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Platform Dağılımı */}
+          <div className="glass p-6 rounded-2xl border border-app-border flex flex-col">
+            <h3 className="text-lg font-bold text-on-surface mb-6">Platform Performansı</h3>
+            <div className="flex-1 flex flex-col gap-5 justify-center">
+              {[
+                { name: "Instagram", percent: 65, color: "#E1306C" },
+                { name: "Facebook", percent: 20, color: "#1877F2" },
+                { name: "TikTok", percent: 10, color: "#00f0ff" },
+                { name: "LinkedIn", percent: 5, color: "#0A66C2" },
+              ].map(p => (
+                <div key={p.name}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-on-surface">{p.name}</span>
+                    <span className="text-xs font-bold" style={{ color: p.color }}>%{p.percent}</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-app-bg overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${p.percent}%`, backgroundColor: p.color, boxShadow: `0 0 10px ${p.color}80` }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Recent Top Posts */}
+        <div className="glass p-6 rounded-2xl border border-app-border">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-bold text-on-surface">En Çok Etkileşim Alan Gönderiler</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="p-4 rounded-xl border border-app-border bg-app-bg/30 flex items-center gap-4 hover:border-app-muted/50 transition-colors cursor-pointer">
+                <div className="w-16 h-16 rounded-lg bg-surface-container overflow-hidden">
+                  <img src={`https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=100&h=100&fit=crop&random=${item}`} alt="Post" className="w-full h-full object-cover"/>
+                </div>
+                <div>
+                  <div className="flex gap-1 mb-1">
+                    <i className="fa-brands fa-instagram text-[#E1306C] text-xs"></i>
+                    <i className="fa-brands fa-facebook text-[#1877F2] text-xs"></i>
+                  </div>
+                  <p className="text-xs text-on-surface line-clamp-1 mb-2">Kampanya başladı! Hemen ziyaret edin...</p>
+                  <div className="flex items-center gap-3 text-xs text-app-muted font-bold">
+                    <span className="text-[#00f0ff]"><i className="fa-solid fa-heart mr-1"></i> 1.2K</span>
+                    <span className="text-[#bc13fe]"><i className="fa-solid fa-comment mr-1"></i> 340</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
 }
-
-

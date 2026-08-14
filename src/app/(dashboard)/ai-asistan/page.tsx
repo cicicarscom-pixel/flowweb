@@ -69,7 +69,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   ];
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ padding: "28px 32px", width: "100%", flex: 1 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>

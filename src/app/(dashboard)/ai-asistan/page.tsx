@@ -158,11 +158,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         </div>
       </div>
 
-      {/* Middle Section: 2-Column Grid for AI Kişiliği and Canlı Test */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", gap: 28, alignItems: "stretch", marginBottom: 32 }}>
+      {/* Middle Section: Vertical Stack for Settings and Canlı Test */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
         
-        {/* Left Column: AI Kişiliği & Advanced Settings */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {/* AI Kişiliği (Purple Box) */}
           <div className="glass" style={{ 
             borderRadius: 24, 
@@ -318,11 +316,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               </div>
             </div>
           )}
-        </div>
 
-        {/* Right Column: Canlı Test */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", flex: 1, minHeight: 500 }}>
+          {/* Canlı Test */}
+          <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", minHeight: 500 }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
@@ -410,7 +406,6 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       {/* Bottom Section */}

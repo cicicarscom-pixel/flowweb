@@ -115,10 +115,13 @@ export default function IsletmeHizmetleriPage() {
  <div>
  <label className="block text-sm font-medium text-on-surface mb-2" htmlFor="serviceName">Hizmet Adı</label>
  <input 
- className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary" 
+ className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-1 focus:ring-emerald-500" 
  id="serviceName" 
  type="text" 
  defaultValue="Sac Kesimi" 
+ onFocus={(e) => {
+   if (e.target.value === "Sac Kesimi") e.target.value = "";
+ }}
  />
  </div>
 
@@ -128,14 +131,17 @@ export default function IsletmeHizmetleriPage() {
  <div className="flex items-center gap-3">
  <div className="flex-1">
  <input 
- className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary" 
+ className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-2.5 text-black focus:outline-none focus:ring-1 focus:ring-emerald-500" 
  type="text" 
  defaultValue="150" 
+ onFocus={(e) => {
+   if (e.target.value === "150") e.target.value = "";
+ }}
  />
  </div>
  <div className="w-32">
  <div className="relative">
- <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-on-surface appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary" defaultValue="TL">
+ <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-black appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500" defaultValue="TL">
  <option value="TL">TL</option>
  <option value="USD">USD</option>
  <option value="EUR">EUR</option>
@@ -148,7 +154,7 @@ export default function IsletmeHizmetleriPage() {
  <span className="text-app-muted">/</span>
  <div className="w-40">
  <div className="relative">
- <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-on-surface appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary" defaultValue="seans">
+ <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-black appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500" defaultValue="seans">
  <option value="seans">seans</option>
  <option value="saat">saat</option>
  <option value="adet">adet</option>
@@ -168,10 +174,11 @@ export default function IsletmeHizmetleriPage() {
  </label>
  <div className="relative">
  <textarea 
- className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-3 text-on-surface placeholder-app-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary resize-none" 
+ className="w-full bg-app-bg border border-app-border rounded-lg px-4 py-3 text-black placeholder-app-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" 
  id="description" 
  placeholder="Hizmet hakkında kısa açıklama girin..." 
  rows={3}
+ onFocus={(e) => e.target.value = ""}
  ></textarea>
  <div className="absolute bottom-3 right-3 text-xs text-app-muted">0 / 250</div>
  </div>
@@ -181,7 +188,7 @@ export default function IsletmeHizmetleriPage() {
  <div>
  <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Süre</label>
  <div className="relative">
- <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-on-surface appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:-secondary" defaultValue="30 dakika">
+ <select className="w-full bg-app-bg border border-app-border rounded-lg pl-4 pr-10 py-2.5 text-black appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500" defaultValue="30 dakika">
  <option value="30 dakika">30 dakika</option>
  <option value="45 dakika">45 dakika</option>
  <option value="60 dakika">60 dakika</option>

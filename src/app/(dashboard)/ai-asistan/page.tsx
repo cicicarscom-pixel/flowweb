@@ -424,22 +424,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
 
       {/* Bottom Section */}
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {/* Bot performance */}
-        <div className="glass" style={{ borderRadius: 18, padding: "18px 20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 14 }}>BOT PERFORMANSI · BUGÜN</p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-            {[
-              { label: "Otonom Yanıt", value: "94%", color: "#4edea3" },
-              { label: "Yönlendirilen", value: "47", color: "#ffb95f" },
-              { label: "Ort. Yanıt Süresi", value: "0.8s", color: "#00f0ff" },
-            ].map(s => (
-              <div key={s.label} style={{ textAlign: "center", padding: "14px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 12 }}>
-                <p style={{ fontSize: 22, fontWeight: 700, color: s.color, fontFamily: "Outfit, sans-serif" }}>{s.value}</p>
-                <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Ai Randevu Yönetimi */}
         <Link href="/ai-asistan/randevu" style={{ textDecoration: 'none' }}>

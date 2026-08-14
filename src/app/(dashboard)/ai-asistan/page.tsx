@@ -72,7 +72,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     <div style={{ padding: "28px 32px", width: "100%", flex: 1 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi GÜNCELLENDİ</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
       </div>
 
@@ -159,7 +159,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
       </div>
 
       {/* Middle Section: 2-Column Grid for AI Kişiliği and Canlı Test */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))", gap: 28, alignItems: "stretch", marginBottom: 32 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 28, alignItems: "stretch", marginBottom: 32 }}>
         
         {/* Left Column: AI Kişiliği & Advanced Settings */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>

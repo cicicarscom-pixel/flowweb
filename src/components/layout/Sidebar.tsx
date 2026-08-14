@@ -11,6 +11,7 @@ export default function Sidebar() {
     { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#00a2ff" },
     { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#ffb95f" },
     { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#bc13fe" },
+    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#ff4d4d" },
     { href: "/analiz", label: "Analiz", icon: "◈", color: "#4edea3" },
   ];
 
@@ -46,6 +47,7 @@ export default function Sidebar() {
           if (color === "#4edea3") bgRgb = "78,222,163";
           if (color === "#00a2ff") bgRgb = "0,162,255";
           if (color === "#ffb95f") bgRgb = "255,185,95";
+          if (color === "#ff4d4d") bgRgb = "255,77,77";
 
           return (
             <Link

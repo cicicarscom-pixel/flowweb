@@ -6,6 +6,12 @@ export default function DashboardHomePage() {
     { time: "17:30", title: "Haftalık Analitik İncelemesi", type: "review", color: "#ffb95f" },
   ];
 
+  const activities = [
+    { id: 1, type: "MESAJ", platform: "WHATSAPP", name: "Ahmet Yılmaz", message: "Merhaba, ürün hakkında bilgi alabilir miyim?", date: "5dk önce", color: "#25D366" },
+    { id: 2, type: "YORUM", platform: "INSTAGRAM", name: "ayse_kaya", message: "Fiyat nedir acaba?", date: "1sa önce", color: "#bc13fe" },
+    { id: 3, type: "MESAJ", platform: "WHATSAPP", name: "Mehmet Demir", message: "Siparişim ne zaman kargoya verilir?", date: "2sa önce", color: "#25D366" },
+  ];
+
   function PlatformIcon({ platform, size = 16 }: { platform: string; size?: number }) {
     const icons: Record<string, { bg: string; label: string }> = {
       instagram: { bg: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", label: "IG" },
@@ -149,6 +155,115 @@ export default function DashboardHomePage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Social Media Stats (Tüm Hesaplar) */}
+      <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(0,240,255,0.05), transparent)", pointerEvents: "none" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>Tüm Hesaplar</p>
+          </div>
+          <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>CANLI ANALİZ</span>
+          </div>
+        </div>
+        
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Toplam Takipçi Kitle</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <p style={{ fontSize: 32, fontWeight: 800, color: "#00f0ff", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(0,240,255,0.3)" }}>32,420</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#4edea3" }}>
+                <span style={{ fontSize: 14 }}>↑</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>12%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div style={{ textAlign: "right" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Etkileşim Trendi</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 120, height: 6, borderRadius: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #00f0ff, #bc13fe)" }} />
+              </div>
+              <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>Yüksek</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Son Aktiviteler */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <p style={{ fontSize: 16, color: "#fff", fontWeight: 700 }}>Son Aktiviteler</p>
+          <span style={{ fontSize: 12, color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>TÜMÜNÜ GÖR</span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {activities.map(act => (
+            <div key={act.id} className="glass" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", borderRadius: 16, borderLeft: `3px solid ${act.color}` }}>
+              <div style={{ width: 44, height: 44, borderRadius: 22, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, overflow: "hidden" }}>
+                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(act.name)}&background=random&color=fff`} style={{ width: "100%", height: "100%" }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <p style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{act.name}</p>
+                  <p style={{ color: "var(--text-secondary)", fontSize: 11 }}>{act.date}</p>
+                </div>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginBottom: 8 }}>{act.message}</p>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: `${act.color}22`, color: act.color, fontWeight: 700 }}>{act.type}</span>
+                  <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", fontWeight: 700 }}>{act.platform}</span>
+                </div>
+              </div>
+              <span style={{ color: "var(--text-secondary)", opacity: 0.5, fontSize: 18 }}>›</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* İletişim Raporları */}
+      <div>
+        <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>İletişim Raporları</p>
+        <div className="glass" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "var(--text-secondary)", textAlign: "left" }}>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>İletişim Kanalı</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>Tarih/Saat</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>Durum</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600, textAlign: "right" }}>İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <td style={{ padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
+                  <PlatformIcon platform="whatsapp" size={24} /> WhatsApp
+                </td>
+                <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>Bugün, 10:45</td>
+                <td style={{ padding: "16px 20px" }}><span style={{ color: "#4edea3", background: "rgba(78,222,163,0.1)", padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700 }}>Başarılı</span></td>
+                <td style={{ padding: "16px 20px", textAlign: "right", color: "#00f0ff", cursor: "pointer", fontWeight: 600 }}>İncele</td>
+              </tr>
+              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <td style={{ padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
+                  <PlatformIcon platform="instagram" size={24} /> Instagram DM
+                </td>
+                <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>Dün, 18:20</td>
+                <td style={{ padding: "16px 20px" }}><span style={{ color: "#4edea3", background: "rgba(78,222,163,0.1)", padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700 }}>Başarılı</span></td>
+                <td style={{ padding: "16px 20px", textAlign: "right", color: "#00f0ff", cursor: "pointer", fontWeight: 600 }}>İncele</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
+                  <PlatformIcon platform="facebook" size={24} /> Facebook Yorum
+                </td>
+                <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>12 Ağu, 14:10</td>
+                <td style={{ padding: "16px 20px" }}><span style={{ color: "#ffb95f", background: "rgba(255,185,95,0.1)", padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700 }}>Beklemede</span></td>
+                <td style={{ padding: "16px 20px", textAlign: "right", color: "#00f0ff", cursor: "pointer", fontWeight: 600 }}>İncele</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -57,3 +57,7 @@ Navigasyonda aktif sekme (`active link`) stilini vermek için `Sidebar.tsx` içe
 
 ### 11. Ai Asistan Sihirli Kasa İptali ve Yeni Layout (Ağustos 2026)
 **KURAL:** Kullanıcı talebi üzerine 'Sihirli Kasa (Magic Vault)' konsepti tamamen İPTAL EDİLMİŞTİR (Madde 9 geçersizdir). Yeni tasarımda grid yapısı (yan yana dizilim) kullanılmamalıdır. Bunun yerine 'WhatsApp Asistanı (Şalter)', 'Asistan Talimatı', 'İleri Seviye Ayarlar' ve 'AI Kişiliği' bileşenleri sayfada tam genişlikte, dikey olarak alt alta (stack) sıralanmalıdır.
+
+
+### 12. Web ve Mobil Platform UI/UX Senkronizasyonu (Ağustos 2026)
+**KURAL:** Web ve Mobil (React Native) platformları arasında tam bir görsel ve işlevsel bütünlük sağlanmıştır. Web tarafındaki Dashboard modülleri (Son Aktiviteler, İletişim Raporları, Tüm Hesaplar) aynen mobil tasarıma da eklenmiştir. Ayrıca Mobil taraftaki Sosyal Medya kartları, Web tarafındaki gibi yatay kaydırılabilir (Horizontal ScrollView), cam efektli (glassmorphism), parlak (glow), 140px genişliğinde ve Emoji ikon (👥, 📸 vb.) kullanan şık kartlara dönüştürülmüştür. Bu görsel eşitlik yeni eklenecek sayfalarda da korunmalıdır.

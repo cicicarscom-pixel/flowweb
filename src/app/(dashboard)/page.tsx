@@ -136,28 +136,6 @@ export default function DashboardHomePage() {
         </div>
       </div>
 
-      {/* Platform overview */}
-      <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>PLATFORM PERFORMANSI · BUGÜN</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
-          {[
-            { name: "Instagram", reach: "8,420", engagement: "18.4%", platform: "instagram" },
-            { name: "TikTok", reach: "15,200", engagement: "22.1%", platform: "tiktok" },
-            { name: "Facebook", reach: "5,900", engagement: "9.8%", platform: "facebook" },
-            { name: "YouTube", reach: "3,100", engagement: "14.2%", platform: "youtube" },
-          ].map(p => (
-            <div key={p.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", background: "rgba(255,255,255,0.03)", borderRadius: 12 }}>
-              <PlatformIcon platform={p.platform} size={28} />
-              <div>
-                <p style={{ color: "var(--text-secondary)", fontSize: 10, marginBottom: 2 }}>{p.name}</p>
-                <p style={{ color: "#fff", fontSize: 14, fontWeight: 700, fontFamily: "JetBrains Mono, monospace" }}>{p.reach}</p>
-                <p style={{ color: "#4edea3", fontSize: 10, fontWeight: 600 }}>{p.engagement}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Social Media Stats (Tüm Hesaplar) */}
       <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(0,240,255,0.05), transparent)", pointerEvents: "none" }} />

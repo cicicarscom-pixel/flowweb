@@ -90,7 +90,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           
           <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#25D366" }}>💬</span>
+              <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>
               <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
               <Toggle on={botConfig.whatsapp} onChange={() => setBotConfig(c => ({ ...c, whatsapp: !c.whatsapp }))} />
             </div>
@@ -140,7 +140,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             {/* WhatsApp */}
             <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <span style={{ fontSize: 22, color: "#25D366" }}>💬</span>
+                <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
                 <div>
                   <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>

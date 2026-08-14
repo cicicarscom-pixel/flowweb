@@ -72,7 +72,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     <div style={{ padding: "28px 32px", width: "100%", flex: 1 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi GÜNCELLENDİ</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
       </div>
 

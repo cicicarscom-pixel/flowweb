@@ -307,17 +307,26 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     fontFamily: "Inter, sans-serif",
                   }}
                 />
-                <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
-                  <button className="fab" style={{ background: "linear-gradient(135deg,rgba(0,162,255,0.2),rgba(0,240,255,0.2))", color: "#00f0ff", border: "1.5px solid rgba(0,240,255,0.3)", fontSize: 13 }}>
-                    🤖 AI ile Optimize Et
-                  </button>
-                  <button className="fab" style={{ background: "rgba(78,222,163,0.12)", color: "#4edea3", border: "1.5px solid rgba(78,222,163,0.3)", fontSize: 13 }}>
-                    ✓ Kaydet
-                  </button>
-                </div>
+
               </div>
             </div>
           )}
+
+          <button style={{ 
+            background: "linear-gradient(135deg, #bc13fe 0%, #00a2ff 100%)",
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 16, 
+            padding: "16px", 
+            color: "#fff", 
+            fontSize: 16, 
+            fontWeight: 600,
+            letterSpacing: "0.02em",
+            cursor: "pointer", 
+            boxShadow: "0 0 20px rgba(188,19,254,0.25)", 
+            marginTop: 8
+          }}>
+            Değişiklikleri Kaydet
+          </button>
         </div>
 
         {/* Right Column: Canlı Test */}

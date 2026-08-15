@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import CropperModal from '@/components/CropperModal';
 
 const PLATFORMS_DATA = [
   { id: "instagram", name: "Instagram", color: "#E1306C", icon: "fa-instagram" },
@@ -124,45 +125,12 @@ export default function SharePage() {
   
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
   const [isSharing, setIsSharing] = useState(false);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
 
   const togglePlatform = (id: string) => {
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const cropImageToInstagramFormat = (dataUrl: string): Promise<string> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const aspectRatio = img.width / img.height;
-        // Instagram Feed allows 0.75 to 1.91. Target 0.8 (4:5) if too tall.
-        if (aspectRatio >= 0.75 && aspectRatio <= 1.91) {
-          resolve(dataUrl); 
-          return;
-        }
-        
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return resolve(dataUrl);
-
-        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
-
-        if (aspectRatio < 0.75) {
-          sHeight = sWidth / 0.8; 
-          sy = (img.height - sHeight) / 2; 
-        } else if (aspectRatio > 1.91) {
-          sWidth = sHeight * 1.91;
-          sx = (img.width - sWidth) / 2; 
-        }
-
-        canvas.width = sWidth;
-        canvas.height = sHeight;
-        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight);
-        resolve(canvas.toDataURL('image/jpeg', 0.9));
-      };
-      img.onerror = () => resolve(dataUrl);
-      img.src = dataUrl;
-    });
-  };
 
   const handleShare = async () => {
     if (!localText.trim() && !prompt.trim()) {
@@ -207,17 +175,12 @@ export default function SharePage() {
 
     setIsSharing(true);
     try {
-      let finalImage = localImage;
-      if (localImage && platformsToShare.some(p => p?.platform === 'instagram') && igFormat.toLowerCase() === 'feed') {
-        finalImage = await cropImageToInstagramFormat(localImage);
-      }
-
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
           action: 'create-post',
           payload: {
             content: localText || prompt,
-            mediaItems: finalImage ? [{ url: finalImage }] : [],
+            mediaItems: localImage ? [{ url: localImage }] : [],
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
             scheduledFor: publishMode === 'schedule' ? new Date(scheduleDate).toISOString() : undefined,
@@ -288,7 +251,17 @@ export default function SharePage() {
                   onChange={handleFileSelect} 
                 />
                 {localImage ? (
-                  <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
+                  <div className="relative w-full h-full group/image">
+                    <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
+                    {selectedPlatforms['instagram'] && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setIsCropperOpen(true); }}
+                        className="absolute bottom-4 right-4 bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-[0_4px_12px_rgba(225,48,108,0.4)] opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center gap-2"
+                      >
+                        <i className="fa-solid fa-crop-simple"></i> Kırp (Instagram 4:5)
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center">
                     <div className="mb-4 bg-[#00f0ff]/10 rounded-full p-4 border border-[#00f0ff]/30 border-dashed">
@@ -567,6 +540,18 @@ export default function SharePage() {
           
         </div>
       </div>
+      
+      {isCropperOpen && localImage && (
+        <CropperModal 
+          imageSrc={localImage}
+          aspectRatio={4/5}
+          onCancel={() => setIsCropperOpen(false)}
+          onCropComplete={(croppedImage) => {
+             setLocalImage(croppedImage);
+             setIsCropperOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }

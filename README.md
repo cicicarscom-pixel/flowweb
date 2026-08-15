@@ -10,8 +10,8 @@ Workigom projesi monorepo mimarisinden bağımsız ve modüler 4 ayrı projeye (
    - **Görev:** Ana landing page ve pazarlama sitesidir. /flow ve /ledger tanıtım sayfalarını içerir. Kullanıcı kayıt/giriş işlemlerini yürütmez, doğrudan uygulamanın login sayfasına yönlendirir.
    
 2. **Workigom Flow (Ana Uygulama)**
-   - **Repo:** cicicarscom-pixel/flow (Eski adıyla i_muhasebeci)
-   - **Domain:** low.workigom.com
+   - **Repo:** cicicarscom-pixel/flow (Eski adıyla ai_muhasebeci)
+   - **Domain:** flow.workigom.com
    - **Görev:** Flow'un gerçek yapay zeka ve otomasyon uygulamasıdır. Supabase ve arka plan API'lerine bağlıdır. Çalışması için Vercel üzerinde Environment Variables (Ortam Değişkenleri) yapılandırmasına ihtiyaç duyar.
 
 3. **Workigom Ledger (Ana Uygulama)**
@@ -25,66 +25,10 @@ Workigom projesi monorepo mimarisinden bağımsız ve modüler 4 ayrı projeye (
 
 ## Geliştirme ve Deployment Kuralları
 - **Yönlendirmeler:** Tanıtım sayfalarındaki "Giriş Yap" butonları (örn: www.workigom.com/flow veya /ledger), direkt olarak uygulamanın kendi domain'indeki (örn: https://flow.workigom.com/login) giriş sayfalarına yönlendirmelidir.
-- **Environment Variables:** low ve ledger gibi gerçek uygulama repoları Vercel'de deploy edilirken .env dosyasındaki tüm API ve veritabanı değişkenleri eksiksiz olarak Vercel paneline girilmelidir, aksi takdirde 500 Internal Server Error hatası alınır.
-- **Root Directory:** Repolar ayrıldığı için Vercel üzerindeki Root Directory ayarları boş bırakılmalıdır (Eskiden pps/flow vs. idi, artık tüm repolar kendi kök dizininde çalışır).
+- **Environment Variables:** flow ve ledger gibi gerçek uygulama repoları Vercel'de deploy edilirken .env dosyasındaki tüm API ve veritabanı değişkenleri eksiksiz olarak Vercel paneline girilmelidir, aksi takdirde 500 Internal Server Error hatası alınır.
+- **Root Directory:** Repolar ayrıldığı için Vercel üzerindeki Root Directory ayarları boş bırakılmalıdır (Eskiden apps/flow vs. idi, artık tüm repolar kendi kök dizininde çalışır).
 
 ---
-
-# Workigom FlowWeb - Dashboard UI
-
-Bu proje, Workigom AI platformunun gelişmiş statik HTML dashboard arayüzlerinin **Next.js (App Router)** mimarisine entegre edilmiş halidir. Tüm tasarım konfigürasyonları mobil uygulama mimarisine sadık kalınarak yeniden uyarlanmış ve performans odaklı bileşenlere dönüştürülmüştür.
-
-## 🚀 Proje Hakkında
-Temmuz 2026 kararlarına istinaden, dashboard içerisindeki ekranların her biri (`Anasayfa`, `Ai Muhasebe`, `Sosyal Medya`, `Ai Asistan`, `Analiz`) React ve Next.js App Router yapısına çevrilmiştir.
-
-- **Route Groups (`(dashboard)`):** Projedeki tüm dashboard sayfaları merkezi bir `layout.tsx` yapısı üzerinden servis edilmektedir. Böylece sayfalar arası geçişlerde sidebar ve header tekrarlarının önüne geçilerek asimetrik tasarım hataları giderilmiştir.
-- **Tasarım İzolasyonu:** Sayfalara özgü neon (glow) ve degrade (gradient) efektleri, `.module.css` dosyaları ile izole edilmiştir.
-- **Modülerlik:** Her statik ekran (`create-post`, `gelen-mesaj-analizi`, vb.) alt rotalar halinde ayrıştırılmıştır. Tasarımdaki öğeler statik iskelet (skeleton) standartlarına oturtulmuştur.
-
-## 🛠 Kullanılan Teknolojiler
-- **Framework:** Next.js 16 (App Router)
-- **Styling:** Tailwind CSS + Custom CSS Modules (Neon/Glow/Gradient efektleri için)
-- **Paket Yöneticisi:** npm
-- **İkonlar:** FontAwesome & Lucide
-
-## 📁 Sayfa Yapısı
-
-```
-src/app/(dashboard)/
-├── page.tsx (Anasayfa)
-├── ai-asistan/
-│   ├── page.tsx
-│   ├── isletme-hizmetleri/
-│   └── randevu/
-├── ai-muhasebe/
-│   ├── page.tsx
-│   ├── isletmem/
-│   ├── odeme-takvimi/
-│   └── veri-girisi/
-├── analiz/
-│   ├── page.tsx (Gönderi Analizi)
-│   └── gelen-mesaj-analizi/
-└── sosyal-medya/
-    ├── page.tsx
-    ├── create-post/ (AI Paylaşım)
-    ├── inbox/
-    ├── posts/
-    └── share/
-```
-
-## ⚙️ Kurulum ve Çalıştırma
-
-Projeyi lokalinizde çalıştırmak için:
-
-1. Bağımlılıkları yükleyin:
-   ```bash
-   npm install
-   ```
-2. Geliştirme sunucusunu başlatın:
-   ```bash
-   npm run dev
-   ```
-3. Tarayıcınızda [http://localhost:3000](http://localhost:3000) adresine gidin.
 
 # Workigom FlowWeb - Dashboard UI
 
@@ -160,6 +104,9 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 - **Canlı Test ve Simülasyon (Ağustos 2026):** Ai Asistan sağ sütununa "Canlı Test" bölümü eklendi. Kullanıcı "Asistan ile konuşun" kısmına odaklandığında (focus) örnek simülasyon silinerek temiz bir test paneline geçilmesi sağlandı.
 - **Ai Randevu Yönetimi Adaptasyonu (Ağustos 2026):** Mobil sürümdeki Randevu ekranı, web versiyonunun şık renkleri ve cam efektli modal tasarımıyla Next.js ortamına uyarlandı (Takvim Şeridi, Isı Haritası, Dikey Timeline).
 - **Sosyal Medya Bölünmüş ve Kaydırılabilir Düzeni (Ağustos 2026):** Eski "cute" (sevimli) kart tasarımı korunarak tüm sosyal medya yönetim ekranı mobildeki "kaydırmalı slider" mantığına çekildi. Üst kısımda bağlanabilecek tüm hesaplar (Hesabınızı Ekleyin), alt kısımda ise halihazırda bağlanmış hesaplar (Eklediğiniz Hesaplarınız) yatay düzlemde listelendi. Her iki liste için özel bir "drag-to-scroll" (fare ile sürükleyerek kaydırma) bileşeni geliştirilerek akıcı bir kullanıcı deneyimi sağlandı. Kart boyutları daha zarif (premium) hale getirildi.
-- Trigger Vercel build
-
 - **Web ve Mobil UI/UX Senkronizasyonu (Ağustos 2026):** Mobil platform ile tam fonksiyonel ve görsel eşitlik sağlandı. Web üzerindeki Dashboard widget'ları mobil tarafa eklendi, Mobil taraftaki Sosyal Medya kartları ise Web'in şık cam (glassmorphism) ve neon tasarımlı, sevimli emoji (👥, 📸) ikonlarına sahip yatay kaydırılabilir yapısına kavuşturuldu.
+- **Web ve Mobil Supabase Veritabanı Senkronizasyonu (Ağustos 2026):** Web panelindeki tüm sahte (mock) veriler kaldırılarak uygulamanın mobil versiyonunda kullanılan gerçek Supabase veritabanına bağlandı.
+  - *Ai Muhasebe ve Ödeme Takvimi:* `transactions` tablosuna ve realtime aboneliklere bağlandı.
+  - *Sosyal Medya:* Platform hesapları (`social_accounts`) ve gönderiler (`posts`) veritabanından çekilir hale getirildi. Zernio bağlantıları yapılandırıldı.
+  - *Gelen Kutusu:* Mesajlar (`conversations`, `messages`), yorumlar (`comments`) ve değerlendirmeler (`reviews`) Supabase ve Zernio edge function'larına bağlanarak tamamen gerçek verilere dönüştürüldü.
+  - *Analiz:* Günlük gösterim (views), beğeniler (likes), takipçi istatistikleri ve platform bazlı analiz verileri `zernio-client` Supabase fonksiyonu kullanılarak çekilir duruma getirildi. Birebir mobil entegrasyonu sağlandı.

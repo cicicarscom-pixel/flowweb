@@ -90,11 +90,11 @@ export default function SosyalMedyaPage() {
         <Link href="/sosyal-medya/share" className="group glass p-6 rounded-2xl border border-app-border hover:border-[#4edea3]/50 transition-all cursor-pointer relative overflow-hidden flex flex-col items-center justify-center gap-4 hover:scale-[1.02] shadow-none hover:shadow-[0_0_30px_rgba(78,222,163,0.15)]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#4edea3]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="w-16 h-16 rounded-full bg-[#4edea3]/10 flex items-center justify-center border border-[#4edea3]/30 group-hover:border-[#4edea3]/60 transition-colors shadow-[0_0_15px_rgba(78,222,163,0.2)]">
-            <i className="fa-solid fa-chart-pie text-[#4edea3] text-2xl"></i>
+            <i className="fa-solid fa-paper-plane text-[#4edea3] text-2xl"></i>
           </div>
           <div className="text-center relative z-10">
             <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Paylaşım Merkezi</h3>
-            <p className="text-xs text-app-muted font-jetbrains">İstatistik ve raporlar</p>
+            <p className="text-xs text-app-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
           </div>
         </Link>
       </div>

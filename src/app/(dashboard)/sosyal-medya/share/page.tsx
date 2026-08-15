@@ -136,7 +136,34 @@ export default function SharePage() {
     
     const platformsToShare = Object.keys(selectedPlatforms).filter(p => selectedPlatforms[p]).map(p => {
       const acc = zernioAccounts.find((a: any) => a.platform.toLowerCase() === p);
-      return acc ? { platform: p, accountId: acc._id || acc.id || acc.uuid || acc.zernio_account_id } : null;
+      if (!acc) return null;
+      
+      let platformOptions: any = {};
+      
+      if (p === 'instagram') {
+        platformOptions = {
+          contentType: igFormat.toLowerCase(),
+          aiGenerated: igAiLabel,
+          firstComment: igFirstComment,
+          caption: igCustomCaption || undefined
+        };
+      } else if (p === 'linkedin') {
+        platformOptions = {
+          firstComment: liFirstComment,
+          caption: liCustomCaption || undefined
+        };
+      } else if (p === 'twitter') {
+        platformOptions = {
+          isThread: twIsThread,
+          caption: twCustomCaption || undefined
+        };
+      }
+
+      return { 
+        platform: p, 
+        accountId: acc._id || acc.id || acc.uuid || acc.zernio_account_id,
+        platformSpecificData: Object.keys(platformOptions).length > 0 ? platformOptions : undefined
+      };
     }).filter(Boolean);
 
     if (platformsToShare.length === 0) {

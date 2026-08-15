@@ -24,6 +24,29 @@ export default function SharePage() {
   const supabase = createClient();
   const [zernioAccounts, setZernioAccounts] = useState<any[]>([]);
 
+  // Publishing Mode
+  const [publishMode, setPublishMode] = useState('now'); 
+  const [scheduleDate, setScheduleDate] = useState('04.07.2026 14:00');
+
+  // Facebook
+  const [fbFormat, setFbFormat] = useState('Feed');
+  const [fbFirstComment, setFbFirstComment] = useState('');
+  const [fbCustomCaption, setFbCustomCaption] = useState('');
+
+  // Instagram
+  const [igFormat, setIgFormat] = useState('Feed');
+  const [igAiLabel, setIgAiLabel] = useState(false);
+  const [igFirstComment, setIgFirstComment] = useState('');
+  const [igCustomCaption, setIgCustomCaption] = useState('');
+
+  // LinkedIn
+  const [liFirstComment, setLiFirstComment] = useState('');
+  const [liCustomCaption, setLiCustomCaption] = useState('');
+
+  // Twitter/X
+  const [twIsThread, setTwIsThread] = useState(false);
+  const [twCustomCaption, setTwCustomCaption] = useState('');
+
   useEffect(() => {
     const fetchAccounts = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -285,6 +308,135 @@ export default function SharePage() {
                 )
               })}
             </div>
+          </div>
+
+          {/* Platform Specific Settings */}
+          <div className="mt-6 flex flex-col gap-4">
+            
+            {/* Facebook */}
+            {selectedPlatforms['facebook'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#1877F2]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#1877F2] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <i className="fa-brands fa-facebook text-[#1877F2]"></i>
+                      <span className="text-[#e5e2e3] font-semibold text-sm">Facebook</span>
+                    </div>
+                    <div className="flex bg-[#0e0e0f]/50 p-1 rounded-lg border border-white/5">
+                      {['Feed', 'Story', 'Reel'].map(fmt => (
+                        <button key={fmt} onClick={() => setFbFormat(fmt)} className={`px-3 py-1 rounded-md text-[10px] font-medium transition-colors ${fbFormat === fmt ? 'bg-[#1877F2] text-white' : 'text-[#b9cacb]'}`}>{fmt}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {fbFormat === 'Story' && <p className="text-[#b9cacb]/70 text-[11px] mb-4">İçerik 24 saat sonra kaybolur. Medya gerektirir.</p>}
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
+                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder="Drop any extra context or a CTA here." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                  <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{fbFirstComment.length}/8000</p>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* Instagram */}
+            {selectedPlatforms['instagram'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#bc13fe]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#bc13fe] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
+                    <div className="flex items-center gap-2">
+                      <i className="fa-brands fa-instagram text-[#bc13fe]"></i>
+                      <span className="text-[#e5e2e3] font-semibold text-sm">Instagram</span>
+                    </div>
+                    <div className="flex bg-[#0e0e0f]/50 p-1 rounded-lg border border-white/5">
+                      {['Feed', 'Story', 'Reel', 'Carousel'].map(fmt => (
+                        <button key={fmt} onClick={() => setIgFormat(fmt)} className={`px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${igFormat === fmt ? 'bg-[#bc13fe] text-white' : 'text-[#b9cacb]'}`}>{fmt}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {igFormat === 'Story' && <p className="text-[#b9cacb]/70 text-[11px] mb-4">İçerik 24 saat sonra kaybolur. Medya gerektirir.</p>}
+                  <button onClick={() => setIgAiLabel(!igAiLabel)} className="flex items-start gap-2 mb-4 group text-left">
+                    <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center shrink-0 transition-colors ${igAiLabel ? 'bg-[#4edea3] border-[#4edea3]' : 'border-white/20 group-hover:border-white/40'}`}>
+                      {igAiLabel && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
+                    </div>
+                    <div>
+                      <p className="text-[#e5e2e3] text-xs font-medium">AI ile üretildi olarak işaretle</p>
+                      <p className="text-[#b9cacb]/60 text-[10px] mt-0.5 leading-tight">Instagram'ın AI içerik etiketini ekler. Medya tamamen veya büyük oranda AI ile oluşturulduğunda kullanın.</p>
+                    </div>
+                  </button>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
+                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder="Drop any extra context or a CTA here." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
+                  <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{igFirstComment.length}/2200</p>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* LinkedIn */}
+            {selectedPlatforms['linkedin'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#0A66C2]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0A66C2] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <i className="fa-brands fa-linkedin text-[#0A66C2]"></i>
+                    <span className="text-[#e5e2e3] font-semibold text-sm">LinkedIn</span>
+                  </div>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
+                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder="Add a first comment to boost engagement." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                  <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{liFirstComment.length}/1250</p>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* Twitter/X */}
+            {selectedPlatforms['twitter'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-white/10 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <i className="fa-brands fa-x-twitter text-white"></i>
+                    <span className="text-[#e5e2e3] font-semibold text-sm">X (Twitter)</span>
+                  </div>
+                  <button onClick={() => setTwIsThread(!twIsThread)} className="flex items-center gap-2 mb-4 group">
+                    <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${twIsThread ? 'bg-[#4edea3] border-[#4edea3]' : 'border-white/20 group-hover:border-white/40'}`}>
+                      {twIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
+                    </div>
+                    <span className="text-[#e5e2e3] text-xs font-medium">Create a thread</span>
+                  </button>
+                  {twIsThread && <p className="text-[#b9cacb]/70 text-[10px] mb-4">Main content + media become tweet 1. Add more below.</p>}
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* Publishing Settings */}
+            <div className="mt-2 bg-[#1c1b1c]/50 rounded-[14px] border border-white/5 p-4 mb-20">
+              <label className="block text-[#b9cacb] text-xs font-medium mb-3">yayıncılık</label>
+              <div className="flex bg-[#0e0e0f]/50 p-1 rounded-lg border border-white/5 mb-4">
+                <button onClick={() => setPublishMode('schedule')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'schedule' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#b9cacb] hover:text-white'}`}>Planlı</button>
+                <button onClick={() => setPublishMode('now')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'now' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#b9cacb] hover:text-white'}`}>Şimdi</button>
+              </div>
+              {publishMode === 'schedule' ? (
+                <div className="bg-[#4edea3]/10 border border-[#4edea3]/30 rounded-lg p-3 flex items-start gap-2">
+                  <i className="fa-solid fa-calendar text-[#4edea3] mt-0.5"></i>
+                  <div className="w-full">
+                    <span className="block text-[#e5e2e3] text-xs font-medium mb-1">Zamanlanmış Yayın</span>
+                    <input type="text" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)} className="bg-transparent text-[#4edea3] text-sm font-semibold outline-none w-full" />
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-[#4edea3]/10 border border-[#4edea3]/30 rounded-lg p-3 flex items-start gap-2">
+                  <i className="fa-solid fa-circle-info text-[#4edea3] mt-0.5"></i>
+                  <span className="text-[#4edea3] text-xs font-medium leading-tight">Gönderi, seçilen tüm platformlarda anında yayınlanacaktır.</span>
+                </div>
+              )}
+            </div>
+
           </div>
 
           {/* Publish Button Bar */}

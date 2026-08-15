@@ -59,6 +59,7 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
 export default function SosyalMedyaPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isConnecting, setIsConnecting] = useState<string | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -89,6 +90,27 @@ export default function SosyalMedyaPage() {
       console.warn("Error fetching accounts:", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleConnectZernio = async (platformId: string) => {
+    setIsConnecting(platformId);
+    try {
+      const redirectUrl = window.location.origin + '/sosyal-medya';
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl } }
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      if (data?.data?.authUrl) {
+        window.location.href = data.data.authUrl;
+      }
+    } catch (err) {
+      console.warn("Error connecting account:", err);
+      alert("Hesap bağlama linki alınırken bir hata oluştu.");
+    } finally {
+      setIsConnecting(null);
     }
   };
 
@@ -272,10 +294,11 @@ export default function SosyalMedyaPage() {
                 </p>
 
                 <button 
-                  onClick={() => alert('Hesap bağlama işlemi mobil uygulamadan veya web yönlendirmesi ile yapılmalıdır.')}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600 }}
+                  onClick={() => handleConnectZernio(p.id)}
+                  disabled={isConnecting === p.id}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
                 >
-                  + Hesap Bağla
+                  {isConnecting === p.id ? "Bağlanıyor..." : "+ Hesap Bağla"}
                 </button>
               </div>
             ))}

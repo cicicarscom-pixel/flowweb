@@ -60,13 +60,53 @@ export default function SosyalMedyaPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [activeProfile, setActiveProfile] = useState<any>(null);
+  const [isProfilesDropdownOpen, setIsProfilesDropdownOpen] = useState(false);
   const supabase = createClient();
+
+  const fetchProfiles = async () => {
+    try {
+      const { data } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'get-zernio-profiles', payload: {} }
+      });
+      if (data?.data?.profiles) {
+        const fetchedProfiles = data.data.profiles;
+        setProfiles(fetchedProfiles);
+        const aiEsnaf = fetchedProfiles.find((p: any) => p.name === 'AI Esnaf Profil');
+        if (aiEsnaf) setActiveProfile(aiEsnaf);
+        else if (fetchedProfiles.length > 0) setActiveProfile(fetchedProfiles[0]);
+      }
+    } catch (err) {
+      console.warn("Failed to fetch profiles", err);
+    }
+  };
+
+  const handleCreateProfile = async () => {
+    const name = prompt("Yeni profilin adını giriniz:");
+    if (!name?.trim()) return;
+    try {
+      const { data } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'add-zernio-profile', payload: { name: name.trim() } }
+      });
+      if (data?.data?.profile) {
+        setProfiles(prev => [...prev, data.data.profile]);
+        setActiveProfile(data.data.profile);
+      } else if (data?.error) {
+        alert("Hata: " + data.error);
+      }
+    } catch (err) {
+      alert("Profil oluşturulurken hata oluştu.");
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const accountId = params.get('accountId');
     const platform = params.get('platform') || params.get('connected');
     const username = params.get('username');
+
+    fetchProfiles();
 
     if (accountId) {
       handleSaveZernioAccount(accountId, platform, username);
@@ -132,9 +172,10 @@ export default function SosyalMedyaPage() {
   const handleConnectZernio = async (platformId: string) => {
     setIsConnecting(platformId);
     try {
-      const redirectUrl = window.location.origin + '/sosyal-medya/callback'; // Geçici özel callback route'u kullanmak daha güvenli olabilir ancak şimdilik sayfaya dönüyoruz
+      const redirectUrl = window.location.origin + '/sosyal-medya/callback'; 
+      const profileId = activeProfile?.id || activeProfile?._id || activeProfile?.profileId;
       const { data, error } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl: window.location.origin + '/sosyal-medya' } }
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl: window.location.origin + '/sosyal-medya', profileId } }
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -209,6 +250,55 @@ export default function SosyalMedyaPage() {
             <p className="text-xs text-app-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
           </div>
         </Link>
+      </div>
+
+      {/* Zernio Profil Yönetimi */}
+      <div className="mb-10 flex items-center justify-between">
+        <div className="relative">
+          <label className="block text-[#b9cacb] text-xs font-medium mb-2">Platform Profiliniz (Zernio Workspace)</label>
+          <button 
+            onClick={() => setIsProfilesDropdownOpen(!isProfilesDropdownOpen)}
+            className="flex items-center justify-between bg-[#1c1b1c]/80 rounded-xl border border-white/10 px-4 py-3 min-w-[280px] hover:bg-[#1c1b1c] transition-colors shadow-lg"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 rounded-full bg-[#ffb95f]"></div>
+              <span className="text-[#e5e2e3] font-medium">{activeProfile?.name || "Profil Seçin"}</span>
+            </div>
+            <i className={`fa-solid fa-chevron-down text-[#b9cacb] transition-transform ${isProfilesDropdownOpen ? 'rotate-180' : ''}`}></i>
+          </button>
+          
+          {isProfilesDropdownOpen && (
+            <div className="absolute top-full left-0 mt-2 w-[280px] bg-[#1c1b1c] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+              <div className="px-3 py-2 text-[10px] text-[#b9cacb] border-b border-white/5 bg-black/20 font-medium">All profiles</div>
+              <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
+                {profiles.map((p, idx) => {
+                  const isActive = activeProfile && (activeProfile.id === p.id || activeProfile._id === p._id);
+                  return (
+                    <button 
+                      key={idx}
+                      onClick={() => { setActiveProfile(p); setIsProfilesDropdownOpen(false); }}
+                      className={`w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${isActive ? 'bg-[#4edea3]/5' : ''}`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2.5 h-2.5 rounded-full ${isActive ? 'bg-[#4edea3]' : 'bg-[#e5e2e3]/40'}`}></div>
+                        <span className={`text-sm ${isActive ? 'text-[#4edea3] font-semibold' : 'text-[#e5e2e3]'}`}>{p.name}</span>
+                      </div>
+                      {isActive && <i className="fa-solid fa-check text-[#4edea3] text-sm"></i>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <button 
+          onClick={handleCreateProfile}
+          className="flex items-center gap-2 bg-[#4edea3]/10 text-[#4edea3] border border-[#4edea3]/30 px-4 py-2.5 rounded-xl hover:bg-[#4edea3]/20 transition-all font-medium text-sm mt-6 shadow-[0_0_15px_rgba(78,222,163,0.15)]"
+        >
+          <i className="fa-solid fa-plus"></i>
+          Yeni Profil
+        </button>
       </div>
 
       {/* Eklediğiniz Hesaplarınız (Bağlı Olanlar) */}

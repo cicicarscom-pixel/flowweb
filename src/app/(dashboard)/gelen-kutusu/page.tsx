@@ -13,9 +13,69 @@ export default function GelenKutusuPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [isSendingReply, setIsSendingReply] = useState(false);
+
   const supabase = createClient();
 
   // Fetch Data
+  const handleSendReply = async (comment: any) => {
+    if (!replyText.trim()) return;
+    setIsSendingReply(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.id) throw new Error("Oturum bulunamadı");
+      
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: { 
+          action: 'reply-comment', 
+          payload: { 
+            userId: session.user.id,
+            postId: comment.zernio_post_id,
+            accountId: comment.posts?.accountId || comment.accountId,
+            commentId: comment.zernio_comment_id,
+            message: replyText,
+            platform: comment.platform
+          } 
+        }
+      });
+      
+      if (error || data?.error) {
+        throw new Error(error?.message || data?.error);
+      }
+      
+      // Optimistic UI Update (insert locally)
+      const newComment = {
+        id: Math.random().toString(),
+        post_id: comment.post_id,
+        zernio_comment_id: data?.id || data?.data?.id || `mock_${Date.now()}`,
+        zernio_post_id: comment.zernio_post_id,
+        content: replyText,
+        username: 'Mağaza (Ben)',
+        platform: comment.platform,
+        created_at: new Date().toISOString(),
+        liked: false,
+        hidden: false,
+      };
+      setComments(prev => [newComment, ...prev]);
+
+      await supabase.from('comments').insert({
+        ...newComment,
+        id: undefined // Let db generate uuid
+      });
+
+      alert("Yanıt başarıyla gönderildi!");
+      setReplyingTo(null);
+      setReplyText("");
+    } catch (err: any) {
+      console.error(err);
+      alert("Yanıt gönderilemedi: " + err.message);
+    } finally {
+      setIsSendingReply(false);
+    }
+  };
+
   const fetchConversations = async () => {
     try {
       const { data, error } = await supabase
@@ -82,7 +142,7 @@ export default function GelenKutusuPage() {
           const cachedPics = getCachedPictures();
           const enhancedData = data.map(c => ({
              ...c,
-             picture: c.picture || cachedPics[c.zernio_post_id] || null
+             picture: c.picture || (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || cachedPics[c.zernio_comment_id] || null
           }));
           setComments(enhancedData);
           
@@ -103,7 +163,7 @@ export default function GelenKutusuPage() {
              
              setComments(prev => prev.map(c => ({
                 ...c,
-                picture: c.picture || newPics[c.zernio_post_id] || null
+                picture: c.picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || newPics[c.zernio_comment_id] || null
              })));
            }
            // Faz 2'yi tetikle
@@ -401,8 +461,8 @@ export default function GelenKutusuPage() {
                   </div>
                 )}
 
-                {comm.posts?.media_urls?.[0] ? (
-                  <img src={comm.posts.media_urls[0]} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
+                {comm.picture || comm.posts?.media_urls?.[0] ? (
+                  <img src={comm.picture || comm.posts.media_urls[0]} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
                 ) : (
                   <div className="w-14 h-14 bg-white/5 rounded-lg border border-white/5 flex-shrink-0 flex items-center justify-center">
                     <i className="fa-regular fa-image text-app-muted"></i>
@@ -425,8 +485,44 @@ export default function GelenKutusuPage() {
                   
                   {!isSelectionMode && (
                     <div className="mt-3 flex items-center justify-end">
-                      <button className="px-3 py-1.5 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/20 text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors text-xs font-semibold flex items-center gap-1.5">
-                        <i className="fa-regular fa-comment-dots"></i> Yorumları Gör
+                      <button 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          setReplyingTo(comm.id); 
+                          setReplyText(`@${comm.author_name || comm.username} `); 
+                        }}
+                        className="px-3 py-1.5 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/20 text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors text-xs font-semibold flex items-center gap-1.5"
+                      >
+                        <i className="fa-solid fa-reply"></i> Yanıtla
+                      </button>
+                    </div>
+                  )}
+
+                  {replyingTo === comm.id && (
+                    <div 
+                      className="mt-3 pt-3 border-t border-white/5 flex gap-2"
+                      onClick={(e) => e.stopPropagation()} // prevent row selection when interacting with input
+                    >
+                      <input 
+                        type="text" 
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Yanıtınızı yazın..." 
+                        className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
+                        autoFocus
+                      />
+                      <button 
+                        onClick={() => handleSendReply(comm)}
+                        disabled={isSendingReply}
+                        className="px-4 py-2 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 min-w-[80px]"
+                      >
+                        {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : "Gönder"}
+                      </button>
+                      <button 
+                        onClick={() => { setReplyingTo(null); setReplyText(""); }}
+                        className="px-3 py-2 bg-white/5 hover:bg-white/10 text-[#849495] rounded-lg text-sm transition-colors"
+                      >
+                        İptal
                       </button>
                     </div>
                   )}

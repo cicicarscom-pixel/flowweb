@@ -114,6 +114,18 @@ export default function SosyalMedyaPage() {
     } else {
       fetchAccounts();
     }
+
+    // Web Focus Radar: Kullanıcı tarayıcı sekmesine döndüğünde Zernio hesaplarını anlık sync et
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchAccounts(true);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const handleSaveZernioAccount = async (accountId: string, platform: string | null, username: string | null) => {

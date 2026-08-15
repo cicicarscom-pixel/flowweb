@@ -45,15 +45,78 @@ export default function GelenKutusuPage() {
     }
   };
 
-  const fetchComments = async () => {
+  const CACHE_TTL_MS = 6 * 24 * 60 * 60 * 1000; // 6 gün
+  
+  const getCachedPictures = () => {
     try {
-      const { data, error } = await supabase
-        .from('comments')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (!error && data) {
-        setComments(data);
+       const cached = localStorage.getItem('zernio_pic_cache');
+       if (!cached) return {};
+       const parsed = JSON.parse(cached);
+       if (Date.now() - parsed.timestamp > CACHE_TTL_MS) {
+          localStorage.removeItem('zernio_pic_cache');
+          return {};
+       }
+       return parsed.data || {};
+    } catch { return {}; }
+  };
+
+  const setCachedPictures = (data: any) => {
+    try {
+      localStorage.setItem('zernio_pic_cache', JSON.stringify({
+        timestamp: Date.now(),
+        data
+      }));
+    } catch {}
+  };
+
+  const fetchComments = async (phase: number = 1) => {
+    try {
+      if (phase === 1) {
+        // Faz 1: Local DB + Önbellekteki Resimler
+        const { data, error } = await supabase
+          .from('comments')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (!error && data) {
+          const cachedPics = getCachedPictures();
+          const enhancedData = data.map(c => ({
+             ...c,
+             picture: c.picture || cachedPics[c.zernio_post_id] || null
+          }));
+          setComments(enhancedData);
+          
+          // Faz 1.5'i tetikle
+          setTimeout(() => fetchComments(1.5), 500);
+        }
+      } else if (phase === 1.5) {
+        // Faz 1.5: Eksik resimleri Edge Function'dan çek ve önbellekle
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+           const { data: picData } = await supabase.functions.invoke('zernio-client', {
+              body: { action: 'get-inbox-pictures', payload: { userId: session.user.id } }
+           });
+           if (picData?.data && Object.keys(picData.data).length > 0) {
+             const newPics = picData.data;
+             const currentCache = getCachedPictures();
+             setCachedPictures({ ...currentCache, ...newPics });
+             
+             setComments(prev => prev.map(c => ({
+                ...c,
+                picture: c.picture || newPics[c.zernio_post_id] || null
+             })));
+           }
+           // Faz 2'yi tetikle
+           setTimeout(() => fetchComments(2), 2000);
+        }
+      } else if (phase === 2) {
+         // Faz 2: Zernio'dan eksik yorumları eşitle (sync-comments)
+         const { data: { session } } = await supabase.auth.getSession();
+         if (session?.user?.id) {
+            await supabase.functions.invoke('zernio-client', {
+              body: { action: 'sync-comments', payload: { userId: session.user.id } }
+            });
+         }
       }
     } catch (err) {
       console.warn("Comments fetch err:", err);
@@ -78,14 +141,17 @@ export default function GelenKutusuPage() {
   useEffect(() => {
     const loadAll = async () => {
       setIsLoading(true);
-      await Promise.all([fetchConversations(), fetchComments(), fetchReviews()]);
+      await Promise.all([fetchConversations(), fetchComments(1), fetchReviews()]);
       setIsLoading(false);
     };
     loadAll();
 
-    // Realtime Subscriptions
+    // Realtime Subscriptions (Döngü Korumalı)
     const convChannel = supabase.channel('web_realtime_conversations')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, fetchConversations)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, fetchConversations)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'conversations' }, (payload) => {
+         setConversations(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
+      })
       .subscribe();
 
     const msgChannel = supabase.channel('web_realtime_messages')
@@ -93,11 +159,20 @@ export default function GelenKutusuPage() {
       .subscribe();
 
     const commentChannel = supabase.channel('web_realtime_comments')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, fetchComments)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => fetchComments(1))
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comments' }, (payload) => {
+         setComments(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'comments' }, (payload) => {
+         setComments(prev => prev.filter(c => c.id !== payload.old.id));
+      })
       .subscribe();
 
     const reviewChannel = supabase.channel('web_realtime_reviews')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, fetchReviews)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, fetchReviews)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload) => {
+         setReviews(prev => prev.map(r => r.id === payload.new.id ? { ...r, ...payload.new } : r));
+      })
       .subscribe();
 
     return () => {

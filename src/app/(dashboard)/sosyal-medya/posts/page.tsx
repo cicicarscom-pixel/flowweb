@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
 
 const FILTERS = [
   { id: 'all', label: 'Tümü' },
@@ -11,40 +11,47 @@ const FILTERS = [
   { id: 'failed', label: 'Hatalı' }
 ];
 
-const MOCK_POSTS = [
-  {
-    id: "1",
-    content: "Yeni yaz koleksiyonumuz mağazalarda! #moda #yaz",
-    platforms: ["instagram", "facebook"],
-    scheduled_for: "2026-08-01T10:00:00Z",
-    status: "scheduled",
-    media_urls: ["https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=200&h=200&fit=crop"],
-    metrics: { likes: "-", comments: "-", shares: "-", saves: "-", clicks: "-", views: "-", impressions: "-", reach: "-" }
-  },
-  {
-    id: "2",
-    content: "İndirim günleri başladı, %50'ye varan fırsatları kaçırmayın.",
-    platforms: ["instagram", "whatsapp"],
-    scheduled_for: "2026-07-25T14:30:00Z",
-    status: "published",
-    media_urls: ["https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=200&h=200&fit=crop"],
-    metrics: { likes: "1200", comments: "48", shares: "12", saves: "89", clicks: "340", views: "4500", impressions: "5200", reach: "4100" }
-  },
-  {
-    id: "3",
-    content: "Sistemsel bir hata nedeniyle yüklenemedi.",
-    platforms: ["linkedin"],
-    scheduled_for: "2026-07-30T09:00:00Z",
-    status: "failed",
-    media_urls: [],
-    metrics: { likes: "-", comments: "-", shares: "-", saves: "-", clicks: "-", views: "-", impressions: "-", reach: "-" }
-  }
-];
-
 export default function TumGonderilerPage() {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [posts, setPosts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const filteredPosts = MOCK_POSTS.filter(post => {
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data } = await supabase
+          .from('posts')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (data) {
+          setPosts(data);
+        }
+      } catch (err) {
+        console.warn("Posts fetch error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPosts();
+
+    // Subscribe to realtime changes
+    const channel = supabase
+      .channel('realtime_posts')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+        fetchPosts();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const filteredPosts = posts.filter(post => {
     if (activeFilter === 'all') return true;
     return post.status === activeFilter;
   });
@@ -68,6 +75,7 @@ export default function TumGonderilerPage() {
   };
 
   const formatDate = (isoString: string) => {
+    if (!isoString) return 'Belirtilmedi';
     const d = new Date(isoString);
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   };
@@ -82,7 +90,8 @@ export default function TumGonderilerPage() {
   };
 
   const getPlatformIcon = (platform: string) => {
-    switch (platform) {
+    const p = platform.toLowerCase();
+    switch (p) {
       case 'instagram': return "fa-instagram";
       case 'facebook': return "fa-facebook";
       case 'whatsapp': return "fa-whatsapp";
@@ -140,10 +149,15 @@ export default function TumGonderilerPage() {
           </div>
 
           {/* Table Rows */}
-          {filteredPosts.length > 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00f0ff]"></div>
+            </div>
+          ) : filteredPosts.length > 0 ? (
             filteredPosts.map((item) => {
               const statusColor = getStatusColor(item.status);
               const isScheduled = item.status === 'scheduled';
+              const platformsArray = Array.isArray(item.platforms) ? item.platforms : [];
 
               return (
                 <div key={item.id} className="flex items-center border-b border-white/5 py-3 px-5 hover:bg-white/5 transition-colors" style={{ opacity: isScheduled ? 0.7 : 1 }}>
@@ -164,15 +178,17 @@ export default function TumGonderilerPage() {
                       </div>
                     )}
                     <span className="text-[#e5e2e3] text-[13px] font-medium line-clamp-2 leading-tight">
-                      {getPreviewText(item.content)}
+                      {getPreviewText(item.content || item.title)}
                     </span>
                   </div>
 
                   {/* Platforms */}
                   <div style={{ width: 100 }} className="flex justify-center items-center gap-1">
-                    {item.platforms.map((plat, idx) => (
-                      <i key={idx} className={`fa-brands ${getPlatformIcon(plat)} text-[14px] text-[#e5e2e3]`}></i>
-                    ))}
+                    {platformsArray.map((platObj: any, idx: number) => {
+                      const platName = typeof platObj === 'string' ? platObj : platObj.platform;
+                      if (!platName) return null;
+                      return <i key={idx} className={`fa-brands ${getPlatformIcon(platName)} text-[14px] text-[#e5e2e3]`}></i>;
+                    })}
                   </div>
 
                   {/* Date */}
@@ -210,22 +226,22 @@ export default function TumGonderilerPage() {
 
                   {/* Metrics */}
                   {[
-                    item.metrics.likes,
-                    item.metrics.comments,
-                    item.metrics.shares,
-                    item.metrics.saves,
-                    item.metrics.clicks,
-                    item.metrics.views,
-                    item.metrics.impressions,
-                    item.metrics.reach
+                    item.metrics?.likes ?? item.likes,
+                    item.metrics?.comments ?? item.comments,
+                    item.metrics?.shares ?? item.shares,
+                    item.metrics?.saves ?? item.saves,
+                    item.metrics?.clicks ?? item.clicks,
+                    item.metrics?.views ?? item.views,
+                    item.metrics?.impressions ?? item.impressions,
+                    item.metrics?.reach ?? item.reach
                   ].map((val, idx) => (
                     <div key={idx} style={{ width: 60 }} className="flex justify-center items-center">
-                      <span className="text-[#849495] text-[12px]">{val}</span>
+                      <span className="text-[#849495] text-[12px]">{val != null ? val : '-'}</span>
                     </div>
                   ))}
 
                   {/* Actions */}
-                  <div style={{ width: 80 }} className="flex justify-center items-center">
+                  <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
                     {item.status === 'failed' && (
                       <button className="w-7 h-7 rounded bg-[#ff0050]/20 border border-[#ff0050]/40 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/30 transition-colors">
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>
@@ -248,11 +264,11 @@ export default function TumGonderilerPage() {
             })
           ) : (
             <div className="flex flex-col items-center justify-center mt-20 w-full">
-              <i className="fa-regular fa-file-lines text-[48px] text-[#849495] opacity-50 mb-4"></i>
-              <span className="text-[#849495] text-[14px]">Bu duruma ait gönderi bulunamadı.</span>
+              <i className="fa-regular fa-file-lines text-4xl text-[#849495] opacity-50 mb-4"></i>
+              <p className="text-[#849495] text-sm">Bu duruma ait gönderi bulunamadı.</p>
             </div>
           )}
-          
+
         </div>
       </div>
     </div>

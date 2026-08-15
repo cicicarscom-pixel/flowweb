@@ -1,78 +1,112 @@
 "use client";
 
-import React, { useState } from 'react';
-
-// --- DUMMY DATA ---
-const DUMMY_CONVERSATIONS = [
-  {
-    id: "conv-1",
-    participant_name: "Ahmet Yılmaz",
-    platform: "instagram",
-    lastMessageSnippet: "Fiyat bilgisi alabilir miyim?",
-    updated_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    unread_count: 2,
-    avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=100&h=100&fit=crop"
-  },
-  {
-    id: "conv-2",
-    participant_name: "Ayşe Demir",
-    platform: "facebook",
-    lastMessageSnippet: "Randevumu iptal etmek istiyorum.",
-    updated_at: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    unread_count: 0,
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-  },
-  {
-    id: "conv-3",
-    participant_name: "Can Kaya",
-    platform: "whatsapp",
-    lastMessageSnippet: "Konum atar mısınız?",
-    updated_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    unread_count: 1,
-    avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop"
-  }
-];
-
-const DUMMY_COMMENTS = [
-  {
-    id: "comm-1",
-    username: "mehmet_can",
-    platform: "instagram",
-    content: "Harika görünüyor! Ellerinize sağlık.",
-    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    post_image: "https://images.unsplash.com/photo-1600948836101-f9ffda59d250?w=100&h=100&fit=crop"
-  },
-  {
-    id: "comm-2",
-    username: "zeynep.beauty",
-    platform: "facebook",
-    content: "Kullandığınız ürünlerin markası nedir?",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
-    post_image: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=100&h=100&fit=crop"
-  }
-];
-
-const DUMMY_REVIEWS = [
-  {
-    id: "rev-1",
-    reviewer_name: "Selin Şahin",
-    rating: 5,
-    content: "Çok memnun kaldım, herkese tavsiye ederim. İlgi ve alaka süperdi.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-  },
-  {
-    id: "rev-2",
-    reviewer_name: "Burak Yılmaz",
-    rating: 4,
-    content: "Genel olarak iyiydi fakat biraz beklemek zorunda kaldım.",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-  }
-];
+import React, { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function GelenKutusuPage() {
   const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler'>('mesajlar');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const supabase = createClient();
+
+  // Fetch Data
+  const fetchConversations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          messages (
+            content,
+            created_at
+          )
+        `)
+        .order('updated_at', { ascending: false });
+      
+      if (!error && data) {
+        const enhancedData = data.map(conv => {
+          let lastMessageSnippet = 'Son mesajı görmek için dokunun';
+          if (conv.messages && conv.messages.length > 0) {
+            const sortedMessages = [...conv.messages].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            lastMessageSnippet = sortedMessages[0].content;
+          }
+          return { ...conv, lastMessageSnippet };
+        });
+        setConversations(enhancedData);
+      }
+    } catch (err) {
+      console.warn("Conversations fetch err:", err);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*, posts(media_urls, title)')
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        setComments(data);
+      }
+    } catch (err) {
+      console.warn("Comments fetch err:", err);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        setReviews(data);
+      }
+    } catch (err) {
+      console.warn("Reviews fetch err:", err);
+    }
+  };
+
+  useEffect(() => {
+    const loadAll = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchConversations(), fetchComments(), fetchReviews()]);
+      setIsLoading(false);
+    };
+    loadAll();
+
+    // Realtime Subscriptions
+    const convChannel = supabase.channel('web_realtime_conversations')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, fetchConversations)
+      .subscribe();
+
+    const msgChannel = supabase.channel('web_realtime_messages')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, fetchConversations)
+      .subscribe();
+
+    const commentChannel = supabase.channel('web_realtime_comments')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, fetchComments)
+      .subscribe();
+
+    const reviewChannel = supabase.channel('web_realtime_reviews')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, fetchReviews)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(convChannel);
+      supabase.removeChannel(msgChannel);
+      supabase.removeChannel(commentChannel);
+      supabase.removeChannel(reviewChannel);
+    };
+  }, []);
 
   const toggleSelection = (id: string) => {
     setSelectedItems(prev => 
@@ -80,21 +114,40 @@ export default function GelenKutusuPage() {
     );
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (selectedItems.length === 0) return;
     if (confirm(`Seçilen ${selectedItems.length} öğeyi silmek istediğinize emin misiniz?`)) {
-      // Dummy silme işlemi
-      setIsSelectionMode(false);
-      setSelectedItems([]);
-      alert("Seçilen öğeler silindi (Simülasyon).");
+      try {
+        if (activeTab === 'mesajlar') {
+          await supabase.from('conversations').delete().in('zernio_conversation_id', selectedItems);
+          await supabase.from('ai_communication_logs').delete().in('sender_id', selectedItems);
+        } else if (activeTab === 'yorumlar') {
+          const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+          const zernioIds = selectedItems.filter(id => !uuids.includes(id));
+          if (uuids.length > 0) await supabase.from('comments').delete().in('id', uuids);
+          if (zernioIds.length > 0) {
+            await supabase.from('comments').delete().in('zernio_comment_id', zernioIds);
+            await supabase.from('ai_communication_logs').delete().in('sender_id', zernioIds);
+          }
+        } else if (activeTab === 'degerlendirmeler') {
+           await supabase.from('reviews').delete().in('id', selectedItems);
+        }
+      } catch (e) {
+        console.warn("Delete err:", e);
+      } finally {
+        setIsSelectionMode(false);
+        setSelectedItems([]);
+      }
     }
   };
 
   const getPlatformIcon = (platform: string) => {
-    switch (platform) {
+    switch (platform?.toLowerCase()) {
       case 'instagram': return <i className="fa-brands fa-instagram text-[#ebb2ff]"></i>;
       case 'facebook': return <i className="fa-brands fa-facebook text-[#00f0ff]"></i>;
       case 'whatsapp': return <i className="fa-brands fa-whatsapp text-[#25D366]"></i>;
+      case 'youtube': return <i className="fa-brands fa-youtube text-[#ff0000]"></i>;
+      case 'linkedin': return <i className="fa-brands fa-linkedin text-[#0077b5]"></i>;
       default: return <i className="fa-solid fa-message text-gray-400"></i>;
     }
   };
@@ -168,116 +221,149 @@ export default function GelenKutusuPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-3">
+      <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-3 custom-scrollbar">
         
+        {isLoading ? (
+          <div className="flex items-center justify-center p-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00f0ff]"></div>
+          </div>
+        ) : activeTab === 'mesajlar' && conversations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-20 opacity-60">
+            <i className="fa-regular fa-comments text-4xl mb-4 text-[#849495]"></i>
+            <p className="text-[#849495] text-sm">Henüz mesaj bulunmuyor.</p>
+          </div>
+        ) : activeTab === 'yorumlar' && comments.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-20 opacity-60">
+            <i className="fa-regular fa-comment text-4xl mb-4 text-[#849495]"></i>
+            <p className="text-[#849495] text-sm">Henüz yorum bulunmuyor.</p>
+          </div>
+        ) : activeTab === 'degerlendirmeler' && reviews.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-20 opacity-60">
+            <i className="fa-regular fa-star text-4xl mb-4 text-[#849495]"></i>
+            <p className="text-[#849495] text-sm">Henüz değerlendirme bulunmuyor.</p>
+          </div>
+        ) : null}
+
         {/* --- MESAJLAR TAB --- */}
-        {activeTab === 'mesajlar' && (
-          DUMMY_CONVERSATIONS.map(conv => (
-            <div 
-              key={conv.id}
-              onClick={() => isSelectionMode ? toggleSelection(conv.id) : null}
-              className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                selectedItems.includes(conv.id) 
-                  ? 'border-[#00f0ff] bg-[#00f0ff]/5' 
-                  : 'border-app-border bg-app-card hover:border-app-muted/40'
-              }`}
-            >
-              {isSelectionMode && (
-                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                  selectedItems.includes(conv.id) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-app-muted'
-                }`}>
-                  {selectedItems.includes(conv.id) && <i className="fa-solid fa-check text-xs"></i>}
-                </div>
-              )}
-              
-              <div className="relative w-12 h-12 flex-shrink-0">
-                <img src={conv.avatar} alt={conv.participant_name} className="w-full h-full object-cover rounded-full border border-white/10" />
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
-                  {getPlatformIcon(conv.platform)}
-                </div>
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
-                  <span className="text-xs text-app-muted flex-shrink-0">
-                    {new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
-                  </span>
-                </div>
-                <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-app-muted'}`}>
-                  {conv.lastMessageSnippet}
-                </p>
-              </div>
-
-              {!isSelectionMode && (
-                <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                  {conv.unread_count > 0 ? (
-                    <div className="bg-[#00f0ff] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                      {conv.unread_count}
-                    </div>
-                  ) : (
-                    <div className="w-5 h-5"></div> /* Placeholder for alignment */
-                  )}
-                  <button className="text-app-muted hover:text-[#00f0ff] transition-colors">
-                    <i className="fa-solid fa-reply"></i>
-                  </button>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-
-        {/* --- YORUMLAR TAB --- */}
-        {activeTab === 'yorumlar' && (
-          DUMMY_COMMENTS.map(comm => (
-            <div 
-              key={comm.id}
-              onClick={() => isSelectionMode ? toggleSelection(comm.id) : null}
-              className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                selectedItems.includes(comm.id) 
-                  ? 'border-[#bc13fe] bg-[#bc13fe]/5' 
-                  : 'border-app-border bg-app-card hover:border-app-muted/40'
-              }`}
-            >
-               {isSelectionMode && (
-                <div className={`mt-2 w-5 h-5 rounded flex items-center justify-center border transition-colors flex-shrink-0 ${
-                  selectedItems.includes(comm.id) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
-                }`}>
-                  {selectedItems.includes(comm.id) && <i className="fa-solid fa-check text-xs"></i>}
-                </div>
-              )}
-
-              <img src={comm.post_image} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5">
-                    {getPlatformIcon(comm.platform)}
-                    <span className="font-semibold text-on-surface text-sm truncate">@{comm.username}</span>
+        {!isLoading && activeTab === 'mesajlar' && (
+          conversations.map(conv => {
+            const selectId = conv.zernio_conversation_id || conv.id;
+            return (
+              <div 
+                key={conv.id}
+                onClick={() => isSelectionMode ? toggleSelection(selectId) : null}
+                className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
+                  selectedItems.includes(selectId) 
+                    ? 'border-[#00f0ff] bg-[#00f0ff]/5' 
+                    : 'border-app-border bg-app-card hover:border-app-muted/40'
+                }`}
+              >
+                {isSelectionMode && (
+                  <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
+                    selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-app-muted'
+                  }`}>
+                    {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
                   </div>
-                  <span className="text-xs text-app-muted whitespace-nowrap">
-                    {new Date(comm.created_at).toLocaleDateString('tr-TR')}
-                  </span>
-                </div>
-                <p className="text-sm text-app-muted line-clamp-2 leading-relaxed">
-                  {comm.content}
-                </p>
+                )}
                 
+                <div className="relative w-12 h-12 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center">
+                  <i className="fa-solid fa-user text-app-muted"></i>
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
+                    {getPlatformIcon(conv.platform)}
+                  </div>
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
+                    <span className="text-xs text-app-muted flex-shrink-0">
+                      {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
+                    </span>
+                  </div>
+                  <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-app-muted'}`}>
+                    {conv.lastMessageSnippet}
+                  </p>
+                </div>
+
                 {!isSelectionMode && (
-                  <div className="mt-3 flex items-center justify-end">
-                    <button className="px-3 py-1.5 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/20 text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors text-xs font-semibold flex items-center gap-1.5">
-                      <i className="fa-regular fa-comment-dots"></i> Yorumları Gör
+                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                    {conv.unread_count > 0 ? (
+                      <div className="bg-[#00f0ff] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                        {conv.unread_count}
+                      </div>
+                    ) : (
+                      <div className="w-5 h-5"></div> /* Placeholder for alignment */
+                    )}
+                    <button className="text-app-muted hover:text-[#00f0ff] transition-colors">
+                      <i className="fa-solid fa-reply"></i>
                     </button>
                   </div>
                 )}
               </div>
-            </div>
-          ))
+            )
+          })
+        )}
+
+        {/* --- YORUMLAR TAB --- */}
+        {!isLoading && activeTab === 'yorumlar' && (
+          comments.map(comm => {
+            const selectId = comm.zernio_comment_id || comm.id;
+            return (
+              <div 
+                key={comm.id}
+                onClick={() => isSelectionMode ? toggleSelection(selectId) : null}
+                className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
+                  selectedItems.includes(selectId) 
+                    ? 'border-[#bc13fe] bg-[#bc13fe]/5' 
+                    : 'border-app-border bg-app-card hover:border-app-muted/40'
+                }`}
+              >
+                {isSelectionMode && (
+                  <div className={`mt-2 w-5 h-5 rounded flex items-center justify-center border transition-colors flex-shrink-0 ${
+                    selectedItems.includes(selectId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                  }`}>
+                    {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
+                  </div>
+                )}
+
+                {comm.posts?.media_urls?.[0] ? (
+                  <img src={comm.posts.media_urls[0]} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
+                ) : (
+                  <div className="w-14 h-14 bg-white/5 rounded-lg border border-white/5 flex-shrink-0 flex items-center justify-center">
+                    <i className="fa-regular fa-image text-app-muted"></i>
+                  </div>
+                )}
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1.5">
+                      {getPlatformIcon(comm.platform)}
+                      <span className="font-semibold text-on-surface text-sm truncate">@{comm.author_name || comm.username}</span>
+                    </div>
+                    <span className="text-xs text-app-muted whitespace-nowrap">
+                      {comm.created_at ? new Date(comm.created_at).toLocaleDateString('tr-TR') : ''}
+                    </span>
+                  </div>
+                  <p className="text-sm text-app-muted line-clamp-2 leading-relaxed">
+                    {comm.content}
+                  </p>
+                  
+                  {!isSelectionMode && (
+                    <div className="mt-3 flex items-center justify-end">
+                      <button className="px-3 py-1.5 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/20 text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors text-xs font-semibold flex items-center gap-1.5">
+                        <i className="fa-regular fa-comment-dots"></i> Yorumları Gör
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })
         )}
 
         {/* --- DEĞERLENDİRMELER TAB --- */}
-        {activeTab === 'degerlendirmeler' && (
-          DUMMY_REVIEWS.map(rev => (
+        {!isLoading && activeTab === 'degerlendirmeler' && (
+          reviews.map(rev => (
             <div 
               key={rev.id}
               onClick={() => isSelectionMode ? toggleSelection(rev.id) : null}
@@ -299,7 +385,7 @@ export default function GelenKutusuPage() {
                   <h3 className="font-semibold text-on-surface">{rev.reviewer_name}</h3>
                 </div>
                 <span className="text-xs text-app-muted">
-                  {new Date(rev.created_at).toLocaleDateString('tr-TR')}
+                  {rev.created_at ? new Date(rev.created_at).toLocaleDateString('tr-TR') : ''}
                 </span>
               </div>
               

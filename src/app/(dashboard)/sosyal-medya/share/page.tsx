@@ -52,8 +52,8 @@ export default function SharePage() {
         setLocalImage(`data:image/jpeg;base64,${data.generatedImage}`);
       }
       
-      if (data?.reply) {
-        setLocalText(data.reply);
+      if (data?.text) {
+        setLocalText(data.text);
         setIsEditingCaption(true);
       }
     } catch (err: any) {
@@ -134,7 +134,7 @@ export default function SharePage() {
                   onChange={handleFileSelect} 
                 />
                 {localImage ? (
-                  <img src={localImage} alt="uploaded" className="w-full h-full object-cover" />
+                  <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
                 ) : (
                   <div className="flex flex-col items-center">
                     <div className="mb-4 bg-[#00f0ff]/10 rounded-full p-4 border border-[#00f0ff]/30 border-dashed">

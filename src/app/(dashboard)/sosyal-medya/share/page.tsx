@@ -123,9 +123,52 @@ export default function SharePage() {
   };
   
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
+  const [isSharing, setIsSharing] = useState(false);
 
   const togglePlatform = (id: string) => {
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleShare = async () => {
+    if (!localText.trim() && !prompt.trim()) {
+      return alert("Lütfen paylaşılacak bir metin girin.");
+    }
+    
+    const platformsToShare = Object.keys(selectedPlatforms).filter(p => selectedPlatforms[p]).map(p => {
+      const acc = zernioAccounts.find((a: any) => a.platform.toLowerCase() === p);
+      return acc ? { platform: p, accountId: acc._id || acc.id || acc.uuid || acc.zernio_account_id } : null;
+    }).filter(Boolean);
+
+    if (platformsToShare.length === 0) {
+      return alert("Lütfen en az bir platform seçin.");
+    }
+
+    setIsSharing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: {
+          action: 'create-post',
+          payload: {
+            content: localText || prompt,
+            mediaItems: localImage ? [{ url: localImage }] : [],
+            platforms: platformsToShare,
+            publishNow: publishMode === 'now',
+            scheduledFor: publishMode === 'schedule' ? new Date(scheduleDate).toISOString() : undefined,
+          }
+        }
+      });
+
+      if (error || data?.error) {
+        throw new Error(error?.message || data?.error);
+      }
+
+      alert("Gönderi başarıyla paylaşıldı!");
+    } catch (e: any) {
+      console.error(e);
+      alert("Gönderi paylaşılırken bir hata oluştu: " + e.message);
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   return (
@@ -441,8 +484,17 @@ export default function SharePage() {
 
           {/* Publish Button Bar */}
           <div className="fixed bottom-0 left-0 lg:left-64 right-0 p-5 bg-gradient-to-t from-[#0A0A0B] to-transparent pointer-events-none flex justify-center z-50">
-            <button className="w-full max-w-sm py-3.5 rounded-full bg-gradient-to-r from-[#4edea3] to-[#00f0ff] text-[#0A0A0B] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(78,222,163,0.3)] hover:opacity-90 transition-opacity pointer-events-auto">
-              <i className="fa-solid fa-paper-plane"></i> Şimdi Paylaş
+            <button 
+              onClick={handleShare}
+              disabled={isSharing}
+              className={`w-full max-w-sm py-3.5 rounded-full ${isSharing ? 'bg-gray-500' : 'bg-gradient-to-r from-[#4edea3] to-[#00f0ff] hover:opacity-90'} text-[#0A0A0B] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(78,222,163,0.3)] transition-opacity pointer-events-auto`}
+            >
+              {isSharing ? (
+                 <i className="fa-solid fa-spinner fa-spin"></i>
+              ) : (
+                 <i className="fa-solid fa-paper-plane"></i> 
+              )}
+              {isSharing ? 'Paylaşılıyor...' : 'Şimdi Paylaş'}
             </button>
           </div>
           

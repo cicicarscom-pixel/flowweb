@@ -135,14 +135,15 @@ export default function GelenKutusuPage() {
         // Faz 1: Local DB + Önbellekteki Resimler
         const { data, error } = await supabase
           .from('comments')
-          .select('*')
+          .select('*, posts(*)')
           .order('created_at', { ascending: false });
         
         if (!error && data) {
           const cachedPics = getCachedPictures();
           const enhancedData = data.map(c => ({
              ...c,
-             picture: c.picture || (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || cachedPics[c.zernio_comment_id] || null
+             post_picture: (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || c.posts?.media_urls?.[0] || null,
+             author_picture: cachedPics[c.zernio_comment_id] || null
           }));
           setComments(enhancedData);
           
@@ -163,7 +164,8 @@ export default function GelenKutusuPage() {
              
              setComments(prev => prev.map(c => ({
                 ...c,
-                picture: c.picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || newPics[c.zernio_comment_id] || null
+                post_picture: c.post_picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || null,
+                author_picture: c.author_picture || newPics[c.zernio_comment_id] || null
              })));
            }
            // Faz 2'yi tetikle
@@ -461,8 +463,8 @@ export default function GelenKutusuPage() {
                   </div>
                 )}
 
-                {comm.picture || comm.posts?.media_urls?.[0] ? (
-                  <img src={comm.picture || comm.posts.media_urls[0]} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
+                {comm.post_picture ? (
+                  <img src={comm.post_picture} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
                 ) : (
                   <div className="w-14 h-14 bg-white/5 rounded-lg border border-white/5 flex-shrink-0 flex items-center justify-center">
                     <i className="fa-regular fa-image text-app-muted"></i>
@@ -471,8 +473,24 @@ export default function GelenKutusuPage() {
                 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5">
-                      {getPlatformIcon(comm.platform)}
+                    <div className="flex items-center gap-2">
+                      {comm.author_picture ? (
+                        <div className="relative">
+                          <img src={comm.author_picture} alt="Author" className="w-6 h-6 rounded-full object-cover border border-white/10" />
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-[#131315] rounded-full flex items-center justify-center">
+                            {getPlatformIcon(comm.platform)}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative">
+                          <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
+                            <i className="fa-solid fa-user text-[10px] text-app-muted"></i>
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-[#131315] rounded-full flex items-center justify-center">
+                            {getPlatformIcon(comm.platform)}
+                          </div>
+                        </div>
+                      )}
                       <span className="font-semibold text-on-surface text-sm truncate">@{comm.author_name || comm.username}</span>
                     </div>
                     <span className="text-xs text-app-muted whitespace-nowrap">

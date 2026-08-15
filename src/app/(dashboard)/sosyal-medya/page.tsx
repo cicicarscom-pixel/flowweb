@@ -63,8 +63,44 @@ export default function SosyalMedyaPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    fetchAccounts();
+    const params = new URLSearchParams(window.location.search);
+    const accountId = params.get('accountId');
+    const platform = params.get('platform');
+    const username = params.get('username');
+
+    if (accountId) {
+      handleSaveZernioAccount(accountId, platform, username);
+      window.history.replaceState({}, '', window.location.pathname);
+    } else {
+      fetchAccounts();
+    }
   }, []);
+
+  const handleSaveZernioAccount = async (accountId: string, platform: string | null, username: string | null) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return;
+
+      const { error } = await supabase.from('social_accounts').upsert({
+        profile_id: userId,
+        zernio_account_id: accountId,
+        platform: platform || 'unknown',
+        account_name: username || 'User',
+        status: 'active'
+      }, { onConflict: 'zernio_account_id' });
+
+      if (error) {
+        console.error("Db Error:", error);
+        alert("Hesap kaydedilirken veritabanı hatası oluştu: " + error.message);
+      } else {
+        alert("Hesabınız başarıyla bağlandı!");
+        fetchAccounts();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchAccounts = async (syncWithZernio = false) => {
     setIsLoading(true);
@@ -96,9 +132,9 @@ export default function SosyalMedyaPage() {
   const handleConnectZernio = async (platformId: string) => {
     setIsConnecting(platformId);
     try {
-      const redirectUrl = window.location.origin + '/sosyal-medya';
+      const redirectUrl = window.location.origin + '/sosyal-medya/callback'; // Geçici özel callback route'u kullanmak daha güvenli olabilir ancak şimdilik sayfaya dönüyoruz
       const { data, error } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl } }
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl: window.location.origin + '/sosyal-medya' } }
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -237,13 +273,10 @@ export default function SosyalMedyaPage() {
                   </p>
 
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "6px", borderRadius: 8 }}
+                    <button className="pill-btn" style={{ width: "100%", justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "6px", borderRadius: 8 }}
                       onClick={(e) => { e.stopPropagation(); handleDisconnect(acc.zernio_account_id) }}
                     >
-                      Ayır
-                    </button>
-                    <button className="pill-btn" style={{ flex: 1, justifyContent: "center", background: `${p.glow.replace("0.3","0.15")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, padding: "6px", borderRadius: 8 }}>
-                      Yönet
+                      Bağlantıyı Kes
                     </button>
                   </div>
                 </div>
@@ -298,7 +331,7 @@ export default function SosyalMedyaPage() {
                   disabled={isConnecting === p.id}
                   style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
                 >
-                  {isConnecting === p.id ? "Bağlanıyor..." : "+ Hesap Bağla"}
+                  {isConnecting === p.id ? "Bağlanıyor..." : "Hesap Bağla"}
                 </button>
               </div>
             ))}

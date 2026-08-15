@@ -49,7 +49,7 @@ export default function GelenKutusuPage() {
     try {
       const { data, error } = await supabase
         .from('comments')
-        .select('*, posts(media_urls, title)')
+        .select('*')
         .order('created_at', { ascending: false });
       
       if (!error && data) {

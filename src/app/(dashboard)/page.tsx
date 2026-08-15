@@ -28,7 +28,7 @@ export default function DashboardHomePage() {
             .from('bot_settings')
             .select('is_active')
             .eq('merchant_id', merchantId)
-            .single();
+            .maybeSingle();
           if (botData) setAiActive(botData.is_active);
         }
 
@@ -52,7 +52,7 @@ export default function DashboardHomePage() {
 
         let orgId = null;
         if (merchantId) {
-          const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).single();
+          const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).maybeSingle();
           orgId = orgMember?.organization_id;
         }
 

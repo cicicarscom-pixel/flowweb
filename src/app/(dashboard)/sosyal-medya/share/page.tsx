@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 
 const PLATFORMS_DATA = [
@@ -18,6 +18,18 @@ export default function SharePage() {
   const [localText, setLocalText] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLocalImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({
     instagram: true,
@@ -67,7 +79,17 @@ export default function SharePage() {
                 background: 'linear-gradient(to bottom right, transparent 0%, transparent 40%, #00f0ff 90%, #ffffff 100%)'
               }}></div>
               
-              <div className="absolute inset-[3px] bg-[#131314] rounded-[21px] flex items-center justify-center bg-[#2a2a2b]/50 overflow-hidden z-10 cursor-pointer hover:bg-[#2a2a2b]/70 transition-colors">
+              <div 
+                className="absolute inset-[3px] bg-[#131314] rounded-[21px] flex items-center justify-center bg-[#2a2a2b]/50 overflow-hidden z-10 cursor-pointer hover:bg-[#2a2a2b]/70 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  hidden 
+                  accept="image/*,video/*" 
+                  onChange={handleFileSelect} 
+                />
                 {localImage ? (
                   <img src={localImage} alt="uploaded" className="w-full h-full object-cover" />
                 ) : (

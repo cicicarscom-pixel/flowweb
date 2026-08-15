@@ -72,7 +72,7 @@ export default function SosyalMedyaPage() {
           </div>
           <div className="text-center relative z-10">
             <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Gönderi Oluştur</h3>
-            <p className="text-xs text-app-muted font-jetbrains">Yeni içerik planlayın</p>
+            <p className="text-xs text-app-muted font-jetbrains">Yapay zeka ile gönderi oluşturun</p>
           </div>
         </Link>
         

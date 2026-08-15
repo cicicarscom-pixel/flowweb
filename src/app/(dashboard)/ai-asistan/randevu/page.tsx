@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 
 const TIME_SLOTS = (() => {
   const slots = [];
@@ -21,6 +21,48 @@ const CARD_COLORS = [
   { bg: 'rgba(192,193,255,0.1)', border: 'rgba(192,193,255,0.3)', text: '#c0c1ff', icon: '🌿' },
   { bg: 'rgba(0,162,255,0.1)', border: 'rgba(0,162,255,0.3)', text: '#00a2ff', icon: '🖌️' },
 ];
+
+function ScrollableContainer({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDown(true);
+    if (containerRef.current) {
+      setStartX(e.pageX - containerRef.current.offsetLeft);
+      setScrollLeft(containerRef.current.scrollLeft);
+    }
+  };
+  const handleMouseLeave = () => setIsDown(false);
+  const handleMouseUp = () => setIsDown(false);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown || !containerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onMouseLeave={handleMouseLeave}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      style={{ 
+        display: "flex", overflowX: "auto", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10, 
+        cursor: isDown ? "grabbing" : "grab",
+        scrollbarWidth: "none", msOverflowStyle: "none"
+      }}
+    >
+      <style dangerouslySetInnerHTML={{__html: `div::-webkit-scrollbar { display: none; }`}} />
+      {children}
+    </div>
+  );
+}
 
 export default function RandevuPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -132,8 +174,8 @@ export default function RandevuPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           
           {/* Calendar Strip */}
-          <div className="glass" style={{ borderRadius: 24, padding: "20px 10px", border: "1px solid rgba(255,255,255,0.06)", overflowX: "auto" }}>
-            <div style={{ display: "flex", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10 }}>
+          <div className="glass" style={{ borderRadius: 24, padding: "20px 0", border: "1px solid rgba(255,255,255,0.06)", overflowX: "hidden" }}>
+            <ScrollableContainer>
               {dynamicDays.map((day, i) => {
                 const isActive = selectedDate === day.fullDate;
                 return (
@@ -156,7 +198,7 @@ export default function RandevuPage() {
                   </div>
                 );
               })}
-            </div>
+            </ScrollableContainer>
           </div>
 
           {/* Timeline */}

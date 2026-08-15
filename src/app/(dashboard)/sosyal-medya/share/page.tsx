@@ -129,6 +129,41 @@ export default function SharePage() {
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const cropImageToInstagramFormat = (dataUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const aspectRatio = img.width / img.height;
+        // Instagram Feed allows 0.75 to 1.91. Target 0.8 (4:5) if too tall.
+        if (aspectRatio >= 0.75 && aspectRatio <= 1.91) {
+          resolve(dataUrl); 
+          return;
+        }
+        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(dataUrl);
+
+        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+
+        if (aspectRatio < 0.75) {
+          sHeight = sWidth / 0.8; 
+          sy = (img.height - sHeight) / 2; 
+        } else if (aspectRatio > 1.91) {
+          sWidth = sHeight * 1.91;
+          sx = (img.width - sWidth) / 2; 
+        }
+
+        canvas.width = sWidth;
+        canvas.height = sHeight;
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight);
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  };
+
   const handleShare = async () => {
     if (!localText.trim() && !prompt.trim()) {
       return alert("Lütfen paylaşılacak bir metin girin.");
@@ -172,12 +207,17 @@ export default function SharePage() {
 
     setIsSharing(true);
     try {
+      let finalImage = localImage;
+      if (localImage && platformsToShare.some(p => p?.platform === 'instagram') && igFormat.toLowerCase() === 'feed') {
+        finalImage = await cropImageToInstagramFormat(localImage);
+      }
+
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
           action: 'create-post',
           payload: {
             content: localText || prompt,
-            mediaItems: localImage ? [{ url: localImage }] : [],
+            mediaItems: finalImage ? [{ url: finalImage }] : [],
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
             scheduledFor: publishMode === 'schedule' ? new Date(scheduleDate).toISOString() : undefined,

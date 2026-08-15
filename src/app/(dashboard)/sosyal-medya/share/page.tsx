@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -22,6 +22,31 @@ export default function SharePage() {
   const [isGeneratingText, setIsGeneratingText] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
+  const [zernioAccounts, setZernioAccounts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.id) {
+        try {
+          const { data: accData } = await supabase.functions.invoke('zernio-client', {
+            body: { action: 'sync-accounts', payload: { userId: user.id } }
+          });
+          const accounts = accData?.data?.accounts || [];
+          setZernioAccounts(accounts);
+          
+          const initialSelected: Record<string, boolean> = {};
+          accounts.forEach((acc: any) => {
+            initialSelected[acc.platform.toLowerCase()] = true;
+          });
+          setSelectedPlatforms(initialSelected);
+        } catch(e) {
+          console.warn("Failed to fetch accounts", e);
+        }
+      }
+    };
+    fetchAccounts();
+  }, []);
 
   const generateCaption = async () => {
     if (!aiPrompt.trim()) return;
@@ -74,11 +99,7 @@ export default function SharePage() {
     }
   };
   
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({
-    instagram: true,
-    facebook: false,
-    youtube: false,
-  });
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
 
   const togglePlatform = (id: string) => {
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
@@ -231,21 +252,28 @@ export default function SharePage() {
 
             <label className="block text-[#b9cacb] text-xs font-medium mb-3">Seçilen platformlarda paylaş</label>
             <div className="grid grid-cols-3 gap-3">
-              {PLATFORMS_DATA.map((acc) => {
-                const isSelected = selectedPlatforms[acc.id];
+              {zernioAccounts.map((acc, i) => {
+                const platformKey = acc.platform.toLowerCase();
+                const platformConfig = PLATFORMS_DATA.find(p => p.id === platformKey) || {
+                  id: platformKey,
+                  name: acc.platform,
+                  color: "#e5e2e3",
+                  icon: "fa-globe"
+                };
+                const isSelected = selectedPlatforms[platformKey];
                 return (
                   <button 
-                    key={acc.id}
-                    onClick={() => togglePlatform(acc.id)}
+                    key={acc.id || i}
+                    onClick={() => togglePlatform(platformKey)}
                     className={`flex items-center justify-between rounded-lg border p-2 transition-all ${
                       isSelected ? 'bg-[#4edea3]/10 border-[#4edea3]/50' : 'bg-[#1c1b1c]/50 border-white/5 hover:border-white/10'
                     }`}
                   >
                     <div className="flex items-center gap-2 overflow-hidden">
-                      <i className={`fa-brands ${acc.icon} text-base shrink-0`} style={{ color: acc.id === 'twitter' && !isSelected ? '#b9cacb' : acc.color }}></i>
+                      <i className={`fa-brands ${platformConfig.icon} text-base shrink-0`} style={{ color: platformKey === 'twitter' && !isSelected ? '#b9cacb' : platformConfig.color }}></i>
                       <div className="flex flex-col items-start overflow-hidden text-left">
-                        <span className="text-[#e5e2e3] text-[10px] font-medium truncate w-full">{acc.name}</span>
-                        <span className="text-[#b9cacb]/60 text-[8px] truncate w-full">@hesap</span>
+                        <span className="text-[#e5e2e3] text-[10px] font-medium truncate w-full">{platformConfig.name}</span>
+                        <span className="text-[#b9cacb]/60 text-[8px] truncate w-full">@{acc.account_name || platformKey}</span>
                       </div>
                     </div>
                     {isSelected && (

@@ -65,7 +65,7 @@ export default function SosyalMedyaPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const accountId = params.get('accountId');
-    const platform = params.get('platform');
+    const platform = params.get('platform') || params.get('connected');
     const username = params.get('username');
 
     if (accountId) {

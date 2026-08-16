@@ -61,6 +61,27 @@ export default function TumGonderilerPage() {
     };
   }, []);
 
+  const handleDeletePost = async (id: string) => {
+    if (!window.confirm("Bu gönderiyi silmek istediğinize emin misiniz?")) return;
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error("Delete error:", error);
+        alert("Gönderi silinirken hata oluştu: " + error.message);
+      } else {
+        setPosts(prev => prev.filter(p => p.id !== id));
+      }
+    } catch (err) {
+      console.error("Delete exception:", err);
+      alert("Gönderi silinemedi.");
+    }
+  };
+
   const filteredPosts = posts.filter(post => {
     if (activeFilter === 'all') return true;
     return (post.status || '').toLowerCase() === activeFilter.toLowerCase();
@@ -255,20 +276,22 @@ export default function TumGonderilerPage() {
                   {/* Actions */}
                   <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
                     {(item.status || '').toLowerCase() === 'failed' && (
-                      <button className="w-7 h-7 rounded bg-[#ff0050]/20 border border-[#ff0050]/40 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/30 transition-colors">
+                      <button className="w-7 h-7 rounded bg-[#ff0050]/20 border border-[#ff0050]/40 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/30 transition-colors" title="Yeniden Dene">
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>
                       </button>
                     )}
-                    {(item.status || '').toLowerCase() === 'scheduled' && (
-                      <button className="w-7 h-7 rounded bg-[#00f0ff]/10 border border-[#00f0ff]/30 flex items-center justify-center text-[#00f0ff] hover:bg-[#00f0ff]/20 transition-colors">
-                        <i className="fa-regular fa-trash-can text-[12px]"></i>
-                      </button>
-                    )}
                     {(item.status || '').toLowerCase() === 'published' && (
-                      <button className="w-7 h-7 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/30 flex items-center justify-center text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors">
+                      <button className="w-7 h-7 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/30 flex items-center justify-center text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors" title="Analiz">
                         <i className="fa-solid fa-cloud-arrow-down text-[12px]"></i>
                       </button>
                     )}
+                    <button 
+                      onClick={() => handleDeletePost(item.id)}
+                      className="w-7 h-7 rounded bg-[#ff0050]/10 border border-[#ff0050]/30 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/20 transition-colors"
+                      title="Sil"
+                    >
+                      <i className="fa-regular fa-trash-can text-[12px]"></i>
+                    </button>
                   </div>
 
                 </div>

@@ -141,12 +141,11 @@ export default function GelenKutusuPage() {
         id: undefined // Let db generate uuid
       });
 
-      alert("Yanıt başarıyla gönderildi!");
       setReplyingTo(null);
       setReplyText("");
     } catch (err: any) {
       console.error(err);
-      alert("Yanıt gönderilemedi: " + err.message);
+      // alert("Yanıt gönderilemedi: " + err.message);
     } finally {
       setIsSendingReply(false);
     }

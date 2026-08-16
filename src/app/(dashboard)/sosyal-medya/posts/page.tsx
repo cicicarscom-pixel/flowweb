@@ -68,14 +68,14 @@ export default function TumGonderilerPage() {
     try {
       const { error } = await supabase
         .from('posts')
-        .delete()
+        .update({ status: 'deleted' })
         .eq('id', id);
 
       if (error) {
         console.error("Delete error:", error);
         alert("Gönderi silinirken hata oluştu: " + error.message);
       } else {
-        setPosts(prev => prev.filter(p => p.id !== id));
+        setPosts(prev => prev.map(p => p.id === id ? { ...p, status: 'deleted' } : p));
         setSelectedPostIds(prev => prev.filter(pId => pId !== id));
       }
     } catch (err) {
@@ -91,14 +91,14 @@ export default function TumGonderilerPage() {
     try {
       const { error } = await supabase
         .from('posts')
-        .delete()
+        .update({ status: 'deleted' })
         .in('id', selectedPostIds);
 
       if (error) {
         console.error("Bulk delete error:", error);
         alert("Gönderiler silinirken hata oluştu: " + error.message);
       } else {
-        setPosts(prev => prev.filter(p => !selectedPostIds.includes(p.id)));
+        setPosts(prev => prev.map(p => selectedPostIds.includes(p.id) ? { ...p, status: 'deleted' } : p));
         setSelectedPostIds([]);
       }
     } catch (err) {
@@ -122,8 +122,10 @@ export default function TumGonderilerPage() {
   };
 
   const filteredPosts = posts.filter(post => {
+    const s = (post.status || '').toLowerCase();
+    if (s === 'deleted') return false;
     if (activeFilter === 'all') return true;
-    return (post.status || '').toLowerCase() === activeFilter.toLowerCase();
+    return s === activeFilter.toLowerCase();
   });
 
   const getStatusColor = (status: string) => {

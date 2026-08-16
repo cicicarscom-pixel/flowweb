@@ -7,6 +7,7 @@ export default function GelenKutusuPage() {
   const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler'>('mesajlar');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
   
   const [conversations, setConversations] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
@@ -16,6 +17,40 @@ export default function GelenKutusuPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
+
+  const postsWithComments = React.useMemo(() => {
+    if (!comments || comments.length === 0) return [];
+    
+    const postMap = new Map<string, any>();
+    
+    comments.forEach(comm => {
+      const pId = comm.zernio_post_id || comm.post_id || 'unknown';
+      if (!postMap.has(pId)) {
+        postMap.set(pId, {
+          postId: pId,
+          postPicture: comm.post_picture,
+          platform: comm.platform,
+          latestCommentAt: comm.created_at || new Date().toISOString(),
+          comments: []
+        });
+      }
+      
+      const postGroup = postMap.get(pId);
+      postGroup.comments.push(comm);
+      
+      if (comm.created_at && new Date(comm.created_at).getTime() > new Date(postGroup.latestCommentAt).getTime()) {
+        postGroup.latestCommentAt = comm.created_at;
+      }
+    });
+    
+    return Array.from(postMap.values()).sort((a, b) => new Date(b.latestCommentAt).getTime() - new Date(a.latestCommentAt).getTime());
+  }, [comments]);
+
+  useEffect(() => {
+    if (activeTab === 'yorumlar' && postsWithComments.length > 0 && !selectedPostId) {
+      setSelectedPostId(postsWithComments[0].postId);
+    }
+  }, [activeTab, postsWithComments, selectedPostId]);
 
   const supabase = createClient();
 
@@ -484,112 +519,142 @@ export default function GelenKutusuPage() {
         )}
 
         {/* --- YORUMLAR TAB --- */}
-        {!isLoading && activeTab === 'yorumlar' && (
-          comments.map(comm => {
-            const selectId = comm.zernio_comment_id || comm.id;
-            return (
-              <div 
-                key={comm.id}
-                onClick={() => isSelectionMode ? toggleSelection(selectId) : null}
-                className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                  selectedItems.includes(selectId) 
-                    ? 'border-[#bc13fe] bg-[#bc13fe]/5' 
-                    : 'border-app-border bg-app-card hover:border-app-muted/40'
-                }`}
-              >
-                {isSelectionMode && (
-                  <div className={`mt-2 w-5 h-5 rounded flex items-center justify-center border transition-colors flex-shrink-0 ${
-                    selectedItems.includes(selectId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
-                  }`}>
-                    {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
-                  </div>
-                )}
-
-                {comm.post_picture ? (
-                  <img src={comm.post_picture} alt="Post" className="w-14 h-14 object-cover rounded-lg border border-white/5 flex-shrink-0" />
-                ) : (
-                  <div className="w-14 h-14 bg-white/5 rounded-lg border border-white/5 flex-shrink-0 flex items-center justify-center">
-                    <i className="fa-regular fa-image text-app-muted"></i>
-                  </div>
-                )}
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      {comm.author_picture ? (
-                        <div className="relative">
-                          <img src={comm.author_picture} alt="Author" className="w-6 h-6 rounded-full object-cover border border-white/10" />
-                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-[#131315] rounded-full flex items-center justify-center">
-                            {getPlatformIcon(comm.platform)}
-                          </div>
-                        </div>
+        {!isLoading && activeTab === 'yorumlar' && postsWithComments.length > 0 && (
+          <div className="flex flex-col lg:flex-row gap-6 h-[600px] w-full">
+            {/* Left Pane - Posts List */}
+            <div className="w-full lg:w-1/3 flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2 h-full">
+              {postsWithComments.map(postGroup => {
+                const isSelected = selectedPostId === postGroup.postId;
+                return (
+                  <div
+                    key={postGroup.postId}
+                    onClick={() => setSelectedPostId(postGroup.postId)}
+                    className={`glass flex items-center gap-4 p-3 rounded-xl border transition-all cursor-pointer ${
+                      isSelected ? 'border-[#bc13fe] bg-[#bc13fe]/10' : 'border-app-border bg-app-card hover:border-app-muted/40'
+                    }`}
+                  >
+                    <div className="relative">
+                      {postGroup.postPicture ? (
+                        <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" />
                       ) : (
-                        <div className="relative">
-                          <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
-                            <i className="fa-solid fa-user text-[10px] text-app-muted"></i>
-                          </div>
-                          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-[#131315] rounded-full flex items-center justify-center">
-                            {getPlatformIcon(comm.platform)}
-                          </div>
+                        <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
+                          <i className="fa-regular fa-image text-app-muted"></i>
                         </div>
                       )}
-                      <span className="font-semibold text-on-surface text-sm truncate">@{comm.author_name || comm.username}</span>
+                      <div className="absolute -bottom-2 -right-2 w-5 h-5 bg-[#131315] rounded-full flex items-center justify-center border border-white/10 text-[10px]">
+                        {getPlatformIcon(postGroup.platform)}
+                      </div>
                     </div>
-                    <span className="text-xs text-app-muted whitespace-nowrap">
-                      {comm.created_at ? new Date(comm.created_at).toLocaleDateString('tr-TR') : ''}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-on-surface truncate">
+                        {postGroup.comments.length} Yorum
+                      </div>
+                      <div className="text-xs text-app-muted mt-1">
+                        Son: {postGroup.latestCommentAt ? new Date(postGroup.latestCommentAt).toLocaleDateString('tr-TR') : ''}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-sm text-app-muted line-clamp-2 leading-relaxed">
-                    {comm.content}
-                  </p>
-                  
-                  {!isSelectionMode && (
-                    <div className="mt-3 flex items-center justify-end">
-                      <button 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          setReplyingTo(comm.id); 
-                          setReplyText(`@${comm.author_name || comm.username} `); 
-                        }}
-                        className="px-3 py-1.5 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/20 text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors text-xs font-semibold flex items-center gap-1.5"
-                      >
-                        <i className="fa-solid fa-reply"></i> Yanıtla
-                      </button>
-                    </div>
-                  )}
+                );
+              })}
+            </div>
 
-                  {replyingTo === comm.id && (
-                    <div 
-                      className="mt-3 pt-3 border-t border-white/5 flex gap-2"
-                      onClick={(e) => e.stopPropagation()} // prevent row selection when interacting with input
-                    >
-                      <input 
-                        type="text" 
-                        value={replyText}
-                        onChange={(e) => setReplyText(e.target.value)}
-                        placeholder="Yanıtınızı yazın..." 
-                        className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
-                        autoFocus
-                      />
-                      <button 
-                        onClick={() => handleSendReply(comm)}
-                        disabled={isSendingReply}
-                        className="px-4 py-2 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 min-w-[80px]"
-                      >
-                        {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : "Gönder"}
-                      </button>
-                      <button 
-                        onClick={() => { setReplyingTo(null); setReplyText(""); }}
-                        className="px-3 py-2 bg-white/5 hover:bg-white/10 text-[#849495] rounded-lg text-sm transition-colors"
-                      >
-                        İptal
-                      </button>
-                    </div>
-                  )}
-                </div>
+            {/* Right Pane - Thread & Reply */}
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-app-border h-full overflow-hidden relative">
+              {/* Thread */}
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col-reverse gap-4 custom-scrollbar">
+                {postsWithComments.find(p => p.postId === selectedPostId)?.comments
+                  .slice()
+                  .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // newest first
+                  .map((comm: any) => {
+                    const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.is_outbound;
+                    const commId = comm.zernio_comment_id || comm.id;
+                    return (
+                      <div key={comm.id} className={`flex ${isBusiness ? 'justify-end' : 'justify-start'} w-full`}>
+                        {isSelectionMode && !isBusiness && (
+                          <div className="mr-3 self-center">
+                            <div 
+                              onClick={() => toggleSelection(commId)}
+                              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer ${
+                                selectedItems.includes(commId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                              }`}>
+                              {selectedItems.includes(commId) && <i className="fa-solid fa-check text-xs"></i>}
+                            </div>
+                          </div>
+                        )}
+                        <div className={`flex flex-col ${isBusiness ? 'items-end' : 'items-start'} max-w-[80%]`}>
+                          <div className="flex items-center gap-2 mb-1">
+                            {!isBusiness && (
+                              <>
+                                <span className="font-semibold text-on-surface text-sm">@{comm.author_name || comm.username}</span>
+                                <span className="text-[10px] text-app-muted">{new Date(comm.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}</span>
+                              </>
+                            )}
+                            {isBusiness && (
+                              <>
+                                <span className="text-[10px] text-app-muted">{new Date(comm.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}</span>
+                                <span className="font-semibold text-[#f59e0b] text-sm">Mağaza (Ben)</span>
+                              </>
+                            )}
+                          </div>
+                          <div className={`px-4 py-2 rounded-2xl text-sm ${isBusiness ? 'bg-[#bc13fe]/20 text-[#bc13fe] border border-[#bc13fe]/30 rounded-br-none' : 'bg-white/5 text-on-surface border border-white/10 rounded-bl-none'}`}>
+                            {comm.content}
+                          </div>
+                        </div>
+                        {isSelectionMode && isBusiness && (
+                          <div className="ml-3 self-center">
+                            <div 
+                              onClick={() => toggleSelection(commId)}
+                              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer ${
+                                selectedItems.includes(commId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                              }`}>
+                              {selectedItems.includes(commId) && <i className="fa-solid fa-check text-xs"></i>}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
               </div>
-            )
-          })
+
+              {/* Reply Input */}
+              <div className="p-3 border-t border-white/5 bg-[#131315]/80 flex gap-2">
+                <input 
+                  type="text" 
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
+                      if (postGrp && postGrp.comments.length > 0) {
+                        const targetComment = postGrp.comments.reduce((latest: any, curr: any) => {
+                          return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
+                        });
+                        handleSendReply(targetComment);
+                      }
+                    }
+                  }}
+                  placeholder="Yanıtlama için yazın..." 
+                  className="flex-1 bg-[#131314] rounded-xl px-4 py-3 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
+                />
+                <button 
+                  onClick={() => {
+                    const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
+                    if (postGrp && postGrp.comments.length > 0) {
+                      // find latest comment as target
+                      const targetComment = postGrp.comments.reduce((latest: any, curr: any) => {
+                        return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
+                      });
+                      handleSendReply(targetComment);
+                    }
+                  }}
+                  disabled={isSendingReply || !replyText.trim()}
+                  className="px-6 py-3 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
+                >
+                  {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* --- DEĞERLENDİRMELER TAB --- */}

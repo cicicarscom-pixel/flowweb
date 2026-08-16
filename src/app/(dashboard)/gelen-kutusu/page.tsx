@@ -396,8 +396,16 @@ export default function GelenKutusuPage() {
     if (confirm(`Seçilen ${selectedItems.length} öğeyi silmek istediğinize emin misiniz?`)) {
       try {
         if (activeTab === 'mesajlar') {
-          await supabase.from('conversations').delete().in('zernio_conversation_id', selectedItems);
-          await supabase.from('ai_communication_logs').delete().in('sender_id', selectedItems);
+          const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+          const zernioIds = selectedItems.filter(id => !uuids.includes(id));
+          if (uuids.length > 0) {
+            await supabase.from('conversations').delete().in('id', uuids);
+            await supabase.from('ai_communication_logs').delete().in('sender_id', uuids);
+          }
+          if (zernioIds.length > 0) {
+            await supabase.from('conversations').delete().in('zernio_conversation_id', zernioIds);
+            await supabase.from('ai_communication_logs').delete().in('sender_id', zernioIds);
+          }
         } else if (activeTab === 'yorumlar') {
           const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
           const zernioIds = selectedItems.filter(id => !uuids.includes(id));

@@ -22,17 +22,8 @@ export default function Sidebar() {
     }}>
       {/* Logo */}
       <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10,
-            background: "linear-gradient(135deg,rgba(0,240,255,0.2),rgba(188,19,254,0.2))",
-            border: "1.5px solid rgba(0,240,255,0.3)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18,
-          }}>⬡</div>
-          <div>
-            <p style={{ fontFamily: "Outfit, sans-serif", fontWeight: 800, fontSize: 15, letterSpacing: "-0.02em", color: "#fff" }}>workigom</p>
-            <p style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace", letterSpacing: "0.08em" }}>FLOW</p>
-          </div>
+        <Link href="/" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 10 }}>
+          <img src="/logo.png" alt="Workigom Flow" style={{ height: 36, width: "auto", objectFit: "contain" }} />
         </Link>
       </div>
 

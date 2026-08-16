@@ -158,6 +158,20 @@ export default function DashboardHomePage() {
     fetchData();
   }, []);
 
+  const toggleAiStatus = async () => {
+    const newStatus = !aiActive;
+    setAiActive(newStatus); // optimistic UI update
+    
+    const { data: { session } } = await supabase.auth.getSession();
+    const merchantId = session?.user?.id;
+    if (merchantId) {
+      await supabase
+        .from('bot_settings')
+        .update({ is_active: newStatus, social_bot_active: newStatus })
+        .eq('merchant_id', merchantId);
+    }
+  };
+
   const formatCurrency = (amount: number) => Number(amount).toLocaleString('tr-TR');
   const formatRelativeTime = (dateStr: string) => {
     if (!dateStr) return '';
@@ -230,7 +244,10 @@ export default function DashboardHomePage() {
           <span style={{ fontSize: 10, fontWeight: 700, color: aiActive ? "#00f0ff" : "#849495", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>
             {aiActive ? "AKTİF" : "KAPALI"}
           </span>
-          <div style={{ width: 44, height: 24, borderRadius: 12, background: aiActive ? "rgba(0, 240, 255, 0.2)" : "rgba(255,255,255,0.1)", border: `1.5px solid ${aiActive ? "rgba(0, 240, 255, 0.4)" : "rgba(255,255,255,0.2)"}`, position: "relative", cursor: "pointer" }}>
+          <div 
+            onClick={toggleAiStatus}
+            style={{ width: 44, height: 24, borderRadius: 12, background: aiActive ? "rgba(0, 240, 255, 0.2)" : "rgba(255,255,255,0.1)", border: `1.5px solid ${aiActive ? "rgba(0, 240, 255, 0.4)" : "rgba(255,255,255,0.2)"}`, position: "relative", cursor: "pointer" }}
+          >
             <div style={{ width: 18, height: 18, borderRadius: 9, background: "#fff", position: "absolute", top: 1.5, right: aiActive ? 2 : 'auto', left: !aiActive ? 2 : 'auto', boxShadow: aiActive ? "0 0 10px #00f0ff" : "none" }} />
           </div>
         </div>

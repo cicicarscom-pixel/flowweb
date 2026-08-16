@@ -64,8 +64,20 @@ export default function TumGonderilerPage() {
 
   const handleDeletePost = async (id: string) => {
     if (!window.confirm("Bu gönderiyi silmek istediğinize emin misiniz?")) return;
+    const deleteFromPlatforms = window.confirm("Bu gönderi sosyal medya platformlarından (Facebook vb.) da KALICI OLARAK silinsin mi?\n\nTamam: Platformlardan da sil.\nİptal: Sadece panelden sil (Platformda yayınlanmaya devam eder).");
 
     try {
+      const post = posts.find(p => p.id === id);
+      if (post?.zernio_post_id) {
+        const { error: invokeError } = await supabase.functions.invoke('zernio-client', {
+          body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+        });
+        if (invokeError) {
+           console.error("Zernio delete error:", invokeError);
+           // Hata olsa bile yerel olarak silelim mi? Evet devam edelim.
+        }
+      }
+
       const { error } = await supabase
         .from('posts')
         .update({ status: 'deleted' })
@@ -87,8 +99,18 @@ export default function TumGonderilerPage() {
   const handleBulkDelete = async () => {
     if (selectedPostIds.length === 0) return;
     if (!window.confirm(`${selectedPostIds.length} gönderiyi silmek istediğinize emin misiniz?`)) return;
+    const deleteFromPlatforms = window.confirm("Seçili gönderiler sosyal medya platformlarından (Facebook vb.) da KALICI OLARAK silinsin mi?\n\nTamam: Platformlardan da sil.\nİptal: Sadece panelden sil (Platformlarda yayınlanmaya devam eder).");
 
     try {
+      const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
+      
+      // Her biri için API çağrısı yap (Sırayla yapalım, asenkron çok fazla istek atıp patlatmayalım)
+      for (const post of postsToDelete) {
+        await supabase.functions.invoke('zernio-client', {
+          body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+        });
+      }
+
       const { error } = await supabase
         .from('posts')
         .update({ status: 'deleted' })

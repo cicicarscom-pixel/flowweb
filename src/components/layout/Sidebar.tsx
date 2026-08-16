@@ -23,7 +23,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 10 }}>
-          <img src="/logo.png" alt="Workigom Flow" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+          <img src="/logo.png" alt="Workigom Flow" style={{ height: 43, width: "auto", objectFit: "contain" }} />
         </Link>
       </div>
 

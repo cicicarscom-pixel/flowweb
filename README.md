@@ -121,3 +121,6 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 3. **Sosyal Medya Entegrasyonu (Web):** Web versiyonundaki "Hesap BaÄŸla" uyarÄ± mesajÄ± kaldÄ±rÄ±larak, mobil versiyondaki Supabase Edge Function (zernio-client) tabanlÄ± gÃ¼venli Instagram/Zernio yetkilendirme linki alma ve yÃ¶nlendirme sistemi web versiyonuna entegre edildi.
 4. **Gelen Kutusu (Web):** Gelen Kutusu (/gelen-kutusu) ekranÄ±ndaki comments tablosu sorgusunda yer alan geÃ§ersiz posts iliÅŸkisi (posts(media_urls, title)) kaldÄ±rÄ±larak sadece .select('*') bÄ±rakÄ±ldÄ± ve "400 Bad Request" hatasÄ± giderildi. TÃ¼m iletiÅŸim raporlarÄ± sÄ±fÄ±r hata ile yÃ¼klenebilir hale geldi.
 5. **Agent KurallarÄ±:** Web ve Mobil projelerin kalÄ±cÄ± hafÄ±zasÄ±na (AGENTS.md) Ã§apraz veritabanÄ± etkileÅŸimi hakkÄ±nda yeni "ğŸš¨ Kritik Kural: Ortak VeritabanÄ± EtkileÅŸimi" kuralÄ± iÅŸlendi.
+
+### [16.08.2026] Gelen Kutusu (Web) Senkronizasyon Hata Giderimi
+1. **Gelen Kutusu Silinen Yorumlar Senkronizasyonu:** Silinen yorumlarin Supabase realtime sync dongusu ve edge function tarafindan tekrar getirilip geri gelmesi sorunu Web versiyonu (page.tsx) icinde de cozuldu. Silinen zernio_comment_id'ler i_communication_logs tablosunda zernio_deleted_comment platform markasi ile loglanip Web frontend tarafinda listeleme yapilmadan once filtrelenmesi saglandi.

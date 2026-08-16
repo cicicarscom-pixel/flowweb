@@ -139,11 +139,18 @@ export default function GelenKutusuPage() {
           .order('created_at', { ascending: false });
         
         if (!error && data) {
+          const { data: globalLogs } = await supabase.from('ai_communication_logs')
+            .select('sender_id')
+            .eq('platform', 'zernio_deleted_comment');
+          const globallyDeletedIds = globalLogs ? globalLogs.map(l => l.sender_id) : [];
+
           const cachedPics = getCachedPictures();
-          const enhancedData = data.map(c => ({
-             ...c,
-             post_picture: (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || c.posts?.media_urls?.[0] || null,
-             author_picture: cachedPics[c.zernio_comment_id] || null
+          const enhancedData = data
+            .filter(c => !globallyDeletedIds.includes(c.zernio_comment_id))
+            .map(c => ({
+              ...c,
+              post_picture: (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || c.posts?.media_urls?.[0] || null,
+              author_picture: cachedPics[c.zernio_comment_id] || null
           }));
           setComments(enhancedData);
           
@@ -264,7 +271,13 @@ export default function GelenKutusuPage() {
           if (uuids.length > 0) await supabase.from('comments').delete().in('id', uuids);
           if (zernioIds.length > 0) {
             await supabase.from('comments').delete().in('zernio_comment_id', zernioIds);
-            await supabase.from('ai_communication_logs').delete().in('sender_id', zernioIds);
+            await supabase.from('ai_communication_logs').insert(
+              zernioIds.map(id => ({
+                platform: 'zernio_deleted_comment',
+                sender_id: id,
+                user_message: '[DELETED]'
+              }))
+            );
           }
         } else if (activeTab === 'degerlendirmeler') {
            await supabase.from('reviews').delete().in('id', selectedItems);

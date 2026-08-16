@@ -387,9 +387,11 @@ export default function GelenKutusuPage() {
               }`}
             >
               {tab.label}
-              <span className="w-5 h-5 rounded-full bg-[#bc13fe] text-white flex items-center justify-center text-[11px] font-bold">
-                {tab.count}
-              </span>
+              {tab.count > 0 && (
+                <span className="w-5 h-5 rounded-full bg-[#bc13fe] text-white flex items-center justify-center text-[11px] font-bold">
+                  {tab.count}
+                </span>
+              )}
             </button>
           );
         })}

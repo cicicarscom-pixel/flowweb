@@ -635,10 +635,21 @@ export default function GelenKutusuPage() {
                        ?.slice()
                        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                        .map((msg: any) => (
-                         <div key={msg.id} className={`max-w-[75%] p-3 rounded-2xl text-sm ${msg.is_outbound ? 'bg-[#00f0ff]/20 text-[#00f0ff] self-end rounded-br-sm' : 'bg-[#1c1b1d] border border-white/5 text-white self-start rounded-bl-sm'}`}>
-                           {msg.content}
-                           <div className={`text-[10px] mt-1 ${msg.is_outbound ? 'text-[#00f0ff]/60 text-right' : 'text-app-muted'}`}>
-                             {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
+                         <div key={msg.id} className={`flex max-w-[75%] ${msg.is_outbound ? 'self-end' : 'self-start'} gap-2 items-end`}>
+                           {!msg.is_outbound && (
+                             <div className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0 overflow-hidden flex items-center justify-center mb-1 border border-white/10">
+                               {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
+                                 <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
+                               ) : (
+                                 <i className="fa-solid fa-user text-[10px] text-app-muted"></i>
+                               )}
+                             </div>
+                           )}
+                           <div className={`p-3 rounded-2xl text-sm ${msg.is_outbound ? 'bg-[#3797F0] text-white rounded-br-sm' : 'bg-[#262626] text-white rounded-bl-sm'}`}>
+                             {msg.content}
+                             <div className={`text-[10px] mt-1 ${msg.is_outbound ? 'text-blue-200/70 text-right' : 'text-gray-400'}`}>
+                               {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
+                             </div>
                            </div>
                          </div>
                        ))}
@@ -724,7 +735,7 @@ export default function GelenKutusuPage() {
                   .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // newest first
                   .map((parent: any) => {
                     const parentId = parent.zernio_comment_id || parent.id;
-                    const uName = parent.author_name || parent.username;
+                    const uName = parent.author_name || parent.username || 'Kullanıcı';
                     return (
                       <div key={parent.id} className="glass rounded-xl border border-app-border p-4 flex flex-col gap-3">
                         {/* Parent Header */}

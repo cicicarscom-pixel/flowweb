@@ -16,6 +16,8 @@ export default function TumGonderilerPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
+  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean, postId: string | null, isBulk: boolean }>({ isOpen: false, postId: null, isBulk: false });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const supabase = createClient();
 
@@ -62,70 +64,71 @@ export default function TumGonderilerPage() {
     };
   }, []);
 
-  const handleDeletePost = async (id: string) => {
-    if (!window.confirm("Bu gönderiyi silmek istediğinize emin misiniz?")) return;
-    const deleteFromPlatforms = window.confirm("Bu gönderi sosyal medya platformlarından (Facebook vb.) da KALICI OLARAK silinsin mi?\n\nTamam: Platformlardan da sil.\nİptal: Sadece panelden sil (Platformda yayınlanmaya devam eder).");
+  const handleDeletePost = (id: string) => {
+    setDeleteModal({ isOpen: true, postId: id, isBulk: false });
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedPostIds.length === 0) return;
+    setDeleteModal({ isOpen: true, postId: null, isBulk: true });
+  };
+
+  const executeDelete = async (deleteFromPlatforms: boolean) => {
+    if (isDeleting) return;
+    setIsDeleting(true);
 
     try {
-      const post = posts.find(p => p.id === id);
-      if (post?.zernio_post_id) {
-        const { error: invokeError } = await supabase.functions.invoke('zernio-client', {
-          body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
-        });
-        if (invokeError) {
-           console.error("Zernio delete error:", invokeError);
-           // Hata olsa bile yerel olarak silelim mi? Evet devam edelim.
+      if (deleteModal.isBulk) {
+        const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
+        
+        for (const post of postsToDelete) {
+          await supabase.functions.invoke('zernio-client', {
+            body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+          });
         }
-      }
 
-      const { error } = await supabase
-        .from('posts')
-        .update({ status: 'deleted' })
-        .eq('id', id);
+        const { error } = await supabase
+          .from('posts')
+          .update({ status: 'deleted' })
+          .in('id', selectedPostIds);
 
-      if (error) {
-        console.error("Delete error:", error);
-        alert("Gönderi silinirken hata oluştu: " + error.message);
-      } else {
-        setPosts(prev => prev.map(p => p.id === id ? { ...p, status: 'deleted' } : p));
-        setSelectedPostIds(prev => prev.filter(pId => pId !== id));
+        if (error) {
+          console.error("Bulk delete error:", error);
+          alert("Gönderiler silinirken hata oluştu: " + error.message);
+        } else {
+          setPosts(prev => prev.map(p => selectedPostIds.includes(p.id) ? { ...p, status: 'deleted' } : p));
+          setSelectedPostIds([]);
+        }
+      } else if (deleteModal.postId) {
+        const post = posts.find(p => p.id === deleteModal.postId);
+        if (post?.zernio_post_id) {
+          const { error: invokeError } = await supabase.functions.invoke('zernio-client', {
+            body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+          });
+          if (invokeError) {
+             console.error("Zernio delete error:", invokeError);
+          }
+        }
+
+        const { error } = await supabase
+          .from('posts')
+          .update({ status: 'deleted' })
+          .eq('id', deleteModal.postId);
+
+        if (error) {
+          console.error("Delete error:", error);
+          alert("Gönderi silinirken hata oluştu: " + error.message);
+        } else {
+          setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
+          setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
+        }
       }
     } catch (err) {
       console.error("Delete exception:", err);
-      alert("Gönderi silinemedi.");
-    }
-  };
-
-  const handleBulkDelete = async () => {
-    if (selectedPostIds.length === 0) return;
-    if (!window.confirm(`${selectedPostIds.length} gönderiyi silmek istediğinize emin misiniz?`)) return;
-    const deleteFromPlatforms = window.confirm("Seçili gönderiler sosyal medya platformlarından (Facebook vb.) da KALICI OLARAK silinsin mi?\n\nTamam: Platformlardan da sil.\nİptal: Sadece panelden sil (Platformlarda yayınlanmaya devam eder).");
-
-    try {
-      const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
-      
-      // Her biri için API çağrısı yap (Sırayla yapalım, asenkron çok fazla istek atıp patlatmayalım)
-      for (const post of postsToDelete) {
-        await supabase.functions.invoke('zernio-client', {
-          body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
-        });
-      }
-
-      const { error } = await supabase
-        .from('posts')
-        .update({ status: 'deleted' })
-        .in('id', selectedPostIds);
-
-      if (error) {
-        console.error("Bulk delete error:", error);
-        alert("Gönderiler silinirken hata oluştu: " + error.message);
-      } else {
-        setPosts(prev => prev.map(p => selectedPostIds.includes(p.id) ? { ...p, status: 'deleted' } : p));
-        setSelectedPostIds([]);
-      }
-    } catch (err) {
-      console.error("Bulk delete exception:", err);
-      alert("Gönderiler silinemedi.");
+      alert("İşlem sırasında hata oluştu.");
+    } finally {
+      setIsDeleting(false);
+      setDeleteModal({ isOpen: false, postId: null, isBulk: false });
     }
   };
 
@@ -383,7 +386,79 @@ export default function TumGonderilerPage() {
           )}
 
         </div>
+        </div>
       </div>
+
+      {/* Delete Modal */}
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transition-all transform duration-200 ease-out">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <h3 className="text-gray-900 font-semibold flex items-center gap-2">
+                <i className="fa-regular fa-trash-can text-[#ff3b30]"></i> Gönderiyi sil
+              </h3>
+              <button 
+                onClick={() => !isDeleting && setDeleteModal({ isOpen: false, postId: null, isBulk: false })}
+                className="text-gray-400 hover:text-gray-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                disabled={isDeleting}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            
+            <div className="p-5">
+              <p className="text-gray-600 text-sm mb-5">
+                {deleteModal.isBulk 
+                  ? `${selectedPostIds.length} gönderiyi nasıl silmek istediğinizi seçin.`
+                  : 'Bu gönderiyi nasıl silmek istediğinizi seçin.'}
+              </p>
+              
+              <div className="flex flex-col gap-3">
+                {/* Delete from Workigom Flow Only */}
+                <button 
+                  onClick={() => executeDelete(false)}
+                  disabled={isDeleting}
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#ff3b30] hover:bg-[#ff3b30]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                >
+                  <div className="bg-[#ff3b30]/10 p-2.5 rounded-lg text-[#ff3b30] shrink-0 mt-0.5">
+                    <i className="fa-regular fa-trash-can text-lg"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Sadece Workigom Flow'dan sil</h4>
+                    <p className="text-gray-500 text-xs leading-relaxed">
+                      Workigom Flow panelinizden kaldırılır. Gönderi Facebook ve Instagram'da yayınlanmaya devam eder.
+                    </p>
+                  </div>
+                </button>
+
+                {/* Delete from Platforms and Zernio */}
+                <button 
+                  onClick={() => executeDelete(true)}
+                  disabled={isDeleting}
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#ff3b30] hover:bg-[#ff3b30]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                >
+                  <div className="bg-pink-100 p-2.5 rounded-lg text-pink-500 shrink-0 mt-0.5">
+                    <i className="fa-solid fa-globe text-lg"></i>
+                  </div>
+                  <div>
+                    <h4 className="text-gray-900 font-medium mb-1">Platformlardan ve Workigom Flow'dan sil</h4>
+                    <p className="text-gray-500 text-xs leading-relaxed mb-3">
+                      Facebook'tan kalıcı olarak silinir ve Workigom Flow'dan kaldırılır.
+                    </p>
+                    <div className="flex items-start gap-2 bg-yellow-50 p-2.5 rounded-lg border border-yellow-100">
+                      <i className="fa-solid fa-triangle-exclamation text-yellow-600 text-xs mt-0.5 shrink-0"></i>
+                      <p className="text-yellow-700 text-[11px] leading-relaxed">
+                        Instagram API üzerinden silmeyi desteklemediğinden, Instagram'dan manuel olarak silinmesi gerekebilir.
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

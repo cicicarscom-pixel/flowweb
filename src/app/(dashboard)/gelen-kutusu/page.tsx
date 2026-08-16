@@ -278,6 +278,24 @@ export default function GelenKutusuPage() {
     }
   };
 
+  const handleSelectAll = () => {
+    let allIds: string[] = [];
+    if (activeTab === 'mesajlar') {
+      allIds = conversations.map(c => c.zernio_conversation_id || c.id);
+    } else if (activeTab === 'yorumlar') {
+      allIds = comments.map(c => c.zernio_comment_id || c.id);
+    } else if (activeTab === 'degerlendirmeler') {
+      allIds = reviews.map(r => r.id);
+    }
+
+    if (selectedItems.length === allIds.length && allIds.length > 0) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(allIds);
+    }
+  };
+
+
   const getPlatformIcon = (platform: string) => {
     switch (platform?.toLowerCase()) {
       case 'instagram': return <i className="fa-brands fa-instagram text-[#ebb2ff]"></i>;
@@ -302,6 +320,12 @@ export default function GelenKutusuPage() {
           {isSelectionMode ? (
             <>
               <span className="text-sm font-medium text-app-muted">{selectedItems.length} Seçildi</span>
+              <button 
+                onClick={handleSelectAll}
+                className="px-4 py-2 rounded-lg bg-app-card border border-app-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium flex items-center gap-2"
+              >
+                <i className="fa-solid fa-check-double"></i> Tümünü Seç
+              </button>
               <button 
                 onClick={handleDeleteSelected}
                 disabled={selectedItems.length === 0}

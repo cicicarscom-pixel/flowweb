@@ -417,6 +417,7 @@ export default function GelenKutusuPage() {
             await supabase.from('conversations').delete().in('zernio_conversation_id', zernioIds);
             await supabase.from('ai_communication_logs').delete().in('sender_id', zernioIds);
           }
+          setConversations(prev => prev.filter(c => !uuids.includes(c.id) && !zernioIds.includes(c.zernio_conversation_id)));
         } else if (activeTab === 'yorumlar') {
           const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
           const zernioIds = selectedItems.filter(id => !uuids.includes(id));
@@ -433,8 +434,10 @@ export default function GelenKutusuPage() {
               }))
             );
           }
+          setComments(prev => prev.filter(c => !uuids.includes(c.id) && !zernioIds.includes(c.zernio_comment_id)));
         } else if (activeTab === 'degerlendirmeler') {
            await supabase.from('reviews').delete().in('id', selectedItems);
+           setReviews(prev => prev.filter(r => !selectedItems.includes(r.id)));
         }
       } catch (e) {
         console.warn("Delete err:", e);
@@ -600,8 +603,12 @@ export default function GelenKutusuPage() {
                       </div>
                     )}
                     
-                    <div className="relative w-12 h-12 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center">
-                      <i className="fa-solid fa-user text-app-muted"></i>
+                    <div className="relative w-12 h-12 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center overflow-hidden">
+                      {conv.participant_picture ? (
+                        <img src={conv.participant_picture} className="w-full h-full object-cover" />
+                      ) : (
+                        <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                      )}
                       <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
                         {getPlatformIcon(conv.platform)}
                       </div>
@@ -641,8 +648,12 @@ export default function GelenKutusuPage() {
                  <>
                    {/* Chat Header */}
                    <div className="p-4 border-b border-app-border flex items-center gap-3">
-                     <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                        <i className="fa-solid fa-user text-app-muted"></i>
+                     <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                        {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
+                           <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
+                        ) : (
+                           <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                        )}
                      </div>
                      <span className="font-bold text-on-surface">
                        {conversations.find(c => c.id === selectedConvId)?.participant_name}
@@ -659,11 +670,11 @@ export default function GelenKutusuPage() {
                          <div key={msg.id} className={`flex max-w-[75%] ${isOutbound ? 'self-end' : 'self-start'} gap-2 items-end`}>
                            {!isOutbound && (
                              <div className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0 overflow-hidden flex items-center justify-center mb-1 border border-white/10">
-                               {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
-                                 <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
-                               ) : (
-                                 <i className="fa-solid fa-user text-[10px] text-app-muted"></i>
-                               )}
+                                {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
+                                  <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
+                                ) : (
+                                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                                )}
                              </div>
                            )}
                            <div className={`p-3 rounded-2xl text-sm ${isOutbound ? 'bg-[#3797F0] text-white rounded-br-sm' : 'bg-[#262626] text-white rounded-bl-sm'}`}>
@@ -775,7 +786,7 @@ export default function GelenKutusuPage() {
                               {parent.author_picture ? (
                                 <img src={parent.author_picture} alt={uName} className="w-full h-full object-cover" />
                               ) : (
-                                <i className="fa-solid fa-user text-app-muted"></i>
+                                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(uName)}&background=random`} alt={uName} className="w-full h-full object-cover" />
                               )}
                             </div>
                             <div className="flex flex-col">

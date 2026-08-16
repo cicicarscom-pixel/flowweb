@@ -223,13 +223,18 @@ export default function GelenKutusuPage() {
         .order('updated_at', { ascending: false });
       
       if (!error && data) {
+        const cachedPics = getCachedPictures();
         const enhancedData = data.map(conv => {
           let lastMessageSnippet = 'Son mesajı görmek için dokunun';
           if (conv.messages && conv.messages.length > 0) {
             const sortedMessages = [...conv.messages].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
             lastMessageSnippet = sortedMessages[0].content;
           }
-          return { ...conv, lastMessageSnippet };
+          return { 
+              ...conv, 
+              lastMessageSnippet,
+              participant_picture: conv.participant_picture || cachedPics[conv.zernio_conversation_id] || null
+          };
         });
         setConversations(enhancedData);
       }
@@ -297,8 +302,9 @@ export default function GelenKutusuPage() {
            const { data: picData } = await supabase.functions.invoke('zernio-client', {
               body: { action: 'get-inbox-pictures', payload: { userId: session.user.id } }
            });
-           if (picData?.data && Object.keys(picData.data).length > 0) {
-             const newPics = picData.data;
+           
+           if (picData?.pictures && Object.keys(picData.pictures).length > 0) {
+             const newPics = picData.pictures;
              const currentCache = getCachedPictures();
              setCachedPictures({ ...currentCache, ...newPics });
              
@@ -306,6 +312,11 @@ export default function GelenKutusuPage() {
                 ...c,
                 post_picture: c.post_picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || null,
                 author_picture: c.author_picture || newPics[c.zernio_comment_id] || null
+             })));
+             
+             setConversations(prev => prev.map(conv => ({
+                ...conv,
+                participant_picture: conv.participant_picture || newPics[conv.zernio_conversation_id] || null
              })));
            }
            // Faz 2'yi tetikle

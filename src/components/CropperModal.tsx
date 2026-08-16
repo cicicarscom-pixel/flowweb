@@ -56,6 +56,8 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
             onCropComplete={onCropCompleteLocal}
             onZoomChange={setZoom}
             objectFit="contain"
+            restrictPosition={false}
+            minZoom={0.1}
           />
         </div>
 
@@ -66,7 +68,7 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
             <input
               type="range"
               value={zoom}
-              min={1}
+              min={0.1}
               max={3}
               step={0.1}
               aria-labelledby="Zoom"

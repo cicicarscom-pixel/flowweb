@@ -22,6 +22,9 @@ export async function getCroppedImg(
   canvas.width = pixelCrop.width
   canvas.height = pixelCrop.height
 
+  ctx.fillStyle = '#000'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+
   ctx.drawImage(
     image,
     pixelCrop.x,

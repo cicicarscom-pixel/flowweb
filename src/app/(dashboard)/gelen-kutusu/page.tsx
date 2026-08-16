@@ -634,9 +634,11 @@ export default function GelenKutusuPage() {
                      {conversations.find(c => c.id === selectedConvId)?.messages
                        ?.slice()
                        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                       .map((msg: any) => (
-                         <div key={msg.id} className={`flex max-w-[75%] ${msg.is_outbound ? 'self-end' : 'self-start'} gap-2 items-end`}>
-                           {!msg.is_outbound && (
+                       .map((msg: any) => {
+                         const isOutbound = msg.is_outbound || msg.direction === 'outgoing';
+                         return (
+                         <div key={msg.id} className={`flex max-w-[75%] ${isOutbound ? 'self-end' : 'self-start'} gap-2 items-end`}>
+                           {!isOutbound && (
                              <div className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0 overflow-hidden flex items-center justify-center mb-1 border border-white/10">
                                {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
                                  <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
@@ -645,14 +647,14 @@ export default function GelenKutusuPage() {
                                )}
                              </div>
                            )}
-                           <div className={`p-3 rounded-2xl text-sm ${msg.is_outbound ? 'bg-[#3797F0] text-white rounded-br-sm' : 'bg-[#262626] text-white rounded-bl-sm'}`}>
+                           <div className={`p-3 rounded-2xl text-sm ${isOutbound ? 'bg-[#3797F0] text-white rounded-br-sm' : 'bg-[#262626] text-white rounded-bl-sm'}`}>
                              {msg.content}
-                             <div className={`text-[10px] mt-1 ${msg.is_outbound ? 'text-blue-200/70 text-right' : 'text-gray-400'}`}>
+                             <div className={`text-[10px] mt-1 ${isOutbound ? 'text-blue-200/70 text-right' : 'text-gray-400'}`}>
                                {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
                              </div>
                            </div>
                          </div>
-                       ))}
+                       )})}
                    </div>
                    {/* Chat Input */}
                    <div className="p-3 border-t border-app-border flex items-center gap-2 bg-[#131315]/80">

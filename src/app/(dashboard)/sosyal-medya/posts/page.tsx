@@ -386,7 +386,6 @@ export default function TumGonderilerPage() {
           )}
 
         </div>
-        </div>
       </div>
 
       {/* Delete Modal */}
@@ -458,7 +457,6 @@ export default function TumGonderilerPage() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

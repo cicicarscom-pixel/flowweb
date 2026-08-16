@@ -181,17 +181,26 @@ export default function GelenKutusuPage() {
       if (error || data?.error) {
         throw new Error(error?.message || data?.error);
       }
+        
+      const returnedCommentId = data?.commentId || data?.data?.commentId || data?.id || data?.data?.id || `mock_${Date.now()}`;
+        
+      let finalContent = replyText;
+      const uName = comment.author_name || comment.username || 'Yorum';
+      if (!finalContent.includes(`@${uName}`)) {
+          finalContent = `@${uName} ${finalContent}`;
+      }
       
-      // Optimistic UI Update (insert locally)
       const newComment = {
         id: Math.random().toString(),
         post_id: comment.post_id,
-        zernio_comment_id: data?.id || data?.data?.id || `mock_${Date.now()}`,
+        zernio_comment_id: returnedCommentId,
         zernio_post_id: comment.zernio_post_id,
-        content: replyText,
+        content: finalContent,
         username: 'Mağaza (Ben)',
+        author_name: 'Mağaza (Ben)',
         platform: comment.platform,
         created_at: new Date().toISOString(),
+        is_outbound: true,
         liked: false,
         hidden: false,
       };

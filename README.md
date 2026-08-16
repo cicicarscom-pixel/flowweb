@@ -111,6 +111,10 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
   - *Gelen Kutusu:* Mesajlar (`conversations`, `messages`), yorumlar (`comments`) ve değerlendirmeler (`reviews`) Supabase ve Zernio edge function'larına bağlanarak tamamen gerçek verilere dönüştürüldü.
   - *Analiz:* Günlük gösterim (views), beğeniler (likes), takipçi istatistikleri ve platform bazlı analiz verileri `zernio-client` Supabase fonksiyonu kullanılarak çekilir duruma getirildi. Birebir mobil entegrasyonu sağlandı.
 
+### [16.08.2026] Son Güncellemeler (Çoklu Seçim & Silme Optimizasyonu)
+1. **Gelen Kutusu Çoklu Seçim Geliştirmesi:** "Tümünü Seç ve Sil" özelliği arayüze entegre edildi. Gelen kutusundaki (Mesajlar, Yorumlar, Değerlendirmeler) seçim moduna eklenen "Tümünü Seç" butonu ile kullanıcıların tüm öğeleri tek seferde seçip toplu olarak silebilmesi sağlandı.
+2. **Kalıcı Silme Güvenliği:** Yorumların ve mesajların silindiğinde tekrar geri gelmesini önlemek amacıyla, Supabase `comments` ve `messages` tablolarına `DELETE` (Row Level Security) yetkileri eklendi ve frontend tetikleyicileri (Supabase `.delete().in()`) buna göre güncellendi.
+
 ### [15.08.2026] Ã‡apraz Platform VeritabanÄ± Senkronizasyonu & Hata Giderimleri
 1. **Ai Randevu (Web):** Ai Randevu YÃ¶netimi ekranÄ±ndaki takvim gÃ¼nleri yana kaydÄ±rÄ±labilir (drag-to-scroll) hale getirildi.
 2. **Ortak VeritabanÄ± UyumsuzluÄŸu (406 HatasÄ±):** Dashboard ve AI Muhasebe (Web) ekranlarÄ±nda, organizasyon Ã¼yelerini Ã§eken .single() metotlarÄ± boÅŸ sonuÃ§ dÃ¶nebileceÄŸi iÃ§in 406 Not Acceptable hatasÄ± veriyordu. Bunlar gÃ¼venli olan .maybeSingle() ile deÄŸiÅŸtirildi ve sÄ±fÄ±r hata (No errors) durumuna ulaÅŸÄ±ldÄ±.

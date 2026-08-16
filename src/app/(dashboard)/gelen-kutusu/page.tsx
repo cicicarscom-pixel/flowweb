@@ -8,6 +8,10 @@ export default function GelenKutusuPage() {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
+  const [dmText, setDmText] = useState("");
+  const [isSendingDM, setIsSendingDM] = useState(false);
+
   
   const [conversations, setConversations] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
@@ -96,6 +100,45 @@ export default function GelenKutusuPage() {
   const supabase = createClient();
 
   // Fetch Data
+  
+  const handleSendDM = async (conv: any) => {
+    if (!conv || !dmText.trim()) return;
+    setIsSendingDM(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: {
+          action: 'send-message',
+          payload: {
+            userId: session?.user?.id,
+            conversationId: conv.zernio_conversation_id || conv.id,
+            accountId: conv.accountId,
+            message: dmText,
+            platform: conv.platform
+          }
+        }
+      });
+      if (error || data?.error) throw new Error(error?.message || data?.error);
+      
+      const newMsg = {
+        id: Math.random().toString(),
+        conversation_id: conv.id,
+        zernio_message_id: 'mock_' + Date.now(),
+        content: dmText,
+        is_outbound: true,
+        created_at: new Date().toISOString(),
+      };
+      
+      setConversations(prev => prev.map(c => c.id === conv.id ? { ...c, messages: [...(c.messages || []), newMsg] } : c));
+      setDmText("");
+    } catch (e: any) {
+      console.error(e);
+    } finally {
+      setIsSendingDM(false);
+    }
+  };
+
   const handleHideComment = async (comment: any) => {
     try {
       setComments(prev => prev.filter(c => c.id !== comment.id));
@@ -108,7 +151,7 @@ export default function GelenKutusuPage() {
   const handleDMClick = (username: string) => {
     const conv = conversations.find(c => c.participant_name?.toLowerCase() === username?.toLowerCase());
     if (conv) {
-      setActiveTab('mesajlar');
+      setActiveTab('mesajlar'); setSelectedConvId(conv.id);
     } else {
       alert("Bu kullanıcı ile aktif bir DM geçmişi bulunamadı. (Sadece size mesaj atanlara DM gönderebilirsiniz).");
     }
@@ -175,10 +218,7 @@ export default function GelenKutusuPage() {
         .from('conversations')
         .select(`
           *,
-          messages (
-            content,
-            created_at
-          )
+          messages (*)
         `)
         .order('updated_at', { ascending: false });
       
@@ -516,65 +556,124 @@ export default function GelenKutusuPage() {
           </div>
         ) : null}
 
+        
         {/* --- MESAJLAR TAB --- */}
-        {!isLoading && activeTab === 'mesajlar' && (
-          conversations.map(conv => {
-            const selectId = conv.zernio_conversation_id || conv.id;
-            return (
-              <div 
-                key={conv.id}
-                onClick={() => isSelectionMode ? toggleSelection(selectId) : null}
-                className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                  selectedItems.includes(selectId) 
-                    ? 'border-[#00f0ff] bg-[#00f0ff]/5' 
-                    : 'border-app-border bg-app-card hover:border-app-muted/40'
-                }`}
-              >
-                {isSelectionMode && (
-                  <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                    selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-app-muted'
-                  }`}>
-                    {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
-                  </div>
-                )}
-                
-                <div className="relative w-12 h-12 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center">
-                  <i className="fa-solid fa-user text-app-muted"></i>
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
-                    {getPlatformIcon(conv.platform)}
-                  </div>
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
-                    <span className="text-xs text-app-muted flex-shrink-0">
-                      {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
-                    </span>
-                  </div>
-                  <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-app-muted'}`}>
-                    {conv.lastMessageSnippet}
-                  </p>
-                </div>
-
-                {!isSelectionMode && (
-                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                    {conv.unread_count > 0 ? (
-                      <div className="bg-[#00f0ff] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                        {conv.unread_count}
+        {!isLoading && activeTab === 'mesajlar' && conversations.length > 0 && (
+          <div className="flex flex-col lg:flex-row gap-6 h-[600px] w-full">
+            {/* Left Pane - Conversations List */}
+            <div className="w-full lg:w-1/3 flex flex-col gap-3 overflow-y-auto custom-scrollbar pr-2 h-full">
+              {conversations.map(conv => {
+                const selectId = conv.zernio_conversation_id || conv.id;
+                const isSelected = selectedConvId === conv.id;
+                return (
+                  <div 
+                    key={conv.id}
+                    onClick={() => isSelectionMode ? toggleSelection(selectId) : setSelectedConvId(conv.id)}
+                    className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
+                      isSelected ? 'border-[#00f0ff] bg-[#00f0ff]/10' : 'border-app-border bg-app-card hover:border-app-muted/40'
+                    }`}
+                  >
+                    {isSelectionMode && (
+                      <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
+                        selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-app-muted'
+                      }`}>
+                        {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
                       </div>
-                    ) : (
-                      <div className="w-5 h-5"></div> /* Placeholder for alignment */
                     )}
-                    <button className="text-app-muted hover:text-[#00f0ff] transition-colors">
-                      <i className="fa-solid fa-reply"></i>
-                    </button>
+                    
+                    <div className="relative w-12 h-12 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center">
+                      <i className="fa-solid fa-user text-app-muted"></i>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
+                        {getPlatformIcon(conv.platform)}
+                      </div>
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
+                        <span className="text-xs text-app-muted flex-shrink-0">
+                          {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
+                        </span>
+                      </div>
+                      <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-app-muted'}`}>
+                        {conv.lastMessageSnippet}
+                      </p>
+                    </div>
+
+                    {!isSelectionMode && (
+                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                        {conv.unread_count > 0 ? (
+                          <div className="bg-[#00f0ff] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                            {conv.unread_count}
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5"></div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            )
-          })
+                )
+              })}
+            </div>
+
+            {/* Right Pane - Chat View */}
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-app-border h-full overflow-hidden relative bg-[#0A0A0B]">
+               {selectedConvId ? (
+                 <>
+                   {/* Chat Header */}
+                   <div className="p-4 border-b border-app-border flex items-center gap-3">
+                     <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
+                        <i className="fa-solid fa-user text-app-muted"></i>
+                     </div>
+                     <span className="font-bold text-on-surface">
+                       {conversations.find(c => c.id === selectedConvId)?.participant_name}
+                     </span>
+                   </div>
+                   {/* Chat Messages */}
+                   <div className="flex-1 p-4 overflow-y-auto flex flex-col-reverse gap-4 custom-scrollbar">
+                     {conversations.find(c => c.id === selectedConvId)?.messages
+                       ?.slice()
+                       .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                       .map((msg: any) => (
+                         <div key={msg.id} className={`max-w-[75%] p-3 rounded-2xl text-sm ${msg.is_outbound ? 'bg-[#00f0ff]/20 text-[#00f0ff] self-end rounded-br-sm' : 'bg-[#1c1b1d] border border-white/5 text-white self-start rounded-bl-sm'}`}>
+                           {msg.content}
+                           <div className={`text-[10px] mt-1 ${msg.is_outbound ? 'text-[#00f0ff]/60 text-right' : 'text-app-muted'}`}>
+                             {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
+                           </div>
+                         </div>
+                       ))}
+                   </div>
+                   {/* Chat Input */}
+                   <div className="p-3 border-t border-app-border flex items-center gap-2 bg-[#131315]/80">
+                      <input 
+                        type="text" 
+                        value={dmText}
+                        onChange={(e) => setDmText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSendDM(conversations.find(c => c.id === selectedConvId));
+                        }}
+                        placeholder="Mesaj yazın..." 
+                        className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#00f0ff] border border-transparent"
+                      />
+                      <button 
+                        onClick={() => handleSendDM(conversations.find(c => c.id === selectedConvId))}
+                        disabled={isSendingDM || !dmText.trim()}
+                        className="px-5 py-3 rounded-xl bg-[#00f0ff] text-black font-semibold flex items-center justify-center disabled:opacity-50 hover:bg-[#00c0cc] transition-colors"
+                      >
+                        {isSendingDM ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                      </button>
+                   </div>
+                 </>
+               ) : (
+                 <div className="flex-1 flex flex-col items-center justify-center text-app-muted opacity-60">
+                    <i className="fa-regular fa-comments text-4xl mb-4"></i>
+                    <p>Mesajlaşmaya başlamak için bir sohbet seçin.</p>
+                 </div>
+               )}
+            </div>
+          </div>
         )}
+        
 
         {/* --- YORUMLAR TAB --- */}
         {!isLoading && activeTab === 'yorumlar' && postsWithComments.length > 0 && (

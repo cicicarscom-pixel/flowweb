@@ -15,6 +15,7 @@ export default function TumGonderilerPage() {
   const [activeFilter, setActiveFilter] = useState('all');
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedPostIds, setSelectedPostIds] = useState<string[]>([]);
 
   const supabase = createClient();
 
@@ -75,10 +76,48 @@ export default function TumGonderilerPage() {
         alert("Gönderi silinirken hata oluştu: " + error.message);
       } else {
         setPosts(prev => prev.filter(p => p.id !== id));
+        setSelectedPostIds(prev => prev.filter(pId => pId !== id));
       }
     } catch (err) {
       console.error("Delete exception:", err);
       alert("Gönderi silinemedi.");
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedPostIds.length === 0) return;
+    if (!window.confirm(`${selectedPostIds.length} gönderiyi silmek istediğinize emin misiniz?`)) return;
+
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .in('id', selectedPostIds);
+
+      if (error) {
+        console.error("Bulk delete error:", error);
+        alert("Gönderiler silinirken hata oluştu: " + error.message);
+      } else {
+        setPosts(prev => prev.filter(p => !selectedPostIds.includes(p.id)));
+        setSelectedPostIds([]);
+      }
+    } catch (err) {
+      console.error("Bulk delete exception:", err);
+      alert("Gönderiler silinemedi.");
+    }
+  };
+
+  const toggleSelectPost = (id: string) => {
+    setSelectedPostIds(prev => 
+      prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedPostIds.length === filteredPosts.length) {
+      setSelectedPostIds([]);
+    } else {
+      setSelectedPostIds(filteredPosts.map(p => p.id));
     }
   };
 
@@ -139,14 +178,14 @@ export default function TumGonderilerPage() {
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden text-on-surface">
       {/* Filters */}
-      <div className="px-5 py-4 flex gap-2 overflow-x-auto hide-scrollbar shrink-0">
+      <div className="px-5 py-4 flex gap-2 overflow-x-auto hide-scrollbar shrink-0 items-center">
         <Link href="/sosyal-medya" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#849495] hover:text-[#e5e2e3] transition-colors mr-2 shrink-0">
           <i className="fa-solid fa-arrow-left"></i>
         </Link>
         {FILTERS.map(filter => (
           <button
             key={filter.id}
-            onClick={() => setActiveFilter(filter.id)}
+            onClick={() => { setActiveFilter(filter.id); setSelectedPostIds([]); }}
             className={`px-4 py-2 rounded-full border text-[12px] font-bold whitespace-nowrap transition-colors ${
               activeFilter === filter.id 
                 ? 'bg-[#00f0ff]/20 border-[#00f0ff] text-[#00f0ff]' 
@@ -156,6 +195,15 @@ export default function TumGonderilerPage() {
             {filter.label}
           </button>
         ))}
+        {selectedPostIds.length > 0 && (
+          <button 
+            onClick={handleBulkDelete}
+            className="ml-auto px-4 py-2 rounded-full border border-[#ff0050] bg-[#ff0050]/20 text-[#ff0050] text-[12px] font-bold hover:bg-[#ff0050]/30 transition-colors flex items-center gap-2"
+          >
+            <i className="fa-regular fa-trash-can"></i>
+            {selectedPostIds.length} Seçiliyi Sil
+          </button>
+        )}
       </div>
 
       {/* List (Table Layout) */}
@@ -164,7 +212,11 @@ export default function TumGonderilerPage() {
           
           {/* Table Header */}
           <div className="flex items-center border-b border-white/10 pb-3 pt-4 mb-2 px-5 sticky top-0 bg-[#0A0A0B]/95 z-10 backdrop-blur-sm">
-            <div style={{ width: 40 }}></div>
+            <div style={{ width: 40 }} className="flex justify-start">
+              <button onClick={toggleSelectAll} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 ? 'bg-[#00f0ff] border-[#00f0ff]' : 'border-[#849495]/50 bg-transparent'}`}>
+                {selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 && <i className="fa-solid fa-check text-[#0A0A0B] text-[10px]"></i>}
+              </button>
+            </div>
             <div style={{ width: 250 }} className="text-[#849495] text-[12px] font-semibold">Content</div>
             <div style={{ width: 100 }} className="text-[#849495] text-[12px] font-semibold text-center">Platforms</div>
             <div style={{ width: 150 }} className="text-[#849495] text-[12px] font-semibold text-center">Date</div>
@@ -196,7 +248,9 @@ export default function TumGonderilerPage() {
                 <div key={item.id} className="flex items-center border-b border-white/5 py-3 px-5 hover:bg-white/5 transition-colors" style={{ opacity: isScheduled ? 0.7 : 1 }}>
                   {/* Checkbox Placeholder */}
                   <div style={{ width: 40 }} className="flex justify-start">
-                    <div className="w-4 h-4 rounded border border-[#849495]/50 bg-transparent"></div>
+                    <button onClick={() => toggleSelectPost(item.id)} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.includes(item.id) ? 'bg-[#00f0ff] border-[#00f0ff]' : 'border-[#849495]/50 bg-transparent'}`}>
+                      {selectedPostIds.includes(item.id) && <i className="fa-solid fa-check text-[#0A0A0B] text-[10px]"></i>}
+                    </button>
                   </div>
 
                   {/* Content */}

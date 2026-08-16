@@ -27,7 +27,22 @@ export default function SharePage() {
 
   // Publishing Mode
   const [publishMode, setPublishMode] = useState('now'); 
-  const [scheduleDate, setScheduleDate] = useState('04.07.2026 14:00');
+  const [scheduleDate, setScheduleDate] = useState(() => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() + 10);
+    return `${d.getDate().toString().padStart(2, '0')}.${(d.getMonth() + 1).toString().padStart(2, '0')}.${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+  });
+  const [timezone, setTimezone] = useState('Europe/Istanbul');
+
+  const TIMEZONES = [
+    { value: 'Europe/Istanbul', label: 'Europe/Istanbul (GMT+3)' },
+    { value: 'Europe/London', label: 'Europe/London (GMT)' },
+    { value: 'America/New_York', label: 'America/New_York (EST)' },
+    { value: 'America/Los_Angeles', label: 'America/Los_Angeles (PST)' },
+    { value: 'Asia/Dubai', label: 'Asia/Dubai (GMT+4)' },
+    { value: 'Asia/Tokyo', label: 'Asia/Tokyo (GMT+9)' },
+    { value: 'Australia/Sydney', label: 'Australia/Sydney (GMT+10)' }
+  ];
 
   // Facebook
   const [fbFormat, setFbFormat] = useState('Feed');
@@ -180,15 +195,9 @@ export default function SharePage() {
         if (parts.length !== 2) throw new Error();
         const dateParts = parts[0].split('.');
         const timeParts = parts[1].split(':');
-        const d = new Date(
-          parseInt(dateParts[2], 10),
-          parseInt(dateParts[1], 10) - 1,
-          parseInt(dateParts[0], 10),
-          parseInt(timeParts[0], 10),
-          parseInt(timeParts[1] || '0', 10)
-        );
-        if (isNaN(d.getTime())) throw new Error();
-        finalScheduledFor = d.toISOString();
+        
+        // Zernio schedule format: YYYY-MM-DDTHH:mm:00 
+        finalScheduledFor = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts[0].padStart(2, '0')}:${timeParts[1].padStart(2, '0')}:00`;
       } catch (err) {
         return alert("Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.");
       }
@@ -205,6 +214,7 @@ export default function SharePage() {
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
             scheduledFor: finalScheduledFor,
+            timezone: timezone,
           }
         }
       });
@@ -526,11 +536,25 @@ export default function SharePage() {
                 <button onClick={() => setPublishMode('now')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'now' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#b9cacb] hover:text-white'}`}>Şimdi</button>
               </div>
               {publishMode === 'schedule' ? (
-                <div className="bg-[#4edea3]/10 border border-[#4edea3]/30 rounded-lg p-3 flex items-start gap-2">
-                  <i className="fa-solid fa-calendar text-[#4edea3] mt-0.5"></i>
-                  <div className="w-full">
-                    <span className="block text-[#e5e2e3] text-xs font-medium mb-1">Zamanlanmış Yayın</span>
-                    <input type="text" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)} className="bg-transparent text-[#4edea3] text-sm font-semibold outline-none w-full" />
+                <div className="bg-[#4edea3]/10 border border-[#4edea3]/30 rounded-lg p-3 flex flex-col gap-3">
+                  <div className="flex items-start gap-2">
+                    <i className="fa-solid fa-calendar text-[#4edea3] mt-0.5"></i>
+                    <div className="w-full">
+                      <span className="block text-[#e5e2e3] text-xs font-medium mb-1">Zamanlanmış Yayın (Tarih & Saat)</span>
+                      <input type="text" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)} className="bg-transparent text-[#4edea3] text-sm font-semibold outline-none w-full" />
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 border-t border-[#4edea3]/20 pt-3">
+                    <i className="fa-solid fa-earth-americas text-[#4edea3] mt-0.5"></i>
+                    <div className="w-full relative">
+                      <span className="block text-[#e5e2e3] text-xs font-medium mb-1">Timezone</span>
+                      <select value={timezone} onChange={e => setTimezone(e.target.value)} className="bg-transparent text-[#4edea3] text-sm font-semibold outline-none w-full appearance-none cursor-pointer">
+                        {TIMEZONES.map(tz => (
+                          <option key={tz.value} value={tz.value} className="bg-[#1c1b1c] text-[#e5e2e3]">{tz.label}</option>
+                        ))}
+                      </select>
+                      <i className="fa-solid fa-chevron-down absolute right-2 top-6 text-[#4edea3] pointer-events-none text-xs"></i>
+                    </div>
                   </div>
                 </div>
               ) : (

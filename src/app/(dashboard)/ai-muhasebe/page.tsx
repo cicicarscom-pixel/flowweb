@@ -176,6 +176,17 @@ export default function AiMuhasebePage() {
           </div>
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#ecb2ff] transition-colors"></i>
         </Link>
+
+        <Link href="/ai-muhasebe/muhasebecim" className="block rounded-xl border border-[#00daf3]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
+          <div className="flex items-center gap-4">
+            <i className="fa-solid fa-key text-[#00daf3] text-xl w-6 text-center"></i>
+            <div>
+              <h3 className="text-sm font-semibold text-[#00daf3] tracking-wide mb-1 uppercase">MUHASEBECİ BAĞLANTISI</h3>
+              <p className="text-xs text-on-surface-variant">Mali müşavirinizle hesabınızı bağlayın ve verilerinizi güvenle paylaşın.</p>
+            </div>
+          </div>
+          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#00daf3] transition-colors"></i>
+        </Link>
       </div>
     </div>
   );

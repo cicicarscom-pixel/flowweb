@@ -55,7 +55,6 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
             onCropChange={setCrop}
             onCropComplete={onCropCompleteLocal}
             onZoomChange={setZoom}
-            objectFit="contain"
             restrictPosition={false}
             minZoom={0.1}
           />

@@ -55,7 +55,7 @@ export default function GelenKutusuPage() {
     comments.forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       const postGroup = postMap.get(pId);
-      const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.is_outbound;
+      const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.username === 'Mağaza (Ben)' || comm.is_outbound;
       comm.isBusiness = isBusiness;
       
       if (!isBusiness) {
@@ -647,7 +647,10 @@ export default function GelenKutusuPage() {
                           <div className="flex items-center gap-4 text-xs font-medium mt-1">
                             <button 
                               className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
-                              onClick={() => setReplyText(`@${uName} `)}
+                              onClick={() => {
+                                setReplyingTo(parentId);
+                                setReplyText(`@${uName} `);
+                              }}
                             >
                               <i className="fa-solid fa-reply"></i> Yanıtla
                             </button>
@@ -701,7 +704,10 @@ export default function GelenKutusuPage() {
                                     <div className="flex items-center gap-4 text-[11px] font-medium mt-0.5">
                                       <button 
                                         className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
-                                        onClick={() => setReplyText(`@${uName} `)}
+                                        onClick={() => {
+                                          setReplyingTo(parentId);
+                                          setReplyText(`@${uName} `);
+                                        }}
                                       >
                                         <i className="fa-solid fa-reply"></i> Yanıtla
                                       </button>
@@ -718,48 +724,35 @@ export default function GelenKutusuPage() {
                             })}
                           </div>
                         )}
+
+                        {/* Inline Reply Input */}
+                        {replyingTo === parentId && (
+                          <div className="mt-2 flex gap-2">
+                            <input 
+                              type="text" 
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSendReply(parent);
+                              }}
+                              autoFocus
+                              placeholder="Yanıtlama için yazın..." 
+                              className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
+                            />
+                            <button 
+                              onClick={() => handleSendReply(parent)}
+                              disabled={isSendingReply || !replyText.trim()}
+                              className="px-4 py-2 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+                            >
+                              {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )
                   })}
               </div>
 
-              {/* Reply Input */}
-              <div className="p-3 border-t border-white/5 bg-[#131315]/80 flex gap-2">
-                <input 
-                  type="text" 
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
-                      if (postGrp && postGrp.parentComments.length > 0) {
-                        const targetComment = postGrp.parentComments.reduce((latest: any, curr: any) => {
-                          return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
-                        });
-                        handleSendReply(targetComment);
-                      }
-                    }
-                  }}
-                  placeholder="Yanıtlama için yazın..." 
-                  className="flex-1 bg-[#131314] rounded-xl px-4 py-3 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
-                />
-                <button 
-                  onClick={() => {
-                    const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
-                    if (postGrp && postGrp.parentComments.length > 0) {
-                      // find latest comment as target
-                      const targetComment = postGrp.parentComments.reduce((latest: any, curr: any) => {
-                        return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
-                      });
-                      handleSendReply(targetComment);
-                    }
-                  }}
-                  disabled={isSendingReply || !replyText.trim()}
-                  className="px-6 py-3 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-xl text-sm font-semibold transition-colors disabled:opacity-50"
-                >
-                  {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
-                </button>
-              </div>
             </div>
           </div>
         )}

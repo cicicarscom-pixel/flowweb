@@ -23,7 +23,7 @@ export default function GelenKutusuPage() {
     
     const postMap = new Map<string, any>();
     
-    comments.forEach(comm => {
+    comments.filter(c => !c.hidden).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       if (!postMap.has(pId)) {
         let snippet = comm.posts?.content || 'Gönderi detayı bulunamadı.';
@@ -52,7 +52,7 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments.forEach(comm => {
+    comments.filter(c => !c.hidden).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       const postGroup = postMap.get(pId);
       const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.username === 'Mağaza (Ben)' || comm.is_outbound;
@@ -64,7 +64,7 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments.forEach(comm => {
+    comments.filter(c => !c.hidden).forEach(comm => {
       if (comm.isBusiness) {
          const pId = comm.zernio_post_id || comm.post_id || 'unknown';
          const postGroup = postMap.get(pId);
@@ -96,6 +96,24 @@ export default function GelenKutusuPage() {
   const supabase = createClient();
 
   // Fetch Data
+  const handleHideComment = async (comment: any) => {
+    try {
+      setComments(prev => prev.filter(c => c.id !== comment.id));
+      await supabase.from('comments').update({ hidden: true }).eq('id', comment.id);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDMClick = (username: string) => {
+    const conv = conversations.find(c => c.participant_name?.toLowerCase() === username?.toLowerCase());
+    if (conv) {
+      setActiveTab('mesajlar');
+    } else {
+      alert("Bu kullanıcı ile aktif bir DM geçmişi bulunamadı. (Sadece size mesaj atanlara DM gönderebilirsiniz).");
+    }
+  };
+
   const handleSendReply = async (comment: any) => {
     if (!replyText.trim()) return;
     setIsSendingReply(true);
@@ -653,10 +671,10 @@ export default function GelenKutusuPage() {
                             >
                               <i className="fa-solid fa-reply"></i> Yanıtla
                             </button>
-                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(uName)}>
                               <i className="fa-solid fa-paper-plane"></i> DM
                             </button>
-                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
                               <i className="fa-solid fa-eye-slash"></i> Gizle
                             </button>
                           </div>
@@ -710,10 +728,10 @@ export default function GelenKutusuPage() {
                                       >
                                         <i className="fa-solid fa-reply"></i> Yanıtla
                                       </button>
-                                      <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                                      <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
                                         <i className="fa-solid fa-eye-slash"></i> Gizle
                                       </button>
-                                      <button className="text-app-muted hover:text-red-400 transition-colors flex items-center gap-1.5">
+                                      <button className="text-app-muted hover:text-red-400 transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
                                         <i className="fa-solid fa-trash-can"></i> Sil
                                       </button>
                                     </div>

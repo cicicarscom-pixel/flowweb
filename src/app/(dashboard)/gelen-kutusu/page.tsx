@@ -22,6 +22,10 @@ export default function GelenKutusuPage() {
   const [replyText, setReplyText] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
 
+  const [privateReplyModal, setPrivateReplyModal] = useState<any>(null);
+  const [privateReplyText, setPrivateReplyText] = useState("");
+  const [isSendingPrivateReply, setIsSendingPrivateReply] = useState(false);
+
   const postsWithComments = React.useMemo(() => {
     if (!comments || comments.length === 0) return [];
     
@@ -148,12 +152,45 @@ export default function GelenKutusuPage() {
     }
   };
 
-  const handleDMClick = (username: string) => {
-    const conv = conversations.find(c => c.participant_name?.toLowerCase() === username?.toLowerCase());
+  const handleDMClick = (comment: any) => {
+    const uName = comment.author_name || comment.username;
+    const conv = conversations.find(c => c.participant_name?.toLowerCase() === uName?.toLowerCase());
     if (conv) {
       setActiveTab('mesajlar'); setSelectedConvId(conv.id);
     } else {
-      alert("Bu kullanıcı ile aktif bir DM geçmişi bulunamadı. (Sadece size mesaj atanlara DM gönderebilirsiniz).");
+      setPrivateReplyModal(comment);
+      setPrivateReplyText("");
+    }
+  };
+
+  const handleSendPrivateReply = async () => {
+    if (!privateReplyModal || !privateReplyText.trim()) return;
+    setIsSendingPrivateReply(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: {
+          action: 'send-private-reply',
+          payload: {
+            userId: session?.user?.id,
+            accountId: privateReplyModal.posts?.accountId || privateReplyModal.accountId,
+            postId: privateReplyModal.zernio_post_id,
+            commentId: privateReplyModal.zernio_comment_id,
+            message: privateReplyText,
+            platform: privateReplyModal.platform
+          }
+        }
+      });
+      if (error || data?.error) throw new Error(error?.message || data?.error);
+      
+      setPrivateReplyModal(null);
+      setPrivateReplyText("");
+      alert("Mesaj başarıyla gönderildi!");
+    } catch (e: any) {
+      console.error(e);
+      alert("Mesaj gönderilirken hata: " + e.message);
+    } finally {
+      setIsSendingPrivateReply(false);
     }
   };
 
@@ -320,7 +357,7 @@ export default function GelenKutusuPage() {
              setComments(prev => prev.map(c => ({
                 ...c,
                 post_picture: c.post_picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || null,
-                author_picture: c.author_picture || newPics[c.zernio_comment_id] || null
+                author_picture: c.author_picture || newPics[c.comment_id] || null
              })));
              
              setConversations(prev => prev.map(conv => ({
@@ -822,7 +859,7 @@ export default function GelenKutusuPage() {
                             >
                               <i className="fa-solid fa-reply"></i> Yanıtla
                             </button>
-                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(uName)}>
+                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
                               <i className="fa-solid fa-paper-plane"></i> DM
                             </button>
                             <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
@@ -966,6 +1003,38 @@ export default function GelenKutusuPage() {
           ))
         )}
 
+        {privateReplyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-[#1c1b1d] rounded-2xl w-[90%] max-w-md p-6 border border-white/10 shadow-2xl">
+              <h3 className="text-lg font-semibold text-white mb-2">Gizli Mesaj Gönder (DM)</h3>
+              <p className="text-sm text-app-muted mb-4">
+                @{privateReplyModal.author_name || privateReplyModal.username} adlı kullanıcıya özel bir mesaj gönderin:
+              </p>
+              <textarea
+                value={privateReplyText}
+                onChange={(e) => setPrivateReplyText(e.target.value)}
+                className="w-full h-24 bg-[#131315] border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-[#bc13fe] resize-none mb-4 custom-scrollbar"
+                placeholder="Mesajınızı buraya yazın..."
+              ></textarea>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setPrivateReplyModal(null)}
+                  className="px-4 py-2 rounded-lg font-medium text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                >
+                  İptal
+                </button>
+                <button
+                  onClick={handleSendPrivateReply}
+                  disabled={isSendingPrivateReply || !privateReplyText.trim()}
+                  className="px-4 py-2 rounded-lg font-medium text-sm bg-[#bc13fe] text-white hover:bg-[#a10ce0] disabled:opacity-50 transition-colors flex items-center gap-2"
+                >
+                  {isSendingPrivateReply ? <i className="fa-solid fa-spinner fa-spin"></i> : null}
+                  Gönder
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

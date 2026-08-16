@@ -96,6 +96,30 @@ export default function MuhasebecimPage() {
               </div>
             </div>
 
+            {/* Share Code Card */}
+            <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <i className="fa-solid fa-share-nodes text-[#00daf3]"></i>
+                <h3 className="text-lg font-medium text-on-surface">Kendi Kodunu Paylaş</h3>
+              </div>
+              <p className="text-sm text-on-surface-variant mb-6">
+                Muhasebeciniz sizi platforma davet etmek isterse aşağıdaki kodu onunla paylaşın. Muhasebecim beni eklesin.
+              </p>
+              
+              <div className="flex justify-between items-center bg-[#0e0e11] border border-white/5 rounded-lg px-5 py-4">
+                <span className="text-xl font-bold tracking-widest text-[#00daf3]">WG-73492</span>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText('WG-73492');
+                    alert('Kopyalandı: Kimlik kodunuz panoya kopyalandı.');
+                  }}
+                  className="text-on-surface-variant hover:text-white transition-colors"
+                >
+                  <i className="fa-regular fa-copy text-xl"></i>
+                </button>
+              </div>
+            </div>
+
             {step === 'verified' && firm && (
               <div className="bg-[#1a1b22] border border-[#4edea3]/30 rounded-xl p-6 animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-2 text-[#4edea3] mb-6">

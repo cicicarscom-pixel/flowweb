@@ -173,6 +173,27 @@ export default function SharePage() {
       return alert("Lütfen en az bir platform seçin.");
     }
 
+    let finalScheduledFor: string | undefined = undefined;
+    if (publishMode === 'schedule') {
+      try {
+        const parts = scheduleDate.trim().split(' ');
+        if (parts.length !== 2) throw new Error();
+        const dateParts = parts[0].split('.');
+        const timeParts = parts[1].split(':');
+        const d = new Date(
+          parseInt(dateParts[2], 10),
+          parseInt(dateParts[1], 10) - 1,
+          parseInt(dateParts[0], 10),
+          parseInt(timeParts[0], 10),
+          parseInt(timeParts[1] || '0', 10)
+        );
+        if (isNaN(d.getTime())) throw new Error();
+        finalScheduledFor = d.toISOString();
+      } catch (err) {
+        return alert("Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.");
+      }
+    }
+
     setIsSharing(true);
     try {
       const { data, error } = await supabase.functions.invoke('zernio-client', {
@@ -183,7 +204,7 @@ export default function SharePage() {
             mediaItems: localImage ? [{ url: localImage }] : [],
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
-            scheduledFor: publishMode === 'schedule' ? new Date(scheduleDate).toISOString() : undefined,
+            scheduledFor: finalScheduledFor,
           }
         }
       });

@@ -26,20 +26,61 @@ export default function GelenKutusuPage() {
     comments.forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       if (!postMap.has(pId)) {
+        let snippet = comm.posts?.content || 'Gönderi detayı bulunamadı.';
+        if (snippet && snippet !== 'Gönderi detayı bulunamadı.') {
+           const sentences = snippet.match(/[^.!?]+[.!?]+/g);
+           if (sentences && sentences.length > 0) {
+               snippet = sentences.slice(0, 3).join('').trim();
+           } else {
+               snippet = snippet.slice(0, 100) + '...';
+           }
+        }
+
         postMap.set(pId, {
           postId: pId,
           postPicture: comm.post_picture,
           platform: comm.platform,
+          postContentSnippet: snippet,
           latestCommentAt: comm.created_at || new Date().toISOString(),
-          comments: []
+          parentComments: []
         });
       }
       
       const postGroup = postMap.get(pId);
-      postGroup.comments.push(comm);
-      
       if (comm.created_at && new Date(comm.created_at).getTime() > new Date(postGroup.latestCommentAt).getTime()) {
         postGroup.latestCommentAt = comm.created_at;
+      }
+    });
+
+    comments.forEach(comm => {
+      const pId = comm.zernio_post_id || comm.post_id || 'unknown';
+      const postGroup = postMap.get(pId);
+      const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.is_outbound;
+      comm.isBusiness = isBusiness;
+      
+      if (!isBusiness) {
+         comm.replies = [];
+         postGroup.parentComments.push(comm);
+      }
+    });
+
+    comments.forEach(comm => {
+      if (comm.isBusiness) {
+         const pId = comm.zernio_post_id || comm.post_id || 'unknown';
+         const postGroup = postMap.get(pId);
+         let foundParent = false;
+         for (const parent of postGroup.parentComments) {
+            const uName = parent.author_name || parent.username;
+            if (uName && comm.content && comm.content.includes(`@${uName}`)) {
+               parent.replies.push(comm);
+               foundParent = true;
+               break;
+            }
+         }
+         if (!foundParent) {
+            comm.replies = [];
+            postGroup.parentComments.push(comm);
+         }
       }
     });
     
@@ -546,8 +587,8 @@ export default function GelenKutusuPage() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-on-surface truncate">
-                        {postGroup.comments.length} Yorum
+                      <div className="text-sm font-semibold text-on-surface line-clamp-3">
+                        {postGroup.postContentSnippet}
                       </div>
                       <div className="text-xs text-app-muted mt-1">
                         Son: {postGroup.latestCommentAt ? new Date(postGroup.latestCommentAt).toLocaleDateString('tr-TR') : ''}
@@ -561,54 +602,120 @@ export default function GelenKutusuPage() {
             {/* Right Pane - Thread & Reply */}
             <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-app-border h-full overflow-hidden relative">
               {/* Thread */}
-              <div className="flex-1 overflow-y-auto p-4 flex flex-col-reverse gap-4 custom-scrollbar">
-                {postsWithComments.find(p => p.postId === selectedPostId)?.comments
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
+                {postsWithComments.find(p => p.postId === selectedPostId)?.parentComments
                   .slice()
                   .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // newest first
-                  .map((comm: any) => {
-                    const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.is_outbound;
-                    const commId = comm.zernio_comment_id || comm.id;
+                  .map((parent: any) => {
+                    const parentId = parent.zernio_comment_id || parent.id;
+                    const uName = parent.author_name || parent.username;
                     return (
-                      <div key={comm.id} className={`flex ${isBusiness ? 'justify-end' : 'justify-start'} w-full`}>
-                        {isSelectionMode && !isBusiness && (
-                          <div className="mr-3 self-center">
-                            <div 
-                              onClick={() => toggleSelection(commId)}
-                              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer ${
-                                selectedItems.includes(commId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
-                              }`}>
-                              {selectedItems.includes(commId) && <i className="fa-solid fa-check text-xs"></i>}
+                      <div key={parent.id} className="glass rounded-xl border border-app-border p-4 flex flex-col gap-3">
+                        {/* Parent Header */}
+                        <div className="flex justify-between items-start">
+                          <div className="flex items-center gap-3">
+                            {isSelectionMode && (
+                              <div 
+                                onClick={() => toggleSelection(parentId)}
+                                className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
+                                  selectedItems.includes(parentId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                                }`}>
+                                {selectedItems.includes(parentId) && <i className="fa-solid fa-check text-xs"></i>}
+                              </div>
+                            )}
+                            <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
+                              {parent.author_picture ? (
+                                <img src={parent.author_picture} alt={uName} className="w-full h-full object-cover" />
+                              ) : (
+                                <i className="fa-solid fa-user text-app-muted"></i>
+                              )}
                             </div>
-                          </div>
-                        )}
-                        <div className={`flex flex-col ${isBusiness ? 'items-end' : 'items-start'} max-w-[80%]`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            {!isBusiness && (
-                              <>
-                                <span className="font-semibold text-on-surface text-sm">@{comm.author_name || comm.username}</span>
-                                <span className="text-[10px] text-app-muted">{new Date(comm.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}</span>
-                              </>
-                            )}
-                            {isBusiness && (
-                              <>
-                                <span className="text-[10px] text-app-muted">{new Date(comm.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}</span>
-                                <span className="font-semibold text-[#f59e0b] text-sm">Mağaza (Ben)</span>
-                              </>
-                            )}
-                          </div>
-                          <div className={`px-4 py-2 rounded-2xl text-sm ${isBusiness ? 'bg-[#bc13fe]/20 text-[#bc13fe] border border-[#bc13fe]/30 rounded-br-none' : 'bg-white/5 text-on-surface border border-white/10 rounded-bl-none'}`}>
-                            {comm.content}
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-on-surface text-sm">@{uName}</span>
+                              <span className="text-[10px] text-app-muted">{new Date(parent.created_at).toLocaleString('tr-TR')}</span>
+                            </div>
                           </div>
                         </div>
-                        {isSelectionMode && isBusiness && (
-                          <div className="ml-3 self-center">
-                            <div 
-                              onClick={() => toggleSelection(commId)}
-                              className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer ${
-                                selectedItems.includes(commId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
-                              }`}>
-                              {selectedItems.includes(commId) && <i className="fa-solid fa-check text-xs"></i>}
-                            </div>
+
+                        {/* Content */}
+                        <div className="text-sm text-[#e5e2e3]">
+                          {parent.content}
+                        </div>
+
+                        {/* Actions */}
+                        {!isSelectionMode && (
+                          <div className="flex items-center gap-4 text-xs font-medium mt-1">
+                            <button 
+                              className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
+                              onClick={() => setReplyText(`@${uName} `)}
+                            >
+                              <i className="fa-solid fa-reply"></i> Yanıtla
+                            </button>
+                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                              <i className="fa-solid fa-paper-plane"></i> DM
+                            </button>
+                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                              <i className="fa-solid fa-eye-slash"></i> Gizle
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Replies */}
+                        {parent.replies && parent.replies.length > 0 && (
+                          <div className="mt-2 pl-4 border-l-2 border-app-border flex flex-col gap-3">
+                            {parent.replies.map((reply: any) => {
+                              const replyId = reply.zernio_comment_id || reply.id;
+                              return (
+                                <div key={reply.id} className="flex flex-col gap-2">
+                                  <div className="flex justify-between items-start">
+                                    <div className="flex items-center gap-2">
+                                      {isSelectionMode && (
+                                        <div 
+                                          onClick={() => toggleSelection(replyId)}
+                                          className={`w-4 h-4 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
+                                            selectedItems.includes(replyId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                                          }`}>
+                                          {selectedItems.includes(replyId) && <i className="fa-solid fa-check text-[10px]"></i>}
+                                        </div>
+                                      )}
+                                      <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                        {reply.author_picture ? (
+                                          <img src={reply.author_picture} alt="Mağaza" className="w-full h-full object-cover" />
+                                        ) : (
+                                          <i className="fa-solid fa-store text-[10px] text-app-muted"></i>
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-semibold text-on-surface text-sm">Mağaza</span>
+                                        <span className="text-[9px] font-bold bg-[#f59e0b]/20 text-[#f59e0b] px-1.5 py-0.5 rounded">Sen</span>
+                                      </div>
+                                      <span className="text-[10px] text-app-muted">{new Date(reply.created_at).toLocaleString('tr-TR')}</span>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="text-sm text-[#e5e2e3]">
+                                    {reply.content}
+                                  </div>
+                                  
+                                  {!isSelectionMode && (
+                                    <div className="flex items-center gap-4 text-[11px] font-medium mt-0.5">
+                                      <button 
+                                        className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
+                                        onClick={() => setReplyText(`@${uName} `)}
+                                      >
+                                        <i className="fa-solid fa-reply"></i> Yanıtla
+                                      </button>
+                                      <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5">
+                                        <i className="fa-solid fa-eye-slash"></i> Gizle
+                                      </button>
+                                      <button className="text-app-muted hover:text-red-400 transition-colors flex items-center gap-1.5">
+                                        <i className="fa-solid fa-trash-can"></i> Sil
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -625,8 +732,8 @@ export default function GelenKutusuPage() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
-                      if (postGrp && postGrp.comments.length > 0) {
-                        const targetComment = postGrp.comments.reduce((latest: any, curr: any) => {
+                      if (postGrp && postGrp.parentComments.length > 0) {
+                        const targetComment = postGrp.parentComments.reduce((latest: any, curr: any) => {
                           return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
                         });
                         handleSendReply(targetComment);
@@ -639,9 +746,9 @@ export default function GelenKutusuPage() {
                 <button 
                   onClick={() => {
                     const postGrp = postsWithComments.find(p => p.postId === selectedPostId);
-                    if (postGrp && postGrp.comments.length > 0) {
+                    if (postGrp && postGrp.parentComments.length > 0) {
                       // find latest comment as target
-                      const targetComment = postGrp.comments.reduce((latest: any, curr: any) => {
+                      const targetComment = postGrp.parentComments.reduce((latest: any, curr: any) => {
                         return new Date(curr.created_at).getTime() > new Date(latest.created_at).getTime() ? curr : latest;
                       });
                       handleSendReply(targetComment);

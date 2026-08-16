@@ -358,24 +358,25 @@ export default function GelenKutusuPage() {
       {/* Tabs */}
       <div className="flex items-center gap-2 mb-6 border-b border-app-border pb-1 overflow-x-auto hide-scrollbar">
         {[
-          { id: 'mesajlar', label: 'Mesajlar', icon: 'fa-regular fa-comment-dots', color: '#00f0ff' },
-          { id: 'yorumlar', label: 'Yorumlar', icon: 'fa-regular fa-comment', color: '#bc13fe' },
-          { id: 'degerlendirmeler', label: 'Değerlendirmeler', icon: 'fa-regular fa-star', color: '#f59e0b' },
+          { id: 'mesajlar', label: 'Mesajlar (DM)', count: conversations.length },
+          { id: 'yorumlar', label: 'Yorumlar', count: comments.length },
+          { id: 'degerlendirmeler', label: 'Değerlendirmeler', count: reviews.length },
         ].map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
-              className={`flex items-center gap-2 px-5 py-3 rounded-t-lg font-medium text-sm transition-all whitespace-nowrap ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
                 isActive 
-                  ? 'bg-app-card text-on-surface border-t border-l border-r border-app-border relative after:absolute after:bottom-[-1px] after:left-0 after:w-full after:h-[2px] after:bg-app-bg' 
-                  : 'text-app-muted hover:text-on-surface hover:bg-white/5'
+                  ? 'bg-[#bc13fe]/10 text-white border-[#bc13fe]' 
+                  : 'border-transparent text-app-muted hover:text-white hover:bg-white/5'
               }`}
-              style={isActive ? { borderTopColor: tab.color } : {}}
             >
-              <i className={`${tab.icon}`} style={{ color: isActive ? tab.color : 'inherit' }}></i>
               {tab.label}
+              <span className="w-5 h-5 rounded-full bg-[#bc13fe] text-white flex items-center justify-center text-[11px] font-bold">
+                {tab.count}
+              </span>
             </button>
           );
         })}

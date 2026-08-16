@@ -303,8 +303,8 @@ export default function GelenKutusuPage() {
               body: { action: 'get-inbox-pictures', payload: { userId: session.user.id } }
            });
            
-           if (picData?.pictures && Object.keys(picData.pictures).length > 0) {
-             const newPics = picData.pictures;
+           if (picData?.data?.pictures && Object.keys(picData.data.pictures).length > 0) {
+             const newPics = picData.data.pictures;
              const currentCache = getCachedPictures();
              setCachedPictures({ ...currentCache, ...newPics });
              

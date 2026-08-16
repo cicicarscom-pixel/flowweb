@@ -21,6 +21,16 @@ export default function TumGonderilerPage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        
+        if (userId) {
+          // Sync posts from Zernio first to make sure we have the latest scheduled/published posts
+          await supabase.functions.invoke('zernio-client', {
+            body: { action: 'sync-posts', payload: { userId } }
+          });
+        }
+
         const { data } = await supabase
           .from('posts')
           .select('*')
@@ -53,11 +63,12 @@ export default function TumGonderilerPage() {
 
   const filteredPosts = posts.filter(post => {
     if (activeFilter === 'all') return true;
-    return post.status === activeFilter;
+    return (post.status || '').toLowerCase() === activeFilter.toLowerCase();
   });
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    const s = (status || '').toLowerCase();
+    switch(s) {
       case 'scheduled': return '#00f0ff'; // Cyan
       case 'published': return '#bc13fe'; // Magenta
       case 'failed': return '#ff0050'; // Red
@@ -66,7 +77,8 @@ export default function TumGonderilerPage() {
   };
 
   const getStatusLabel = (status: string) => {
-    switch(status) {
+    const s = (status || '').toLowerCase();
+    switch(s) {
       case 'scheduled': return 'Planlandı';
       case 'published': return 'Yayınlandı';
       case 'failed': return 'Hatalı';
@@ -156,7 +168,7 @@ export default function TumGonderilerPage() {
           ) : filteredPosts.length > 0 ? (
             filteredPosts.map((item) => {
               const statusColor = getStatusColor(item.status);
-              const isScheduled = item.status === 'scheduled';
+              const isScheduled = (item.status || '').toLowerCase() === 'scheduled';
               const platformsArray = Array.isArray(item.platforms) ? item.platforms : [];
 
               return (
@@ -242,17 +254,17 @@ export default function TumGonderilerPage() {
 
                   {/* Actions */}
                   <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
-                    {item.status === 'failed' && (
+                    {(item.status || '').toLowerCase() === 'failed' && (
                       <button className="w-7 h-7 rounded bg-[#ff0050]/20 border border-[#ff0050]/40 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/30 transition-colors">
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>
                       </button>
                     )}
-                    {item.status === 'scheduled' && (
+                    {(item.status || '').toLowerCase() === 'scheduled' && (
                       <button className="w-7 h-7 rounded bg-[#00f0ff]/10 border border-[#00f0ff]/30 flex items-center justify-center text-[#00f0ff] hover:bg-[#00f0ff]/20 transition-colors">
                         <i className="fa-regular fa-trash-can text-[12px]"></i>
                       </button>
                     )}
-                    {item.status === 'published' && (
+                    {(item.status || '').toLowerCase() === 'published' && (
                       <button className="w-7 h-7 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/30 flex items-center justify-center text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors">
                         <i className="fa-solid fa-cloud-arrow-down text-[12px]"></i>
                       </button>

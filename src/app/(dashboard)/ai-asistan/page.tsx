@@ -31,8 +31,8 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
 export default function BotScreen() {
   const supabase = createClient();
   const [botConfig, setBotConfig] = useState({
-    whatsapp: true,
-    social: true,
+    whatsapp: false,
+    social: false,
     autoReply: true,
     smartRouting: false,
   });
@@ -48,7 +48,7 @@ export default function BotScreen() {
       .from('bot_settings')
       .select('*')
       .eq('merchant_id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (data) {
       setBotConfig(prev => ({
@@ -64,13 +64,26 @@ export default function BotScreen() {
     setBotConfig(c => ({ ...c, [key]: newValue }));
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
+    
     const updateData: any = {};
     if (key === 'social') {
       updateData.is_active = newValue;
       updateData.social_bot_active = newValue;
     }
     if (key === 'whatsapp') updateData.whatsapp_bot_active = newValue;
-    await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
+
+    // Check if row exists
+    const { data: existingData } = await supabase
+      .from('bot_settings')
+      .select('id')
+      .eq('merchant_id', session.user.id)
+      .limit(1);
+
+    if (existingData && existingData.length > 0) {
+      await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
+    } else {
+      await supabase.from('bot_settings').insert([{ merchant_id: session.user.id, ...updateData }]);
+    }
   };
 
   

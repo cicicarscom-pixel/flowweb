@@ -101,14 +101,20 @@ export default function SosyalMedyaPage() {
   };
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const accountId = params.get('accountId');
-    const platform = params.get('platform') || params.get('connected');
-    const username = params.get('username');
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+    
+    const accountId = searchParams.get('accountId') || hashParams.get('accountId');
+    const platform = searchParams.get('platform') || searchParams.get('connected') || hashParams.get('platform') || hashParams.get('connected');
+    const username = searchParams.get('username') || hashParams.get('username');
+    const errorParam = searchParams.get('error') || hashParams.get('error') || searchParams.get('error_description') || hashParams.get('error_description');
 
     fetchProfiles();
 
-    if (accountId) {
+    if (errorParam) {
+       alert("Bağlantı sırasında bir hata oluştu: " + errorParam);
+       window.history.replaceState({}, '', window.location.pathname);
+    } else if (accountId) {
       handleSaveZernioAccount(accountId, platform, username);
       window.history.replaceState({}, '', window.location.pathname);
     } else {
@@ -132,7 +138,10 @@ export default function SosyalMedyaPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      if (!userId) return;
+      if (!userId) {
+        alert("Oturum bulunamadı. Bağlantı kaydedilemedi, lütfen tekrar giriş yapıp deneyin.");
+        return;
+      }
 
       const { error } = await supabase.from('social_accounts').upsert({
         profile_id: userId,

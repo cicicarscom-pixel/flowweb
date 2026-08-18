@@ -153,14 +153,10 @@ export default function GelenKutusuPage() {
   };
 
   const handleDMClick = (comment: any) => {
-    const uName = comment.author_name || comment.username;
-    const conv = conversations.find(c => c.participant_name?.toLowerCase() === uName?.toLowerCase());
-    if (conv) {
-      setActiveTab('mesajlar'); setSelectedConvId(conv.id);
-    } else {
-      setPrivateReplyModal(comment);
-      setPrivateReplyText("");
-    }
+    // ALWAYS open the private reply modal for comments, 
+    // because standard DMs (conversations) may fail if the user hasn't messaged in 24 hours.
+    setPrivateReplyModal(comment);
+    setPrivateReplyText("");
   };
 
   const handleSendPrivateReply = async () => {

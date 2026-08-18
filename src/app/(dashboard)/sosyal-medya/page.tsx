@@ -11,7 +11,7 @@ const PLATFORMS_DATA = [
   { id: "tiktok", name: "TikTok", color: "#010101", glow: "rgba(105,201,208,0.3)", icon: "🎵" },
   { id: "youtube", name: "YouTube", color: "#FF0000", glow: "rgba(255,0,0,0.3)", icon: "▶️" },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
-  { id: "google", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢" },
+  { id: "googlebusiness", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢" },
 ];
 
 function ScrollableContainer({ children }: { children: React.ReactNode }) {
@@ -223,8 +223,8 @@ export default function SosyalMedyaPage() {
 
   const getPlatformInfo = (platformId: string) => {
     const id = platformId.toLowerCase();
-    // try to match with generic names (e.g. googlebusiness -> google)
-    const normalizedId = id.includes('google') ? 'google' : id;
+    // try to match with generic names (e.g. google -> googlebusiness)
+    const normalizedId = id.includes('google') ? 'googlebusiness' : id;
     return PLATFORMS_DATA.find(p => p.id === normalizedId) || {
       id: platformId, name: platformId, color: '#00f0ff', glow: 'rgba(0,240,255,0.3)', icon: '📱'
     };
@@ -232,7 +232,7 @@ export default function SosyalMedyaPage() {
 
   const connectedPlatformIds = accounts.map(a => {
     const id = a.platform.toLowerCase();
-    return id.includes('google') ? 'google' : id;
+    return id.includes('google') ? 'googlebusiness' : id;
   });
 
   const availablePlatforms = PLATFORMS_DATA.filter(p => !connectedPlatformIds.includes(p.id));

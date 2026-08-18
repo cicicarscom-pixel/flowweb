@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   return (
@@ -28,12 +29,50 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
 }
 
 export default function BotScreen() {
+  const supabase = createClient();
   const [botConfig, setBotConfig] = useState({
     whatsapp: true,
     social: true,
     autoReply: true,
     smartRouting: false,
   });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const { data, error } = await supabase
+      .from('bot_settings')
+      .select('*')
+      .eq('merchant_id', session.user.id)
+      .single();
+
+    if (data) {
+      setBotConfig(prev => ({
+        ...prev,
+        whatsapp: !!data.whatsapp_bot_active,
+        social: !!data.is_active,
+      }));
+      if (data.system_prompt) setSystemPrompt(data.system_prompt);
+    }
+  };
+
+  const handleToggle = async (key: 'social' | 'whatsapp', newValue: boolean) => {
+    setBotConfig(c => ({ ...c, [key]: newValue }));
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const updateData: any = {};
+    if (key === 'social') {
+      updateData.is_active = newValue;
+      updateData.social_bot_active = newValue;
+    }
+    if (key === 'whatsapp') updateData.whatsapp_bot_active = newValue;
+    await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
+  };
+
   
   const [systemPrompt, setSystemPrompt] = useState(`Sen workigomFlow işletmesinin AI asistanısın. Müşterilere samimi, profesyonel ve yardımsever bir şekilde yanıt verirsin.
 
@@ -85,14 +124,14 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 10px #4edea3" }} />
               <span style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ai Asistan</span>
             </div>
-            <Toggle on={botConfig.social} onChange={() => setBotConfig(c => ({ ...c, social: !c.social }))} />
+            <Toggle on={botConfig.social} onChange={() => handleToggle('social', !botConfig.social)} />
           </div>
           
           <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>
               <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
-              <Toggle on={botConfig.whatsapp} onChange={() => setBotConfig(c => ({ ...c, whatsapp: !c.whatsapp }))} />
+              <Toggle on={botConfig.whatsapp} onChange={() => handleToggle('whatsapp', !botConfig.whatsapp)} />
             </div>
           </div>
         </div>

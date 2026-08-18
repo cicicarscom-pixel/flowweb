@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function GelenKutusuPage() {
-  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler'>('mesajlar');
+  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>('mesajlar');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -16,6 +16,7 @@ export default function GelenKutusuPage() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [comments, setComments] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+    const [notifications, setNotifications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -376,6 +377,14 @@ export default function GelenKutusuPage() {
     } catch (err) {
       console.warn("Comments fetch err:", err);
     }
+  };
+
+
+  const fetchNotifications = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    const { data } = await supabase.from('notifications').select('*').eq('profile_id', session.user.id).order('created_at', { ascending: false });
+    if (data) setNotifications(data);
   };
 
   const fetchReviews = async () => {

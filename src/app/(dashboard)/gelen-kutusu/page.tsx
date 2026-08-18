@@ -405,7 +405,7 @@ export default function GelenKutusuPage() {
   useEffect(() => {
     const loadAll = async () => {
       setIsLoading(true);
-      await Promise.all([fetchConversations(), fetchComments(1), fetchReviews()]);
+      await Promise.all([fetchConversations(), fetchComments(1), fetchReviews(), fetchNotifications()]);
       setIsLoading(false);
     };
     loadAll();
@@ -582,6 +582,7 @@ export default function GelenKutusuPage() {
           { id: 'mesajlar', label: 'Mesajlar (DM)', count: conversations.length },
           { id: 'yorumlar', label: 'Yorumlar', count: comments.length },
           { id: 'degerlendirmeler', label: 'Değerlendirmeler', count: reviews.length },
+          { id: 'bildirimler', label: 'Bildirimler', count: notifications.filter(n => !n.is_read).length },
         ].map(tab => {
           const isActive = activeTab === tab.id;
           return (
@@ -1006,6 +1007,42 @@ export default function GelenKutusuPage() {
               </p>
             </div>
           ))
+        )}
+
+        {/* --- BILDIRIMLER TAB --- */}
+        {!isLoading && activeTab === 'bildirimler' && notifications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center p-20 opacity-60">
+            <i className="fa-regular fa-bell text-4xl mb-4 text-[#849495]"></i>
+            <p className="text-[#849495] text-sm">Henüz bildirim bulunmuyor.</p>
+          </div>
+        ) : !isLoading && activeTab === 'bildirimler' && notifications.length > 0 && (
+          <div className="flex flex-col gap-4">
+            {notifications.map(notification => (
+              <div 
+                key={notification.id}
+                className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all ${
+                  !notification.is_read ? 'border-[#3b82f6] bg-[#3b82f6]/5' : 'border-app-border bg-app-card'
+                }`}
+              >
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 shrink-0">
+                  <i className={`fa-solid fa-bell text-lg ${!notification.is_read ? 'text-[#3b82f6]' : 'text-[#849495]'}`}></i>
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className={`text-sm ${!notification.is_read ? 'font-bold text-white' : 'font-medium text-app-muted'}`}>
+                      {notification.title}
+                    </h4>
+                    <span className="text-xs text-app-muted">
+                      {new Date(notification.created_at).toLocaleDateString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <p className="text-sm text-app-muted leading-relaxed">
+                    {notification.message}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
         {privateReplyModal && (

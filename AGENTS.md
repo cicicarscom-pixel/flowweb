@@ -363,3 +363,12 @@ ull\ veya boş string dönülmeyecek.
 
 ### [18.08.2026] Zernio Private Reply (Gizli DM) 24 Saat Kuralı Optimizasyonu
 1. **Web ve Mobil Private Reply Senkronizasyonu:** Yorumlara DM gönderilirken geçmiş bir sohbet bulunduğunda sistemin standart 'send-message' yöntemine (Instagram'ın 24 saat aktif konuşma kuralına) takılıp hata vermesi sorunu çözüldü. Artık her iki platformda da bir yorumdan DM butonuna basıldığında geçmişe bakılmaksızın doğrudan (24 saat kuralını delen) 'send-private-reply' metodu tetiklenmektedir. Mobil (React Native) uygulamaya da web versiyonu ile aynı olan satıriçi (inline) Özel Yanıt gönderme yeteneği entegre edildi.
+
+### [19.08.2026] Çapraz Platform Profil & Müşavir Bağlantısı Senkronizasyonu
+1. **Flow Web ve Mobil Profil Paritesi:** Web tarafında (/profil) ve Mobil tarafında (ProfilScreen) kullanıcı profilleri tamamen eşitlendi. Her iki platforma da "Şirket Tam Adı", "Vergi Numarası (VKN)" ve "Vergi Dairesi" alanları eklendi.
+2. **Ortak Veritabanı (Organization Legal Profiles):** Kullanıcının VKN bilgileri \profiles\ tablosu yerine, doğrudan Müşavirin (Ledger) görebileceği \organization_legal_profiles\ tablosuna (kullanıcının \organization_id\si üzerinden) bağlandı. Böylece Esnaf bilgilerini güncellediğinde Müşavirin ekranında anında güncelleniyor.
+3. **Muhasebecim Arayüzü (Gerçek Veri):** Hem Web hem de Mobil "Muhasebecim" ekranlarındaki sahte zamanlayıcılı (mock) görselleştirme kaldırılarak, sayfa yüklendiğinde \ccountant_taxpayer_links\ tablosundan kullanıcının gerçekten bir müşavire bağlı olup olmadığı sorgulanmaya başlandı. Bağlantı varsa otomatik "Bağarıyla Bağlandı" ekranı gösteriliyor.
+4. **Müşavir Bağlantısı Tetikleyicisi (PostgreSQL Trigger):** Müşavir (Ledger üzerinden) yeni bir mükellef bağladığında Esnafa otomatik anlık bildirim fırlatması için \ccountant_taxpayer_links\ tablosuna bir \AFTER INSERT\ PostgreSQL tetikleyicisi eklendi.
+5. **Gelen Kutusu Realtime Bildirimleri:** Web tarafında Gelen Kutusu sayfasının \
+otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu eklendi; böylece asistan veya tetikleyici bir bildirim gönderdiğinde kullanıcının sayfası yenilenmeden çan ikonu ve bildirim listesi güncelleniyor.
+6. **Yapay Zeka VKN/İsim Arama Hata Çözümü:** \ledger-ai-chat\ Edge fonksiyonunda Türkçe karakterleri dönüştüren RegExp (replace) kodlamasında yaşanan UTF-8 bozulması giderildi. Yapay zeka artık "YILMAZ İNŞAAT TAAHHÜT..." gibi uzun ve Türkçe karakterli resmi adları veritabanında doğru bir şekilde % wildcard'a çevirerek eşleştirebiliyor.

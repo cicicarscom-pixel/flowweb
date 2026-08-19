@@ -9,6 +9,7 @@ export default function ProfilPage() {
   const [message, setMessage] = useState("");
   
   const [businessName, setBusinessName] = useState("");
+  const [authorizedPerson, setAuthorizedPerson] = useState("");
   const [category, setCategory] = useState("Diğer");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -34,12 +35,13 @@ export default function ProfilPage() {
       
       const { data: profile } = await supabase
         .from("profiles")
-        .select("business_name, category, phone_number, address, avatar_url")
+        .select("business_name, authorized_person, category, phone_number, address, avatar_url")
         .eq("id", session.user.id)
         .single();
         
       if (profile) {
         setBusinessName(profile.business_name || "");
+        setAuthorizedPerson(profile.authorized_person || "");
         setCategory(profile.category || "Diğer");
         setPhone(profile.phone_number || "");
         
@@ -120,6 +122,7 @@ export default function ProfilPage() {
         .from("profiles")
         .update({
           business_name: businessName,
+          authorized_person: authorizedPerson,
           category: category,
           phone_number: phone,
           address: addressToSave,
@@ -180,6 +183,10 @@ export default function ProfilPage() {
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Yetkili Kişi Adı Soyadı</label>
+              <input type="text" value={authorizedPerson} onChange={e => setAuthorizedPerson(e.target.value)} placeholder="Örn: Mehmet Yılmaz" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", marginBottom: 20 }} />
+            </div>
+            <div>
               <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>İşletme Adı</label>
               <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="İşletmenizin adını girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
@@ -226,6 +233,7 @@ export default function ProfilPage() {
     </div>
   );
 }
+
 
 
 

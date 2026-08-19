@@ -1,7 +1,34 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+
+
 import { createClient } from "@/lib/supabase/client";
+
+const LOCATION_DATA: any = {
+  "Türkiye": {
+    "Istanbul": [
+      "Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", 
+      "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", 
+      "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", 
+      "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", 
+      "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", 
+      "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"
+    ],
+    "Ankara": ["Çankaya", "Keçiören", "Yenimahalle", "Mamak"],
+    "Izmir": ["Karşıyaka", "Bornova", "Buca", "Konak"]
+  },
+  "Germany": {
+    "Hamburg": ["Altona", "Eimsbüttel", "Hamburg-Nord", "Wandsbek"],
+    "Berlin": ["Mitte", "Pankow", "Charlottenburg", "Spandau"],
+    "Munich": ["Altstadt", "Maxvorstadt", "Schwabing", "Bogenhausen"]
+  },
+  "USA": {
+    "New York": ["Manhattan", "Brooklyn", "Queens", "Bronx"],
+    "California": ["Los Angeles", "San Francisco", "San Diego", "San Jose"],
+    "Texas": ["Houston", "Austin", "Dallas", "San Antonio"]
+  }
+};
 
 export default function ProfilPage() {
   const [loading, setLoading] = useState(true);
@@ -13,7 +40,7 @@ export default function ProfilPage() {
   const [category, setCategory] = useState("Diğer");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+    const [addressObj, setAddressObj] = useState({ country: "", city: "", district: "", fullAddress: "" });
   const [avatar, setAvatar] = useState("");
   
   const [vkn, setVkn] = useState("");
@@ -46,21 +73,18 @@ export default function ProfilPage() {
         setPhone(profile.phone_number || "");
         
         // Handle address object from mobile AddressSelector
-        if (typeof profile.address === 'object' && profile.address !== null) {
-          let parts = [];
-          if (profile.address.fullAddress) parts.push(profile.address.fullAddress);
-          else if (profile.address.detail) parts.push(profile.address.detail);
-          
-          if (profile.address.district) parts.push(profile.address.district);
-          if (profile.address.city) parts.push(profile.address.city);
-          
-          let formatted = parts.filter(Boolean).join(", ");
-          setAddress(formatted || JSON.stringify(profile.address));
+                if (typeof profile.address === 'object' && profile.address !== null) {
+          setAddressObj({
+            country: profile.address.country || "",
+            city: profile.address.city || "",
+            district: profile.address.district || "",
+            fullAddress: profile.address.fullAddress || profile.address.detail || ""
+          });
         } else {
-          setAddress(profile.address || "");
+          setAddressObj({ country: "", city: "", district: "", fullAddress: profile.address || "" });
         }
 
-                let av = profile.avatar_url;
+        let av = profile.avatar_url;
         if (!av || av.startsWith('file://')) {
             av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff';
         }
@@ -107,16 +131,7 @@ export default function ProfilPage() {
       
       // Keep mobile's AddressSelector compatibility if it expects an object. 
       // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
-      let addressToSave: any = address;
-      try {
-        if (address.startsWith('{')) {
-          addressToSave = JSON.parse(address);
-        } else {
-          addressToSave = { fullAddress: address };
-        }
-      } catch (e) {
-        addressToSave = address;
-      }
+      let addressToSave = addressObj;
 
       await supabase
         .from("profiles")
@@ -215,9 +230,49 @@ export default function ProfilPage() {
             </div>
           </div>
           
-          <div>
+                    <div>
             <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Adres Bilgileri</label>
-            <textarea value={address} onChange={e => setAddress(e.target.value)} rows={3} placeholder="Açık adresinizi girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
+              <select 
+                value={addressObj.country} 
+                onChange={e => setAddressObj({...addressObj, country: e.target.value, city: "", district: ""})}
+                className="glass-input" 
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }}
+              >
+                <option value="">Ülke Seçin</option>
+                {Object.keys(LOCATION_DATA).map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+              
+              <select 
+                value={addressObj.city} 
+                onChange={e => setAddressObj({...addressObj, city: e.target.value, district: ""})}
+                disabled={!addressObj.country}
+                className="glass-input" 
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.country ? 1 : 0.5 }}
+              >
+                <option value="">Şehir Seçin</option>
+                {addressObj.country && Object.keys(LOCATION_DATA[addressObj.country] || {}).map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+
+              <select 
+                value={addressObj.district} 
+                onChange={e => setAddressObj({...addressObj, district: e.target.value})}
+                disabled={!addressObj.city}
+                className="glass-input" 
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.city ? 1 : 0.5 }}
+              >
+                <option value="">İlçe Seçin</option>
+                {addressObj.country && addressObj.city && (LOCATION_DATA[addressObj.country]?.[addressObj.city] || []).map((d: any) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
+            <textarea 
+              value={addressObj.fullAddress} 
+              onChange={e => setAddressObj({...addressObj, fullAddress: e.target.value})} 
+              rows={3} 
+              placeholder="Açık adresinizi girin" 
+              className="glass-input" 
+              style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} 
+            />
           </div>
           
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
@@ -230,6 +285,11 @@ export default function ProfilPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 

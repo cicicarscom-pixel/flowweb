@@ -173,10 +173,7 @@ export default function ProfilPage() {
       <div className="glass-strong" style={{ padding: 32, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
           <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(0, 240, 255, 0.3)" }} />
-          <div>
-            <h2 style={{ fontSize: 20, fontWeight: 600, color: "#fff", marginBottom: 4 }}>{businessName || "İşletme Adı"}</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{email}</p>
-          </div>
+          
         </div>
         
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -233,6 +230,8 @@ export default function ProfilPage() {
     </div>
   );
 }
+
+
 
 
 

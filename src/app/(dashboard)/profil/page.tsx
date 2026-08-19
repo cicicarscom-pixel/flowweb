@@ -51,7 +51,7 @@ export default function ProfilPage() {
           setAddress(profile.address || "");
         }
 
-        setAvatar(profile.avatar_url || https://ui-avatars.com/api/?name= + encodeURIComponent(profile.business_name || 'Esnaf') + &background=00daf3&color=fff);
+        setAvatar(profile.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff');
       }
       
       // Fetch organization and legal info for VKN
@@ -151,7 +151,7 @@ export default function ProfilPage() {
       <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz.</p>
       
       {message && (
-        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(255, 77, 77, 0.1)" : "rgba(78, 222, 163, 0.1)", color: message.includes("Hata") ? "#ff4d4d" : "#4edea3", border: 1px solid  + (message.includes("Hata") ? "rgba(255, 77, 77, 0.2)" : "rgba(78, 222, 163, 0.2)") }}>
+        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(255, 77, 77, 0.1)" : "rgba(78, 222, 163, 0.1)", color: message.includes("Hata") ? "#ff4d4d" : "#4edea3", border: '1px solid ' + (message.includes("Hata") ? "rgba(255, 77, 77, 0.2)" : "rgba(78, 222, 163, 0.2)") }}>
           {message}
         </div>
       )}
@@ -215,3 +215,5 @@ export default function ProfilPage() {
     </div>
   );
 }
+
+

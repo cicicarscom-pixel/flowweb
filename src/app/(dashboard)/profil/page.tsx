@@ -42,8 +42,16 @@ export default function ProfilPage() {
         setBusinessName(profile.business_name || "");
         setCategory(profile.category || "Diğer");
         setPhone(profile.phone_number || "");
-        setAddress(typeof profile.address === 'object' ? JSON.stringify(profile.address) : (profile.address || ""));
-        setAvatar(profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.business_name || 'Esnaf')}&background=00daf3&color=fff`);
+        
+        // Handle address object from mobile AddressSelector
+        if (typeof profile.address === 'object' && profile.address !== null) {
+          // e.g. { city, district, detail } or similar, let's just format it nice or stringify
+          setAddress(profile.address.fullAddress || profile.address.detail || JSON.stringify(profile.address));
+        } else {
+          setAddress(profile.address || "");
+        }
+
+        setAvatar(profile.avatar_url || https://ui-avatars.com/api/?name= + encodeURIComponent(profile.business_name || 'Esnaf') + &background=00daf3&color=fff);
       }
       
       // Fetch organization and legal info for VKN
@@ -84,11 +92,17 @@ export default function ProfilPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Oturum bulunamadı");
       
-      let parsedAddress = address;
+      // Keep mobile's AddressSelector compatibility if it expects an object. 
+      // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
+      let addressToSave: any = address;
       try {
-         parsedAddress = JSON.parse(address);
+        if (address.startsWith('{')) {
+          addressToSave = JSON.parse(address);
+        } else {
+          addressToSave = { fullAddress: address };
+        }
       } catch (e) {
-         // keep as string if not JSON
+        addressToSave = address;
       }
 
       await supabase
@@ -97,7 +111,7 @@ export default function ProfilPage() {
           business_name: businessName,
           category: category,
           phone_number: phone,
-          address: parsedAddress,
+          address: addressToSave,
         })
         .eq("id", session.user.id);
         
@@ -137,7 +151,7 @@ export default function ProfilPage() {
       <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz.</p>
       
       {message && (
-        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(255, 77, 77, 0.1)" : "rgba(78, 222, 163, 0.1)", color: message.includes("Hata") ? "#ff4d4d" : "#4edea3", border: `1px solid ${message.includes("Hata") ? "rgba(255, 77, 77, 0.2)" : "rgba(78, 222, 163, 0.2)"}` }}>
+        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(255, 77, 77, 0.1)" : "rgba(78, 222, 163, 0.1)", color: message.includes("Hata") ? "#ff4d4d" : "#4edea3", border: 1px solid  + (message.includes("Hata") ? "rgba(255, 77, 77, 0.2)" : "rgba(78, 222, 163, 0.2)") }}>
           {message}
         </div>
       )}
@@ -152,36 +166,48 @@ export default function ProfilPage() {
         </div>
         
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Şirket Tam Adı</label>
-              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>İşletme Adı</label>
+              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="İşletmenizin adını girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
             <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>E-posta</label>
+              <input type="email" value={email} disabled className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: 0.6 }} />
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
               <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Telefon</label>
-              <input type="text" value={phone} onChange={e => setPhone(e.target.value)} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <input type="text" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Telefon numarasını girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Mağaza Kategorisi</label>
+              <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="Örn: Cafe & Restoran, Kuaför..." className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
           </div>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
               <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Vergi Numarası (VKN)</label>
-              <input type="text" value={vkn} onChange={e => setVkn(e.target.value)} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <input type="text" value={vkn} onChange={e => setVkn(e.target.value)} placeholder="VKN girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
             <div>
               <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Vergi Dairesi</label>
-              <input type="text" value={taxOffice} onChange={e => setTaxOffice(e.target.value)} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <input type="text" value={taxOffice} onChange={e => setTaxOffice(e.target.value)} placeholder="Vergi dairesini girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
           </div>
           
           <div>
-            <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Tam Adres</label>
-            <textarea value={address} onChange={e => setAddress(e.target.value)} rows={3} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} />
+            <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Adres Bilgileri</label>
+            <textarea value={address} onChange={e => setAddress(e.target.value)} rows={3} placeholder="Açık adresinizi girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} />
           </div>
           
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
             <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #4edea3)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-              {saving ? "Kaydediliyor..." : "Bilgileri Kaydet"}
+              {saving ? "Kaydediliyor..." : "Profili Kaydet"}
             </button>
           </div>
         </form>

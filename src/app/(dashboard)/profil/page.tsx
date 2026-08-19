@@ -45,13 +45,24 @@ export default function ProfilPage() {
         
         // Handle address object from mobile AddressSelector
         if (typeof profile.address === 'object' && profile.address !== null) {
-          // e.g. { city, district, detail } or similar, let's just format it nice or stringify
-          setAddress(profile.address.fullAddress || profile.address.detail || JSON.stringify(profile.address));
+          let parts = [];
+          if (profile.address.fullAddress) parts.push(profile.address.fullAddress);
+          else if (profile.address.detail) parts.push(profile.address.detail);
+          
+          if (profile.address.district) parts.push(profile.address.district);
+          if (profile.address.city) parts.push(profile.address.city);
+          
+          let formatted = parts.filter(Boolean).join(", ");
+          setAddress(formatted || JSON.stringify(profile.address));
         } else {
           setAddress(profile.address || "");
         }
 
-        setAvatar(profile.avatar_url || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff');
+                let av = profile.avatar_url;
+        if (!av || av.startsWith('file://')) {
+            av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff';
+        }
+        setAvatar(av);
       }
       
       // Fetch organization and legal info for VKN
@@ -215,5 +226,6 @@ export default function ProfilPage() {
     </div>
   );
 }
+
 
 

@@ -64,18 +64,20 @@ export default function Sidebar() {
 
       {/* User profile */}
       <div style={{ padding: "14px 16px 20px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-          <img
-            src="https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=36&h=36&fit=crop&auto=format"
-            alt="Kullanıcı profili"
-            style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", border: "1.5px solid rgba(0,240,255,0.2)" }}
-          />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Ahmet Yılmaz</p>
-            <p style={{ fontSize: 10, color: "var(--text-muted)" }}>Pro Plan</p>
+        <Link href="/profil" style={{ textDecoration: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, cursor: "pointer" }}>
+            <img
+              src="https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=36&h=36&fit=crop&auto=format"
+              alt="Kullanıcı profili"
+              style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", border: "1.5px solid rgba(0,240,255,0.2)" }}
+            />
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Ahmet Yılmaz</p>
+              <p style={{ fontSize: 10, color: "var(--text-muted)" }}>Pro Plan</p>
+            </div>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3", flexShrink: 0 }} />
           </div>
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3", flexShrink: 0 }} />
-        </div>
+        </Link>
 
         <button 
           style={{

@@ -30,8 +30,9 @@ export default function LoginPage() {
         },
       })
       if (error) throw error
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google login error:', error)
+      alert('Google Giriş Hatası: ' + (error.message || 'Bilinmeyen bir hata oluştu. Çevre değişkenlerini kontrol edin.'))
       setGoogleLoading(false)
     }
   }

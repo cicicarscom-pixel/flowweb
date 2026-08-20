@@ -18,12 +18,11 @@ export default function LoginPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#141319] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex overflow-hidden relative">
+    <div className="min-h-[100dvh] bg-[#141319] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex relative">
       
       {/* Background Ambience */}
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00A2FF]/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[50%] bg-[#B600F8]/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
-      <div className="fixed inset-0 bg-[url('/noise.svg')] opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"></div>
 
       {/* Left Column (Visuals) */}
       <div className="hidden lg:flex flex-1 relative z-10 flex-col justify-between p-6 xl:p-12 overflow-y-auto border-r border-white/5 bg-[#0A0D14]/50 backdrop-blur-md">

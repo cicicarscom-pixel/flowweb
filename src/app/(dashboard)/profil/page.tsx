@@ -5,7 +5,6 @@ import React, { useState, useEffect } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
-import { Country, State, City } from "country-state-city";
 
 export default function ProfilPage() {
   const [loading, setLoading] = useState(true);
@@ -28,6 +27,7 @@ export default function ProfilPage() {
 
   useEffect(() => {
     fetchProfileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchProfileData = async () => {

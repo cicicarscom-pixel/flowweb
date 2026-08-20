@@ -137,3 +137,135 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ### [18.08.2026] Zernio Private Reply (Gizli DM) 24 Saat Kuralı Optimizasyonu
 1. **Web ve Mobil Private Reply Senkronizasyonu:** Yorumlara DM gönderilirken geçmiş bir sohbet bulunduğunda sistemin standart 'send-message' yöntemine (Instagram'ın 24 saat aktif konuşma kuralına) takılıp hata vermesi sorunu çözüldü. Artık her iki platformda da bir yorumdan DM butonuna basıldığında geçmişe bakılmaksızın doğrudan (24 saat kuralını delen) 'send-private-reply' metodu tetiklenmektedir. Mobil (React Native) uygulamaya da web versiyonu ile aynı olan satıriçi (inline) Özel Yanıt gönderme yeteneği entegre edildi.
+
+
+# WORKIGOM AI CORE — STEP 1: DISCOVERY & ARCHITECTURE REPORT
+
+Based on the master plan (PDF) and the codebase analysis of the current Next.js/Supabase structure in `c:\Users\roman\flowweb`, here is the required architecture report.
+
+## 1. Current Domain Models (Mapping)
+
+Mevcut veritabanı tablolarının PDF'teki kavramlara eşleşmesi:
+
+- **AccountingFirm & Accountant:** `accounting_firms` ve `organization_members` tablolarında tutulmaktadır. Müşavir yetkileri buradan gelir.
+- **Taxpayer (Mükellef):** `accountant_taxpayer_links` (Müşavirin mükellefe erişim bağı) ve mükellefin bağlı olduğu `organization_members`.
+- **FlowBusiness:** Uygulamayı kullanan işletmenin temel organizasyon kaydı (Supabase auth users ve organizations üzerinden).
+- **Invoices / Documents:** `finance_documents` (Fiziksel belgeler ve kayıtlar) ve `accounting_drafts` (AI tarafından oluşturulan onay bekleyen taslaklar).
+- **Payment / Debt:** `transactions` (Gelir/gider işlemleri ve borç takibi).
+- **Notifications:** `notifications` (Uygulama içi ve harici bildirim kayıtları).
+
+## 2. Reusable Services (Mevcut Altyapı)
+
+Yeniden kullanılacak ve AI Core'un wrap edeceği servisler:
+
+- **Database Clients:** `@/lib/supabase/server.ts` ve `@/lib/supabase/client.ts` zaten hazır ve çalışıyor. Doğrudan bu client üzerinden yetkilendirmeli işlemler yapılacak.
+- **Auth Service:** `src/actions/auth.ts` içerisinde `supabase.auth.getUser()` kullanılarak tenant (user_id) bağımsızlığı zaten sağlanmış. AI Context'e buradan user/firm bilgisi çekilecek.
+- **Data Actions:** `src/actions/accounting.ts` gibi hazır server action'lar mevcut (örn. `getTransactions`, `addTransaction`). AI Core bu servislerin iş mantığını ("Semantic Business Layer") kullanarak operasyon yapacak, doğrudan raw SQL atmayacak.
+
+## 3. Missing Architecture Pieces (Eksik Parçalar)
+
+Sıfırdan inşa etmemiz gereken foundation katmanları:
+
+1. **AI Router & Fast Path:** Gelen mesajın intent'ini (`COUNT_TAXPAYERS` vb.) belirleyen ve eğer read-only ise tool orchestration'a girmeden anında cevap döndüren (Fast Path) yapı.
+2. **Context Engine:** Kullanıcının hangi mükellefin sayfasında olduğunu veya bir önceki konuşmada kimi kastettiğini tutan kısa süreli state.
+3. **Turkish Entity Resolver:** "Yılmaz İnşaat'ın", "Yilmaz insaat'a" gibi ekli ve bozuk Türkçe kelimeleri, doğru `taxpayer_id` ile eşleştirecek kritik pipeline (Unicode normalization + suffix awareness + fuzzy matching).
+4. **Tool Registry & Semantic Business Layer:** AI modelinin doğrudan veritabanına erişmesini engelleyecek, `execute(context, input)` şemasına sahip type-safe (Zod) komut araçları.
+5. **Policy Engine:** `risk: "read" | "write" | "external_action"` bazında RLS harici authorization kontrollerini (bu müşavir bu mükellefin verisine erişebilir mi?) yapan katman.
+6. **AI Provider Abstraction:** Kodun direkt `Gemini SDK`'ya değil, `AIProvider` arayüzüne bağımlı olmasını sağlayacak wrapper.
+
+## 4. Proposed Folder Structure (AI Core)
+
+PDF direktiflerine uygun olarak, `src/ai-core/` dizin ağacı tam olarak aşağıdaki gibi oluşturulacaktır:
+
+```text
+src/ai-core/
+├── router/
+│   ├── intent-router.ts
+│   ├── intent.types.ts
+│   └── intent.schemas.ts
+├── context/
+│   ├── conversation-context.ts
+│   └── context.types.ts
+├── entities/
+│   ├── taxpayer-resolver.ts
+│   ├── turkish-normalizer.ts
+│   ├── entity.types.ts
+│   └── aliases.ts
+├── tools/
+│   ├── registry.ts
+│   ├── tool.types.ts
+│   ├── taxpayers/
+│   │   ├── count-taxpayers.ts
+│   │   ├── find-taxpayer.ts
+│   │   ├── get-taxpayer-balance.ts
+│   │   └── get-taxpayer-history.ts
+│   ├── invoices/
+│   │   ├── get-taxpayer-invoices.ts
+│   │   └── get-missing-invoices.ts
+│   └── notifications/
+│       └── send-notification.ts
+├── policy/
+│   ├── policy-engine.ts
+│   └── permissions.ts
+├── audit/
+│   ├── audit-service.ts
+│   └── audit.types.ts
+├── providers/
+│   ├── ai-provider.ts
+│   └── gemini-provider.ts
+└── shared/
+    ├── result.ts
+    ├── errors.ts
+    └── schemas.ts
+```
+
+## 5. Database Migrations (ai_audit_logs)
+
+Sistemin audit edilmesi ve partial failure tespiti için gerekli olan loglama tablosu migration taslağı:
+
+```sql
+-- 20260819_ai_audit_logs.sql
+CREATE TABLE IF NOT EXISTS ai_audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    firm_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    conversation_id UUID,
+    
+    intent VARCHAR(255),
+    tool_name VARCHAR(255),
+    tool_risk VARCHAR(50),      -- 'read', 'write', 'external_action'
+    
+    entity_type VARCHAR(100),   -- 'taxpayer', 'invoice' vb.
+    entity_id VARCHAR(255),
+    
+    input_json JSONB,           -- LLM'den gelen parametreler
+    output_json JSONB,          -- Servis yanıtı veya error detayları
+    
+    status VARCHAR(50) NOT NULL,-- 'success', 'failed', 'denied'
+    error_code VARCHAR(100),
+    error_message TEXT,
+    
+    latency_ms INT,             -- Total işlem süresi
+    model VARCHAR(255),         -- Örn: 'gemini-1.5-pro'
+    model_latency_ms INT,       -- AI cevap süresi
+    tool_latency_ms INT,        -- Tool execute süresi
+    
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexler (Hızlı arama ve observability için)
+CREATE INDEX idx_ai_audit_firm_id ON ai_audit_logs(firm_id);
+CREATE INDEX idx_ai_audit_status ON ai_audit_logs(status);
+CREATE INDEX idx_ai_audit_created_at ON ai_audit_logs(created_at);
+
+-- RLS Politakaları (Sadece yetkili organizasyon veya adminlerin logları görmesi için eklenecektir)
+ALTER TABLE ai_audit_logs ENABLE ROW LEVEL SECURITY;
+```
+
+---
+
+> [!IMPORTANT]
+> **User Review Required**
+> Yukarıdaki rapor "STEP 1 - DISCOVERY" fazını tamamlamaktadır. Mimarideki eşleşmeler ve klasör yapısı master plan (PDF) ile birebir örtüşmektedir.
+> Raporu onaylamanız durumunda "STEP 2 - DOMAIN MAPPING" ve sonrasındaki klasörleri/dosyaları oluşturma adımına (STEP 3 - FOUNDATION) geçebiliriz. Onaylıyor musunuz?
+

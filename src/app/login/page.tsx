@@ -18,7 +18,7 @@ export default function LoginPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#070B14] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex overflow-hidden relative">
+    <div className="min-h-screen w-full bg-[#141319] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex overflow-hidden relative">
       
       {/* Background Ambience */}
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00A2FF]/10 blur-[150px] rounded-full pointer-events-none z-0"></div>

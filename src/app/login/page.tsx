@@ -18,7 +18,7 @@ export default function LoginPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#141319] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex overflow-hidden relative">
+    <div className="min-h-screen bg-[#070B14] text-white selection:bg-[#00A2FF]/30 selection:text-white font-sans flex overflow-hidden relative">
       
       {/* Background Ambience */}
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#00A2FF]/10 blur-[150px] rounded-full pointer-events-none z-0"></div>
@@ -138,7 +138,7 @@ export default function LoginPage() {
                 type="password" 
                 name="password"
                 required
-                placeholder="••••••••" 
+                placeholder="        " 
                 className="w-full bg-[#0D1017] border border-[#232B45] text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#00A2FF] focus:ring-1 focus:ring-[#00A2FF]/50 transition-all placeholder-[#8E95B3]/50"
               />
             </div>

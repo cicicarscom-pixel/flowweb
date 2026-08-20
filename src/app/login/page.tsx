@@ -26,24 +26,24 @@ export default function LoginPage() {
       <div className="fixed inset-0 bg-[url('/noise.svg')] opacity-[0.03] pointer-events-none z-0 mix-blend-overlay"></div>
 
       {/* Left Column (Visuals) */}
-      <div className="hidden lg:flex flex-1 relative z-10 flex-col justify-between p-8 xl:p-12 overflow-hidden border-r border-white/5 bg-[#0A0D14]/50 backdrop-blur-md">
+      <div className="hidden lg:flex flex-1 relative z-10 flex-col justify-between p-6 xl:p-12 overflow-y-auto border-r border-white/5 bg-[#0A0D14]/50 backdrop-blur-md">
         <div className="flex items-center gap-2 animate-fade-in-right">
-          <img src="/logo.png" alt="Workigom Flow" className="h-16 xl:h-20 w-auto object-contain" />
+          <img src="/logo.png" alt="Workigom Flow" className="h-12 xl:h-20 w-auto object-contain" />
         </div>
 
-        <div className="relative z-10 my-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="mb-6 xl:mb-8">
-            <h1 className="text-[32px] xl:text-[42px] font-extrabold leading-tight mb-4 tracking-tight">
+        <div className="relative z-10 my-auto py-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="mb-4 xl:mb-8">
+            <h1 className="text-[28px] xl:text-[42px] font-extrabold leading-tight mb-2 xl:mb-4 tracking-tight">
               İşletmenizin <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A2FF] to-[#B600F8]">sinir merkezi.</span>
             </h1>
-            <p className="text-[#8E95B3] text-[14px] xl:text-[16px] max-w-[400px] leading-relaxed">
+            <p className="text-[#8E95B3] text-[13px] xl:text-[16px] max-w-[400px] leading-relaxed">
               Tüm operasyonlarınızı, görevlerinizi ve iş akışlarınızı tek bir noktadan yönetin.
             </p>
           </div>
 
           {/* Abstract floating UI representation */}
-          <div className="w-full h-[180px] xl:h-[250px] relative mt-8 xl:mt-12 perspective-1000 animate-scale-in" style={{ animationDelay: '0.4s' }}>
+          <div className="w-full h-[150px] xl:h-[250px] relative mt-6 xl:mt-12 perspective-1000 animate-scale-in" style={{ animationDelay: '0.4s' }}>
             <div className="absolute inset-0 bg-gradient-to-tr from-[#00A2FF]/10 to-transparent border border-white/10 rounded-2xl transform rotate-x-12 rotate-y-[-12deg] shadow-2xl overflow-hidden flex flex-col p-6">
               <div className="flex justify-between items-center mb-6">
                 <div className="w-24 h-4 bg-white/10 rounded-full animate-pulse"></div>

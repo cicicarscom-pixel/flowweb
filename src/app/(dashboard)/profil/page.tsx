@@ -63,7 +63,14 @@ export default function ProfilPage() {
         }
 
         let av = profile.avatar_url;
-        if (!av || av.startsWith('file://')) {
+        if (av && av.startsWith('file://')) {
+            av = null;
+        } else if (av && !av.startsWith('http')) {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(av);
+            av = data.publicUrl;
+        }
+        
+        if (!av) {
             av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff';
         }
         setAvatar(av);

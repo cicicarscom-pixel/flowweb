@@ -32,7 +32,14 @@ export default function Sidebar() {
         if (profile) {
           setUserName(profile.authorized_person || profile.business_name || "Kullanıcı");
           let av = profile.avatar_url;
-          if (av && !av.startsWith('file://')) {
+          if (av && av.startsWith('file://')) {
+            av = null;
+          } else if (av && !av.startsWith('http')) {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(av);
+            av = data.publicUrl;
+          }
+
+          if (av) {
             setAvatar(av);
           } else {
             setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff');
@@ -117,6 +124,7 @@ export default function Sidebar() {
         </Link>
 
         <button 
+          onClick={handleLogout}
           style={{
             width: "100%", padding: "8px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             background: "rgba(255, 77, 77, 0.05)", border: "1px solid rgba(255, 77, 77, 0.2)",

@@ -218,10 +218,6 @@ export default function ProfilPage() {
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
               </div>
             </label>
-            <div>
-              <h2 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 600 }}>{businessName || authorizedPerson || 'İşletme Profili'}</h2>
-              <p style={{ margin: "4px 0 0 0", color: "var(--text-secondary)", fontSize: 14 }}>Profil fotoğrafını değiştirmek için resme tıklayın</p>
-            </div>
           </div>
         
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>

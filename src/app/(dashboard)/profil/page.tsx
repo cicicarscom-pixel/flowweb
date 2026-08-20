@@ -5,30 +5,7 @@ import React, { useState, useEffect } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
-const LOCATION_DATA: any = {
-  "Türkiye": {
-    "Istanbul": [
-      "Adalar", "Arnavutköy", "Ataşehir", "Avcılar", "Bağcılar", "Bahçelievler", "Bakırköy", 
-      "Başakşehir", "Bayrampaşa", "Beşiktaş", "Beykoz", "Beylikdüzü", "Beyoğlu", "Büyükçekmece", 
-      "Çatalca", "Çekmeköy", "Esenler", "Esenyurt", "Eyüpsultan", "Fatih", "Gaziosmanpaşa", 
-      "Güngören", "Kadıköy", "Kağıthane", "Kartal", "Küçükçekmece", "Maltepe", "Pendik", 
-      "Sancaktepe", "Sarıyer", "Silivri", "Sultanbeyli", "Sultangazi", "Şile", "Şişli", 
-      "Tuzla", "Ümraniye", "Üsküdar", "Zeytinburnu"
-    ],
-    "Ankara": ["Çankaya", "Keçiören", "Yenimahalle", "Mamak"],
-    "Izmir": ["Karşıyaka", "Bornova", "Buca", "Konak"]
-  },
-  "Germany": {
-    "Hamburg": ["Altona", "Eimsbüttel", "Hamburg-Nord", "Wandsbek"],
-    "Berlin": ["Mitte", "Pankow", "Charlottenburg", "Spandau"],
-    "Munich": ["Altstadt", "Maxvorstadt", "Schwabing", "Bogenhausen"]
-  },
-  "USA": {
-    "New York": ["Manhattan", "Brooklyn", "Queens", "Bronx"],
-    "California": ["Los Angeles", "San Francisco", "San Diego", "San Jose"],
-    "Texas": ["Houston", "Austin", "Dallas", "San Antonio"]
-  }
-};
+import { Country, State, City } from "country-state-city";
 
 export default function ProfilPage() {
   const [loading, setLoading] = useState(true);
@@ -233,14 +210,14 @@ export default function ProfilPage() {
                     <div>
             <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Adres Bilgileri</label>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
-              <select 
+                            <select 
                 value={addressObj.country} 
                 onChange={e => setAddressObj({...addressObj, country: e.target.value, city: "", district: ""})}
                 className="glass-input" 
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }}
               >
                 <option value="">Ülke Seçin</option>
-                {Object.keys(LOCATION_DATA).map(c => <option key={c} value={c}>{c}</option>)}
+                {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
               </select>
               
               <select 
@@ -250,8 +227,8 @@ export default function ProfilPage() {
                 className="glass-input" 
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.country ? 1 : 0.5 }}
               >
-                <option value="">Şehir Seçin</option>
-                {addressObj.country && Object.keys(LOCATION_DATA[addressObj.country] || {}).map(c => <option key={c} value={c}>{c}</option>)}
+                <option value="">Şehir / Eyalet Seçin</option>
+                {addressObj.country && State.getStatesOfCountry(addressObj.country).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>)}
               </select>
 
               <select 
@@ -262,7 +239,7 @@ export default function ProfilPage() {
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.city ? 1 : 0.5 }}
               >
                 <option value="">İlçe Seçin</option>
-                {addressObj.country && addressObj.city && (LOCATION_DATA[addressObj.country]?.[addressObj.city] || []).map((d: any) => <option key={d} value={d}>{d}</option>)}
+                {addressObj.country && addressObj.city && City.getCitiesOfState(addressObj.country, addressObj.city).map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
               </select>
             </div>
             <textarea 
@@ -285,6 +262,7 @@ export default function ProfilPage() {
     </div>
   );
 }
+
 
 
 

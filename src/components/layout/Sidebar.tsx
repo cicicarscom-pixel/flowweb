@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Sidebar() {
     const pathname = usePathname();
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth/login");
+    router.refresh();
+  };
   const [userName, setUserName] = useState("Kullanıcı");
   const [avatar, setAvatar] = useState("https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=36&h=36&fit=crop&auto=format");
 
@@ -121,5 +129,6 @@ export default function Sidebar() {
     </aside>
   );
 }
+
 
 

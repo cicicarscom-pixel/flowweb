@@ -372,3 +372,9 @@ ull\ veya boş string dönülmeyecek.
 5. **Gelen Kutusu Realtime Bildirimleri:** Web tarafında Gelen Kutusu sayfasının \
 otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu eklendi; böylece asistan veya tetikleyici bir bildirim gönderdiğinde kullanıcının sayfası yenilenmeden çan ikonu ve bildirim listesi güncelleniyor.
 6. **Yapay Zeka VKN/İsim Arama Hata Çözümü:** \ledger-ai-chat\ Edge fonksiyonunda Türkçe karakterleri dönüştüren RegExp (replace) kodlamasında yaşanan UTF-8 bozulması giderildi. Yapay zeka artık "YILMAZ İNŞAAT TAAHHÜT..." gibi uzun ve Türkçe karakterli resmi adları veritabanında doğru bir şekilde % wildcard'a çevirerek eşleştirebiliyor.
+### [20.08.2026] V2 DDD Tablo Temizliği ve Gelecek Görevler
+1. **Gereksiz Tablolar Temizlendi**: V1 mimarisinden kalan taxpayers, invoices, invoice_schemas, ledger_chat_history tabloları Supabase üzerinden kalıcı olarak silindi. Storage Avatar yüklemeleri için eksik RLS kuralları eklendi.
+2. **BUGÜN YAPILACAKLAR (Bekleyen Görevler)**:
+   - **Görev 1:** Mobil/Web arası profil fotoğrafı (Avatar) senkronizasyonunun web (FlowWeb) tarafında hala görüntülenememesi sorunu (URL veya CORS/RLS kaynaklı olabilir) detaylıca incelenip çözülecek.
+   - **Görev 2:** Veritabanındaki eski test kullanıcıları tamamen silinip temiz kullanıcılar oluşturulacak.
+   - **Görev 3:** Supabase üzerinde Google Login (Google ile Giriş Yap) entegrasyonu aktif edilecek ve test edilecek.

@@ -79,6 +79,16 @@ export default function ProfilPage() {
       if (orgMember?.organization_id) {
         setOrganizationId(orgMember.organization_id);
         
+        const { data: orgData } = await supabase
+          .from("organizations")
+          .select("name")
+          .eq("id", orgMember.organization_id)
+          .maybeSingle();
+          
+        if (orgData && orgData.name) {
+          setBusinessName(orgData.name);
+        }
+
         const { data: legalData } = await supabase
           .from("organization_legal_profiles")
           .select("tax_identifier, tax_office")
@@ -94,6 +104,37 @@ export default function ProfilPage() {
       console.error("Error fetching profile:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+        
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(fileName);
+      setAvatar(publicUrl);
+      
+      await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', session.user.id);
+      
+      setMessage("Profil fotoğrafı güncellendi.");
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error: any) {
+      console.error("Avatar upload error:", error);
+      setMessage("Fotoğraf yükleme hatası: " + error.message);
+      setTimeout(() => setMessage(""), 3000);
     }
   };
 
@@ -122,6 +163,11 @@ export default function ProfilPage() {
         .eq("id", session.user.id);
         
       if (organizationId) {
+        await supabase
+          .from("organizations")
+          .update({ name: businessName })
+          .eq("id", organizationId);
+
         const { data: existingLegal } = await supabase
           .from("organization_legal_profiles")
           .select("id")
@@ -163,10 +209,19 @@ export default function ProfilPage() {
       )}
       
       <div className="glass-strong" style={{ padding: 32, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
-          <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(0, 240, 255, 0.3)" }} />
-          
-        </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
+            <label style={{ cursor: "pointer", position: "relative" }}>
+              <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(0, 240, 255, 0.3)" }} />
+              <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
+              <div style={{ position: "absolute", bottom: -8, right: -8, background: "var(--primary)", color: "#000", padding: 6, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+              </div>
+            </label>
+            <div>
+              <h2 style={{ margin: 0, color: "#fff", fontSize: 24, fontWeight: 600 }}>{businessName || authorizedPerson || 'İşletme Profili'}</h2>
+              <p style={{ margin: "4px 0 0 0", color: "var(--text-secondary)", fontSize: 14 }}>Profil fotoğrafını değiştirmek için resme tıklayın</p>
+            </div>
+          </div>
         
         <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           

@@ -269,3 +269,6 @@ ALTER TABLE ai_audit_logs ENABLE ROW LEVEL SECURITY;
 > Yukarıdaki rapor "STEP 1 - DISCOVERY" fazını tamamlamaktadır. Mimarideki eşleşmeler ve klasör yapısı master plan (PDF) ile birebir örtüşmektedir.
 > Raporu onaylamanız durumunda "STEP 2 - DOMAIN MAPPING" ve sonrasındaki klasörleri/dosyaları oluşturma adımına (STEP 3 - FOUNDATION) geçebiliriz. Onaylıyor musunuz?
 
+
+### [21.08.2026] Müşavir Profil & Bağlantı Entegrasyonu
+- **Müşavir Bağlantı Kartı:** Flow (Esnaf) uygulamasında "Muhasebecim" sayfasına girildiğinde, kullanıcının bağlı olduğu müşavir var ise doğrudan "Bağlı" durumunu gösteren ve müşavirin profil bilgilerini, İşletme Adı, resim ve iletişim numarasıyla birlikte sunan interaktif Glassmorphism Müşavir Kartı eklendi. ccountant_taxpayer_links tablosundan canlı doğrulama sağlandı.

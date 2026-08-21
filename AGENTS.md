@@ -378,3 +378,7 @@ otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu e
    - **Görev 1:** Mobil/Web arası profil fotoğrafı (Avatar) senkronizasyonunun web (FlowWeb) tarafında hala görüntülenememesi sorunu (URL veya CORS/RLS kaynaklı olabilir) detaylıca incelenip çözülecek.
    - **Görev 2:** Veritabanındaki eski test kullanıcıları tamamen silinip temiz kullanıcılar oluşturulacak.
    - **Görev 3:** Supabase üzerinde Google Login (Google ile Giriş Yap) entegrasyonu aktif edilecek ve test edilecek.
+
+### [21.08.2026] Müşavir Profil & Bağlantı Entegrasyonu (Flow & Ledger Senkronizasyonu)
+1. **Ledger Profil Ekranı:** Müşavirlerin kendi profil bilgilerini (İşletme Adı, Yetkili Kişi Adı Soyadı, Telefon vb.) düzenleyebilecekleri ve galeriden Profil Fotoğrafı yükleyebilecekleri (Supabase Storage 'avatars' bucket üzerinden) özel bir '/profil' ekranı eklendi.
+2. **Flow Bağlantı Kartı:** Esnafın (Flow) "Muhasebecim" sayfasında yer alan sahte zamanlayıcılı bağlantı görünümü kaldırılarak gerçek veritabanına bağlandı. Artık aktif bir bağlantı varsa doğrudan müşavirin güncel profili, işletme adı ve fotoğrafı "Bağlı" rozeti ile Glassmorphism kartında gösterilmektedir.

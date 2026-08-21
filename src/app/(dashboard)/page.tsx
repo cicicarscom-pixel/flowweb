@@ -11,6 +11,7 @@ export default function DashboardHomePage() {
   const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
   const [socialStats, setSocialStats] = useState({ followers: 0, trend: 12 });
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
   const [appointments, setAppointments] = useState<any[]>([]);
   const [commLogs, setCommLogs] = useState<any[]>([]);
 
@@ -94,10 +95,18 @@ export default function DashboardHomePage() {
         setSocialStats(prev => ({ ...prev, followers: totalFollowers }));
 
         // Recent Activities (Messages & Comments)
-        const [{ data: msgs }, { data: comments }] = await Promise.all([
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayIso = todayStart.toISOString();
+
+        const [{ data: msgs }, { data: comments }, { count: msgCount }, { count: cmtCount }] = await Promise.all([
           supabase.from('messages').select('*').order('created_at', { ascending: false }).limit(5),
-          supabase.from('comments').select('*').order('created_at', { ascending: false }).limit(5)
+          supabase.from('comments').select('*').order('created_at', { ascending: false }).limit(5),
+          supabase.from('messages').select('*', { count: 'exact', head: true }).gte('created_at', todayIso),
+          supabase.from('comments').select('*', { count: 'exact', head: true }).gte('created_at', todayIso)
         ]);
+
+        setDailyStats({ messages: msgCount || 0, comments: cmtCount || 0 });
         
         let merged: any[] = [];
         if (msgs) {
@@ -136,10 +145,7 @@ export default function DashboardHomePage() {
             color: "#00f0ff"
           })));
         } else {
-          setAppointments([
-            { time: "10:00", title: "Ayşe Kaya - Danışmanlık", color: "#00f0ff" },
-            { time: "12:30", title: "Marka Toplantısı", color: "#bc13fe" },
-          ]);
+          setAppointments([]);
         }
 
         // Comm Logs
@@ -235,9 +241,17 @@ export default function DashboardHomePage() {
         <div style={{ flex: 1 }}>
           <p style={{ fontSize: 11, color: "rgba(0,240,255,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
-            Bugün <strong style={{ color: "#00f0ff" }}>{recentActivities.length > 0 ? recentActivities.length + 12 : 47} mesaj</strong> ve <strong style={{ color: "#4edea3" }}>128 yorum</strong> otomatik yanıtlandı.
-            Instagram'da yayınlanan son post <strong style={{ color: "#ffb95f" }}>%18.4</strong> etkileşim aldı — bu haftanın rekoru!
-            Öğleden sonra <strong style={{ color: "#bc13fe" }}>{appointments.length} randevunuz</strong> var.
+            Bugün <strong style={{ color: "#00f0ff" }}>{dailyStats.messages} mesaj</strong> ve <strong style={{ color: "#4edea3" }}>{dailyStats.comments} yorum</strong> otomatik yanıtlandı.
+            {socialStats.trend > 0 ? (
+               <> Sosyal medya hesaplarınızın etkileşimi <strong style={{ color: "#ffb95f" }}>%{socialStats.trend}</strong> artış gösterdi!</>
+            ) : (
+               <> Son 7 günde sosyal medya etkileşimleriniz analiz ediliyor.</>
+            )}
+            {appointments.length > 0 ? (
+               <> Bugün <strong style={{ color: "#bc13fe" }}>{appointments.length} randevunuz</strong> var.</>
+            ) : (
+               <> Bugün için planlı randevunuz bulunmuyor.</>
+            )}
           </p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingLeft: 20, borderLeft: "1px solid rgba(255,255,255,0.1)", justifyContent: "center" }}>

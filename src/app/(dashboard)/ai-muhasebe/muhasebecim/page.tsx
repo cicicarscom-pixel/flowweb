@@ -34,19 +34,39 @@ export default function MuhasebecimPage() {
           .eq('status', 'active')
           .maybeSingle();
 
-        if (link?.accounting_firm_id) {
+          if (link?.accounting_firm_id) {
           const { data: firmInfo } = await supabase
             .from('accounting_firms')
-            .select('firm_name')
+            .select(`
+              name,
+              accounting_firm_members (
+                profiles (
+                  authorized_person,
+                  avatar_url,
+                  phone,
+                  email
+                )
+              )
+            `)
             .eq('id', link.accounting_firm_id)
             .maybeSingle();
 
           if (firmInfo) {
+            let accountantProfile = null;
+            if (firmInfo.accounting_firm_members && firmInfo.accounting_firm_members.length > 0) {
+              // Extract the first member's profile
+              const member = Array.isArray(firmInfo.accounting_firm_members) ? firmInfo.accounting_firm_members[0] : firmInfo.accounting_firm_members;
+              if (member && member.profiles) {
+                 accountantProfile = Array.isArray(member.profiles) ? member.profiles[0] : member.profiles;
+              }
+            }
+
             setFirm({
-              name: firmInfo.firm_name,
-              location: '-',
-              rating: 5.0,
-              activeTaxpayers: 'Çok sayıda'
+              name: firmInfo.name || 'Müşaviriniz',
+              authorized_person: accountantProfile?.authorized_person || 'Müşavir Temsilcisi',
+              avatar_url: accountantProfile?.avatar_url || null,
+              phone: accountantProfile?.phone || '-',
+              email: accountantProfile?.email || '-'
             });
             setStep('connected');
           }
@@ -65,10 +85,11 @@ export default function MuhasebecimPage() {
       // Simulate API verification
       setTimeout(() => {
         setFirm({
-          name: 'Akbulut Mali Müşavirlik',
-          location: 'İstanbul / Başakşehir',
-          rating: 4.9,
-          activeTaxpayers: 120
+          name: 'Örnek Mali Müşavirlik',
+          authorized_person: 'Örnek Müşavir',
+          avatar_url: null,
+          phone: '-',
+          email: '-'
         });
         setIsLoading(false);
         setStep('verified');
@@ -177,17 +198,8 @@ export default function MuhasebecimPage() {
                 </div>
                 
                 <h3 className="text-xl font-bold text-on-surface mb-1">{firm.name}</h3>
-                <p className="text-on-surface-variant text-sm mb-4">{firm.location}</p>
                 
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-2 bg-[#ffb95f]/10 text-[#ffb95f] px-3 py-1 rounded-full text-sm">
-                    <i className="fa-solid fa-star"></i>
-                    <span>{firm.rating}</span>
-                  </div>
-                  <span className="text-on-surface-variant text-sm">{firm.activeTaxpayers} aktif mükellef</span>
-                </div>
-                
-                <div className="border-t border-white/10 pt-6 mb-6">
+                <div className="border-t border-white/10 pt-6 mb-6 mt-4">
                   <h4 className="text-sm font-medium text-on-surface mb-4">Bu muhasebeciye bağlanırsanız;</h4>
                   <ul className="space-y-3">
                     {['Faturalar paylaşılır', 'Gelir gider aktarılır', 'Evrak talepleri alınır', 'AI Muhasebe birlikte çalışır'].map((feature, idx) => (
@@ -213,20 +225,52 @@ export default function MuhasebecimPage() {
 
         {/* Connected State */}
         {step === 'connected' && (
-          <div className="text-center py-10 animate-in fade-in zoom-in-95 duration-500">
-            <div className="w-24 h-24 bg-[#4edea3]/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <i className="fa-solid fa-check text-5xl text-[#4edea3]"></i>
+          <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center">
+            
+            <div className="w-full bg-gradient-to-b from-[#1a1b22] to-[#0e0e11] border border-[#4edea3]/30 rounded-2xl p-8 shadow-[0_0_30px_rgba(78,222,163,0.1)] relative overflow-hidden text-center mt-4">
+              
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#4edea3] to-transparent opacity-50"></div>
+              
+              <div className="inline-flex items-center gap-2 bg-[#4edea3]/10 border border-[#4edea3]/30 text-[#4edea3] px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+                <div className="w-2 h-2 rounded-full bg-[#4edea3] animate-pulse"></div>
+                Bağlı
+              </div>
+
+              {firm?.avatar_url ? (
+                <img src={firm.avatar_url} alt="Muhasebeci Avatar" className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-[#4edea3]/50 shadow-[0_0_15px_rgba(78,222,163,0.2)]" />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-surface-container border-2 border-white/10 flex items-center justify-center mx-auto mb-4">
+                  <i className="fa-solid fa-user-tie text-3xl text-on-surface-variant"></i>
+                </div>
+              )}
+
+              <h2 className="text-2xl font-bold text-white mb-1">{firm?.name}</h2>
+              <p className="text-[#4edea3] font-medium mb-6">{firm?.authorized_person}</p>
+
+              <div className="grid grid-cols-2 gap-4 text-left border-t border-white/10 pt-6 mt-2">
+                <div>
+                  <p className="text-xs text-on-surface-variant mb-1">Telefon Numarası</p>
+                  <p className="text-sm text-white font-medium">{firm?.phone}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-on-surface-variant mb-1">E-posta Adresi</p>
+                  <p className="text-sm text-white font-medium">{firm?.email || '-'}</p>
+                </div>
+              </div>
+
             </div>
-            <h2 className="text-2xl font-bold text-on-surface mb-2">Başarıyla Bağlandı!</h2>
-            <p className="text-on-surface-variant mb-8 max-w-sm mx-auto">
-              Artık {firm?.name} ile verileriniz güvenli bir şekilde senkronize edilecektir.
+
+            <p className="text-sm text-on-surface-variant mt-8 text-center max-w-md mx-auto">
+              Hesabınız başarıyla bağlandı. Tüm evrak, fatura ve finansal verileriniz güvenli bir şekilde müşavirinizle senkronize edilmektedir.
             </p>
+
             <Link 
               href="/ai-muhasebe"
-              className="inline-block bg-white/10 text-on-surface hover:bg-white/20 transition-colors px-8 py-3 rounded-xl font-medium"
+              className="mt-6 inline-flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 transition-colors px-6 py-3 rounded-xl font-medium"
             >
-              Muhasebe Paneline Dön
+              <i className="fa-solid fa-arrow-left"></i> Muhasebe Paneline Dön
             </Link>
+
           </div>
         )}
       </div>

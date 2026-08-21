@@ -12,7 +12,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/auth/login");
+    router.push("/login");
     router.refresh();
   };
   const [userName, setUserName] = useState("Kullanıcı");

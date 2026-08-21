@@ -9,7 +9,7 @@ export default function DashboardHomePage() {
   const [aiActive, setAiActive] = useState(true);
   const [financeStats, setFinanceStats] = useState({ income: 0, expense: 0 });
   const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
-  const [socialStats, setSocialStats] = useState({ followers: 0, trend: 12 });
+  const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -88,11 +88,28 @@ export default function DashboardHomePage() {
         });
         
         let totalFollowers = 0;
+        let totalTrend = 0;
+        let accountsWithTrend = 0;
+
         const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
         if (actualFollow.accounts) {
-           totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || 0), 0);
+           totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || a.followers || 0), 0);
+           
+           actualFollow.accounts.forEach((a: any) => {
+              const t = a.followerGrowthPercentage || a.growthPercentage || a.trend || a.growth || 0;
+              if (t > 0 || t < 0) {
+                 totalTrend += t;
+                 accountsWithTrend++;
+              }
+           });
         }
-        setSocialStats(prev => ({ ...prev, followers: totalFollowers }));
+        
+        // Use average trend if available, otherwise fallback to global actualFollow.trend or 0
+        const finalTrend = accountsWithTrend > 0 
+           ? Number((totalTrend / accountsWithTrend).toFixed(1)) 
+           : (actualFollow.trend || actualFollow.growthPercentage || actualFollow.totalGrowth || 0);
+
+        setSocialStats(prev => ({ ...prev, followers: totalFollowers, trend: finalTrend }));
 
         // Recent Activities (Messages & Comments)
         const todayStart = new Date();

@@ -79,13 +79,23 @@ export default function AnalyticsScreen() {
 
   const fetchInternalStats = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return;
+
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+      const orgId = orgMember?.organization_id;
+      if (!orgId) return;
+
+      // Notice we are treating profile_id as the tenant ID for now, 
+      // which aligns with Phase 9 requirements until a full column rename happens.
       const [{ count: postsCount }, { count: commentsCount }, { count: reviewsCount }, { count: msgsInCount }, { count: msgsOutCount }, { data: accountsData }] = await Promise.all([
-        supabase.from('posts').select('*', { count: 'exact', head: true }),
-        supabase.from('comments').select('*', { count: 'exact', head: true }),
-        supabase.from('reviews').select('*', { count: 'exact', head: true }),
-        supabase.from('messages').select('*', { count: 'exact', head: true }).eq('direction', 'incoming'),
-        supabase.from('messages').select('*', { count: 'exact', head: true }).eq('direction', 'outgoing'),
-        supabase.from('social_accounts').select('zernio_account_id, platform')
+        supabase.from('posts').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
+        supabase.from('comments').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
+        supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
+        supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'incoming'),
+        supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'outgoing'),
+        supabase.schema('integration').from('social_accounts').select('zernio_account_id, platform').eq('organization_id', orgId)
       ]);
 
       setStats({

@@ -19,6 +19,21 @@ export default function GelenKutusuPage() {
     const [notifications, setNotifications] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+
+  useEffect(() => {
+     const initOrg = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+           const { data } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).maybeSingle();
+           if (data?.organization_id) {
+              setOrganizationId(data.organization_id);
+           }
+        }
+     };
+     initOrg();
+  }, []);
+
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
@@ -116,7 +131,7 @@ export default function GelenKutusuPage() {
         body: {
           action: 'send-message',
           payload: {
-            userId: session?.user?.id,
+            organizationId,
             conversationId: conv.zernio_conversation_id || conv.id,
             accountId: conv.accountId,
             message: dmText,
@@ -169,7 +184,7 @@ export default function GelenKutusuPage() {
         body: {
           action: 'send-private-reply',
           payload: {
-            userId: session?.user?.id,
+            organizationId,
             accountId: privateReplyModal.posts?.accountId || privateReplyModal.accountId,
             postId: privateReplyModal.zernio_post_id,
             commentId: privateReplyModal.zernio_comment_id,
@@ -202,7 +217,7 @@ export default function GelenKutusuPage() {
         body: { 
           action: 'reply-comment', 
           payload: { 
-            userId: session.user.id,
+            organizationId,
             postId: comment.zernio_post_id,
             accountId: comment.posts?.accountId || comment.accountId,
             commentId: comment.zernio_comment_id,
@@ -340,10 +355,9 @@ export default function GelenKutusuPage() {
         }
       } else if (phase === 1.5) {
         // Faz 1.5: Eksik resimleri Edge Function'dan çek ve önbellekle
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user?.id) {
+        if (organizationId) {
            const { data: picData } = await supabase.functions.invoke('zernio-client', {
-              body: { action: 'get-inbox-pictures', payload: { userId: session.user.id } }
+              body: { action: 'get-inbox-pictures', payload: { organizationId } }
            });
            
            if (picData?.data?.pictures && Object.keys(picData.data.pictures).length > 0) {
@@ -367,10 +381,9 @@ export default function GelenKutusuPage() {
         }
       } else if (phase === 2) {
          // Faz 2: Zernio'dan eksik yorumları eşitle (sync-comments)
-         const { data: { session } } = await supabase.auth.getSession();
-         if (session?.user?.id) {
+         if (organizationId) {
             await supabase.functions.invoke('zernio-client', {
-              body: { action: 'sync-comments', payload: { userId: session.user.id } }
+              body: { action: 'sync-comments', payload: { organizationId } }
             });
          }
       }
@@ -381,9 +394,8 @@ export default function GelenKutusuPage() {
 
 
   const fetchNotifications = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    const { data } = await supabase.from('notifications').select('*').eq('profile_id', session.user.id).order('created_at', { ascending: false });
+    if (!organizationId) return;
+    const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId).order('created_at', { ascending: false });
     if (data) setNotifications(data);
   };
 
@@ -404,11 +416,14 @@ export default function GelenKutusuPage() {
 
   useEffect(() => {
     const loadAll = async () => {
+      if (!organizationId) return;
       setIsLoading(true);
       await Promise.all([fetchConversations(), fetchComments(1), fetchReviews(), fetchNotifications()]);
       setIsLoading(false);
     };
     loadAll();
+
+    if (!organizationId) return;
 
     // Realtime Subscriptions (Döngü Korumalı)
     const convChannel = supabase.channel('web_realtime_conversations')
@@ -450,7 +465,7 @@ export default function GelenKutusuPage() {
       supabase.removeChannel(reviewChannel);
       supabase.removeChannel(notifChannel);
     };
-  }, []);
+  }, [organizationId]);
 
   const toggleSelection = (id: string) => {
     setSelectedItems(prev => 

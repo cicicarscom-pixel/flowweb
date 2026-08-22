@@ -60,62 +60,20 @@ export default function SosyalMedyaPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
-  const [profiles, setProfiles] = useState<any[]>([]);
-  const [activeProfile, setActiveProfile] = useState<any>(null);
-  const [isProfilesDropdownOpen, setIsProfilesDropdownOpen] = useState(false);
   const supabase = createClient();
-
-  const fetchProfiles = async () => {
-    try {
-      const { data } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-zernio-profiles', payload: {} }
-      });
-      if (data?.data?.profiles) {
-        const fetchedProfiles = data.data.profiles;
-        setProfiles(fetchedProfiles);
-        const aiEsnaf = fetchedProfiles.find((p: any) => p.name === 'AI Esnaf Profil');
-        if (aiEsnaf) setActiveProfile(aiEsnaf);
-        else if (fetchedProfiles.length > 0) setActiveProfile(fetchedProfiles[0]);
-      }
-    } catch (err) {
-      console.warn("Failed to fetch profiles", err);
-    }
-  };
-
-  const handleCreateProfile = async () => {
-    const name = prompt("Yeni profilin adını giriniz:");
-    if (!name?.trim()) return;
-    try {
-      const { data } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'add-zernio-profile', payload: { name: name.trim() } }
-      });
-      if (data?.data?.profile) {
-        setProfiles(prev => [...prev, data.data.profile]);
-        setActiveProfile(data.data.profile);
-      } else if (data?.error) {
-        alert("Hata: " + data.error);
-      }
-    } catch (err) {
-      alert("Profil oluşturulurken hata oluştu.");
-    }
-  };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
     
     const accountId = searchParams.get('accountId') || hashParams.get('accountId');
-    const platform = searchParams.get('platform') || searchParams.get('connected') || hashParams.get('platform') || hashParams.get('connected');
-    const username = searchParams.get('username') || hashParams.get('username');
     const errorParam = searchParams.get('error') || hashParams.get('error') || searchParams.get('error_description') || hashParams.get('error_description');
-
-    fetchProfiles();
 
     if (errorParam) {
        alert("Bağlantı sırasında bir hata oluştu: " + errorParam);
        window.history.replaceState({}, '', window.location.pathname);
     } else if (accountId) {
-      handleSaveZernioAccount(accountId, platform, username);
+      fetchAccounts(true);
       window.history.replaceState({}, '', window.location.pathname);
     } else {
       fetchAccounts();
@@ -134,51 +92,29 @@ export default function SosyalMedyaPage() {
     };
   }, []);
 
-  const handleSaveZernioAccount = async (accountId: string, platform: string | null, username: string | null) => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id;
-      if (!userId) {
-        alert("Oturum bulunamadı. Bağlantı kaydedilemedi, lütfen tekrar giriş yapıp deneyin.");
-        return;
-      }
-
-      const { error } = await supabase.from('social_accounts').upsert({
-        profile_id: userId,
-        zernio_account_id: accountId,
-        platform: platform || 'unknown',
-        account_name: username || 'User',
-        status: 'active'
-      }, { onConflict: 'zernio_account_id' });
-
-      if (error) {
-        console.error("Db Error:", error);
-        alert("Hesap kaydedilirken veritabanı hatası oluştu: " + error.message);
-      } else {
-        alert("Hesabınız başarıyla bağlandı!");
-        fetchAccounts();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const fetchAccounts = async (syncWithZernio = false) => {
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
+      if (!userId) { setIsLoading(false); return; }
 
-      if (syncWithZernio && userId) {
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+      const organizationId = orgMember?.organization_id;
+      if (!organizationId) { setIsLoading(false); return; }
+
+      if (syncWithZernio) {
         await supabase.functions.invoke('zernio-client', {
-          body: { action: 'sync-accounts', payload: { userId } }
+          body: { action: 'sync-accounts', payload: { organizationId } }
         });
       }
 
       const { data } = await supabase
+        .schema('integration')
         .from('social_accounts')
         .select('*')
-        .eq('status', 'active');
+        .eq('organization_id', organizationId)
+        .eq('is_active', true);
 
       if (data) {
         setAccounts(data);
@@ -193,10 +129,18 @@ export default function SosyalMedyaPage() {
   const handleConnectZernio = async (platformId: string) => {
     setIsConnecting(platformId);
     try {
-      const redirectUrl = window.location.origin + '/sosyal-medya/callback'; 
-      const profileId = activeProfile?.id || activeProfile?._id || activeProfile?.profileId;
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) throw new Error("Oturum bulunamadı");
+      
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id, organizations(name)').eq('user_id', userId).maybeSingle();
+      const organizationId = orgMember?.organization_id;
+      const organizationName = (orgMember?.organizations as any)?.name;
+      if (!organizationId) throw new Error("Organizasyon bulunamadı");
+
+      const redirectUrl = window.location.origin + '/sosyal-medya'; 
       const { data, error } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl: window.location.origin + '/sosyal-medya', profileId } }
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl, organizationId, organizationName, userId } }
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -221,7 +165,7 @@ export default function SosyalMedyaPage() {
       await supabase.functions.invoke('zernio-client', {
         body: { action: 'disconnect-account', payload: { accountId } }
       });
-      await supabase.from('social_accounts').delete().eq('zernio_account_id', accountId);
+      await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
       
       fetchAccounts();
     } catch (err) {
@@ -271,58 +215,6 @@ export default function SosyalMedyaPage() {
             <p className="text-xs text-app-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
           </div>
         </Link>
-      </div>
-
-      {/* Zernio Profil Yönetimi */}
-      <div className="glass p-6 rounded-2xl border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.12)] mb-14">
-        <h2 className="text-lg font-bold text-on-surface mb-4 font-outfit">Profil Yönetimi</h2>
-        <div className="flex items-center justify-between">
-          <div className="relative">
-            <label className="block text-[#b9cacb] text-xs font-medium mb-2">Platform Profiliniz (Zernio Workspace)</label>
-            <button 
-              onClick={() => setIsProfilesDropdownOpen(!isProfilesDropdownOpen)}
-              className="flex items-center justify-between bg-[#1c1b1c]/80 rounded-xl border border-white/10 px-4 py-3 min-w-[280px] hover:bg-[#1c1b1c] transition-colors shadow-lg"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#ffb95f]"></div>
-                <span className="text-[#e5e2e3] font-medium">{activeProfile?.name || "Profil Seçin"}</span>
-              </div>
-              <i className={`fa-solid fa-chevron-down text-[#b9cacb] transition-transform ${isProfilesDropdownOpen ? 'rotate-180' : ''}`}></i>
-            </button>
-            
-            {isProfilesDropdownOpen && (
-              <div className="absolute top-full left-0 mt-2 w-[280px] bg-[#1c1b1c] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
-                <div className="px-3 py-2 text-[10px] text-[#b9cacb] border-b border-white/5 bg-black/20 font-medium">All profiles</div>
-                <div className="max-h-[200px] overflow-y-auto custom-scrollbar">
-                  {profiles.map((p, idx) => {
-                    const isActive = activeProfile && (activeProfile.id === p.id || activeProfile._id === p._id);
-                    return (
-                      <button 
-                        key={idx}
-                        onClick={() => { setActiveProfile(p); setIsProfilesDropdownOpen(false); }}
-                        className={`w-full flex items-center justify-between px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${isActive ? 'bg-[#4edea3]/5' : ''}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2.5 h-2.5 rounded-full ${isActive ? 'bg-[#4edea3]' : 'bg-[#e5e2e3]/40'}`}></div>
-                          <span className={`text-sm ${isActive ? 'text-[#4edea3] font-semibold' : 'text-[#e5e2e3]'}`}>{p.name}</span>
-                        </div>
-                        {isActive && <i className="fa-solid fa-check text-[#4edea3] text-sm"></i>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          <button 
-            onClick={handleCreateProfile}
-            className="flex items-center gap-2 bg-[#4edea3]/10 text-[#4edea3] border border-[#4edea3]/30 px-4 py-2.5 rounded-xl hover:bg-[#4edea3]/20 transition-all font-medium text-sm mt-6 shadow-[0_0_15px_rgba(78,222,163,0.15)]"
-          >
-            <i className="fa-solid fa-plus"></i>
-            Yeni Profil
-          </button>
-        </div>
       </div>
 
       {/* Eklediğiniz Hesaplarınız (Bağlı Olanlar) */}
@@ -380,7 +272,7 @@ export default function SosyalMedyaPage() {
                   </div>
 
                   <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#e5e2e3" }} className="truncate">
-                    {acc.account_name ? `@${acc.account_name}` : p.name}
+                    {acc.username ? `@${acc.username}` : (acc.display_name || p.name)}
                   </p>
                   <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 12 }}>
                     Aktif ve eşzamanlı

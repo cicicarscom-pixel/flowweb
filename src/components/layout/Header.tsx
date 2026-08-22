@@ -29,10 +29,14 @@ export default function Header() {
   const fetchUnreadCount = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
+    
+    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).maybeSingle();
+    if (!orgMember?.organization_id) return;
+    
     const { count } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
-      .eq('profile_id', session.user.id)
+      .eq('profile_id', orgMember.organization_id)
       .eq('is_read', false);
     if (count !== null) setUnreadCount(count);
   };

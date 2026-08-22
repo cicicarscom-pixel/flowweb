@@ -271,4 +271,8 @@ ALTER TABLE ai_audit_logs ENABLE ROW LEVEL SECURITY;
 
 
 ### [21.08.2026] Müşavir Profil & Bağlantı Entegrasyonu
-- **Müşavir Bağlantı Kartı:** Flow (Esnaf) uygulamasında "Muhasebecim" sayfasına girildiğinde, kullanıcının bağlı olduğu müşavir var ise doğrudan "Bağlı" durumunu gösteren ve müşavirin profil bilgilerini, İşletme Adı, resim ve iletişim numarasıyla birlikte sunan interaktif Glassmorphism Müşavir Kartı eklendi. ccountant_taxpayer_links tablosundan canlı doğrulama sağlandı.
+- **Müşavir Bağlantı Kartı:** Flow (Esnaf) uygulamasında "Muhasebecim" sayfasına girildiğinde, kullanıcının bağlı olduğu müşavir var ise doğrudan "Bağlı" durumunu gösteren ve müşavirin profil bilgilerini, İşletme Adı, resim ve iletişim numarasıyla birlikte sunan interaktif Glassmorphism Müşavir Kartı eklendi.  ccountant_taxpayer_links tablosundan canlı doğrulama sağlandı.
+
+### [22.08.2026] Dashboard Yapay Zeka Veri Bağlantıları ve Profil Senkronizasyonu
+- **Dashboard Güncellemeleri:** AI Asistan günlük özet kutusundaki ve Sosyal Medya etkileşim trendindeki görsel amaçlı sahte veriler (mock data) kaldırıldı. Flow projelerinde mesaj/yorum istatistikleri ve yaklaşan randevular doğrudan ilgili Supabase tablolarına; sosyal medya etkileşim büyümesi ise Zernio üzerinden gerçek verilere bağlandı.
+- **Ledger Profil Yedekleme (Fallback) Sistemi:** Ledger uygulamasında, "Profil Bilgilerim" ekranının form alanlarında veritabanı boş olsa dahi (authorized_person, avatar_url) Google (OAuth) session'ından gelen verileri (user_metadata) varsayılan olarak göstermesi ve düzgün senkronize olması sağlandı.

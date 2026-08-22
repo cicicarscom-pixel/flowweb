@@ -380,5 +380,10 @@ otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu e
    - **Görev 3:** Supabase üzerinde Google Login (Google ile Giriş Yap) entegrasyonu aktif edilecek ve test edilecek.
 
 ### [21.08.2026] Müşavir Profil & Bağlantı Entegrasyonu (Flow & Ledger Senkronizasyonu)
-1. **Ledger Profil Ekranı:** Müşavirlerin kendi profil bilgilerini (İşletme Adı, Yetkili Kişi Adı Soyadı, Telefon vb.) düzenleyebilecekleri ve galeriden Profil Fotoğrafı yükleyebilecekleri (Supabase Storage 'avatars' bucket üzerinden) özel bir '/profil' ekranı eklendi.
-2. **Flow Bağlantı Kartı:** Esnafın (Flow) "Muhasebecim" sayfasında yer alan sahte zamanlayıcılı bağlantı görünümü kaldırılarak gerçek veritabanına bağlandı. Artık aktif bir bağlantı varsa doğrudan müşavirin güncel profili, işletme adı ve fotoğrafı "Bağlı" rozeti ile Glassmorphism kartında gösterilmektedir.
+3. **Ledger Profil Ekranı:** Müşavirlerin kendi profil bilgilerini (İşletme Adı, Yetkili Kişi Adı Soyadı, Telefon vb.) düzenleyebilecekleri ve galeriden Profil Fotoğrafı yükleyebilecekleri (Supabase Storage 'avatars' bucket üzerinden) özel bir '/profil' ekranı eklendi.
+4. **Flow Bağlantı Kartı:** Esnafın (Flow) "Muhasebecim" sayfasında yer alan sahte zamanlayıcılı bağlantı görünümü kaldırılarak gerçek veritabanına bağlandı. Artık aktif bir bağlantı varsa doğrudan müşavirin güncel profili, işletme adı ve fotoğrafı "Bağlı" rozeti ile Glassmorphism kartında gösterilmektedir.
+
+### [22.08.2026] Dashboard Yapay Zeka Veri Bağlantıları ve Profil Senkronizasyonu
+1. **Flow Web ve Mobil (React Native) Dashboard Güncellemeleri:** AI Asistan günlük özet kutusundaki ve Sosyal Medya etkileşim trendindeki görsel amaçlı sahte veriler (mock data) kaldırıldı.
+2. **Gerçek Veritabanı ve Zernio API Entegrasyonu:** Flow projelerinde mesaj/yorum istatistikleri ve yaklaşan randevular doğrudan ilgili Supabase tablolarına; sosyal medya etkileşim büyümesi ise Zernio üzerinden gerçek verilere bağlandı.
+3. **Ledger Web Profil Yedekleme (Fallback) Sistemi:** Ledger uygulamasında, "Profil Bilgilerim" ekranının form alanlarında veritabanı boş olsa dahi (authorized_person, avatar_url) Google (OAuth) session'ından gelen verileri (user_metadata) varsayılan olarak göstermesi ve düzgün senkronize olması sağlandı.

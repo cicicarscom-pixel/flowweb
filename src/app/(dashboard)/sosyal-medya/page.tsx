@@ -272,7 +272,7 @@ export default function SosyalMedyaPage() {
                   <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2, color: "#e5e2e3" }}>
                     {p.name}
                   </p>
-                  <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.color || "#4edea3" }} className="truncate">
+                  <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.id === 'tiktok' ? '#69C9D0' : (p.color || "#4edea3") }} className="truncate">
                     {acc.account_name && acc.account_name !== p.name && acc.account_name !== 'unknown' 
                       ? (acc.account_name.startsWith('@') ? acc.account_name : `@${acc.account_name}`) 
                       : `@${p.name.toLowerCase()}_hesabi`}
@@ -338,7 +338,7 @@ export default function SosyalMedyaPage() {
                 <button 
                   onClick={() => handleConnectZernio(p.id)}
                   disabled={isConnecting === p.id}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.id === 'tiktok' ? '#69C9D0' : p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
                 >
                   {isConnecting === p.id ? "Bağlanıyor..." : "Hesap Bağla"}
                 </button>

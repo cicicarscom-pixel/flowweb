@@ -240,6 +240,7 @@ export default function SosyalMedyaPage() {
                   className="glass platform-card"
                   style={{
                     minWidth: 220,
+                    minHeight: 200,
                     flex: "0 0 auto",
                     borderRadius: 20, padding: "16px",
                     border: `1px solid ${p.glow.replace("0.3","0.35")}`,
@@ -268,15 +269,20 @@ export default function SosyalMedyaPage() {
                     </div>
                   </div>
 
-                  <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#e5e2e3" }} className="truncate">
-                    {acc.username ? `@${acc.username}` : (acc.display_name || p.name)}
+                  <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2, color: "#e5e2e3" }}>
+                    {p.name}
                   </p>
-                  <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 12 }}>
+                  <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.color || "#4edea3" }} className="truncate">
+                    {acc.account_name && acc.account_name !== p.name && acc.account_name !== 'unknown' 
+                      ? (acc.account_name.startsWith('@') ? acc.account_name : `@${acc.account_name}`) 
+                      : `@${p.name.toLowerCase()}_hesabi`}
+                  </p>
+                  <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 14 }}>
                     Aktif ve eşzamanlı
                   </p>
 
                   <div style={{ display: "flex", gap: 8 }}>
-                    <button className="pill-btn" style={{ width: "100%", justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "6px", borderRadius: 8 }}
+                    <button className="pill-btn" style={{ width: "100%", justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "8px", borderRadius: 8, fontSize: 13, fontWeight: 600 }}
                       onClick={(e) => { e.stopPropagation(); handleDisconnect(acc.zernio_account_id) }}
                     >
                       Bağlantıyı Kes

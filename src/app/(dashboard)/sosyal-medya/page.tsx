@@ -100,21 +100,19 @@ export default function SosyalMedyaPage() {
       if (!userId) { setIsLoading(false); return; }
 
       const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
-      const organizationId = orgMember?.organization_id;
-      if (!organizationId) { setIsLoading(false); return; }
+      const organizationId = orgMember?.organization_id || userId;
 
       if (syncWithZernio) {
         await supabase.functions.invoke('zernio-client', {
-          body: { action: 'sync-accounts', payload: { organizationId } }
+          body: { action: 'sync-accounts', payload: { userId, organizationId } }
         });
       }
 
       const { data } = await supabase
-        .schema('integration')
         .from('social_accounts')
         .select('*')
-        .eq('organization_id', organizationId)
-        .eq('is_active', true);
+        .eq('profile_id', organizationId)
+        .eq('status', 'active');
 
       if (data) {
         setAccounts(data);

@@ -134,13 +134,12 @@ export default function SosyalMedyaPage() {
       if (!userId) throw new Error("Oturum bulunamadı");
       
       const { data: orgMember } = await supabase.from('organization_members').select('organization_id, organizations(name)').eq('user_id', userId).maybeSingle();
-      const organizationId = orgMember?.organization_id;
-      const organizationName = (orgMember?.organizations as any)?.name;
-      if (!organizationId) throw new Error("Organizasyon bulunamadı");
+      const organizationId = orgMember?.organization_id || userId;
+      const organizationName = (orgMember?.organizations as any)?.name || 'Bireysel Hesap';
 
       const redirectUrl = window.location.origin + '/sosyal-medya'; 
       const { data, error } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl, organizationId, organizationName, userId } }
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl, organizationId, organizationName, userId, profileId: organizationId } }
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -148,9 +147,9 @@ export default function SosyalMedyaPage() {
       if (data?.data?.authUrl) {
         window.location.href = data.data.authUrl;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn("Error connecting account:", err);
-      alert("Hesap bağlama linki alınırken bir hata oluştu.");
+      alert(`Hesap bağlama linki alınırken bir hata oluştu: ${err.message || err}`);
     } finally {
       setIsConnecting(null);
     }

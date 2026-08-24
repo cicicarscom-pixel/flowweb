@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
@@ -560,11 +560,11 @@ export default function SharePage() {
                     </div>
                   </div>
                   {fbFormat === 'Story' && <p className="text-[#b9cacb]/70 text-[11px] mb-4">İçerik 24 saat sonra kaybolur. Medya gerektirir.</p>}
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
-                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder="Drop any extra context or a CTA here." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
+                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder="İlk yoruma eklemek istediğiniz bağlantı veya notu girin..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{fbFirstComment.length}/8000</p>
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
                 </div>
               </div>
             )}
@@ -595,11 +595,11 @@ export default function SharePage() {
                       <p className="text-[#b9cacb]/60 text-[10px] mt-0.5 leading-tight">Instagram'ın AI içerik etiketini ekler. Medya tamamen veya büyük oranda AI ile oluşturulduğunda kullanın.</p>
                     </div>
                   </button>
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
-                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder="Drop any extra context or a CTA here." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
+                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder="İlk yoruma eklemek istediğiniz bağlantı veya notu girin..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{igFirstComment.length}/2200</p>
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#bc13fe]/50"></textarea>
                 </div>
               </div>
             )}
@@ -613,11 +613,11 @@ export default function SharePage() {
                     <i className="fa-brands fa-linkedin text-[#0A66C2]"></i>
                     <span className="text-[#e5e2e3] font-semibold text-sm">LinkedIn</span>
                   </div>
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">first comment</label>
-                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder="Add a first comment to boost engagement." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
+                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder="Add a İlk Yorum (Opsiyonel) to boost engagement." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mb-4">{liFirstComment.length}/1250</p>
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
                 </div>
               </div>
             )}
@@ -635,11 +635,11 @@ export default function SharePage() {
                     <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${twIsThread ? 'bg-[#4edea3] border-[#4edea3]' : 'border-white/20 group-hover:border-white/40'}`}>
                       {twIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
                     </div>
-                    <span className="text-[#e5e2e3] text-xs font-medium">Create a thread</span>
+                    <span className="text-[#e5e2e3] text-xs font-medium">Zincir (Thread) oluştur</span>
                   </button>
-                  {twIsThread && <p className="text-[#b9cacb]/70 text-[10px] mb-4">Main content + media become tweet 1. Add more below.</p>}
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
+                  {twIsThread && <p className="text-[#b9cacb]/70 text-[10px] mb-4">Ana metin ilk tweet olur. Altına zincir eklenebilir.</p>}
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
                 </div>
               </div>
             )}
@@ -664,15 +664,15 @@ export default function SharePage() {
                       />
                     </div>
                     <div>
-                      <span className="block text-[#e5e2e3] text-xs font-semibold mb-1">Save to TikTok inbox as draft</span>
+                      <span className="block text-[#e5e2e3] text-xs font-semibold mb-1">TikTok taslaklarına kaydet</span>
                       <span className="block text-[#b9cacb]/70 text-[10px] leading-relaxed">
-                        Uploads to the creator's TikTok inbox instead of publishing. They finish the caption, add music, and post from TikTok.
+                        Video direkt yayınlanmaz, taslak olarak yüklenir. İsterseniz TikTok üzerinden müzik ekleyip yayınlayabilirsiniz.
                       </span>
                     </div>
                   </label>
 
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#00f0ff]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#00f0ff]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mt-1">{ttCustomCaption.length}/2200</p>
                 </div>
               </div>
@@ -688,16 +688,16 @@ export default function SharePage() {
                     <span className="text-[#e5e2e3] font-semibold text-sm">Pinterest</span>
                   </div>
 
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">title (optional)</label>
-                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder="Enter a custom title for your Pin..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Custom title for your Pin. If not provided, the first line of the main content will be used.</p>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Başlık (Opsiyonel)</label>
+                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder="Pin'iniz için özel bir başlık girin..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
+                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Zorunlu değildir. Boş bırakılırsa ana metnin ilk satırı başlık yapılır.</p>
 
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">destination link (optional)</label>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Hedef Bağlantı (Opsiyonel)</label>
                   <input type="url" value={pinLink} onChange={e => setPinLink(e.target.value)} placeholder="https://example.com" className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Set the clickable URL for your Pin. This becomes the Pin's outbound link.</p>
+                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Pin'e tıklandığında gidilecek URL bağlantısını belirler.</p>
 
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
-                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
+                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mt-1">{pinCustomCaption.length}/500</p>
                 </div>
               </div>
@@ -721,10 +721,10 @@ export default function SharePage() {
                   </div>
 
                   <label className="block text-[#b9cacb] text-xs font-medium mb-1">title</label>
-                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder="Video title..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
+                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder="Video başlığı..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
 
-                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">description (custom caption)</label>
-                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">Video Açıklaması (Opsiyonel)</label>
+                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
                 </div>
               </div>
             )}

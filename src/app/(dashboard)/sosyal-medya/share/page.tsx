@@ -140,6 +140,7 @@ export default function SharePage() {
   
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
   const [isSharing, setIsSharing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
 
   const togglePlatform = (id: string) => {
@@ -204,6 +205,15 @@ export default function SharePage() {
     }
 
     setIsSharing(true);
+    setUploadProgress(0);
+    
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 90) return prev;
+        return prev + Math.floor(Math.random() * 5) + 1;
+      });
+    }, 500);
+
     try {
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
@@ -223,12 +233,20 @@ export default function SharePage() {
         throw new Error(error?.message || data?.error);
       }
 
-      alert("Gönderi başarıyla paylaşıldı!");
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
+      setTimeout(() => {
+        alert("Gönderi başarıyla paylaşıldı!");
+        setIsSharing(false);
+        setUploadProgress(0);
+      }, 500);
     } catch (e: any) {
       console.error(e);
-      alert("Gönderi paylaşılırken bir hata oluştu: " + e.message);
-    } finally {
+      clearInterval(progressInterval);
       setIsSharing(false);
+      setUploadProgress(0);
+      alert("Gönderi paylaşılırken bir hata oluştu: " + e.message);
     }
   };
 
@@ -283,8 +301,12 @@ export default function SharePage() {
                 />
                 {localImage ? (
                   <div className="relative w-full h-full group/image">
-                    <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
-                    {selectedPlatforms['instagram'] && (
+                    {localImage.startsWith('data:video') ? (
+                      <video src={localImage} controls className="w-full h-full object-contain" />
+                    ) : (
+                      <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
+                    )}
+                    {selectedPlatforms['instagram'] && !localImage.startsWith('data:video') && (
                       <button
                         onClick={(e) => { e.stopPropagation(); setIsCropperOpen(true); }}
                         className="absolute bottom-4 right-4 bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-[0_4px_12px_rgba(225,48,108,0.4)] opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center gap-2"
@@ -572,14 +594,24 @@ export default function SharePage() {
             <button 
               onClick={handleShare}
               disabled={isSharing}
-              className={`w-full max-w-sm py-3.5 rounded-full ${isSharing ? 'bg-gray-500' : 'bg-gradient-to-r from-[#4edea3] to-[#00f0ff] hover:opacity-90'} text-[#0A0A0B] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(78,222,163,0.3)] transition-opacity pointer-events-auto`}
+              className={`relative overflow-hidden w-full max-w-sm py-3.5 rounded-full ${isSharing ? 'bg-[#2A2631]' : 'bg-gradient-to-r from-[#4edea3] to-[#00f0ff] hover:opacity-90'} text-[#0A0A0B] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(78,222,163,0.3)] transition-opacity pointer-events-auto`}
             >
-              {isSharing ? (
-                 <i className="fa-solid fa-spinner fa-spin"></i>
-              ) : (
-                 <i className="fa-solid fa-paper-plane"></i> 
+              {isSharing && (
+                <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#4edea3] to-[#00f0ff] opacity-40 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
               )}
-              {isSharing ? 'Paylaşılıyor...' : 'Şimdi Paylaş'}
+              <div className={`relative flex items-center gap-2 z-10 ${isSharing ? 'text-white' : 'text-[#0A0A0B]'}`}>
+                {isSharing ? (
+                  <>
+                    <i className="fa-solid fa-spinner fa-spin"></i>
+                    <span>Yükleniyor... {uploadProgress}%</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-paper-plane"></i> 
+                    <span>Şimdi Paylaş</span>
+                  </>
+                )}
+              </div>
             </button>
           </div>
           

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -207,25 +207,25 @@ export default function SosyalMedyaPage() {
     <div style={{ padding: "28px 32px", maxWidth: 1200 }}>
       {/* 2'li Hızlı Erişim Butonları */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <Link href="/sosyal-medya/posts" className="group glass p-6 rounded-2xl border border-app-border hover:border-[#00f0ff]/50 transition-all cursor-pointer relative overflow-hidden flex flex-col items-center justify-center gap-4 hover:scale-[1.02] shadow-none hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]">
+        <Link href="/sosyal-medya/posts" className="group glass p-6 rounded-2xl border border-dark-border hover:border-[#00f0ff]/50 transition-all cursor-pointer relative overflow-hidden flex flex-col items-center justify-center gap-4 hover:scale-[1.02] shadow-none hover:shadow-[0_0_30px_rgba(0,240,255,0.15)]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#00f0ff]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="w-16 h-16 rounded-full bg-[#00f0ff]/10 flex items-center justify-center border border-[#00f0ff]/30 group-hover:border-[#00f0ff]/60 transition-colors shadow-[0_0_15px_rgba(0,240,255,0.2)]">
             <i className="fa-solid fa-layer-group text-[#00f0ff] text-2xl"></i>
           </div>
           <div className="text-center relative z-10">
             <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Tüm Gönderiler</h3>
-            <p className="text-xs text-app-muted font-jetbrains">Yayın akışınızı yönetin</p>
+            <p className="text-xs text-dark-muted font-jetbrains">Yayın akışınızı yönetin</p>
           </div>
         </Link>
 
-        <Link href="/sosyal-medya/share" className="group glass p-6 rounded-2xl border border-app-border hover:border-[#4edea3]/50 transition-all cursor-pointer relative overflow-hidden flex flex-col items-center justify-center gap-4 hover:scale-[1.02] shadow-none hover:shadow-[0_0_30px_rgba(78,222,163,0.15)]">
+        <Link href="/sosyal-medya/share" className="group glass p-6 rounded-2xl border border-dark-border hover:border-[#4edea3]/50 transition-all cursor-pointer relative overflow-hidden flex flex-col items-center justify-center gap-4 hover:scale-[1.02] shadow-none hover:shadow-[0_0_30px_rgba(78,222,163,0.15)]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#4edea3]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           <div className="w-16 h-16 rounded-full bg-[#4edea3]/10 flex items-center justify-center border border-[#4edea3]/30 group-hover:border-[#4edea3]/60 transition-colors shadow-[0_0_15px_rgba(78,222,163,0.2)]">
             <i className="fa-solid fa-paper-plane text-[#4edea3] text-2xl"></i>
           </div>
           <div className="text-center relative z-10">
             <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Paylaşım Merkezi</h3>
-            <p className="text-xs text-app-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
+            <p className="text-xs text-dark-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
           </div>
         </Link>
       </div>

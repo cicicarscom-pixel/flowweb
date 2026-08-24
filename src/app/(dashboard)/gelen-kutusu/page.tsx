@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -554,16 +554,16 @@ export default function GelenKutusuPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-on-surface mb-2">Gelen Kutusu</h1>
-          <p className="text-app-muted text-sm">Tüm müşteri etkileşimlerini buradan yönetin.</p>
+          <p className="text-dark-muted text-sm">Tüm müşteri etkileşimlerini buradan yönetin.</p>
         </div>
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
           {isSelectionMode ? (
             <>
-              <span className="text-sm font-medium text-app-muted">{selectedItems.length} Seçildi</span>
+              <span className="text-sm font-medium text-dark-muted">{selectedItems.length} Seçildi</span>
               <button 
                 onClick={handleSelectAll}
-                className="px-4 py-2 rounded-lg bg-app-card border border-app-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium flex items-center gap-2"
               >
                 <i className="fa-solid fa-check-double"></i> Tümünü Seç
               </button>
@@ -573,14 +573,14 @@ export default function GelenKutusuPage() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
                   selectedItems.length > 0 
                     ? 'bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20' 
-                    : 'bg-app-card text-app-muted border border-app-border'
+                    : 'bg-dark-card text-dark-muted border border-dark-border'
                 }`}
               >
                 <i className="fa-solid fa-trash-can"></i> Sil
               </button>
               <button 
                 onClick={() => { setIsSelectionMode(false); setSelectedItems([]); }}
-                className="px-4 py-2 rounded-lg bg-app-card border border-app-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
+                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
               >
                 İptal
               </button>
@@ -588,7 +588,7 @@ export default function GelenKutusuPage() {
           ) : (
             <button 
               onClick={() => setIsSelectionMode(true)}
-              className="px-4 py-2 rounded-lg border border-dashed border-app-muted/40 text-app-muted hover:text-on-surface hover:border-app-muted transition-colors text-sm font-medium flex items-center gap-2"
+              className="px-4 py-2 rounded-lg border border-dashed border-dark-muted/40 text-dark-muted hover:text-on-surface hover:border-dark-muted transition-colors text-sm font-medium flex items-center gap-2"
             >
               <i className="fa-solid fa-list-check"></i> Seç
             </button>
@@ -597,7 +597,7 @@ export default function GelenKutusuPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 mb-6 border-b border-app-border pb-1 overflow-x-auto hide-scrollbar">
+      <div className="flex items-center gap-2 mb-6 border-b border-dark-border pb-1 overflow-x-auto hide-scrollbar">
         {[
           { id: 'mesajlar', label: 'Mesajlar (DM)', count: conversations.length },
           { id: 'yorumlar', label: 'Yorumlar', count: comments.length },
@@ -612,7 +612,7 @@ export default function GelenKutusuPage() {
               className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
                 isActive 
                   ? 'bg-[#bc13fe]/10 text-white border-[#bc13fe]' 
-                  : 'border-transparent text-app-muted hover:text-white hover:bg-white/5'
+                  : 'border-transparent text-dark-muted hover:text-white hover:bg-white/5'
               }`}
             >
               {tab.label}
@@ -664,12 +664,12 @@ export default function GelenKutusuPage() {
                     key={conv.id}
                     onClick={() => isSelectionMode ? toggleSelection(selectId) : setSelectedConvId(conv.id)}
                     className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                      isSelected ? 'border-[#00f0ff] bg-[#00f0ff]/10' : 'border-app-border bg-app-card hover:border-app-muted/40'
+                      isSelected ? 'border-[#00f0ff] bg-[#00f0ff]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
                     }`}
                   >
                     {isSelectionMode && (
                       <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                        selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-app-muted'
+                        selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-dark-muted'
                       }`}>
                         {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
                       </div>
@@ -683,7 +683,7 @@ export default function GelenKutusuPage() {
                           <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                         )}
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-xs">
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-xs">
                         {getPlatformIcon(conv.platform)}
                       </div>
                     </div>
@@ -691,11 +691,11 @@ export default function GelenKutusuPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
-                        <span className="text-xs text-app-muted flex-shrink-0">
+                        <span className="text-xs text-dark-muted flex-shrink-0">
                           {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
                         </span>
                       </div>
-                      <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-app-muted'}`}>
+                      <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-dark-muted'}`}>
                         {conv.lastMessageSnippet}
                       </p>
                     </div>
@@ -717,11 +717,11 @@ export default function GelenKutusuPage() {
             </div>
 
             {/* Right Pane - Chat View */}
-            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-app-border h-full overflow-hidden relative bg-[#0A0A0B]">
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative bg-[#0A0A0B]">
                {selectedConvId ? (
                  <>
                    {/* Chat Header */}
-                   <div className="p-4 border-b border-app-border flex items-center gap-3">
+                   <div className="p-4 border-b border-dark-border flex items-center gap-3">
                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
                         {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
                            <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
@@ -761,7 +761,7 @@ export default function GelenKutusuPage() {
                        )})}
                    </div>
                    {/* Chat Input */}
-                   <div className="p-3 border-t border-app-border flex items-center gap-2 bg-[#131315]/80">
+                   <div className="p-3 border-t border-dark-border flex items-center gap-2 bg-[#131315]/80">
                       <input 
                         type="text" 
                         value={dmText}
@@ -782,7 +782,7 @@ export default function GelenKutusuPage() {
                    </div>
                  </>
                ) : (
-                 <div className="flex-1 flex flex-col items-center justify-center text-app-muted opacity-60">
+                 <div className="flex-1 flex flex-col items-center justify-center text-dark-muted opacity-60">
                     <i className="fa-regular fa-comments text-4xl mb-4"></i>
                     <p>Mesajlaşmaya başlamak için bir sohbet seçin.</p>
                  </div>
@@ -804,7 +804,7 @@ export default function GelenKutusuPage() {
                     key={postGroup.postId}
                     onClick={() => setSelectedPostId(postGroup.postId)}
                     className={`glass flex items-center gap-4 p-3 rounded-xl border transition-all cursor-pointer ${
-                      isSelected ? 'border-[#bc13fe] bg-[#bc13fe]/10' : 'border-app-border bg-app-card hover:border-app-muted/40'
+                      isSelected ? 'border-[#bc13fe] bg-[#bc13fe]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
                     }`}
                   >
                     <div className="relative">
@@ -812,7 +812,7 @@ export default function GelenKutusuPage() {
                         <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" />
                       ) : (
                         <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
-                          <i className="fa-regular fa-image text-app-muted"></i>
+                          <i className="fa-regular fa-image text-dark-muted"></i>
                         </div>
                       )}
                       <div className="absolute -bottom-2 -right-2 w-5 h-5 bg-[#131315] rounded-full flex items-center justify-center border border-white/10 text-[10px]">
@@ -823,7 +823,7 @@ export default function GelenKutusuPage() {
                       <div className="text-sm font-semibold text-on-surface line-clamp-3">
                         {postGroup.postContentSnippet}
                       </div>
-                      <div className="text-xs text-app-muted mt-1">
+                      <div className="text-xs text-dark-muted mt-1">
                         Son: {postGroup.latestCommentAt ? new Date(postGroup.latestCommentAt).toLocaleDateString('tr-TR') : ''}
                       </div>
                     </div>
@@ -833,7 +833,7 @@ export default function GelenKutusuPage() {
             </div>
 
             {/* Right Pane - Thread & Reply */}
-            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-app-border h-full overflow-hidden relative">
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative">
               {/* Thread */}
               <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
                 {postsWithComments.find(p => p.postId === selectedPostId)?.parentComments
@@ -843,7 +843,7 @@ export default function GelenKutusuPage() {
                     const parentId = parent.zernio_comment_id || parent.id;
                     const uName = parent.author_name || parent.username || 'Kullanıcı';
                     return (
-                      <div key={parent.id} className="glass rounded-xl border border-app-border p-4 flex flex-col gap-3">
+                      <div key={parent.id} className="glass rounded-xl border border-dark-border p-4 flex flex-col gap-3">
                         {/* Parent Header */}
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3">
@@ -851,7 +851,7 @@ export default function GelenKutusuPage() {
                               <div 
                                 onClick={() => toggleSelection(parentId)}
                                 className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
-                                  selectedItems.includes(parentId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                                  selectedItems.includes(parentId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-dark-muted'
                                 }`}>
                                 {selectedItems.includes(parentId) && <i className="fa-solid fa-check text-xs"></i>}
                               </div>
@@ -865,7 +865,7 @@ export default function GelenKutusuPage() {
                             </div>
                             <div className="flex flex-col">
                               <span className="font-semibold text-on-surface text-sm">@{uName}</span>
-                              <span className="text-[10px] text-app-muted">{new Date(parent.created_at).toLocaleString('tr-TR')}</span>
+                              <span className="text-[10px] text-dark-muted">{new Date(parent.created_at).toLocaleString('tr-TR')}</span>
                             </div>
                           </div>
                         </div>
@@ -879,7 +879,7 @@ export default function GelenKutusuPage() {
                         {!isSelectionMode && (
                           <div className="flex items-center gap-4 text-xs font-medium mt-1">
                             <button 
-                              className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
+                              className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5"
                               onClick={() => {
                                 setReplyingTo(parentId);
                                 setReplyText(`@${uName} `);
@@ -887,10 +887,10 @@ export default function GelenKutusuPage() {
                             >
                               <i className="fa-solid fa-reply"></i> Yanıtla
                             </button>
-                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
+                            <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
                               <i className="fa-solid fa-paper-plane"></i> DM
                             </button>
-                            <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
+                            <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
                               <i className="fa-solid fa-eye-slash"></i> Gizle
                             </button>
                           </div>
@@ -898,7 +898,7 @@ export default function GelenKutusuPage() {
 
                         {/* Replies */}
                         {parent.replies && parent.replies.length > 0 && (
-                          <div className="mt-2 pl-4 border-l-2 border-app-border flex flex-col gap-3">
+                          <div className="mt-2 pl-4 border-l-2 border-dark-border flex flex-col gap-3">
                             {parent.replies.map((reply: any) => {
                               const replyId = reply.zernio_comment_id || reply.id;
                               return (
@@ -909,7 +909,7 @@ export default function GelenKutusuPage() {
                                         <div 
                                           onClick={() => toggleSelection(replyId)}
                                           className={`w-4 h-4 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
-                                            selectedItems.includes(replyId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-app-muted'
+                                            selectedItems.includes(replyId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-dark-muted'
                                           }`}>
                                           {selectedItems.includes(replyId) && <i className="fa-solid fa-check text-[10px]"></i>}
                                         </div>
@@ -918,14 +918,14 @@ export default function GelenKutusuPage() {
                                         {reply.author_picture ? (
                                           <img src={reply.author_picture} alt="Mağaza" className="w-full h-full object-cover" />
                                         ) : (
-                                          <i className="fa-solid fa-store text-[10px] text-app-muted"></i>
+                                          <i className="fa-solid fa-store text-[10px] text-dark-muted"></i>
                                         )}
                                       </div>
                                       <div className="flex items-center gap-2">
                                         <span className="font-semibold text-on-surface text-sm">Mağaza</span>
                                         <span className="text-[9px] font-bold bg-[#f59e0b]/20 text-[#f59e0b] px-1.5 py-0.5 rounded">Sen</span>
                                       </div>
-                                      <span className="text-[10px] text-app-muted">{new Date(reply.created_at).toLocaleString('tr-TR')}</span>
+                                      <span className="text-[10px] text-dark-muted">{new Date(reply.created_at).toLocaleString('tr-TR')}</span>
                                     </div>
                                   </div>
                                   
@@ -936,7 +936,7 @@ export default function GelenKutusuPage() {
                                   {!isSelectionMode && (
                                     <div className="flex items-center gap-4 text-[11px] font-medium mt-0.5">
                                       <button 
-                                        className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5"
+                                        className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5"
                                         onClick={() => {
                                           setReplyingTo(parentId);
                                           setReplyText(`@${uName} `);
@@ -944,10 +944,10 @@ export default function GelenKutusuPage() {
                                       >
                                         <i className="fa-solid fa-reply"></i> Yanıtla
                                       </button>
-                                      <button className="text-app-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
+                                      <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
                                         <i className="fa-solid fa-eye-slash"></i> Gizle
                                       </button>
-                                      <button className="text-app-muted hover:text-red-400 transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
+                                      <button className="text-dark-muted hover:text-red-400 transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
                                         <i className="fa-solid fa-trash-can"></i> Sil
                                       </button>
                                     </div>
@@ -999,21 +999,21 @@ export default function GelenKutusuPage() {
               className={`glass flex flex-col gap-3 p-4 rounded-xl border transition-all cursor-pointer ${
                 selectedItems.includes(rev.id) 
                   ? 'border-[#f59e0b] bg-[#f59e0b]/5' 
-                  : 'border-app-border bg-app-card hover:border-app-muted/40'
+                  : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
               }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {isSelectionMode && (
                     <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                      selectedItems.includes(rev.id) ? 'bg-[#f59e0b] border-[#f59e0b] text-white' : 'border-app-muted'
+                      selectedItems.includes(rev.id) ? 'bg-[#f59e0b] border-[#f59e0b] text-white' : 'border-dark-muted'
                     }`}>
                       {selectedItems.includes(rev.id) && <i className="fa-solid fa-check text-xs"></i>}
                     </div>
                   )}
                   <h3 className="font-semibold text-on-surface">{rev.reviewer_name}</h3>
                 </div>
-                <span className="text-xs text-app-muted">
+                <span className="text-xs text-dark-muted">
                   {rev.created_at ? new Date(rev.created_at).toLocaleDateString('tr-TR') : ''}
                 </span>
               </div>
@@ -1024,7 +1024,7 @@ export default function GelenKutusuPage() {
                 ))}
               </div>
               
-              <p className="text-sm text-app-muted leading-relaxed">
+              <p className="text-sm text-dark-muted leading-relaxed">
                 "{rev.content}"
               </p>
             </div>
@@ -1043,7 +1043,7 @@ export default function GelenKutusuPage() {
               <div 
                 key={notification.id}
                 className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all ${
-                  !notification.is_read ? 'border-[#3b82f6] bg-[#3b82f6]/5' : 'border-app-border bg-app-card'
+                  !notification.is_read ? 'border-[#3b82f6] bg-[#3b82f6]/5' : 'border-dark-border bg-dark-card'
                 }`}
               >
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 shrink-0">
@@ -1051,14 +1051,14 @@ export default function GelenKutusuPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-1">
-                    <h4 className={`text-sm ${!notification.is_read ? 'font-bold text-white' : 'font-medium text-app-muted'}`}>
+                    <h4 className={`text-sm ${!notification.is_read ? 'font-bold text-white' : 'font-medium text-dark-muted'}`}>
                       {notification.title}
                     </h4>
-                    <span className="text-xs text-app-muted">
+                    <span className="text-xs text-dark-muted">
                       {new Date(notification.created_at).toLocaleDateString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <p className="text-sm text-app-muted leading-relaxed">
+                  <p className="text-sm text-dark-muted leading-relaxed">
                     {notification.message}
                   </p>
                 </div>
@@ -1071,7 +1071,7 @@ export default function GelenKutusuPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-[#1c1b1d] rounded-2xl w-[90%] max-w-md p-6 border border-white/10 shadow-2xl">
               <h3 className="text-lg font-semibold text-white mb-2">Gizli Mesaj Gönder (DM)</h3>
-              <p className="text-sm text-app-muted mb-4">
+              <p className="text-sm text-dark-muted mb-4">
                 @{privateReplyModal.author_name || privateReplyModal.username} adlı kullanıcıya özel bir mesaj gönderin:
               </p>
               <textarea

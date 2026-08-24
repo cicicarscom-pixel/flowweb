@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { getCroppedImg } from '@/lib/cropImage';
 
@@ -35,12 +35,12 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4">
-      <div className="bg-app-card border border-app-border rounded-xl w-full max-w-2xl overflow-hidden flex flex-col h-[80vh]">
+      <div className="bg-dark-card border border-dark-border rounded-xl w-full max-w-2xl overflow-hidden flex flex-col h-[80vh]">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-app-border bg-app-card">
+        <div className="flex items-center justify-between p-4 border-b border-dark-border bg-dark-card">
           <h2 className="text-on-surface font-semibold">Resmi Kırp (Instagram)</h2>
-          <button onClick={onCancel} className="text-app-muted hover:text-on-surface transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5">
+          <button onClick={onCancel} className="text-dark-muted hover:text-on-surface transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5">
             <i className="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -61,9 +61,9 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
         </div>
 
         {/* Controls */}
-        <div className="p-4 border-t border-app-border bg-app-card flex flex-col gap-4">
+        <div className="p-4 border-t border-dark-border bg-dark-card flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <span className="text-app-muted text-sm whitespace-nowrap"><i className="fa-solid fa-magnifying-glass-minus"></i></span>
+            <span className="text-dark-muted text-sm whitespace-nowrap"><i className="fa-solid fa-magnifying-glass-minus"></i></span>
             <input
               type="range"
               value={zoom}
@@ -74,13 +74,13 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
               onChange={(e) => setZoom(Number(e.target.value))}
               className="w-full accent-[#00f0ff] h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
             />
-            <span className="text-app-muted text-sm whitespace-nowrap"><i className="fa-solid fa-magnifying-glass-plus"></i></span>
+            <span className="text-dark-muted text-sm whitespace-nowrap"><i className="fa-solid fa-magnifying-glass-plus"></i></span>
           </div>
 
           <div className="flex items-center justify-end gap-3">
             <button 
               onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-app-card border border-app-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
+              className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
             >
               İptal
             </button>

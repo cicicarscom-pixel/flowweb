@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -8,16 +8,6 @@
     --bg2: #131315;
     --card: rgba(20, 20, 24, 0.6);
     --card-border: rgba(255, 255, 255, 0.06);
-    --cyan: #00f0ff;
-    --cyan-dim: rgba(0, 240, 255, 0.15);
-    --cyan-glow: rgba(0, 240, 255, 0.25);
-    --purple: #bc13fe;
-    --purple-dim: rgba(188, 19, 254, 0.15);
-    --purple-glow: rgba(188, 19, 254, 0.25);
-    --orange: #ffb95f;
-    --orange-dim: rgba(255, 185, 95, 0.15);
-    --green: #4edea3;
-    --green-dim: rgba(78, 222, 163, 0.15);
     --text-primary: rgba(255, 255, 255, 0.95);
     --text-secondary: rgba(255, 255, 255, 0.55);
     --text-muted: rgba(255, 255, 255, 0.3);

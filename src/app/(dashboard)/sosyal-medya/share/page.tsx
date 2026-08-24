@@ -400,50 +400,53 @@ export default function SharePage() {
 
           {/* Profiles Section */}
           <div className="mt-6">
-            <label className="block text-[#b9cacb] text-xs font-medium mb-3">profiller</label>
-            <button className="w-full flex items-center justify-between bg-[#1c1b1c]/50 rounded-lg border border-white/5 p-4 mb-4 hover:bg-[#1c1b1c] transition-colors">
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-[#ffb95f] mr-3"></div>
-                <span className="text-[#e5e2e3] text-sm">AI Esnaf Profil</span>
+            <label className="block text-[#b9cacb] text-xs font-medium mb-3">Bağlantılı Hesaplar (Platformlar)</label>
+            
+            {zernioAccounts.length === 0 ? (
+              <div className="text-center p-4 bg-[#1c1b1c]/30 rounded-lg border border-white/5">
+                <p className="text-[#b9cacb]/70 text-xs mb-2">Henüz bağlı bir hesap yok.</p>
+                <Link href="/sosyal-medya" className="text-[#4edea3] text-xs font-medium">Hesap Bağla</Link>
               </div>
-              <i className="fa-solid fa-chevron-down text-[#b9cacb]"></i>
-            </button>
-
-            <label className="block text-[#b9cacb] text-xs font-medium mb-3">Seçilen platformlarda paylaş</label>
-            <div className="grid grid-cols-3 gap-3">
-              {zernioAccounts.map((acc, i) => {
-                const platformKey = acc.platform.toLowerCase();
-                const platformConfig = PLATFORMS_DATA.find(p => p.id === platformKey) || {
-                  id: platformKey,
-                  name: acc.platform,
-                  color: "#e5e2e3",
-                  icon: "fa-globe"
-                };
-                const isSelected = selectedPlatforms[platformKey];
-                return (
-                  <button 
-                    key={acc.id || i}
-                    onClick={() => togglePlatform(platformKey)}
-                    className={`flex items-center justify-between rounded-lg border p-2 transition-all ${
-                      isSelected ? 'bg-[#4edea3]/10 border-[#4edea3]/50' : 'bg-[#1c1b1c]/50 border-white/5 hover:border-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <i className={`fa-brands ${platformConfig.icon} text-base shrink-0`} style={{ color: platformKey === 'twitter' && !isSelected ? '#b9cacb' : platformConfig.color }}></i>
-                      <div className="flex flex-col items-start overflow-hidden text-left">
-                        <span className="text-[#e5e2e3] text-[10px] font-medium truncate w-full">{platformConfig.name}</span>
-                        <span className="text-[#b9cacb]/60 text-[8px] truncate w-full">@{acc.account_name || platformKey}</span>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                {zernioAccounts.map((acc, i) => {
+                  const platformKey = acc.platform.toLowerCase();
+                  const platformConfig = PLATFORMS_DATA.find(p => p.id === platformKey) || {
+                    id: platformKey,
+                    name: acc.platform,
+                    color: "#e5e2e3",
+                    icon: "fa-globe"
+                  };
+                  const isSelected = selectedPlatforms[platformKey];
+                  return (
+                    <button 
+                      key={acc.id || i}
+                      onClick={() => togglePlatform(platformKey)}
+                      className={`flex items-center justify-between rounded-lg border p-3 transition-all ${
+                        isSelected ? 'bg-[#4edea3]/10 border-[#4edea3]/50 shadow-[0_0_10px_rgba(78,222,163,0.15)]' : 'bg-[#1c1b1c]/50 border-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        {platformConfig.icon && !platformConfig.icon.startsWith('fa-') ? (
+                          <span className="text-xl shrink-0 leading-none">{platformConfig.icon}</span>
+                        ) : (
+                          <i className={`fa-brands ${platformConfig.icon} text-xl shrink-0`} style={{ color: platformKey === 'twitter' && !isSelected ? '#b9cacb' : platformConfig.color }}></i>
+                        )}
+                        <div className="flex flex-col items-start overflow-hidden text-left">
+                          <span className="text-[#e5e2e3] text-[12px] font-semibold truncate w-full">{platformConfig.name}</span>
+                          <span className="text-[#b9cacb]/60 text-[10px] truncate w-full">@{acc.account_name || platformKey}</span>
+                        </div>
                       </div>
-                    </div>
-                    {isSelected && (
-                      <div className="w-3.5 h-3.5 rounded-full bg-[#4edea3] flex items-center justify-center shrink-0">
-                        <i className="fa-solid fa-check text-[8px] text-[#003824]"></i>
-                      </div>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
+                      {isSelected && (
+                        <div className="w-4 h-4 rounded-full bg-[#4edea3] flex items-center justify-center shrink-0 ml-1">
+                          <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {/* Platform Specific Settings */}

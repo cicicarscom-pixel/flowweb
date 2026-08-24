@@ -3,6 +3,28 @@ import "./globals.css";
 export const metadata = {
   title: "Workigom Flow",
   description: "Workigom Flow Dashboard",
+  openGraph: {
+    title: "Workigom Flow",
+    description: "Workigom Flow Dashboard",
+    url: "https://flow.workigom.com",
+    siteName: "Workigom Flow",
+    images: [
+      {
+        url: "/google.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Workigom Flow Logo",
+      }
+    ],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Workigom Flow",
+    description: "Workigom Flow Dashboard",
+    images: ["/google.jpg"],
+  },
 };
 
 export default function RootLayout({

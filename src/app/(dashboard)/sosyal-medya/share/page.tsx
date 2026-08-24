@@ -65,23 +65,30 @@ export default function SharePage() {
 
   useEffect(() => {
     const fetchAccounts = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.id) {
-        try {
-          const { data: accData } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'sync-accounts', payload: { userId: user.id } }
-          });
-          const accounts = accData?.data?.accounts || [];
-          setZernioAccounts(accounts);
-          
-          const initialSelected: Record<string, boolean> = {};
-          accounts.forEach((acc: any) => {
-            initialSelected[acc.platform.toLowerCase()] = true;
-          });
-          setSelectedPlatforms(initialSelected);
-        } catch(e) {
-          console.warn("Failed to fetch accounts", e);
-        }
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id;
+      if (!userId) return;
+
+      try {
+        const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+        const organizationId = orgMember?.organization_id || userId;
+
+        const { data } = await supabase
+          .from('social_accounts')
+          .select('*')
+          .eq('profile_id', organizationId)
+          .eq('status', 'active');
+
+        const accounts = data || [];
+        setZernioAccounts(accounts);
+        
+        const initialSelected: Record<string, boolean> = {};
+        accounts.forEach((acc: any) => {
+          initialSelected[acc.platform.toLowerCase()] = true;
+        });
+        setSelectedPlatforms(initialSelected);
+      } catch(e) {
+        console.warn("Failed to fetch accounts", e);
       }
     };
     fetchAccounts();
@@ -142,6 +149,10 @@ export default function SharePage() {
   const [isSharing, setIsSharing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
+
+  const [tags, setTags] = useState<string[]>(['yaz', 'yenisezon']);
+  const [isAddingTag, setIsAddingTag] = useState(false);
+  const [newTagText, setNewTagText] = useState("");
 
   const togglePlatform = (id: string) => {
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
@@ -386,13 +397,55 @@ export default function SharePage() {
                 </button>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-[#00f0ff]/10 px-3 py-1 rounded-full border border-[#00f0ff]/20 text-[#00f0ff] text-xs font-medium">#yaz</span>
-                <span className="bg-[#00f0ff]/10 px-3 py-1 rounded-full border border-[#00f0ff]/20 text-[#00f0ff] text-xs font-medium">#yenisezon</span>
-                <button className="px-3 py-1 flex items-center gap-1 hover:bg-white/5 rounded-full transition-colors text-[#b9cacb]">
-                  <i className="fa-solid fa-plus text-xs"></i>
-                  <span className="text-xs font-medium">Etiket ekle</span>
-                </button>
+              <div className="flex flex-wrap gap-2 items-center mt-2">
+                {tags.map(tag => (
+                  <button 
+                    key={tag} 
+                    onClick={() => setLocalText(prev => prev + (prev && !prev.endsWith(' ') && !prev.endsWith('\n') ? ' ' : '') + '#' + tag)} 
+                    className="bg-[#00f0ff]/10 px-3 py-1 rounded-full border border-[#00f0ff]/20 text-[#00f0ff] text-xs font-medium hover:bg-[#00f0ff]/20 transition-colors"
+                  >
+                    #{tag}
+                  </button>
+                ))}
+                
+                {isAddingTag ? (
+                  <div className="flex items-center bg-[#1c1b1c] rounded-full px-2 py-1 border border-[#4edea3]/50 shadow-[0_0_8px_rgba(78,222,163,0.2)]">
+                    <span className="text-[#4edea3] text-xs mr-1 font-medium">#</span>
+                    <input 
+                      type="text" 
+                      value={newTagText}
+                      onChange={e => setNewTagText(e.target.value.replace(/[^a-zA-Z0-9_ğüşıöçĞÜŞİÖÇ]/g, ''))}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (newTagText.trim() && !tags.includes(newTagText.trim())) {
+                            setTags(prev => [...prev, newTagText.trim()]);
+                            setNewTagText("");
+                            setIsAddingTag(false);
+                          }
+                        } else if (e.key === 'Escape') {
+                          setIsAddingTag(false);
+                          setNewTagText("");
+                        }
+                      }}
+                      onBlur={() => {
+                        if (newTagText.trim() && !tags.includes(newTagText.trim())) {
+                          setTags(prev => [...prev, newTagText.trim()]);
+                        }
+                        setNewTagText("");
+                        setIsAddingTag(false);
+                      }}
+                      autoFocus
+                      className="bg-transparent text-[#e5e2e3] text-xs font-medium outline-none w-20"
+                      placeholder="yaz"
+                    />
+                  </div>
+                ) : (
+                  <button onClick={() => setIsAddingTag(true)} className="px-3 py-1 flex items-center gap-1 hover:bg-white/5 rounded-full transition-colors text-[#b9cacb]">
+                    <i className="fa-solid fa-plus text-xs"></i>
+                    <span className="text-xs font-medium">Etiket ekle</span>
+                  </button>
+                )}
               </div>
 
             </div>

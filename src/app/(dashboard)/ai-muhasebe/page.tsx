@@ -115,9 +115,9 @@ export default function AiMuhasebePage() {
           </div>
         </div>
         {/* Expense Card */}
-        <div className="rounded-xl border border-[#B534B2]/40 bg-surface-container p-6 flex items-center gap-6">
-          <div className="w-14 h-14 rounded-full bg-[#B534B2]/10 flex items-center justify-center flex-shrink-0">
-            <i className="fa-solid fa-arrow-trend-down text-[#B534B2] text-xl"></i>
+        <div className="rounded-xl border border-[#C2478D]/40 bg-surface-container p-6 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-full bg-[#C2478D]/10 flex items-center justify-center flex-shrink-0">
+            <i className="fa-solid fa-arrow-trend-down text-[#C2478D] text-xl"></i>
           </div>
           <div>
             <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">BU AY GİDER</p>
@@ -137,8 +137,8 @@ export default function AiMuhasebePage() {
           <span className="text-primary font-semibold tracking-wide">GELİR GİR</span>
         </Link>
         <Link href="/ai-muhasebe/veri-girisi?type=gider" className="w-full py-4 rounded-xl border border-[#1F2937] bg-surface-container/50 hover:bg-surface-container flex items-center justify-center gap-3 transition-colors group">
-          <i className="fa-solid fa-circle-minus text-[#B534B2] text-xl group-hover:scale-110 transition-transform"></i>
-          <span className="text-[#B534B2] font-semibold tracking-wide">GİDER GİR</span>
+          <i className="fa-solid fa-circle-minus text-[#C2478D] text-xl group-hover:scale-110 transition-transform"></i>
+          <span className="text-[#C2478D] font-semibold tracking-wide">GİDER GİR</span>
         </Link>
       </div>
 
@@ -155,37 +155,37 @@ export default function AiMuhasebePage() {
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-primary transition-colors"></i>
         </Link>
 
-        <Link href="/ai-muhasebe/odeme-takvimi" className="block rounded-xl border border-[#ecb2ff]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
+        <Link href="/ai-muhasebe/odeme-takvimi" className="block rounded-xl border border-[#E8A8CD]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
           <div className="flex items-center gap-4">
-            <i className="fa-solid fa-calendar-days text-[#ecb2ff] text-xl w-6 text-center"></i>
+            <i className="fa-solid fa-calendar-days text-[#E8A8CD] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#ecb2ff] tracking-wide mb-1 uppercase">ÖDEME TAKVİMİ</h3>
+              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">ÖDEME TAKVİMİ</h3>
               <p className="text-xs text-on-surface-variant">Yaklaşan ödeme ve tahsilat planlarınızı görüntüleyin.</p>
             </div>
           </div>
-          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#ecb2ff] transition-colors"></i>
+          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#E8A8CD] transition-colors"></i>
         </Link>
 
-        <Link href="/ai-muhasebe/veri-girisi?type=asistan" className="block rounded-xl border border-[#ecb2ff]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
+        <Link href="/ai-muhasebe/veri-girisi?type=asistan" className="block rounded-xl border border-[#E8A8CD]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
           <div className="flex items-center gap-4">
-            <i className="fa-solid fa-wand-magic-sparkles text-[#ecb2ff] text-xl w-6 text-center"></i>
+            <i className="fa-solid fa-wand-magic-sparkles text-[#E8A8CD] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#ecb2ff] tracking-wide mb-1 uppercase">AI ASİSTAN</h3>
+              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">AI ASİSTAN</h3>
               <p className="text-xs text-on-surface-variant">Yapay zeka asistanınızla finansal konularda destek alın.</p>
             </div>
           </div>
-          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#ecb2ff] transition-colors"></i>
+          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#E8A8CD] transition-colors"></i>
         </Link>
 
-        <Link href="/ai-muhasebe/muhasebecim" className="block rounded-xl border border-[#00daf3]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
+        <Link href="/ai-muhasebe/muhasebecim" className="block rounded-xl border border-[#FF7A59]/30 bg-surface-container p-5 hover:bg-surface-container-high transition-colors flex items-center justify-between group">
           <div className="flex items-center gap-4">
-            <i className="fa-solid fa-key text-[#00daf3] text-xl w-6 text-center"></i>
+            <i className="fa-solid fa-key text-[#FF7A59] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#00daf3] tracking-wide mb-1 uppercase">MUHASEBECİ BAĞLANTISI</h3>
+              <h3 className="text-sm font-semibold text-[#FF7A59] tracking-wide mb-1 uppercase">MUHASEBECİ BAĞLANTISI</h3>
               <p className="text-xs text-on-surface-variant">Mali müşavirinizle hesabınızı bağlayın ve verilerinizi güvenle paylaşın.</p>
             </div>
           </div>
-          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#00daf3] transition-colors"></i>
+          <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#FF7A59] transition-colors"></i>
         </Link>
       </div>
     </div>

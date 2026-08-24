@@ -1,4 +1,4 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import styles from './page.module.css';
 
 export default function GelenMesajAnaliziPage() {
@@ -304,9 +304,9 @@ export default function GelenMesajAnaliziPage() {
  </div>
  </div>
  {/* Rows Cum, Cmt, Paz (Empty for layout) */}
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cum</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #2a2a2c, #2a2a2c calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cmt</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #2a2a2c, #2a2a2c calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Paz</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #2a2a2c, #2a2a2c calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cum</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cmt</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Paz</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
  </div>
  </div>
  {/* Bottom Legend & Button */}

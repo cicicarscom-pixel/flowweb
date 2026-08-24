@@ -8,10 +8,10 @@ import {
 import { createClient } from "@/lib/supabase/client";
 
 const PLATFORMS = [
-  { id: 'all', name: 'Tümü', icon: 'apps', color: '#849495' },
-  { id: 'tiktok', name: 'TikTok', icon: 'music', color: '#ff0050' },
-  { id: 'instagram', name: 'Instagram', icon: 'instagram', color: '#ebb2ff' },
-  { id: 'facebook', name: 'Facebook', icon: 'facebook', color: '#00f0ff' },
+  { id: 'all', name: 'Tümü', icon: 'apps', color: '#A79E96' },
+  { id: 'tiktok', name: 'TikTok', icon: 'music', color: '#EF4444' },
+  { id: 'instagram', name: 'Instagram', icon: 'instagram', color: '#E8A8CD' },
+  { id: 'facebook', name: 'Facebook', icon: 'facebook', color: '#FF7A59' },
   { id: 'youtube', name: 'YouTube', icon: 'youtube', color: '#ff0000' },
   { id: 'linkedin', name: 'LinkedIn', icon: 'linkedin', color: '#0077b5' },
   { id: 'googlebusiness', name: 'Google Business', icon: 'store', color: '#34a853' }
@@ -198,7 +198,7 @@ export default function AnalyticsScreen() {
             const genderAge = actualDemo.data[0].values[0].value;
             const mapped = Object.keys(genderAge).map((key, index) => ({
               value: genderAge[key],
-              color: ['#00f0ff', '#bc13fe', '#ebb2ff', '#0077b5'][index % 4],
+              color: ['#FF7A59', '#C2478D', '#E8A8CD', '#0077b5'][index % 4],
               name: key
             }));
             newZernioData.demographics = mapped;
@@ -268,17 +268,17 @@ export default function AnalyticsScreen() {
       {/* Key Metrics Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(0,240,255,0.1), rgba(0,240,255,0.5))" }}>
-          <div style={{ background: "#0A0A0B", borderRadius: 16, padding: "20px" }}>
+        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(255,122,89,0.1), rgba(255,122,89,0.5))" }}>
+          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>TOPLAM GÖNDERİ</p>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#00f0ff", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalPosts || stats.totalPosts || 0}</p>
+            <p style={{ fontSize: 32, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalPosts || stats.totalPosts || 0}</p>
           </div>
         </div>
 
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(188,19,254,0.1), rgba(188,19,254,0.5))" }}>
-          <div style={{ background: "#0A0A0B", borderRadius: 16, padding: "20px" }}>
+        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(194,71,141,0.1), rgba(194,71,141,0.5))" }}>
+          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>TOPLAM YORUM</p>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#ebb2ff", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalComments || stats.totalComments || 0}</p>
+            <p style={{ fontSize: 32, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalComments || stats.totalComments || 0}</p>
           </div>
         </div>
       </div>
@@ -289,7 +289,7 @@ export default function AnalyticsScreen() {
             <span style={{ fontSize: 16, opacity: 0.6 }}>👥</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>TOPLAM TAKİPÇİ</p>
           </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#e5e2e3" }}>{zernioData.totalFollowers}</p>
+          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalFollowers}</p>
         </div>
 
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
@@ -297,7 +297,7 @@ export default function AnalyticsScreen() {
             <span style={{ fontSize: 16, opacity: 0.6 }}>📝</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>DEĞERLENDİRMELER</p>
           </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#e5e2e3" }}>{stats.totalReviews}</p>
+          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{stats.totalReviews}</p>
         </div>
       </div>
 
@@ -305,16 +305,16 @@ export default function AnalyticsScreen() {
       <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
           <div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#e5e2e3", marginBottom: 4 }}>Etkileşim ve Gösterim</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Etkileşim ve Gösterim</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Seçili dönemdeki görüntülenme ve beğeni değişimi</p>
           </div>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#00f0ff" }} />
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF7A59" }} />
               <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Görüntülenme</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#bc13fe" }} />
+              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#C2478D" }} />
               <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Beğeni</span>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function AnalyticsScreen() {
         <div style={{ height: 300, width: "100%" }}>
           {isLoading ? (
             <div className="flex h-full items-center justify-center">
-               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00f0ff]"></div>
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF7A59]"></div>
             </div>
           ) : zernioData.timelineData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -332,13 +332,13 @@ export default function AnalyticsScreen() {
                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="views" name="Görüntülenme" stroke="#00f0ff" strokeWidth={3} dot={{ r: 4, fill: "#00f0ff", strokeWidth: 0 }} activeDot={{ r: 6 }} />
-                <Line type="monotone" dataKey="likes" name="Beğeni" stroke="#bc13fe" strokeWidth={3} dot={{ r: 4, fill: "#bc13fe", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="views" name="Görüntülenme" stroke="#FF7A59" strokeWidth={3} dot={{ r: 4, fill: "#FF7A59", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="likes" name="Beğeni" stroke="#C2478D" strokeWidth={3} dot={{ r: 4, fill: "#C2478D", strokeWidth: 0 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex h-full items-center justify-center">
-               <p className="text-[#849495] text-sm">Grafik verisi bulunamadı.</p>
+               <p className="text-[#A79E96] text-sm">Grafik verisi bulunamadı.</p>
             </div>
           )}
         </div>
@@ -346,10 +346,10 @@ export default function AnalyticsScreen() {
 
       {/* Area Chart: Follower Growth */}
       {zernioData.followerStats.length > 0 && (
-        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(78,222,163,0.3)" }}>
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-            <span style={{ color: "#4edea3", fontSize: 20 }}>📈</span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#e5e2e3" }}>Takipçi Büyümesi</h3>
+            <span style={{ color: "#22B573", fontSize: 20 }}>📈</span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Takipçi Büyümesi</h3>
           </div>
           <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Seçili dönemdeki net takipçi değişimi</p>
 
@@ -358,15 +358,15 @@ export default function AnalyticsScreen() {
               <AreaChart data={zernioData.followerStats}>
                 <defs>
                   <linearGradient id="colorFollowers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4edea3" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#4edea3" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#22B573" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22B573" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <YAxis stroke="rgba(255,255,255,0.3)" domain={['dataMin - 100', 'dataMax + 100']} tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="followers" name="Takipçi" stroke="#4edea3" strokeWidth={3} fillOpacity={1} fill="url(#colorFollowers)" />
+                <Area type="monotone" dataKey="followers" name="Takipçi" stroke="#22B573" strokeWidth={3} fillOpacity={1} fill="url(#colorFollowers)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -376,7 +376,7 @@ export default function AnalyticsScreen() {
       {/* Pie Chart: Demographics */}
       {selectedPlatform.id === 'instagram' && zernioData.demographics.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#e5e2e3", marginBottom: 24 }}>Demografi Analizi</h3>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Demografi Analizi</h3>
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "center" }}>
             <div style={{ height: 250 }}>
@@ -403,7 +403,7 @@ export default function AnalyticsScreen() {
                 <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: d.color }} />
-                    <span style={{ color: "#e5e2e3", fontSize: 14 }}>{d.name}</span>
+                    <span style={{ color: "#F6F1EC", fontSize: 14 }}>{d.name}</span>
                   </div>
                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{d.value}</span>
                 </div>
@@ -420,23 +420,23 @@ export default function AnalyticsScreen() {
       {/* Key Metrics Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(188,19,254,0.1), rgba(188,19,254,0.5))" }}>
-          <div style={{ background: "#0A0A0B", borderRadius: 16, padding: "20px" }}>
+        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(194,71,141,0.1), rgba(194,71,141,0.5))" }}>
+          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>ALINAN MESAJ</p>
             </div>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#ebb2ff", fontFamily: "Outfit, sans-serif" }}>{zernioData.messagesReceived || stats.messagesReceived || 0}</p>
+            <p style={{ fontSize: 32, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.messagesReceived || stats.messagesReceived || 0}</p>
           </div>
         </div>
 
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(0,240,255,0.1), rgba(0,240,255,0.5))" }}>
-          <div style={{ background: "#0A0A0B", borderRadius: 16, padding: "20px" }}>
+        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(255,122,89,0.1), rgba(255,122,89,0.5))" }}>
+          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📤</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>GÖNDERİLEN MESAJ</p>
             </div>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#00f0ff", fontFamily: "Outfit, sans-serif" }}>{stats.messagesSent || 0}</p>
+            <p style={{ fontSize: 32, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{stats.messagesSent || 0}</p>
           </div>
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function AnalyticsScreen() {
             <span style={{ fontSize: 16, opacity: 0.6 }}>👁️</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>OKUNAN</p>
           </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#e5e2e3" }}>%84</p>
+          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>%84</p>
         </div>
 
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
@@ -455,18 +455,18 @@ export default function AnalyticsScreen() {
             <span style={{ fontSize: 16, opacity: 0.6 }}>⏱️</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>ORT. YANIT SÜRESİ</p>
           </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#e5e2e3" }}>1.2 dk</p>
+          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>1.2 dk</p>
         </div>
       </div>
 
       {/* Response Time Analysis Card */}
-      <div className="glass" style={{ borderRadius: 20, padding: "32px 24px", border: "1px solid rgba(0,240,255,0.3)", textAlign: "center" }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: "#e5e2e3", marginBottom: 8 }}>Yanıt Süresi Analizi</h3>
+      <div className="glass" style={{ borderRadius: 20, padding: "32px 24px", border: "1px solid rgba(255,122,89,0.3)", textAlign: "center" }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: "#F6F1EC", marginBottom: 8 }}>Yanıt Süresi Analizi</h3>
         <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 32 }}>Mesajlara ilk dönüş hızı, müşteri memnuniyeti için kritiktir.</p>
         
         <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(0,240,255,0.4))", marginBottom: 16 }}>🚀</span>
-          <p style={{ color: "#00f0ff", fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}>HARİKA HIZ</p>
+          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>🚀</span>
+          <p style={{ color: "#FF7A59", fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}>HARİKA HIZ</p>
         </div>
       </div>
     </div>
@@ -476,7 +476,7 @@ export default function AnalyticsScreen() {
     <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#e5e2e3" }}>Analitik & İstatistikler</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#F6F1EC" }}>Analitik & İstatistikler</h2>
         <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Tüm sosyal medya kanallarınızın performansını detaylı inceleyin</p>
       </div>
 
@@ -486,9 +486,9 @@ export default function AnalyticsScreen() {
           onClick={() => setActiveTab('posting')}
           style={{
             flex: 1, padding: "12px", borderRadius: 12,
-            background: activeTab === 'posting' ? "rgba(0,240,255,0.15)" : "transparent",
-            border: activeTab === 'posting' ? "1px solid rgba(0,240,255,0.3)" : "1px solid transparent",
-            color: activeTab === 'posting' ? "#00f0ff" : "var(--text-secondary)",
+            background: activeTab === 'posting' ? "rgba(255,122,89,0.15)" : "transparent",
+            border: activeTab === 'posting' ? "1px solid rgba(255,122,89,0.3)" : "1px solid transparent",
+            color: activeTab === 'posting' ? "#FF7A59" : "var(--text-secondary)",
             fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "all 0.2s"
           }}
         >
@@ -498,9 +498,9 @@ export default function AnalyticsScreen() {
           onClick={() => setActiveTab('inbox')}
           style={{
             flex: 1, padding: "12px", borderRadius: 12,
-            background: activeTab === 'inbox' ? "rgba(188,19,254,0.15)" : "transparent",
-            border: activeTab === 'inbox' ? "1px solid rgba(188,19,254,0.3)" : "1px solid transparent",
-            color: activeTab === 'inbox' ? "#ebb2ff" : "var(--text-secondary)",
+            background: activeTab === 'inbox' ? "rgba(194,71,141,0.15)" : "transparent",
+            border: activeTab === 'inbox' ? "1px solid rgba(194,71,141,0.3)" : "1px solid transparent",
+            color: activeTab === 'inbox' ? "#E8A8CD" : "var(--text-secondary)",
             fontWeight: 700, fontSize: 14, cursor: "pointer", transition: "all 0.2s"
           }}
         >
@@ -522,14 +522,14 @@ export default function AnalyticsScreen() {
             }}
           >
             <span style={{ fontSize: 16, color: selectedPlatform.color }}>★</span>
-            <span style={{ color: "#e5e2e3", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{selectedPlatform.name}</span>
+            <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{selectedPlatform.name}</span>
             <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
           </button>
 
           {isPlatformMenuOpen && (
             <div className="glass-strong" style={{ 
               position: "absolute", top: "100%", left: 0, marginTop: 8, width: 220,
-              borderRadius: 12, padding: 8, border: "1px solid rgba(0,240,255,0.3)",
+              borderRadius: 12, padding: 8, border: "1px solid rgba(255,122,89,0.3)",
               background: "rgba(10,10,12,0.95)", zIndex: 50, boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
             }}>
               {PLATFORMS.map(p => (
@@ -539,11 +539,11 @@ export default function AnalyticsScreen() {
                   style={{
                     padding: "10px 12px", borderRadius: 8, cursor: "pointer",
                     display: "flex", alignItems: "center", gap: 12,
-                    background: selectedPlatform.id === p.id ? "rgba(0,240,255,0.1)" : "transparent"
+                    background: selectedPlatform.id === p.id ? "rgba(255,122,89,0.1)" : "transparent"
                   }}
                 >
                   <span style={{ fontSize: 16, color: p.color }}>★</span>
-                  <span style={{ color: selectedPlatform.id === p.id ? "#00f0ff" : "#e5e2e3", fontSize: 13, fontWeight: selectedPlatform.id === p.id ? 700 : 500 }}>{p.name}</span>
+                  <span style={{ color: selectedPlatform.id === p.id ? "#FF7A59" : "#F6F1EC", fontSize: 13, fontWeight: selectedPlatform.id === p.id ? 700 : 500 }}>{p.name}</span>
                 </div>
               ))}
             </div>
@@ -561,14 +561,14 @@ export default function AnalyticsScreen() {
             }}
           >
             <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>⏱️</span>
-            <span style={{ color: "#e5e2e3", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{selectedTimeRange.name}</span>
+            <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{selectedTimeRange.name}</span>
             <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
           </button>
 
           {isTimeMenuOpen && (
             <div className="glass-strong" style={{ 
               position: "absolute", top: "100%", right: 0, marginTop: 8, width: 160,
-              borderRadius: 12, padding: 8, border: "1px solid rgba(0,240,255,0.3)",
+              borderRadius: 12, padding: 8, border: "1px solid rgba(255,122,89,0.3)",
               background: "rgba(10,10,12,0.95)", zIndex: 50, boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
             }}>
               {TIME_RANGES.map(tr => (
@@ -578,10 +578,10 @@ export default function AnalyticsScreen() {
                   style={{
                     padding: "10px 12px", borderRadius: 8, cursor: "pointer",
                     display: "flex", alignItems: "center", gap: 12,
-                    background: selectedTimeRange.id === tr.id ? "rgba(0,240,255,0.1)" : "transparent"
+                    background: selectedTimeRange.id === tr.id ? "rgba(255,122,89,0.1)" : "transparent"
                   }}
                 >
-                  <span style={{ color: selectedTimeRange.id === tr.id ? "#00f0ff" : "#e5e2e3", fontSize: 13, fontWeight: selectedTimeRange.id === tr.id ? 700 : 500 }}>{tr.name}</span>
+                  <span style={{ color: selectedTimeRange.id === tr.id ? "#FF7A59" : "#F6F1EC", fontSize: 13, fontWeight: selectedTimeRange.id === tr.id ? 700 : 500 }}>{tr.name}</span>
                 </div>
               ))}
             </div>

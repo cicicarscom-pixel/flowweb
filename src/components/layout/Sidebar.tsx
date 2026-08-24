@@ -51,12 +51,12 @@ export default function Sidebar() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Anasayfa", icon: "⬡", color: "#94a3b8", rgb: "148,163,184" },
-    { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#FF7A59", rgb: "255,122,89" },
-    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#22B573", rgb: "34,181,115" },
-    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#C2478D", rgb: "194,71,141" },
-    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#38BDF8", rgb: "56,189,248" },
-    { href: "/analiz", label: "Analiz", icon: "◈", color: "#FFB95F", rgb: "255,185,95" },
+    { href: "/", label: "Anasayfa", icon: "⬡", color: "#FF7A59" },
+    { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#FF7A59" },
+    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#F59E0B" },
+    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#C2478D" },
+    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#EF4444" },
+    { href: "/analiz", label: "Analiz", icon: "◈", color: "#22B573" },
   ];
 
   return (
@@ -77,7 +77,12 @@ export default function Sidebar() {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
           const color = item.color;
           
-          const bgRgb = item.rgb;
+          let bgRgb = "255,122,89";
+          if (color === "#C2478D") bgRgb = "194,71,141";
+          if (color === "#22B573") bgRgb = "34,181,115";
+          if (color === "#FF7A59") bgRgb = "255,122,89";
+          if (color === "#F59E0B") bgRgb = "245,158,11";
+          if (color === "#EF4444") bgRgb = "239,68,68";
 
           return (
             <Link
@@ -108,13 +113,13 @@ export default function Sidebar() {
             <img
               src={avatar}
               alt="Kullanıcı profili"
-              style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", border: "1.5px solid rgba(0,240,255,0.2)" }}
+              style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", border: "1.5px solid rgba(255,122,89,0.2)" }}
             />
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</p>
               <p style={{ fontSize: 10, color: "var(--text-muted)" }}>Pro Plan</p>
             </div>
-            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3", flexShrink: 0 }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573", flexShrink: 0 }} />
           </div>
         </Link>
 
@@ -122,8 +127,8 @@ export default function Sidebar() {
           onClick={handleLogout}
           style={{
             width: "100%", padding: "8px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            background: "rgba(255, 77, 77, 0.05)", border: "1px solid rgba(255, 77, 77, 0.2)",
-            borderRadius: 8, color: "#ff4d4d", fontSize: 12, fontWeight: 600, cursor: "pointer",
+            background: "rgba(239,68,68, 0.05)", border: "1px solid rgba(239,68,68, 0.2)",
+            borderRadius: 8, color: "#EF4444", fontSize: 12, fontWeight: 600, cursor: "pointer",
           }}
         >
           <span style={{ fontSize: 14 }}>⏻</span> Çıkış Yap

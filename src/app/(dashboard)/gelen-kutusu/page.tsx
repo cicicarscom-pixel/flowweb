@@ -539,8 +539,8 @@ export default function GelenKutusuPage() {
 
   const getPlatformIcon = (platform: string) => {
     switch (platform?.toLowerCase()) {
-      case 'instagram': return <i className="fa-brands fa-instagram text-[#ebb2ff]"></i>;
-      case 'facebook': return <i className="fa-brands fa-facebook text-[#00f0ff]"></i>;
+      case 'instagram': return <i className="fa-brands fa-instagram text-[#E8A8CD]"></i>;
+      case 'facebook': return <i className="fa-brands fa-facebook text-[#FF7A59]"></i>;
       case 'whatsapp': return <i className="fa-brands fa-whatsapp text-[#25D366]"></i>;
       case 'youtube': return <i className="fa-brands fa-youtube text-[#ff0000]"></i>;
       case 'linkedin': return <i className="fa-brands fa-linkedin text-[#0077b5]"></i>;
@@ -563,7 +563,7 @@ export default function GelenKutusuPage() {
               <span className="text-sm font-medium text-dark-muted">{selectedItems.length} Seçildi</span>
               <button 
                 onClick={handleSelectAll}
-                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium flex items-center gap-2"
+                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium flex items-center gap-2"
               >
                 <i className="fa-solid fa-check-double"></i> Tümünü Seç
               </button>
@@ -580,7 +580,7 @@ export default function GelenKutusuPage() {
               </button>
               <button 
                 onClick={() => { setIsSelectionMode(false); setSelectedItems([]); }}
-                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
+                className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium"
               >
                 İptal
               </button>
@@ -611,13 +611,13 @@ export default function GelenKutusuPage() {
               onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
               className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
                 isActive 
-                  ? 'bg-[#bc13fe]/10 text-white border-[#bc13fe]' 
+                  ? 'bg-[#C2478D]/10 text-white border-[#C2478D]' 
                   : 'border-transparent text-dark-muted hover:text-white hover:bg-white/5'
               }`}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[#bc13fe] text-white flex items-center justify-center text-[11px] font-bold">
+                <span className="w-5 h-5 rounded-full bg-[#C2478D] text-white flex items-center justify-center text-[11px] font-bold">
                   {tab.count}
                 </span>
               )}
@@ -631,22 +631,22 @@ export default function GelenKutusuPage() {
         
         {isLoading ? (
           <div className="flex items-center justify-center p-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00f0ff]"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF7A59]"></div>
           </div>
         ) : activeTab === 'mesajlar' && conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
-            <i className="fa-regular fa-comments text-4xl mb-4 text-[#849495]"></i>
-            <p className="text-[#849495] text-sm">Henüz mesaj bulunmuyor.</p>
+            <i className="fa-regular fa-comments text-4xl mb-4 text-[#A79E96]"></i>
+            <p className="text-[#A79E96] text-sm">Henüz mesaj bulunmuyor.</p>
           </div>
         ) : activeTab === 'yorumlar' && comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
-            <i className="fa-regular fa-comment text-4xl mb-4 text-[#849495]"></i>
-            <p className="text-[#849495] text-sm">Henüz yorum bulunmuyor.</p>
+            <i className="fa-regular fa-comment text-4xl mb-4 text-[#A79E96]"></i>
+            <p className="text-[#A79E96] text-sm">Henüz yorum bulunmuyor.</p>
           </div>
         ) : activeTab === 'degerlendirmeler' && reviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
-            <i className="fa-regular fa-star text-4xl mb-4 text-[#849495]"></i>
-            <p className="text-[#849495] text-sm">Henüz değerlendirme bulunmuyor.</p>
+            <i className="fa-regular fa-star text-4xl mb-4 text-[#A79E96]"></i>
+            <p className="text-[#A79E96] text-sm">Henüz değerlendirme bulunmuyor.</p>
           </div>
         ) : null}
 
@@ -664,12 +664,12 @@ export default function GelenKutusuPage() {
                     key={conv.id}
                     onClick={() => isSelectionMode ? toggleSelection(selectId) : setSelectedConvId(conv.id)}
                     className={`glass flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${
-                      isSelected ? 'border-[#00f0ff] bg-[#00f0ff]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
+                      isSelected ? 'border-[#FF7A59] bg-[#FF7A59]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
                     }`}
                   >
                     {isSelectionMode && (
                       <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
-                        selectedItems.includes(selectId) ? 'bg-[#00f0ff] border-[#00f0ff] text-black' : 'border-dark-muted'
+                        selectedItems.includes(selectId) ? 'bg-[#FF7A59] border-[#FF7A59] text-black' : 'border-dark-muted'
                       }`}>
                         {selectedItems.includes(selectId) && <i className="fa-solid fa-check text-xs"></i>}
                       </div>
@@ -695,7 +695,7 @@ export default function GelenKutusuPage() {
                           {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
                         </span>
                       </div>
-                      <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#00f0ff] font-medium' : 'text-dark-muted'}`}>
+                      <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#FF7A59] font-medium' : 'text-dark-muted'}`}>
                         {conv.lastMessageSnippet}
                       </p>
                     </div>
@@ -703,7 +703,7 @@ export default function GelenKutusuPage() {
                     {!isSelectionMode && (
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         {conv.unread_count > 0 ? (
-                          <div className="bg-[#00f0ff] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                          <div className="bg-[#FF7A59] text-black text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                             {conv.unread_count}
                           </div>
                         ) : (
@@ -717,7 +717,7 @@ export default function GelenKutusuPage() {
             </div>
 
             {/* Right Pane - Chat View */}
-            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative bg-[#0A0A0B]">
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative bg-[#17151A]">
                {selectedConvId ? (
                  <>
                    {/* Chat Header */}
@@ -770,12 +770,12 @@ export default function GelenKutusuPage() {
                           if (e.key === 'Enter') handleSendDM(conversations.find(c => c.id === selectedConvId));
                         }}
                         placeholder="Mesaj yazın..." 
-                        className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#00f0ff] border border-transparent"
+                        className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A59] border border-transparent"
                       />
                       <button 
                         onClick={() => handleSendDM(conversations.find(c => c.id === selectedConvId))}
                         disabled={isSendingDM || !dmText.trim()}
-                        className="px-5 py-3 rounded-xl bg-[#00f0ff] text-black font-semibold flex items-center justify-center disabled:opacity-50 hover:bg-[#00c0cc] transition-colors"
+                        className="px-5 py-3 rounded-xl bg-[#FF7A59] text-black font-semibold flex items-center justify-center disabled:opacity-50 hover:bg-[#00c0cc] transition-colors"
                       >
                         {isSendingDM ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
                       </button>
@@ -804,7 +804,7 @@ export default function GelenKutusuPage() {
                     key={postGroup.postId}
                     onClick={() => setSelectedPostId(postGroup.postId)}
                     className={`glass flex items-center gap-4 p-3 rounded-xl border transition-all cursor-pointer ${
-                      isSelected ? 'border-[#bc13fe] bg-[#bc13fe]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
+                      isSelected ? 'border-[#C2478D] bg-[#C2478D]/10' : 'border-dark-border bg-dark-card hover:border-dark-muted/40'
                     }`}
                   >
                     <div className="relative">
@@ -851,7 +851,7 @@ export default function GelenKutusuPage() {
                               <div 
                                 onClick={() => toggleSelection(parentId)}
                                 className={`w-5 h-5 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
-                                  selectedItems.includes(parentId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-dark-muted'
+                                  selectedItems.includes(parentId) ? 'bg-[#C2478D] border-[#C2478D] text-white' : 'border-dark-muted'
                                 }`}>
                                 {selectedItems.includes(parentId) && <i className="fa-solid fa-check text-xs"></i>}
                               </div>
@@ -871,7 +871,7 @@ export default function GelenKutusuPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="text-sm text-[#e5e2e3]">
+                        <div className="text-sm text-[#F6F1EC]">
                           {parent.content}
                         </div>
 
@@ -909,7 +909,7 @@ export default function GelenKutusuPage() {
                                         <div 
                                           onClick={() => toggleSelection(replyId)}
                                           className={`w-4 h-4 rounded flex items-center justify-center border transition-colors cursor-pointer mr-2 ${
-                                            selectedItems.includes(replyId) ? 'bg-[#bc13fe] border-[#bc13fe] text-white' : 'border-dark-muted'
+                                            selectedItems.includes(replyId) ? 'bg-[#C2478D] border-[#C2478D] text-white' : 'border-dark-muted'
                                           }`}>
                                           {selectedItems.includes(replyId) && <i className="fa-solid fa-check text-[10px]"></i>}
                                         </div>
@@ -929,7 +929,7 @@ export default function GelenKutusuPage() {
                                     </div>
                                   </div>
                                   
-                                  <div className="text-sm text-[#e5e2e3]">
+                                  <div className="text-sm text-[#F6F1EC]">
                                     {reply.content}
                                   </div>
                                   
@@ -970,12 +970,12 @@ export default function GelenKutusuPage() {
                               }}
                               autoFocus
                               placeholder="Yanıtlama için yazın..." 
-                              className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#e5e2e3] border border-white/10 focus:border-[#bc13fe] focus:outline-none"
+                              className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#F6F1EC] border border-white/10 focus:border-[#C2478D] focus:outline-none"
                             />
                             <button 
                               onClick={() => handleSendReply(parent)}
                               disabled={isSendingReply || !replyText.trim()}
-                              className="px-4 py-2 bg-[#bc13fe] hover:bg-[#a10ce0] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+                              className="px-4 py-2 bg-[#C2478D] hover:bg-[#a10ce0] text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
                             >
                               {isSendingReply ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
                             </button>
@@ -1034,8 +1034,8 @@ export default function GelenKutusuPage() {
         {/* --- BILDIRIMLER TAB --- */}
         {!isLoading && activeTab === 'bildirimler' && notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
-            <i className="fa-regular fa-bell text-4xl mb-4 text-[#849495]"></i>
-            <p className="text-[#849495] text-sm">Henüz bildirim bulunmuyor.</p>
+            <i className="fa-regular fa-bell text-4xl mb-4 text-[#A79E96]"></i>
+            <p className="text-[#A79E96] text-sm">Henüz bildirim bulunmuyor.</p>
           </div>
         ) : !isLoading && activeTab === 'bildirimler' && notifications.length > 0 && (
           <div className="flex flex-col gap-4">
@@ -1043,11 +1043,11 @@ export default function GelenKutusuPage() {
               <div 
                 key={notification.id}
                 className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all ${
-                  !notification.is_read ? 'border-[#3b82f6] bg-[#3b82f6]/5' : 'border-dark-border bg-dark-card'
+                  !notification.is_read ? 'border-[#FF7A59] bg-[#FF7A59]/5' : 'border-dark-border bg-dark-card'
                 }`}
               >
                 <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 shrink-0">
-                  <i className={`fa-solid fa-bell text-lg ${!notification.is_read ? 'text-[#3b82f6]' : 'text-[#849495]'}`}></i>
+                  <i className={`fa-solid fa-bell text-lg ${!notification.is_read ? 'text-[#FF7A59]' : 'text-[#A79E96]'}`}></i>
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-center mb-1">
@@ -1077,7 +1077,7 @@ export default function GelenKutusuPage() {
               <textarea
                 value={privateReplyText}
                 onChange={(e) => setPrivateReplyText(e.target.value)}
-                className="w-full h-24 bg-[#131315] border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-[#bc13fe] resize-none mb-4 custom-scrollbar"
+                className="w-full h-24 bg-[#131315] border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-[#C2478D] resize-none mb-4 custom-scrollbar"
                 placeholder="Mesajınızı buraya yazın..."
               ></textarea>
               <div className="flex justify-end gap-3">
@@ -1090,7 +1090,7 @@ export default function GelenKutusuPage() {
                 <button
                   onClick={handleSendPrivateReply}
                   disabled={isSendingPrivateReply || !privateReplyText.trim()}
-                  className="px-4 py-2 rounded-lg font-medium text-sm bg-[#bc13fe] text-white hover:bg-[#a10ce0] disabled:opacity-50 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 rounded-lg font-medium text-sm bg-[#C2478D] text-white hover:bg-[#a10ce0] disabled:opacity-50 transition-colors flex items-center gap-2"
                 >
                   {isSendingPrivateReply ? <i className="fa-solid fa-spinner fa-spin"></i> : null}
                   Gönder

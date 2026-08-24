@@ -115,8 +115,8 @@ export default function MuhasebecimPage() {
         <Link href="/ai-muhasebe" className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition-colors">
           <i className="fa-solid fa-arrow-left text-on-surface-variant"></i>
         </Link>
-        <div className="w-12 h-12 rounded-xl bg-[#00daf3]/10 flex items-center justify-center">
-          <i className="fa-solid fa-key text-[#00daf3] text-xl"></i>
+        <div className="w-12 h-12 rounded-xl bg-[#FF7A59]/10 flex items-center justify-center">
+          <i className="fa-solid fa-key text-[#FF7A59] text-xl"></i>
         </div>
         <div>
           <h1 className="text-2xl font-bold text-on-surface">Muhasebecim</h1>
@@ -138,7 +138,7 @@ export default function MuhasebecimPage() {
 
             <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <i className="fa-solid fa-key text-[#00daf3]"></i>
+                <i className="fa-solid fa-key text-[#FF7A59]"></i>
                 <h3 className="text-lg font-medium text-on-surface">Muhasebeci Kodunu Gir</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-6">
@@ -149,7 +149,7 @@ export default function MuhasebecimPage() {
                 <input 
                   type="text"
                   placeholder="Örn: ABC-12345"
-                  className={`flex-1 bg-surface-container border border-white/10 rounded-lg px-4 py-3 text-on-surface outline-none focus:border-[#00daf3] uppercase transition-colors ${step === 'verified' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`flex-1 bg-surface-container border border-white/10 rounded-lg px-4 py-3 text-on-surface outline-none focus:border-[#FF7A59] uppercase transition-colors ${step === 'verified' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   value={accountantCode}
                   onChange={(e) => setAccountantCode(e.target.value.toUpperCase())}
                   disabled={step !== 'initial'}
@@ -158,7 +158,7 @@ export default function MuhasebecimPage() {
                   <button 
                     onClick={handleVerify}
                     disabled={isLoading}
-                    className="bg-[#00daf3] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#00daf3]/90 transition-colors disabled:opacity-70 whitespace-nowrap"
+                    className="bg-[#FF7A59] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#FF7A59]/90 transition-colors disabled:opacity-70 whitespace-nowrap"
                   >
                     {isLoading ? 'Bekleyin...' : 'Doğrula'}
                   </button>
@@ -169,7 +169,7 @@ export default function MuhasebecimPage() {
             {/* Share Code Card */}
             <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
-                <i className="fa-solid fa-share-nodes text-[#00daf3]"></i>
+                <i className="fa-solid fa-share-nodes text-[#FF7A59]"></i>
                 <h3 className="text-lg font-medium text-on-surface">Kendi Kodunu Paylaş</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-6">
@@ -177,7 +177,7 @@ export default function MuhasebecimPage() {
               </p>
               
               <div className="flex justify-between items-center bg-[#0e0e11] border border-white/5 rounded-lg px-5 py-4">
-                <span className="text-xl font-bold tracking-widest text-[#00daf3]">WG-73492</span>
+                <span className="text-xl font-bold tracking-widest text-[#FF7A59]">WG-73492</span>
                 <button 
                   onClick={() => {
                     navigator.clipboard.writeText('WG-73492');
@@ -191,8 +191,8 @@ export default function MuhasebecimPage() {
             </div>
 
             {step === 'verified' && firm && (
-              <div className="bg-[#1a1b22] border border-[#4edea3]/30 rounded-xl p-6 animate-in fade-in zoom-in-95 duration-300">
-                <div className="flex items-center gap-2 text-[#4edea3] mb-6">
+              <div className="bg-[#1a1b22] border border-[#22B573]/30 rounded-xl p-6 animate-in fade-in zoom-in-95 duration-300">
+                <div className="flex items-center gap-2 text-[#22B573] mb-6">
                   <i className="fa-solid fa-circle-check"></i>
                   <span className="font-medium">Kod doğrulandı</span>
                 </div>
@@ -204,7 +204,7 @@ export default function MuhasebecimPage() {
                   <ul className="space-y-3">
                     {['Faturalar paylaşılır', 'Gelir gider aktarılır', 'Evrak talepleri alınır', 'AI Muhasebe birlikte çalışır'].map((feature, idx) => (
                       <li key={idx} className="flex items-center gap-3 text-sm text-on-surface-variant">
-                        <i className="fa-solid fa-check text-[#4edea3]"></i>
+                        <i className="fa-solid fa-check text-[#22B573]"></i>
                         {feature}
                       </li>
                     ))}
@@ -214,7 +214,7 @@ export default function MuhasebecimPage() {
                 <button 
                   onClick={handleConnectFinal}
                   disabled={isLoading}
-                  className="w-full bg-[#4edea3] text-black py-4 rounded-xl font-bold hover:bg-[#4edea3]/90 transition-colors disabled:opacity-70"
+                  className="w-full bg-[#22B573] text-black py-4 rounded-xl font-bold hover:bg-[#22B573]/90 transition-colors disabled:opacity-70"
                 >
                   {isLoading ? 'Bağlanıyor...' : 'Bağlan'}
                 </button>
@@ -227,17 +227,17 @@ export default function MuhasebecimPage() {
         {step === 'connected' && (
           <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center">
             
-            <div className="w-full bg-gradient-to-b from-[#1a1b22] to-[#0e0e11] border border-[#4edea3]/30 rounded-2xl p-8 shadow-[0_0_30px_rgba(78,222,163,0.1)] relative overflow-hidden text-center mt-4">
+            <div className="w-full bg-gradient-to-b from-[#1a1b22] to-[#0e0e11] border border-[#22B573]/30 rounded-2xl p-8 shadow-[0_0_30px_rgba(34,181,115,0.1)] relative overflow-hidden text-center mt-4">
               
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#4edea3] to-transparent opacity-50"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#22B573] to-transparent opacity-50"></div>
               
-              <div className="inline-flex items-center gap-2 bg-[#4edea3]/10 border border-[#4edea3]/30 text-[#4edea3] px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-                <div className="w-2 h-2 rounded-full bg-[#4edea3] animate-pulse"></div>
+              <div className="inline-flex items-center gap-2 bg-[#22B573]/10 border border-[#22B573]/30 text-[#22B573] px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+                <div className="w-2 h-2 rounded-full bg-[#22B573] animate-pulse"></div>
                 Bağlı
               </div>
 
               {firm?.avatar_url ? (
-                <img src={firm.avatar_url} alt="Muhasebeci Avatar" className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-[#4edea3]/50 shadow-[0_0_15px_rgba(78,222,163,0.2)]" />
+                <img src={firm.avatar_url} alt="Muhasebeci Avatar" className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-[#22B573]/50 shadow-[0_0_15px_rgba(34,181,115,0.2)]" />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-surface-container border-2 border-white/10 flex items-center justify-center mx-auto mb-4">
                   <i className="fa-solid fa-user-tie text-3xl text-on-surface-variant"></i>
@@ -245,7 +245,7 @@ export default function MuhasebecimPage() {
               )}
 
               <h2 className="text-2xl font-bold text-white mb-1">{firm?.name}</h2>
-              <p className="text-[#4edea3] font-medium mb-6">{firm?.authorized_person}</p>
+              <p className="text-[#22B573] font-medium mb-6">{firm?.authorized_person}</p>
 
               <div className="grid grid-cols-2 gap-4 text-left border-t border-white/10 pt-6 mt-2">
                 <div>

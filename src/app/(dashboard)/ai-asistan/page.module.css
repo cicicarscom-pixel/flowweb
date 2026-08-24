@@ -7,8 +7,8 @@
     background-size: 200% 100%;
 }
 @keyframes pulse-neon {
-    0%, 100% { box-shadow: 0 0 15px #3b82f6, 0 0 5px #3b82f6; }
-    50% { box-shadow: 0 0 30px #3b82f6, 0 0 10px #3b82f6; }
+    0%, 100% { box-shadow: 0 0 15px #FF7A59, 0 0 5px #FF7A59; }
+    50% { box-shadow: 0 0 30px #FF7A59, 0 0 10px #FF7A59; }
 }
 .animateNeon {
     animation: pulse-neon 2s infinite ease-in-out;

@@ -156,10 +156,10 @@ export default function TumGonderilerPage() {
   const getStatusColor = (status: string) => {
     const s = (status || '').toLowerCase();
     switch(s) {
-      case 'scheduled': return '#00f0ff'; // Cyan
-      case 'published': return '#bc13fe'; // Magenta
-      case 'failed': return '#ff0050'; // Red
-      default: return '#849495'; // Gray
+      case 'scheduled': return '#FF7A59'; // Cyan
+      case 'published': return '#C2478D'; // Magenta
+      case 'failed': return '#EF4444'; // Red
+      default: return '#A79E96'; // Gray
     }
   };
 
@@ -206,7 +206,7 @@ export default function TumGonderilerPage() {
     <div className="flex-1 flex flex-col h-full overflow-hidden text-on-surface">
       {/* Filters */}
       <div className="px-5 py-4 flex gap-2 overflow-x-auto hide-scrollbar shrink-0 items-center">
-        <Link href="/sosyal-medya" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#849495] hover:text-[#e5e2e3] transition-colors mr-2 shrink-0">
+        <Link href="/sosyal-medya" className="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-[#A79E96] hover:text-[#F6F1EC] transition-colors mr-2 shrink-0">
           <i className="fa-solid fa-arrow-left"></i>
         </Link>
         {FILTERS.map(filter => (
@@ -215,8 +215,8 @@ export default function TumGonderilerPage() {
             onClick={() => { setActiveFilter(filter.id); setSelectedPostIds([]); }}
             className={`px-4 py-2 rounded-full border text-[12px] font-bold whitespace-nowrap transition-colors ${
               activeFilter === filter.id 
-                ? 'bg-[#00f0ff]/20 border-[#00f0ff] text-[#00f0ff]' 
-                : 'bg-white/5 border-white/10 text-[#849495] hover:text-[#e5e2e3]'
+                ? 'bg-[#FF7A59]/20 border-[#FF7A59] text-[#FF7A59]' 
+                : 'bg-white/5 border-white/10 text-[#A79E96] hover:text-[#F6F1EC]'
             }`}
           >
             {filter.label}
@@ -225,7 +225,7 @@ export default function TumGonderilerPage() {
         {selectedPostIds.length > 0 && (
           <button 
             onClick={handleBulkDelete}
-            className="ml-auto px-4 py-2 rounded-full border border-[#ff0050] bg-[#ff0050]/20 text-[#ff0050] text-[12px] font-bold hover:bg-[#ff0050]/30 transition-colors flex items-center gap-2"
+            className="ml-auto px-4 py-2 rounded-full border border-[#EF4444] bg-[#EF4444]/20 text-[#EF4444] text-[12px] font-bold hover:bg-[#EF4444]/30 transition-colors flex items-center gap-2"
           >
             <i className="fa-regular fa-trash-can"></i>
             {selectedPostIds.length} Seçiliyi Sil
@@ -238,32 +238,32 @@ export default function TumGonderilerPage() {
         <div style={{ width: 1410, minHeight: '100%' }} className="flex flex-col pb-20">
           
           {/* Table Header */}
-          <div className="flex items-center border-b border-white/10 pb-3 pt-4 mb-2 px-5 sticky top-0 bg-[#0A0A0B]/95 z-10 backdrop-blur-sm">
+          <div className="flex items-center border-b border-white/10 pb-3 pt-4 mb-2 px-5 sticky top-0 bg-[#17151A]/95 z-10 backdrop-blur-sm">
             <div style={{ width: 40 }} className="flex justify-start">
-              <button onClick={toggleSelectAll} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 ? 'bg-[#00f0ff] border-[#00f0ff]' : 'border-[#849495]/50 bg-transparent'}`}>
-                {selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 && <i className="fa-solid fa-check text-[#0A0A0B] text-[10px]"></i>}
+              <button onClick={toggleSelectAll} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 ? 'bg-[#FF7A59] border-[#FF7A59]' : 'border-[#A79E96]/50 bg-transparent'}`}>
+                {selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 && <i className="fa-solid fa-check text-[#17151A] text-[10px]"></i>}
               </button>
             </div>
-            <div style={{ width: 250 }} className="text-[#849495] text-[12px] font-semibold">Content</div>
-            <div style={{ width: 100 }} className="text-[#849495] text-[12px] font-semibold text-center">Platforms</div>
-            <div style={{ width: 150 }} className="text-[#849495] text-[12px] font-semibold text-center">Date</div>
-            <div style={{ width: 120 }} className="text-[#849495] text-[12px] font-semibold text-center">Status</div>
-            <div style={{ width: 150 }} className="text-[#849495] text-[12px] font-semibold">Profile</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Likes</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Cmts</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Shrs</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Saves</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Clicks</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Views</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Impr.</div>
-            <div style={{ width: 60 }} className="text-[#849495] text-[10px] font-semibold text-center">Reach</div>
-            <div style={{ width: 80 }} className="text-[#849495] text-[10px] font-semibold text-center">Actions</div>
+            <div style={{ width: 250 }} className="text-[#A79E96] text-[12px] font-semibold">Content</div>
+            <div style={{ width: 100 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Platforms</div>
+            <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Date</div>
+            <div style={{ width: 120 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Status</div>
+            <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold">Profile</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Likes</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Cmts</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Shrs</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Saves</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Clicks</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Views</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Impr.</div>
+            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Reach</div>
+            <div style={{ width: 80 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Actions</div>
           </div>
 
           {/* Table Rows */}
           {isLoading ? (
             <div className="flex items-center justify-center p-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00f0ff]"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF7A59]"></div>
             </div>
           ) : filteredPosts.length > 0 ? (
             filteredPosts.map((item) => {
@@ -275,8 +275,8 @@ export default function TumGonderilerPage() {
                 <div key={item.id} className="flex items-center border-b border-white/5 py-3 px-5 hover:bg-white/5 transition-colors" style={{ opacity: isScheduled ? 0.7 : 1 }}>
                   {/* Checkbox Placeholder */}
                   <div style={{ width: 40 }} className="flex justify-start">
-                    <button onClick={() => toggleSelectPost(item.id)} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.includes(item.id) ? 'bg-[#00f0ff] border-[#00f0ff]' : 'border-[#849495]/50 bg-transparent'}`}>
-                      {selectedPostIds.includes(item.id) && <i className="fa-solid fa-check text-[#0A0A0B] text-[10px]"></i>}
+                    <button onClick={() => toggleSelectPost(item.id)} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedPostIds.includes(item.id) ? 'bg-[#FF7A59] border-[#FF7A59]' : 'border-[#A79E96]/50 bg-transparent'}`}>
+                      {selectedPostIds.includes(item.id) && <i className="fa-solid fa-check text-[#17151A] text-[10px]"></i>}
                     </button>
                   </div>
 
@@ -288,10 +288,10 @@ export default function TumGonderilerPage() {
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-md mr-3 shrink-0 flex items-center justify-center bg-white/5">
-                        <i className="fa-regular fa-image text-[#849495]"></i>
+                        <i className="fa-regular fa-image text-[#A79E96]"></i>
                       </div>
                     )}
-                    <span className="text-[#e5e2e3] text-[13px] font-medium line-clamp-2 leading-tight">
+                    <span className="text-[#F6F1EC] text-[13px] font-medium line-clamp-2 leading-tight">
                       {getPreviewText(item.content || item.title)}
                     </span>
                   </div>
@@ -301,13 +301,13 @@ export default function TumGonderilerPage() {
                     {platformsArray.map((platObj: any, idx: number) => {
                       const platName = typeof platObj === 'string' ? platObj : platObj.platform;
                       if (!platName) return null;
-                      return <i key={idx} className={`fa-brands ${getPlatformIcon(platName)} text-[14px] text-[#e5e2e3]`}></i>;
+                      return <i key={idx} className={`fa-brands ${getPlatformIcon(platName)} text-[14px] text-[#F6F1EC]`}></i>;
                     })}
                   </div>
 
                   {/* Date */}
                   <div style={{ width: 150 }} className="flex justify-center items-center">
-                    <span className="text-[#b9cacb] text-[12px]">{formatDate(item.scheduled_for)}</span>
+                    <span className="text-[#A79E96] text-[12px]">{formatDate(item.scheduled_for)}</span>
                   </div>
 
                   {/* Status */}
@@ -315,16 +315,16 @@ export default function TumGonderilerPage() {
                     <div 
                       className="flex items-center px-2 py-1 rounded border"
                       style={{ 
-                        backgroundColor: isScheduled ? 'rgba(0, 240, 255, 0.15)' : `${statusColor}15`,
-                        borderColor: isScheduled ? 'rgba(0, 240, 255, 0.4)' : `${statusColor}30` 
+                        backgroundColor: isScheduled ? 'rgba(255,122,89, 0.15)' : `${statusColor}15`,
+                        borderColor: isScheduled ? 'rgba(255,122,89, 0.4)' : `${statusColor}30` 
                       }}
                     >
                       <div 
                         className="w-1.5 h-1.5 rounded-full mr-1.5" 
-                        style={{ backgroundColor: isScheduled ? '#00f0ff' : statusColor }} 
+                        style={{ backgroundColor: isScheduled ? '#FF7A59' : statusColor }} 
                       ></div>
                       <span 
-                        style={{ color: isScheduled ? '#00f0ff' : statusColor }} 
+                        style={{ color: isScheduled ? '#FF7A59' : statusColor }} 
                         className="text-[10px] font-bold"
                       >
                         {getStatusLabel(item.status)}
@@ -334,8 +334,8 @@ export default function TumGonderilerPage() {
 
                   {/* Profile */}
                   <div style={{ width: 150 }} className="flex items-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#ffb95f] mr-2 shrink-0"></div>
-                    <span className="text-[#e5e2e3] text-[12px] truncate">AI Esnaf Profil</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mr-2 shrink-0"></div>
+                    <span className="text-[#F6F1EC] text-[12px] truncate">AI Esnaf Profil</span>
                   </div>
 
                   {/* Metrics */}
@@ -350,25 +350,25 @@ export default function TumGonderilerPage() {
                     item.metrics?.reach ?? item.reach
                   ].map((val, idx) => (
                     <div key={idx} style={{ width: 60 }} className="flex justify-center items-center">
-                      <span className="text-[#849495] text-[12px]">{val != null ? val : '-'}</span>
+                      <span className="text-[#A79E96] text-[12px]">{val != null ? val : '-'}</span>
                     </div>
                   ))}
 
                   {/* Actions */}
                   <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
                     {(item.status || '').toLowerCase() === 'failed' && (
-                      <button className="w-7 h-7 rounded bg-[#ff0050]/20 border border-[#ff0050]/40 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/30 transition-colors" title="Yeniden Dene">
+                      <button className="w-7 h-7 rounded bg-[#EF4444]/20 border border-[#EF4444]/40 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/30 transition-colors" title="Yeniden Dene">
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>
                       </button>
                     )}
                     {(item.status || '').toLowerCase() === 'published' && (
-                      <button className="w-7 h-7 rounded bg-[#bc13fe]/10 border border-[#bc13fe]/30 flex items-center justify-center text-[#bc13fe] hover:bg-[#bc13fe]/20 transition-colors" title="Analiz">
+                      <button className="w-7 h-7 rounded bg-[#C2478D]/10 border border-[#C2478D]/30 flex items-center justify-center text-[#C2478D] hover:bg-[#C2478D]/20 transition-colors" title="Analiz">
                         <i className="fa-solid fa-cloud-arrow-down text-[12px]"></i>
                       </button>
                     )}
                     <button 
                       onClick={() => handleDeletePost(item.id)}
-                      className="w-7 h-7 rounded bg-[#ff0050]/10 border border-[#ff0050]/30 flex items-center justify-center text-[#ff0050] hover:bg-[#ff0050]/20 transition-colors"
+                      className="w-7 h-7 rounded bg-[#EF4444]/10 border border-[#EF4444]/30 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/20 transition-colors"
                       title="Sil"
                     >
                       <i className="fa-regular fa-trash-can text-[12px]"></i>
@@ -380,8 +380,8 @@ export default function TumGonderilerPage() {
             })
           ) : (
             <div className="flex flex-col items-center justify-center mt-20 w-full">
-              <i className="fa-regular fa-file-lines text-4xl text-[#849495] opacity-50 mb-4"></i>
-              <p className="text-[#849495] text-sm">Bu duruma ait gönderi bulunamadı.</p>
+              <i className="fa-regular fa-file-lines text-4xl text-[#A79E96] opacity-50 mb-4"></i>
+              <p className="text-[#A79E96] text-sm">Bu duruma ait gönderi bulunamadı.</p>
             </div>
           )}
 
@@ -394,7 +394,7 @@ export default function TumGonderilerPage() {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transition-all transform duration-200 ease-out">
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <h3 className="text-gray-900 font-semibold flex items-center gap-2">
-                <i className="fa-regular fa-trash-can text-[#ff3b30]"></i> Gönderiyi sil
+                <i className="fa-regular fa-trash-can text-[#EF4444]"></i> Gönderiyi sil
               </h3>
               <button 
                 onClick={() => !isDeleting && setDeleteModal({ isOpen: false, postId: null, isBulk: false })}
@@ -417,9 +417,9 @@ export default function TumGonderilerPage() {
                 <button 
                   onClick={() => executeDelete(false)}
                   disabled={isDeleting}
-                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#ff3b30] hover:bg-[#ff3b30]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EF4444] hover:bg-[#EF4444]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
                 >
-                  <div className="bg-[#ff3b30]/10 p-2.5 rounded-lg text-[#ff3b30] shrink-0 mt-0.5">
+                  <div className="bg-[#EF4444]/10 p-2.5 rounded-lg text-[#EF4444] shrink-0 mt-0.5">
                     <i className="fa-regular fa-trash-can text-lg"></i>
                   </div>
                   <div>
@@ -434,7 +434,7 @@ export default function TumGonderilerPage() {
                 <button 
                   onClick={() => executeDelete(true)}
                   disabled={isDeleting}
-                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#ff3b30] hover:bg-[#ff3b30]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EF4444] hover:bg-[#EF4444]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
                 >
                   <div className="bg-pink-100 p-2.5 rounded-lg text-pink-500 shrink-0 mt-0.5">
                     <i className="fa-solid fa-globe text-lg"></i>

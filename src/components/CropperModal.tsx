@@ -72,7 +72,7 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
               step={0.1}
               aria-labelledby="Zoom"
               onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full accent-[#00f0ff] h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
+              className="w-full accent-[#FF7A59] h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
             />
             <span className="text-dark-muted text-sm whitespace-nowrap"><i className="fa-solid fa-magnifying-glass-plus"></i></span>
           </div>
@@ -80,14 +80,14 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
           <div className="flex items-center justify-end gap-3">
             <button 
               onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-app-border transition-colors text-sm font-medium"
+              className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium"
             >
               İptal
             </button>
             <button 
               onClick={handleSave}
               disabled={isProcessing}
-              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#00f0ff] to-[#0080ff] text-black font-semibold text-sm transition-all hover:opacity-90 flex items-center gap-2"
+              className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FF7A59] to-[#0080ff] text-black font-semibold text-sm transition-all hover:opacity-90 flex items-center gap-2"
             >
               {isProcessing ? (
                 <><i className="fa-solid fa-circle-notch fa-spin"></i> Kırpılıyor...</>

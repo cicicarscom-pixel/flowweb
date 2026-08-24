@@ -117,7 +117,7 @@ export default function AiChatInput({
               className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/5 transition-colors"
             >
               <span
-                className={`material-symbols-outlined text-[24px] transition-transform duration-200 ${isMenuOpen ? "text-[#e3e3e3] rotate-45" : "text-[#c4c7c5] rotate-0"}`}
+                className={`material-symbols-outlined text-[24px] transition-transform duration-200 ${isMenuOpen ? "text-[#F6F1EC] rotate-45" : "text-[#c4c7c5] rotate-0"}`}
               >
                 add
               </span>
@@ -138,7 +138,7 @@ export default function AiChatInput({
                 <span className="material-symbols-outlined text-[#c4c7c5] text-[20px]">
                   photo_camera
                 </span>
-                <span className="text-[#e3e3e3] text-sm ml-3">
+                <span className="text-[#F6F1EC] text-sm ml-3">
                   Dosya yükleyin
                 </span>
               </button>
@@ -149,7 +149,7 @@ export default function AiChatInput({
                 <span className="material-symbols-outlined text-[#c4c7c5] text-[20px]">
                   picture_as_pdf
                 </span>
-                <span className="text-[#e3e3e3] text-sm ml-3">Belge seçin</span>
+                <span className="text-[#F6F1EC] text-sm ml-3">Belge seçin</span>
               </button>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function AiChatInput({
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
-                className="w-full text-[#e3e3e3] text-[20px] leading-[30px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none overflow-hidden max-h-[150px] placeholder-[#8e9194] px-1"
+                className="w-full text-[#F6F1EC] text-[20px] leading-[30px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none overflow-hidden max-h-[150px] placeholder-[#8e9194] px-1"
                 rows={1}
                 style={{
                   height: inputText.length > 30 ? "auto" : "30px",
@@ -176,7 +176,7 @@ export default function AiChatInput({
               disabled={!inputText.trim() && !attachedFile}
               className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                 inputText.trim() || attachedFile
-                  ? "bg-white/10 text-[#e3e3e3] hover:bg-white/20"
+                  ? "bg-white/10 text-[#F6F1EC] hover:bg-white/20"
                   : "text-[#444746]"
               }`}
             >

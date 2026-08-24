@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --bg: #0b0c10;
+    --bg: #17151A;
     --bg2: #131315;
     --card: rgba(20, 20, 24, 0.6);
     --card-border: rgba(255, 255, 255, 0.06);
@@ -12,7 +12,7 @@
     --text-secondary: rgba(255, 255, 255, 0.55);
     --text-muted: rgba(255, 255, 255, 0.3);
     
-    --background: #0b0c10;
+    --background: #17151A;
     --foreground: #e2e8f0;
   }
 }
@@ -59,34 +59,34 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Neon borders */
 .neon-cyan {
-  border: 1.5px solid rgba(0, 240, 255, 0.4);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.12), inset 0 0 20px rgba(0, 240, 255, 0.03);
+  border: 1.5px solid rgba(255, 122, 89, 0.4);
+  box-shadow: 0 0 20px rgba(255, 122, 89, 0.12), inset 0 0 20px rgba(255, 122, 89, 0.03);
 }
 
 .neon-purple {
-  border: 1.5px solid rgba(188, 19, 254, 0.4);
-  box-shadow: 0 0 20px rgba(188, 19, 254, 0.12), inset 0 0 20px rgba(188, 19, 254, 0.03);
+  border: 1.5px solid rgba(194, 71, 141, 0.4);
+  box-shadow: 0 0 20px rgba(194, 71, 141, 0.12), inset 0 0 20px rgba(194, 71, 141, 0.03);
 }
 
 .neon-orange {
-  border: 1.5px solid rgba(255, 185, 95, 0.4);
-  box-shadow: 0 0 20px rgba(255, 185, 95, 0.12), inset 0 0 20px rgba(255, 185, 95, 0.03);
+  border: 1.5px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.12), inset 0 0 20px rgba(245, 158, 11, 0.03);
 }
 
 .neon-green {
-  border: 1.5px solid rgba(78, 222, 163, 0.4);
-  box-shadow: 0 0 20px rgba(78, 222, 163, 0.12), inset 0 0 20px rgba(78, 222, 163, 0.03);
+  border: 1.5px solid rgba(34, 181, 115, 0.4);
+  box-shadow: 0 0 20px rgba(34, 181, 115, 0.12), inset 0 0 20px rgba(34, 181, 115, 0.03);
 }
 
 /* Glow text */
 .text-glow-cyan {
-  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+  text-shadow: 0 0 20px rgba(255, 122, 89, 0.6);
 }
 .text-glow-purple {
-  text-shadow: 0 0 20px rgba(188, 19, 254, 0.6);
+  text-shadow: 0 0 20px rgba(194, 71, 141, 0.6);
 }
 .text-glow-green {
-  text-shadow: 0 0 20px rgba(78, 222, 163, 0.5);
+  text-shadow: 0 0 20px rgba(34, 181, 115, 0.5);
 }
 
 /* Scrollbar */
@@ -126,13 +126,13 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Gradient text */
 .gradient-text-cyan {
-  background: linear-gradient(135deg, #00f0ff, #4edea3);
+  background: linear-gradient(135deg, #FF7A59, #22B573);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .gradient-text-purple {
-  background: linear-gradient(135deg, #bc13fe, #7b2ff7);
+  background: linear-gradient(135deg, #C2478D, #A855F7);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

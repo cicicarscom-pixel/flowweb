@@ -88,7 +88,7 @@ function ChatScreen() {
  };
 
  return (
- <div className="flex-1 flex flex-col h-full w-full bg-[#0A0A0B] relative">
+ <div className="flex-1 flex flex-col h-full w-full bg-[#17151A] relative">
  {/* Background image overlay */}
  <div
  className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20"
@@ -97,10 +97,10 @@ function ChatScreen() {
  "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUpjAKmMNnHDAuGn7KDAmiX4BVuWBLEG-5a7fHFVu_x7Jxrfh8UzY6rM-oy3AiqN0b1h6_K5iobCNsv2B4iHnz_lPjQ6QXfGvJ4UZmCcQLcr6H8o6m3I1JVFmgqk7UubXZx96-wpkV8-ScZZBzzkpl4-_WMzeHLyFljEKugxDZQXZgdkjst86sxa7hU95rBimeOBSnqHbdwH9bj_yj1tbla3T_HPG2xI6XkgTpyJRiDhmg9Po0q7NWy9DKn3JnR0b5tcpUj4Vcxr3w')",
  }}
  ></div>
- <div className="absolute inset-0 z-0 bg-[#0A0A0B]/80"></div>
+ <div className="absolute inset-0 z-0 bg-[#17151A]/80"></div>
 
  {/* Header */}
- <div className="relative z-10 flex items-center h-16 px-6 border-b border-white/10 shrink-0 bg-[#0A0A0B]/50 backdrop-blur-md">
+ <div className="relative z-10 flex items-center h-16 px-6 border-b border-white/10 shrink-0 bg-[#17151A]/50 backdrop-blur-md">
  <Link
  href="/ai-muhasebe"
  className="text-on-surface hover:text-secondary transition-colors mr-4 flex items-center"
@@ -182,7 +182,7 @@ export default function AiVeriGirisiPage() {
  return (
  <Suspense
  fallback={
- <div className="flex-1 bg-[#0A0A0B] flex items-center justify-center">
+ <div className="flex-1 bg-[#17151A] flex items-center justify-center">
  <div className="text-secondary">Yükleniyor...</div>
  </div>
  }

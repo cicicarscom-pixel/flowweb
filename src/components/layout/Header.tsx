@@ -56,7 +56,7 @@ export default function Header() {
       position: "sticky", top: 0, zIndex: 20,
       padding: "14px 32px", borderBottom: "1px solid rgba(255,255,255,0.05)",
       display: "flex", justifyContent: "space-between", alignItems: "center",
-      flexShrink: 0, background: "#0b0c10"
+      flexShrink: 0, background: "#17151A"
     }}>
       <div>
         <h1 style={{ fontSize: 18, fontWeight: 700, fontFamily: "Outfit, sans-serif", marginBottom: 1, color: "#fff" }}>
@@ -74,7 +74,7 @@ export default function Header() {
         >
           🔔
           {unreadCount > 0 && (
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#bc13fe", position: "absolute", top: 4, right: 4, boxShadow: "0 0 6px #bc13fe" }} />
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#C2478D", position: "absolute", top: 4, right: 4, boxShadow: "0 0 6px #C2478D" }} />
           )}
         </button>
       </div>

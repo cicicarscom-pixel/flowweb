@@ -16,10 +16,10 @@ const TIME_SLOTS = (() => {
 })();
 
 const CARD_COLORS = [
-  { bg: 'rgba(78,222,163,0.1)', border: 'rgba(78,222,163,0.3)', text: '#4edea3', icon: '✂️' },
-  { bg: 'rgba(255,185,95,0.1)', border: 'rgba(255,185,95,0.3)', text: '#ffb95f', icon: '✨' },
+  { bg: 'rgba(34,181,115,0.1)', border: 'rgba(34,181,115,0.3)', text: '#22B573', icon: '✂️' },
+  { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', text: '#F59E0B', icon: '✨' },
   { bg: 'rgba(192,193,255,0.1)', border: 'rgba(192,193,255,0.3)', text: '#c0c1ff', icon: '🌿' },
-  { bg: 'rgba(0,162,255,0.1)', border: 'rgba(0,162,255,0.3)', text: '#00a2ff', icon: '🖌️' },
+  { bg: 'rgba(255,122,89,0.1)', border: 'rgba(255,122,89,0.3)', text: '#FF7A59', icon: '🖌️' },
 ];
 
 function ScrollableContainer({ children }: { children: React.ReactNode }) {
@@ -135,7 +135,7 @@ export default function RandevuPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(78,222,163,0.15)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(78,222,163,0.3)" }}>
+          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(34,181,115,0.15)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(34,181,115,0.3)" }}>
             <span style={{ fontSize: 20 }}>📅</span>
           </div>
           <div>
@@ -153,10 +153,10 @@ export default function RandevuPage() {
           <button 
             onClick={() => setIsModalOpen(true)}
             style={{ 
-              background: "linear-gradient(135deg, #4edea3, #00c6ff)", 
+              background: "linear-gradient(135deg, #22B573, #00c6ff)", 
               border: "none", borderRadius: 99, padding: "10px 20px", 
-              color: "#0b0c10", fontWeight: 700, fontSize: 14, cursor: "pointer",
-              boxShadow: "0 0 20px rgba(78,222,163,0.4)",
+              color: "#17151A", fontWeight: 700, fontSize: 14, cursor: "pointer",
+              boxShadow: "0 0 20px rgba(34,181,115,0.4)",
               display: "flex", alignItems: "center", gap: 8, transition: "transform 0.2s"
             }}
             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
@@ -185,16 +185,16 @@ export default function RandevuPage() {
                     style={{
                       flex: "0 0 auto",
                       width: 56, height: 72, borderRadius: 18,
-                      background: isActive ? "linear-gradient(135deg, #4edea3 0%, #00c6ff 100%)" : "rgba(255,255,255,0.03)",
+                      background: isActive ? "linear-gradient(135deg, #22B573 0%, #00c6ff 100%)" : "rgba(255,255,255,0.03)",
                       border: isActive ? "none" : "1px solid rgba(255,255,255,0.05)",
                       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                       cursor: "pointer", transition: "all 0.2s",
-                      boxShadow: isActive ? "0 8px 16px rgba(78,222,163,0.3)" : "none",
+                      boxShadow: isActive ? "0 8px 16px rgba(34,181,115,0.3)" : "none",
                       transform: isActive ? "translateY(-4px)" : "none"
                     }}
                   >
-                    <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? "#0b0c10" : "var(--text-secondary)", marginBottom: 4 }}>{day.name}</span>
-                    <span style={{ fontSize: 18, fontWeight: 800, color: isActive ? "#0b0c10" : "#fff" }}>{day.date}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: isActive ? "#17151A" : "var(--text-secondary)", marginBottom: 4 }}>{day.name}</span>
+                    <span style={{ fontSize: 18, fontWeight: 800, color: isActive ? "#17151A" : "#fff" }}>{day.date}</span>
                   </div>
                 );
               })}
@@ -256,7 +256,7 @@ export default function RandevuPage() {
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff", margin: 0 }}>📊 Günlük Yoğunluk Haritası</h3>
               <div style={{ display: "flex", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573" }} />
                   <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>DOLU</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -288,16 +288,16 @@ export default function RandevuPage() {
                             key={row}
                             style={{
                               width: 44, height: 32, borderRadius: 8,
-                              background: busy ? "#4edea3" : "rgba(255,255,255,0.03)",
+                              background: busy ? "#22B573" : "rgba(255,255,255,0.03)",
                               border: busy ? "none" : "1px solid rgba(255,255,255,0.06)",
                               display: "flex", alignItems: "center", justifyContent: "center",
-                              boxShadow: busy ? "0 0 10px rgba(78,222,163,0.3)" : "none",
+                              boxShadow: busy ? "0 0 10px rgba(34,181,115,0.3)" : "none",
                               cursor: "pointer", transition: "all 0.2s"
                             }}
                             onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
                             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
                           >
-                            <span style={{ fontSize: 10, fontWeight: 800, color: busy ? "#0b0c10" : "var(--text-secondary)" }}>
+                            <span style={{ fontSize: 10, fontWeight: 800, color: busy ? "#17151A" : "var(--text-secondary)" }}>
                               {slot.time}
                             </span>
                           </div>
@@ -309,7 +309,7 @@ export default function RandevuPage() {
               </div>
             </div>
             
-            <div style={{ marginTop: 24, padding: "16px", background: "rgba(0,162,255,0.05)", borderRadius: 16, border: "1px dashed rgba(0,162,255,0.3)", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ marginTop: 24, padding: "16px", background: "rgba(255,122,89,0.05)", borderRadius: 16, border: "1px dashed rgba(255,122,89,0.3)", display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 24 }}>💡</span>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.5 }}>
                 Ai asistanınız, bu takvimi dikkate alarak müşterilerinizle yazışır ve boş saatlerinize otomatik randevu planlar.
@@ -341,7 +341,7 @@ export default function RandevuPage() {
             </button>
             
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 28 }}>
-              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, rgba(78,222,163,0.2), rgba(0,198,255,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 12 }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, rgba(34,181,115,0.2), rgba(0,198,255,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 12 }}>
                 🧸
               </div>
               <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>Yeni Randevu Ekle</h2>
@@ -398,10 +398,10 @@ export default function RandevuPage() {
                 disabled={isSaving}
                 style={{
                   width: "100%", padding: "16px", borderRadius: 16, marginTop: 8,
-                  background: isSaving ? "rgba(78,222,163,0.5)" : "#4edea3",
-                  color: "#0b0c10", fontWeight: 700, fontSize: 15, border: "none",
+                  background: isSaving ? "rgba(34,181,115,0.5)" : "#22B573",
+                  color: "#17151A", fontWeight: 700, fontSize: 15, border: "none",
                   cursor: isSaving ? "default" : "pointer",
-                  boxShadow: "0 8px 16px rgba(78,222,163,0.2)",
+                  boxShadow: "0 8px 16px rgba(34,181,115,0.2)",
                   transition: "transform 0.2s"
                 }}
               >

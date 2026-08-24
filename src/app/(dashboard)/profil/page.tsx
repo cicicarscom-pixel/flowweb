@@ -211,7 +211,7 @@ export default function ProfilPage() {
       <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz.</p>
       
       {message && (
-        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(255, 77, 77, 0.1)" : "rgba(78, 222, 163, 0.1)", color: message.includes("Hata") ? "#ff4d4d" : "#4edea3", border: '1px solid ' + (message.includes("Hata") ? "rgba(255, 77, 77, 0.2)" : "rgba(78, 222, 163, 0.2)") }}>
+        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(239,68,68, 0.1)" : "rgba(34,181,115, 0.1)", color: message.includes("Hata") ? "#EF4444" : "#22B573", border: '1px solid ' + (message.includes("Hata") ? "rgba(239,68,68, 0.2)" : "rgba(34,181,115, 0.2)") }}>
           {message}
         </div>
       )}
@@ -219,7 +219,7 @@ export default function ProfilPage() {
       <div className="glass-strong" style={{ padding: 32, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
             <label style={{ cursor: "pointer", position: "relative" }}>
-              <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(0, 240, 255, 0.3)" }} />
+              <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(255,122,89, 0.3)" }} />
               <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               <div style={{ position: "absolute", bottom: -8, right: -8, background: "var(--primary)", color: "#000", padding: 6, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
@@ -312,7 +312,7 @@ export default function ProfilPage() {
           </div>
           
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
-            <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #4edea3)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+            <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #22B573)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
               {saving ? "Kaydediliyor..." : "Profili Kaydet"}
             </button>
           </div>

@@ -10,7 +10,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
       onClick={onChange}
       style={{
         width: 44, height: 24, borderRadius: 99,
-        background: on ? "#4edea3" : "rgba(255,255,255,0.1)",
+        background: on ? "#22B573" : "rgba(255,255,255,0.1)",
         display: "flex", alignItems: "center", cursor: "pointer",
         padding: 3, transition: "background 0.3s",
       }}
@@ -134,7 +134,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, padding: "0 4px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 10px #4edea3" }} />
+              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 10px #22B573" }} />
               <span style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ai Asistan</span>
             </div>
             <Toggle on={botConfig.social} onChange={() => handleToggle('social', !botConfig.social)} />
@@ -170,7 +170,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           </div>
           
           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Bağlı Servisler</h3>
-          <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(0,162,255,0.3)", background: "rgba(0,162,255,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(255,122,89,0.3)", background: "rgba(255,122,89,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
             
             {/* Google Drive */}
             <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -179,7 +179,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                 <div>
                   <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
                     <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                 <div>
                   <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff4d4d" }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
                     <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
                   </div>
                 </div>
@@ -219,9 +219,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           <div className="glass" style={{ 
             borderRadius: 24, 
             padding: "24px 28px", 
-            border: "2px solid #bc13fe",
-            boxShadow: "0 0 20px rgba(188,19,254,0.15)",
-            background: "rgba(188,19,254,0.03)"
+            border: "2px solid #C2478D",
+            boxShadow: "0 0 20px rgba(194,71,141,0.15)",
+            background: "rgba(194,71,141,0.03)"
           }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: "#fff" }}>AI Kişiliği</h3>
             
@@ -238,9 +238,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     style={{
                       display: "flex", alignItems: "center", gap: 8,
                       padding: "10px 16px", borderRadius: 99,
-                      background: selectedRole === r.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedRole === r.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedRole === r.id ? "#bc13fe" : "var(--text-secondary)",
+                      background: selectedRole === r.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
+                      border: selectedRole === r.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                      cursor: "pointer", color: selectedRole === r.id ? "#C2478D" : "var(--text-secondary)",
                       fontSize: 14, fontWeight: 500, transition: "all 0.2s",
                     }}
                   >
@@ -264,9 +264,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     style={{
                       display: "flex", alignItems: "center", gap: 8,
                       padding: "10px 16px", borderRadius: 99,
-                      background: selectedCharacter === c.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedCharacter === c.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedCharacter === c.id ? "#bc13fe" : "var(--text-secondary)",
+                      background: selectedCharacter === c.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
+                      border: selectedCharacter === c.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                      cursor: "pointer", color: selectedCharacter === c.id ? "#C2478D" : "var(--text-secondary)",
                       fontSize: 14, fontWeight: 500, transition: "all 0.2s",
                     }}
                   >
@@ -290,9 +290,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     style={{
                       display: "flex", alignItems: "center", gap: 8,
                       padding: "10px 16px", borderRadius: 99,
-                      background: selectedTone === t.id ? "rgba(188,19,254,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedTone === t.id ? "1px solid rgba(188,19,254,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedTone === t.id ? "#bc13fe" : "var(--text-secondary)",
+                      background: selectedTone === t.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
+                      border: selectedTone === t.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
+                      cursor: "pointer", color: selectedTone === t.id ? "#C2478D" : "var(--text-secondary)",
                       fontSize: 14, fontWeight: 500, transition: "all 0.2s",
                     }}
                   >
@@ -311,17 +311,17 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             style={{ 
               borderRadius: 99, 
               padding: "12px 16px 12px 24px", 
-              border: "2px solid #bc13fe",
-              boxShadow: "0 0 20px rgba(188,19,254,0.15)",
+              border: "2px solid #C2478D",
+              boxShadow: "0 0 20px rgba(194,71,141,0.15)",
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
               cursor: "pointer",
-              background: "rgba(188,19,254,0.03)",
+              background: "rgba(194,71,141,0.03)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ color: "#00f0ff", fontWeight: "bold", fontSize: 18 }}>{'</>'}</span>
+              <span style={{ color: "#FF7A59", fontWeight: "bold", fontSize: 18 }}>{'</>'}</span>
               <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>İleri Seviye Ayarlar</span>
             </div>
             <div style={{
@@ -338,22 +338,22 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           {/* System prompt card (Advanced Settings) */}
           {isAdvancedOpen && (
             <div style={{ position: "relative", marginTop: -8, animation: "fadeIn 0.3s ease" }}>
-              <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(0,162,255,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
+              <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(255,122,89,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
               <div className="glass" style={{
                 borderRadius: 20, padding: "22px", position: "relative",
-                border: "1.5px solid rgba(0,162,255,0.5)",
-                boxShadow: "0 0 40px rgba(0,162,255,0.1), inset 0 0 20px rgba(0,162,255,0.03)",
+                border: "1.5px solid rgba(255,122,89,0.5)",
+                boxShadow: "0 0 40px rgba(255,122,89,0.1), inset 0 0 20px rgba(255,122,89,0.03)",
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <p style={{ fontSize: 12, color: "#00a2ff", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
-                  <span style={{ fontSize: 11, color: "rgba(0,162,255,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
+                  <p style={{ fontSize: 12, color: "#FF7A59", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
+                  <span style={{ fontSize: 11, color: "rgba(255,122,89,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
                 </div>
                 <textarea
                   value={systemPrompt}
                   onChange={e => setSystemPrompt(e.target.value)}
                   style={{
-                    width: "100%", minHeight: 200, background: "rgba(0,162,255,0.04)",
-                    border: "1px solid rgba(0,162,255,0.15)", borderRadius: 12,
+                    width: "100%", minHeight: 200, background: "rgba(255,122,89,0.04)",
+                    border: "1px solid rgba(255,122,89,0.15)", borderRadius: 12,
                     padding: "14px", color: "rgba(255,255,255,0.85)", fontSize: 13,
                     lineHeight: 1.7, resize: "vertical", outline: "none",
                     fontFamily: "Inter, sans-serif",
@@ -365,7 +365,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           )}
 
           <button style={{ 
-            background: "linear-gradient(135deg, #bc13fe 0%, #00a2ff 100%)",
+            background: "linear-gradient(135deg, #C2478D 0%, #FF7A59 100%)",
             border: "1px solid rgba(255,255,255,0.15)",
             borderRadius: 16, 
             padding: "16px", 
@@ -374,7 +374,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             fontWeight: 600,
             letterSpacing: "0.02em",
             cursor: "pointer", 
-            boxShadow: "0 0 20px rgba(188,19,254,0.25)", 
+            boxShadow: "0 0 20px rgba(194,71,141,0.25)", 
             marginTop: 8
           }}>
             Değişiklikleri Kaydet
@@ -386,7 +386,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", flex: 1, minHeight: 500 }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4edea3", boxShadow: "0 0 8px #4edea3" }} />
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573" }} />
                 <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Canlı Test</span>
               </div>
               <div 
@@ -462,11 +462,11 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                 />
                 <div style={{ 
                   position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
-                  width: 36, height: 36, borderRadius: "50%", background: "rgba(0,162,255,0.15)",
+                  width: 36, height: 36, borderRadius: "50%", background: "rgba(255,122,89,0.15)",
                   display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
-                  border: "1px solid rgba(0,162,255,0.3)"
+                  border: "1px solid rgba(255,122,89,0.3)"
                 }}>
-                  <span style={{ fontSize: 16, color: "#00a2ff" }}>➤</span>
+                  <span style={{ fontSize: 16, color: "#FF7A59" }}>➤</span>
                 </div>
               </div>
             </div>
@@ -481,30 +481,30 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         {/* Ai Randevu Yönetimi */}
         <Link href="/ai-asistan/randevu" style={{ textDecoration: 'none' }}>
           <div className="glass" style={{ 
-            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(78,222,163,0.3)",
+            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(34,181,115,0.3)",
             display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-            background: "rgba(78,222,163,0.05)"
+            background: "rgba(34,181,115,0.05)"
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#4edea3" }}>📅</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#4edea3" }}>Ai Randevu Yönetimi</span>
+              <span style={{ fontSize: 20, color: "#22B573" }}>📅</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#22B573" }}>Ai Randevu Yönetimi</span>
             </div>
-            <span style={{ color: "#4edea3", fontSize: 24, lineHeight: 1 }}>›</span>
+            <span style={{ color: "#22B573", fontSize: 24, lineHeight: 1 }}>›</span>
           </div>
         </Link>
 
         {/* Ai İşletme Hizmetleri */}
         <Link href="/ai-asistan/isletme-hizmetleri" style={{ textDecoration: 'none' }}>
           <div className="glass" style={{ 
-            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(0,162,255,0.3)",
+            borderRadius: 16, padding: "20px 24px", border: "1px solid rgba(255,122,89,0.3)",
             display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer",
-            background: "rgba(0,162,255,0.05)"
+            background: "rgba(255,122,89,0.05)"
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 20, color: "#00a2ff" }}>💼</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#00a2ff" }}>Ai İşletme Hizmetleri</span>
+              <span style={{ fontSize: 20, color: "#FF7A59" }}>💼</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#FF7A59" }}>Ai İşletme Hizmetleri</span>
             </div>
-            <span style={{ color: "#00a2ff", fontSize: 24, lineHeight: 1 }}>›</span>
+            <span style={{ color: "#FF7A59", fontSize: 24, lineHeight: 1 }}>›</span>
           </div>
         </Link>
       </div>

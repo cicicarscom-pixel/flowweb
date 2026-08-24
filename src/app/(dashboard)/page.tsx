@@ -134,7 +134,7 @@ export default function DashboardHomePage() {
             name: m.sender_name || 'Müşteri',
             message: m.message_body || m.content || '',
             date: m.created_at,
-            color: "#00daf3"
+            color: "#FF7A59"
           }))];
         }
         if (comments) {
@@ -145,7 +145,7 @@ export default function DashboardHomePage() {
             name: c.username || 'Kullanıcı',
             message: c.text || c.content || '',
             date: c.created_at,
-            color: "#ecb2ff"
+            color: "#E8A8CD"
           }))];
         }
         
@@ -159,7 +159,7 @@ export default function DashboardHomePage() {
           setAppointments(appts.map(a => ({
             time: a.date ? new Date(a.date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : "00:00",
             title: a.customer_name ? `${a.customer_name} - ${a.service_name || 'Randevu'}` : (a.service_name || 'Randevu'),
-            color: "#00f0ff"
+            color: "#FF7A59"
           })));
         } else {
           setAppointments([]);
@@ -232,7 +232,7 @@ export default function DashboardHomePage() {
   if (isLoading) {
     return (
       <div style={{ padding: "28px 32px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00f0ff]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF7A59]"></div>
       </div>
     );
   }
@@ -242,8 +242,8 @@ export default function DashboardHomePage() {
       {/* AI Summary Bubble */}
       <div className="glass neon-cyan" style={{ borderRadius: 20, padding: "20px 24px", display: "flex", gap: 16, alignItems: "flex-start" }}>
         <div style={{
-          width: 74, height: 74, borderRadius: 23, background: "linear-gradient(135deg,#00f0ff22,#4edea322)",
-          border: "1.5px solid rgba(0,240,255,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
+          width: 74, height: 74, borderRadius: 23, background: "linear-gradient(135deg,#FF7A5922,#22B57322)",
+          border: "1.5px solid rgba(255,122,89,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
           flexShrink: 0, overflow: "hidden"
         }}>
           <video 
@@ -256,30 +256,30 @@ export default function DashboardHomePage() {
           />
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 11, color: "rgba(0,240,255,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
+          <p style={{ fontSize: 11, color: "rgba(255,122,89,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
-            Bugün <strong style={{ color: "#00f0ff" }}>{dailyStats.messages} mesaj</strong> ve <strong style={{ color: "#4edea3" }}>{dailyStats.comments} yorum</strong> otomatik yanıtlandı.
+            Bugün <strong style={{ color: "#FF7A59" }}>{dailyStats.messages} mesaj</strong> ve <strong style={{ color: "#22B573" }}>{dailyStats.comments} yorum</strong> otomatik yanıtlandı.
             {socialStats.trend > 0 ? (
-               <> Sosyal medya hesaplarınızın etkileşimi <strong style={{ color: "#ffb95f" }}>%{socialStats.trend}</strong> artış gösterdi!</>
+               <> Sosyal medya hesaplarınızın etkileşimi <strong style={{ color: "#F59E0B" }}>%{socialStats.trend}</strong> artış gösterdi!</>
             ) : (
                <> Son 7 günde sosyal medya etkileşimleriniz analiz ediliyor.</>
             )}
             {appointments.length > 0 ? (
-               <> Bugün <strong style={{ color: "#bc13fe" }}>{appointments.length} randevunuz</strong> var.</>
+               <> Bugün <strong style={{ color: "#C2478D" }}>{appointments.length} randevunuz</strong> var.</>
             ) : (
                <> Bugün için planlı randevunuz bulunmuyor.</>
             )}
           </p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingLeft: 20, borderLeft: "1px solid rgba(255,255,255,0.1)", justifyContent: "center" }}>
-          <span style={{ fontSize: 10, fontWeight: 700, color: aiActive ? "#00f0ff" : "#849495", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: aiActive ? "#FF7A59" : "#A79E96", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>
             {aiActive ? "AKTİF" : "KAPALI"}
           </span>
           <div 
             onClick={toggleAiStatus}
-            style={{ width: 44, height: 24, borderRadius: 12, background: aiActive ? "rgba(0, 240, 255, 0.2)" : "rgba(255,255,255,0.1)", border: `1.5px solid ${aiActive ? "rgba(0, 240, 255, 0.4)" : "rgba(255,255,255,0.2)"}`, position: "relative", cursor: "pointer" }}
+            style={{ width: 44, height: 24, borderRadius: 12, background: aiActive ? "rgba(255,122,89, 0.2)" : "rgba(255,255,255,0.1)", border: `1.5px solid ${aiActive ? "rgba(255,122,89, 0.4)" : "rgba(255,255,255,0.2)"}`, position: "relative", cursor: "pointer" }}
           >
-            <div style={{ width: 18, height: 18, borderRadius: 9, background: "#fff", position: "absolute", top: 1.5, right: aiActive ? 2 : 'auto', left: !aiActive ? 2 : 'auto', boxShadow: aiActive ? "0 0 10px #00f0ff" : "none" }} />
+            <div style={{ width: 18, height: 18, borderRadius: 9, background: "#fff", position: "absolute", top: 1.5, right: aiActive ? 2 : 'auto', left: !aiActive ? 2 : 'auto', boxShadow: aiActive ? "0 0 10px #FF7A59" : "none" }} />
           </div>
         </div>
       </div>
@@ -287,15 +287,15 @@ export default function DashboardHomePage() {
       {/* Financial Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {[
-          { label: "Aylık Gelir", value: `₺${formatCurrency(financeStats.income)}`, change: "+12.4%", up: true, color: "#4edea3" },
-          { label: "Aylık Gider", value: `₺${formatCurrency(financeStats.expense)}`, change: "-3.1%", up: false, color: "#ff6b6b" },
+          { label: "Aylık Gelir", value: `₺${formatCurrency(financeStats.income)}`, change: "+12.4%", up: true, color: "#22B573" },
+          { label: "Aylık Gider", value: `₺${formatCurrency(financeStats.expense)}`, change: "-3.1%", up: false, color: "#EF4444" },
         ].map(m => (
           <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>
             <p style={{ color: m.color, fontSize: 28, fontWeight: 700, fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", marginBottom: 6 }}>{m.value}</p>
             <span style={{
-              fontSize: 12, fontWeight: 600, color: m.up ? "#4edea3" : "#ff6b6b",
-              background: m.up ? "rgba(78,222,163,0.12)" : "rgba(255,107,107,0.12)",
+              fontSize: 12, fontWeight: 600, color: m.up ? "#22B573" : "#EF4444",
+              background: m.up ? "rgba(34,181,115,0.12)" : "rgba(239,68,68,0.12)",
               padding: "3px 8px", borderRadius: 99, fontFamily: "JetBrains Mono, monospace"
             }}>{m.change}</span>
           </div>
@@ -306,9 +306,9 @@ export default function DashboardHomePage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {/* Invoice Scanner */}
         <div className="glass neon-orange" style={{ borderRadius: 20, padding: "20px 22px" }}>
-          <p style={{ fontSize: 12, color: "rgba(255,185,95,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>FATURA TARAYICI · SON FATURA</p>
+          <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>FATURA TARAYICI · SON FATURA</p>
           <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,185,95,0.2)" }}>
+            <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)" }}>
               <img
                 src="https://images.unsplash.com/photo-1648500847390-7792256bb95a?w=80&h=100&fit=crop&auto=format"
                 alt="Fatura belgesi"
@@ -329,7 +329,7 @@ export default function DashboardHomePage() {
               ))}
             </div>
           </div>
-          <button className="fab" style={{ marginTop: 14, background: "rgba(255,185,95,0.12)", color: "#ffb95f", border: "1px solid rgba(255,185,95,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
+          <button className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
             + Yeni Fatura Tara
           </button>
         </div>
@@ -355,7 +355,7 @@ export default function DashboardHomePage() {
 
       {/* Social Media Stats (Tüm Hesaplar) */}
       <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(0,240,255,0.05), transparent)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
@@ -370,10 +370,10 @@ export default function DashboardHomePage() {
           <div>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Toplam Takipçi Kitle</p>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <p style={{ fontSize: 32, fontWeight: 800, color: "#00f0ff", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(0,240,255,0.3)" }}>
+              <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
                 {socialStats.followers.toLocaleString('tr-TR')}
               </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#4edea3" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#22B573" }}>
                 <span style={{ fontSize: 14 }}>↑</span>
                 <span style={{ fontSize: 13, fontWeight: 700 }}>{socialStats.trend}%</span>
               </div>
@@ -384,7 +384,7 @@ export default function DashboardHomePage() {
             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Etkileşim Trendi</p>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 120, height: 6, borderRadius: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
-                <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #00f0ff, #bc13fe)" }} />
+                <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #FF7A59, #C2478D)" }} />
               </div>
               <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>Yüksek</span>
             </div>
@@ -449,14 +449,14 @@ export default function DashboardHomePage() {
                   </td>
                   <td style={{ padding: "16px 20px" }}>
                     <span style={{ 
-                      color: log.status === 'success' ? "#4edea3" : "#ffb95f", 
-                      background: log.status === 'success' ? "rgba(78,222,163,0.1)" : "rgba(255,185,95,0.1)", 
+                      color: log.status === 'success' ? "#22B573" : "#F59E0B", 
+                      background: log.status === 'success' ? "rgba(34,181,115,0.1)" : "rgba(245,158,11,0.1)", 
                       padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700 
                     }}>
                       {log.status === 'success' ? 'Başarılı' : 'Beklemede'}
                     </span>
                   </td>
-                  <td style={{ padding: "16px 20px", textAlign: "right", color: "#00f0ff", cursor: "pointer", fontWeight: 600 }}>İncele</td>
+                  <td style={{ padding: "16px 20px", textAlign: "right", color: "#FF7A59", cursor: "pointer", fontWeight: 600 }}>İncele</td>
                 </tr>
               ))}
               {commLogs.length === 0 && (

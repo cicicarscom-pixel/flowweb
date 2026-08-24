@@ -21,7 +21,7 @@ export default function IsletmeHizmetleriPage() {
  {/* Toggle Switch */}
  <label className="relative inline-flex items-center cursor-pointer ml-2">
  <input defaultChecked className="sr-only peer" name="toggle" type="checkbox" />
- <div className="w-11 h-6 bg-[#2A2E39] rounded-full peer peer-focus:ring-4 peer-focus:ring-emerald-500/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:-secondary"></div>
+ <div className="w-11 h-6 bg-[#2A2E39] rounded-full peer peer-focus:ring-4 peer-focus:ring-emerald-500/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
  </label>
  </div>
 
@@ -44,7 +44,7 @@ export default function IsletmeHizmetleriPage() {
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400 hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -63,7 +63,7 @@ export default function IsletmeHizmetleriPage() {
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400 hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -82,7 +82,7 @@ export default function IsletmeHizmetleriPage() {
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400 hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -228,20 +228,20 @@ export default function IsletmeHizmetleriPage() {
  </div>
  <label className="relative inline-flex items-center cursor-pointer ml-2">
  <input defaultChecked className="sr-only peer" name="toggle" type="checkbox" />
- <div className="w-11 h-6 bg-[#2A2E39] rounded-full peer peer-focus:ring-4 peer-focus:ring-emerald-500/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:-secondary"></div>
+ <div className="w-11 h-6 bg-[#2A2E39] rounded-full peer peer-focus:ring-4 peer-focus:ring-emerald-500/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
  </label>
  </div>
  </form>
 
  {/* Form Actions */}
  <div className="mt-8 flex items-center justify-end gap-3 pt-4 border-t border-dark-border">
- <button className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-app-border/50 transition-colors text-sm font-medium" type="button">
+ <button className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-dark-border/50 transition-colors text-sm font-medium" type="button">
  İptal
  </button>
- <button className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-app-border/50 transition-colors text-sm font-medium" type="button">
+ <button className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-dark-border/50 transition-colors text-sm font-medium" type="button">
  Temizle
  </button>
- <button className="px-6 py-2.5 rounded-lg bg-secondary text-on-surface hover:bg-secondary/80 transition-colors text-sm font-medium flex items-center gap-2" type="button">
+ <button className="px-6 py-2.5 rounded-lg bg-secondary text-on-surface hover:bg-secondary/90 transition-colors text-sm font-medium flex items-center gap-2" type="button">
  <i className="fa-regular fa-floppy-disk"></i>
  Kaydet
  </button>

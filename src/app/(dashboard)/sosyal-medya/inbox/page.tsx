@@ -200,7 +200,7 @@ export default function GelenKutusuPage() {
                         {conv.participant_name ? conv.participant_name.charAt(0).toUpperCase() : "?"}
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface-container flex items-center justify-center border border-white/10">
-                        <i className={`fa-brands fa-${conv.platform} text-[10px] ${conv.platform === 'instagram' ? 'text-[#ebb2ff]' : 'text-[#00f0ff]'}`}></i>
+                        <i className={`fa-brands fa-${conv.platform} text-[10px] ${conv.platform === 'instagram' ? 'text-[#E8A8CD]' : 'text-[#FF7A59]'}`}></i>
                       </div>
                     </div>
 
@@ -237,7 +237,7 @@ export default function GelenKutusuPage() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <i className={`fa-brands fa-${comment.platform} text-[14px] ${comment.platform === 'instagram' ? 'text-[#ebb2ff]' : 'text-[#00f0ff]'}`}></i>
+                        <i className={`fa-brands fa-${comment.platform} text-[14px] ${comment.platform === 'instagram' ? 'text-[#E8A8CD]' : 'text-[#FF7A59]'}`}></i>
                         <h4 className="text-secondary text-sm font-semibold truncate pr-2">@{comment.username}</h4>
                       </div>
                       <span className="text-on-surface-variant text-xs shrink-0">

@@ -41,7 +41,7 @@
 }
 
 .progressBarGradient {
-  background: linear-gradient(90deg, #0055ff 0%, #A200FF 100%);
+  background: linear-gradient(90deg, #FF7A59 0%, #A200FF 100%);
 }
 
 /* Magic Container & Mechanical Cover Styles */
@@ -77,7 +77,7 @@
   border-radius: 1rem;
   overflow: hidden;
   background: #1c1b1d;
-  border: 3px solid #0055ff;
+  border: 3px solid #FF7A59;
   box-shadow: 0 0 25px rgba(0, 85, 255, 0.6), inset 0 0 15px rgba(0, 85, 255, 0.4);
   animation: colorShiftNeon 8s linear infinite;
   z-index: 1;
@@ -85,11 +85,11 @@
 }
 
 @keyframes colorShiftNeon {
-  0% { border-color: #0055ff; box-shadow: 0 0 25px rgba(0, 85, 255, 0.6), inset 0 0 15px rgba(0, 85, 255, 0.4); }
-  25% { border-color: #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.6), inset 0 0 15px rgba(188, 19, 254, 0.4); }
-  50% { border-color: #ff0050; box-shadow: 0 0 25px rgba(255, 0, 80, 0.6), inset 0 0 15px rgba(255, 0, 80, 0.4); }
+  0% { border-color: #FF7A59; box-shadow: 0 0 25px rgba(0, 85, 255, 0.6), inset 0 0 15px rgba(0, 85, 255, 0.4); }
+  25% { border-color: #C2478D; box-shadow: 0 0 25px rgba(194,71,141, 0.6), inset 0 0 15px rgba(194,71,141, 0.4); }
+  50% { border-color: #EF4444; box-shadow: 0 0 25px rgba(255, 0, 80, 0.6), inset 0 0 15px rgba(255, 0, 80, 0.4); }
   75% { border-color: #00ff00; box-shadow: 0 0 25px rgba(0, 255, 0, 0.6), inset 0 0 15px rgba(0, 255, 0, 0.4); }
-  100% { border-color: #0055ff; box-shadow: 0 0 25px rgba(0, 85, 255, 0.6), inset 0 0 15px rgba(0, 85, 255, 0.4); }
+  100% { border-color: #FF7A59; box-shadow: 0 0 25px rgba(0, 85, 255, 0.6), inset 0 0 15px rgba(0, 85, 255, 0.4); }
 }
 
 .shaderBg {
@@ -167,7 +167,7 @@
 
 .magicButton {
     background: #0B0E14;
-    border: 2px solid #0055ff;
+    border: 2px solid #FF7A59;
     color: #ffffff;
     font-weight: bold;
     text-transform: uppercase;

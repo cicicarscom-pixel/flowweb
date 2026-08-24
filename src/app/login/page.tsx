@@ -143,6 +143,19 @@ export default function LoginPage() {
               </div>
             )}
             
+            {mode === 'signup' && (
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-bold text-gray-300">Ad Soyad</label>
+                <input 
+                  type="text" 
+                  name="fullName"
+                  required={mode === 'signup'}
+                  placeholder="Adınız Soyadınız" 
+                  className="w-full bg-[#0D1017] border border-[#232B45] text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#FF7A59] focus:ring-1 focus:ring-[#FF7A59]/50 transition-all placeholder-[#A79E96]/50"
+                />
+              </div>
+            )}
+            
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-bold text-gray-300">E-posta Adresi</label>
               <input 

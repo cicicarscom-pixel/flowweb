@@ -11,10 +11,10 @@ export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(
     async (prevState: any, formData: FormData) => {
       const res = await authenticate(formData)
-      if (res && !res.success) {
-        return { message: res.message }
+      if (res) {
+        return { message: res.message || '', success: res.success }
       }
-      return { message: '' }
+      return { message: '', success: false }
     },
     undefined
   )
@@ -138,7 +138,7 @@ export default function LoginPage() {
             <input type="hidden" name="mode" value={mode} />
 
             {state?.message && (
-              <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl text-[13px] font-medium text-center">
+              <div className={`px-4 py-3 rounded-xl text-[13px] font-medium text-center ${state.success ? 'bg-green-500/10 border border-green-500/50 text-green-400' : 'bg-red-500/10 border border-red-500/50 text-red-400'}`}>
                 {state.message}
               </div>
             )}

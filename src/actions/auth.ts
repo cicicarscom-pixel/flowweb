@@ -44,6 +44,11 @@ export async function authenticate(formData: FormData) {
     return { success: false, message: error.message }
   }
 
+  // If email confirmation is required, session will be null after signup
+  if (mode === 'signup' && result?.data && !result.data.session) {
+    return { success: true, message: "Kayıt başarılı! Lütfen e-posta adresinize gönderilen onay bağlantısına tıklayın." }
+  }
+
   revalidatePath('/', 'layout')
   redirect('/')
 }

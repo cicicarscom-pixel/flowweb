@@ -35,16 +35,16 @@ export default function IsletmeHizmetleriPage() {
  {/* Service Item 1 */}
  <div className="flex items-center justify-between p-3 rounded-lg border border-dark-border bg-surface-container hover:border-dark-muted/50 transition-colors">
  <div className="flex items-center gap-3">
- <div className="w-6 h-6 rounded bg-emerald-900/50 -secondary flex items-center justify-center text-xs font-medium">1</div>
+ <div className="w-6 h-6 rounded bg-emerald-900/50 text-secondary flex items-center justify-center text-xs font-medium">1</div>
  <span className="font-medium text-on-surface">Sac Kesimi</span>
  </div>
  <div className="flex items-center gap-4">
- <span className="-secondary font-medium text-sm">150 TL / seans</span>
+ <span className="text-secondary font-medium text-sm">150 TL / seans</span>
  <div className="flex gap-2">
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center -tertiary hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -54,16 +54,16 @@ export default function IsletmeHizmetleriPage() {
  {/* Service Item 2 */}
  <div className="flex items-center justify-between p-3 rounded-lg border border-dark-border bg-surface-container hover:border-dark-muted/50 transition-colors">
  <div className="flex items-center gap-3">
- <div className="w-6 h-6 rounded bg-emerald-900/50 -secondary flex items-center justify-center text-xs font-medium">2</div>
+ <div className="w-6 h-6 rounded bg-emerald-900/50 text-secondary flex items-center justify-center text-xs font-medium">2</div>
  <span className="font-medium text-on-surface">Sac Boyama</span>
  </div>
  <div className="flex items-center gap-4">
- <span className="-secondary font-medium text-sm">300 TL / seans</span>
+ <span className="text-secondary font-medium text-sm">300 TL / seans</span>
  <div className="flex gap-2">
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center -tertiary hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -73,16 +73,16 @@ export default function IsletmeHizmetleriPage() {
  {/* Service Item 3 */}
  <div className="flex items-center justify-between p-3 rounded-lg border border-dark-border bg-surface-container hover:border-dark-muted/50 transition-colors">
  <div className="flex items-center gap-3">
- <div className="w-6 h-6 rounded bg-emerald-900/50 -secondary flex items-center justify-center text-xs font-medium">3</div>
+ <div className="w-6 h-6 rounded bg-emerald-900/50 text-secondary flex items-center justify-center text-xs font-medium">3</div>
  <span className="font-medium text-on-surface">Fon Teknik</span>
  </div>
  <div className="flex items-center gap-4">
- <span className="-secondary font-medium text-sm">500 TL / seans</span>
+ <span className="text-secondary font-medium text-sm">500 TL / seans</span>
  <div className="flex gap-2">
  <button className="w-8 h-8 rounded bg-sidebar border border-dark-border flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
  <i className="fa-solid fa-pen text-xs"></i>
  </button>
- <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center -tertiary hover:bg-red-900/40 transition-colors">
+ <button className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-error hover:bg-red-900/40 transition-colors">
  <i className="fa-solid fa-trash-can text-xs"></i>
  </button>
  </div>
@@ -90,7 +90,7 @@ export default function IsletmeHizmetleriPage() {
  </div>
 
  {/* Add New Service Button */}
- <button className="w-full py-4 mt-2 rounded-lg border border-dashed -secondary/50 -secondary/5 -secondary font-medium hover:-secondary/10 transition-colors flex items-center justify-center gap-2">
+ <button className="w-full py-4 mt-2 rounded-lg border border-dashed border-secondary/50 bg-secondary/5 text-secondary font-medium hover:bg-secondary/10 transition-colors flex items-center justify-center gap-2">
  <i className="fa-solid fa-plus"></i>
  Hizmet Ekle (3/10)
  </button>
@@ -241,7 +241,7 @@ export default function IsletmeHizmetleriPage() {
  <button className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-app-border/50 transition-colors text-sm font-medium" type="button">
  Temizle
  </button>
- <button className="px-6 py-2.5 rounded-lg -secondary text-on-surface hover:-secondary transition-colors text-sm font-medium flex items-center gap-2" type="button">
+ <button className="px-6 py-2.5 rounded-lg bg-secondary text-on-surface hover:bg-secondary/80 transition-colors text-sm font-medium flex items-center gap-2" type="button">
  <i className="fa-regular fa-floppy-disk"></i>
  Kaydet
  </button>

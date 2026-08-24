@@ -51,12 +51,12 @@ export default function Sidebar() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Anasayfa", icon: "⬡", color: "#00f0ff" },
-    { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#00a2ff" },
-    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#ffb95f" },
-    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#bc13fe" },
-    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#ff4d4d" },
-    { href: "/analiz", label: "Analiz", icon: "◈", color: "#4edea3" },
+    { href: "/", label: "Anasayfa", icon: "⬡", color: "#94a3b8", rgb: "148,163,184" },
+    { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#FF7A59", rgb: "255,122,89" },
+    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#22B573", rgb: "34,181,115" },
+    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#C2478D", rgb: "194,71,141" },
+    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#38BDF8", rgb: "56,189,248" },
+    { href: "/analiz", label: "Analiz", icon: "◈", color: "#FFB95F", rgb: "255,185,95" },
   ];
 
   return (
@@ -77,12 +77,7 @@ export default function Sidebar() {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
           const color = item.color;
           
-          let bgRgb = "0,240,255";
-          if (color === "#bc13fe") bgRgb = "188,19,254";
-          if (color === "#4edea3") bgRgb = "78,222,163";
-          if (color === "#00a2ff") bgRgb = "0,162,255";
-          if (color === "#ffb95f") bgRgb = "255,185,95";
-          if (color === "#ff4d4d") bgRgb = "255,77,77";
+          const bgRgb = item.rgb;
 
           return (
             <Link

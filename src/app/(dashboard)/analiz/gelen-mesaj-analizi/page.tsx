@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import styles from './page.module.css';
 
 export default function GelenMesajAnaliziPage() {
@@ -49,7 +49,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="text-sm text-on-surface-variant mb-1">Alınan</div>
  <div className="flex items-end gap-2">
  <span className="text-3xl font-bold text-on-surface">2</span>
- <span className="text-xs -secondary mb-1">%100</span>
+ <span className="text-xs text-secondary mb-1">%100</span>
  </div>
  <div className="text-xs text-on-surface-variant mt-1">Toplam mesaj</div>
  </div>
@@ -70,9 +70,9 @@ export default function GelenMesajAnaliziPage() {
  </div>
  </div>
  {/* Card 3: Okunan */}
- <div className="bg-surface-container border -primary/30 rounded-xl p-5 flex items-start gap-4">
- <div className="p-3 -primary/10 rounded-lg -primary relative">
- <div className="absolute inset-0 -primary/20 blur-md rounded-lg"></div>
+ <div className="bg-surface-container border border-primary/30 rounded-xl p-5 flex items-start gap-4">
+ <div className="p-3 bg-primary/10 rounded-lg text-primary relative">
+ <div className="absolute inset-0 bg-primary/20 blur-md rounded-lg"></div>
  <i className="fa-regular fa-eye w-6 h-6 relative z-10 flex items-center justify-center"></i>
  </div>
  <div>
@@ -86,7 +86,7 @@ export default function GelenMesajAnaliziPage() {
  </div>
  {/* Card 4: Ortalama Yanıt */}
  <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-5 flex items-start gap-4">
- <div className="p-3 -primary/10 rounded-lg -primary">
+ <div className="p-3 bg-primary/10 rounded-lg text-primary">
  <i className="fa-regular fa-clock w-6 h-6 flex items-center justify-center"></i>
  </div>
  <div>
@@ -184,7 +184,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="relative w-48 h-48 flex-shrink-0">
  <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
  <path
- className="-primary"
+ className="text-primary"
  d="M18 2.0845
  a 15.9155 15.9155 0 0 1 0 31.831
  a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -222,21 +222,21 @@ export default function GelenMesajAnaliziPage() {
  </div>
  <div className="flex items-center justify-between text-sm">
  <div className="flex items-center gap-2">
- <span className="w-2.5 h-2.5 rounded-full -primary"></span>
+ <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
  <span className="text-on-surface">Web Canlı Destek</span>
  </div>
  <div className="text-on-surface-variant">1 (%50)</div>
  </div>
  <div className="flex items-center justify-between text-sm opacity-50">
  <div className="flex items-center gap-2">
- <span className="w-2.5 h-2.5 rounded-full -tertiary"></span>
+ <span className="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
  <span className="text-on-surface">Instagram</span>
  </div>
  <div className="text-on-surface-variant">0 (%0)</div>
  </div>
  <div className="flex items-center justify-between text-sm opacity-50">
  <div className="flex items-center gap-2">
- <span className="w-2.5 h-2.5 rounded-full -secondary"></span>
+ <span className="w-2.5 h-2.5 rounded-full bg-secondary"></span>
  <span className="text-on-surface">Facebook</span>
  </div>
  <div className="text-on-surface-variant">0 (%0)</div>
@@ -343,7 +343,7 @@ export default function GelenMesajAnaliziPage() {
  <tr className="hover:bg-outline-variant/50 transition-colors">
  <td className="py-4">
  <div className="flex items-center gap-2">
- <div className="p-1.5 -secondary/10 rounded-md -secondary">
+ <div className="p-1.5 bg-secondary/10 rounded-md text-secondary">
  <i className="fa-brands fa-whatsapp w-4 h-4 flex items-center justify-center"></i>
  </div>
  <span className="text-on-surface">WhatsApp</span>
@@ -353,14 +353,14 @@ export default function GelenMesajAnaliziPage() {
  <td className="py-4 max-w-xs truncate" title="Fiyat teklifi hakkında bilgi alabilir miyim?">Fiyat teklifi hakkında bilgi alabilir miyim?</td>
  <td className="py-4">22 May 2024 14:32</td>
  <td className="py-4">
- <span className="px-2 py-1 -secondary/10 -secondary border -secondary/20 rounded-md text-xs font-medium">Okundu</span>
+ <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">Okundu</span>
  </td>
  <td className="py-4 text-on-surface">8 dk</td>
  </tr>
  <tr className="hover:bg-outline-variant/50 transition-colors">
  <td className="py-4">
  <div className="flex items-center gap-2">
- <div className="p-1.5 -primary/10 rounded-md -primary">
+ <div className="p-1.5 bg-primary/10 rounded-md text-primary">
  <i className="fa-solid fa-globe w-4 h-4 flex items-center justify-center"></i>
  </div>
  <span className="text-on-surface">Web Canlı Destek</span>
@@ -370,7 +370,7 @@ export default function GelenMesajAnaliziPage() {
  <td className="py-4 max-w-xs truncate" title="Ürün iade süreci nasıl işliyor?">Ürün iade süreci nasıl işliyor?</td>
  <td className="py-4">22 May 2024 10:15</td>
  <td className="py-4">
- <span className="px-2 py-1 -secondary/10 -secondary border -secondary/20 rounded-md text-xs font-medium">Okundu</span>
+ <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">Okundu</span>
  </td>
  <td className="py-4 text-on-surface">16 dk</td>
  </tr>

@@ -63,6 +63,10 @@ export default function SharePage() {
   const [twIsThread, setTwIsThread] = useState(false);
   const [twCustomCaption, setTwCustomCaption] = useState('');
 
+  // TikTok
+  const [ttSaveToInbox, setTtSaveToInbox] = useState(false);
+  const [ttCustomCaption, setTtCustomCaption] = useState('');
+
   useEffect(() => {
     const fetchAccounts = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -186,6 +190,11 @@ export default function SharePage() {
         platformOptions = {
           isThread: twIsThread,
           caption: twCustomCaption || undefined
+        };
+      } else if (p === 'tiktok') {
+        platformOptions = {
+          saveToInboxAsDraft: ttSaveToInbox,
+          caption: ttCustomCaption || undefined
         };
       }
 
@@ -602,6 +611,40 @@ export default function SharePage() {
                   {twIsThread && <p className="text-[#b9cacb]/70 text-[10px] mb-4">Main content + media become tweet 1. Add more below.</p>}
                   <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
                   <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* TikTok */}
+            {selectedPlatforms['tiktok'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#00f0ff]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00f0ff] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <i className="fa-brands fa-tiktok text-[#00f0ff]"></i>
+                    <span className="text-[#e5e2e3] font-semibold text-sm">TikTok</span>
+                  </div>
+                  
+                  <label className="flex items-start gap-3 cursor-pointer mb-4 p-3 rounded-lg border border-white/5 bg-[#0e0e0f]/50 hover:bg-[#0e0e0f]/80 transition-colors">
+                    <div className="mt-0.5">
+                      <input 
+                        type="checkbox" 
+                        checked={ttSaveToInbox} 
+                        onChange={(e) => setTtSaveToInbox(e.target.checked)}
+                        className="w-4 h-4 rounded border-white/20 bg-transparent text-[#00f0ff] focus:ring-0 focus:ring-offset-0"
+                      />
+                    </div>
+                    <div>
+                      <span className="block text-[#e5e2e3] text-xs font-semibold mb-1">Save to TikTok inbox as draft</span>
+                      <span className="block text-[#b9cacb]/70 text-[10px] leading-relaxed">
+                        Uploads to the creator's TikTok inbox instead of publishing. They finish the caption, add music, and post from TikTok.
+                      </span>
+                    </div>
+                  </label>
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#00f0ff]/50"></textarea>
+                  <p className="text-[#b9cacb]/50 text-[10px] text-right mt-1">{ttCustomCaption.length}/2200</p>
                 </div>
               </div>
             )}

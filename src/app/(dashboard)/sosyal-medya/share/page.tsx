@@ -12,6 +12,7 @@ const PLATFORMS_DATA = [
   { id: "twitter", name: "X", color: "#ffffff", icon: "fa-x-twitter" },
   { id: "youtube", name: "YouTube", color: "#FF0000", icon: "fa-youtube" },
   { id: "tiktok", name: "TikTok", color: "#00f0ff", icon: "fa-tiktok" },
+  { id: "pinterest", name: "Pinterest", color: "#E60023", icon: "fa-pinterest" },
 ];
 
 export default function SharePage() {
@@ -66,6 +67,16 @@ export default function SharePage() {
   // TikTok
   const [ttSaveToInbox, setTtSaveToInbox] = useState(false);
   const [ttCustomCaption, setTtCustomCaption] = useState('');
+
+  // Pinterest
+  const [pinTitle, setPinTitle] = useState('');
+  const [pinLink, setPinLink] = useState('');
+  const [pinCustomCaption, setPinCustomCaption] = useState('');
+
+  // YouTube
+  const [ytTitle, setYtTitle] = useState('');
+  const [ytPrivacy, setYtPrivacy] = useState('public');
+  const [ytCustomCaption, setYtCustomCaption] = useState('');
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -174,7 +185,13 @@ export default function SharePage() {
       
       let platformOptions: any = {};
       
-      if (p === 'instagram') {
+      if (p === 'facebook') {
+        platformOptions = {
+          format: fbFormat,
+          firstComment: fbFirstComment,
+          caption: fbCustomCaption || undefined
+        };
+      } else if (p === 'instagram') {
         platformOptions = {
           contentType: igFormat.toLowerCase(),
           aiGenerated: igAiLabel,
@@ -195,6 +212,18 @@ export default function SharePage() {
         platformOptions = {
           saveToInboxAsDraft: ttSaveToInbox,
           caption: ttCustomCaption || undefined
+        };
+      } else if (p === 'pinterest') {
+        platformOptions = {
+          title: pinTitle || undefined,
+          link: pinLink || undefined,
+          caption: pinCustomCaption || undefined
+        };
+      } else if (p === 'youtube') {
+        platformOptions = {
+          title: ytTitle || undefined,
+          privacyStatus: ytPrivacy,
+          caption: ytCustomCaption || undefined
         };
       }
 
@@ -645,6 +674,57 @@ export default function SharePage() {
                   <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
                   <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#00f0ff]/50"></textarea>
                   <p className="text-[#b9cacb]/50 text-[10px] text-right mt-1">{ttCustomCaption.length}/2200</p>
+                </div>
+              </div>
+            )}
+
+            {/* Pinterest */}
+            {selectedPlatforms['pinterest'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#E60023]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E60023] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <i className="fa-brands fa-pinterest text-[#E60023]"></i>
+                    <span className="text-[#e5e2e3] font-semibold text-sm">Pinterest</span>
+                  </div>
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">title (optional)</label>
+                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder="Enter a custom title for your Pin..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
+                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Custom title for your Pin. If not provided, the first line of the main content will be used.</p>
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">destination link (optional)</label>
+                  <input type="url" value={pinLink} onChange={e => setPinLink(e.target.value)} placeholder="https://example.com" className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
+                  <p className="text-[#b9cacb]/50 text-[10px] mb-4">Set the clickable URL for your Pin. This becomes the Pin's outbound link.</p>
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">custom caption</label>
+                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
+                  <p className="text-[#b9cacb]/50 text-[10px] text-right mt-1">{pinCustomCaption.length}/500</p>
+                </div>
+              </div>
+            )}
+
+            {/* YouTube */}
+            {selectedPlatforms['youtube'] && (
+              <div className="bg-[#1c1b1c]/30 rounded-[14px] border border-[#FF0000]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF0000] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <i className="fa-brands fa-youtube text-[#FF0000]"></i>
+                      <span className="text-[#e5e2e3] font-semibold text-sm">YouTube</span>
+                    </div>
+                    <select value={ytPrivacy} onChange={e => setYtPrivacy(e.target.value)} className="bg-[#0e0e0f]/50 border border-white/5 rounded text-[#e5e2e3] text-[11px] px-2 py-1 outline-none">
+                      <option value="public">Public</option>
+                      <option value="unlisted">Unlisted</option>
+                      <option value="private">Private</option>
+                    </select>
+                  </div>
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">title</label>
+                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder="Video title..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
+
+                  <label className="block text-[#b9cacb] text-xs font-medium mb-1">description (custom caption)</label>
+                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder="Leave blank to use main content..." className="w-full bg-[#0e0e0f]/50 border border-white/5 rounded-lg text-[#e5e2e3] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
                 </div>
               </div>
             )}

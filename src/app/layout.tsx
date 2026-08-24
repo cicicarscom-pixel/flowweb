@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "AI Esnaf Dashboard",
-  description: "Web frontend for Flow AI",
+  title: "Workigom Flow",
+  description: "Workigom Flow Dashboard",
 };
 
 export default function RootLayout({

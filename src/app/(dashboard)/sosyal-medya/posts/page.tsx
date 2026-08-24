@@ -335,7 +335,7 @@ export default function TumGonderilerPage() {
                   {/* Profile */}
                   <div style={{ width: 150 }} className="flex items-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mr-2 shrink-0"></div>
-                    <span className="text-[#F6F1EC] text-[12px] truncate">AI Esnaf Profil</span>
+                    <span className="text-[#F6F1EC] text-[12px] truncate">Workigom Flow Profil</span>
                   </div>
 
                   {/* Metrics */}

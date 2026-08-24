@@ -1,4 +1,4 @@
-# AI Esnaf — Agent Kuralları ve Proje Hafızası
+﻿# Workigom Flow — Agent Kuralları ve Proje Hafızası
 
 ## 🚨 Kritik Kural: Ortak Veritabanı Etkileşimi (Web & Mobil)
 

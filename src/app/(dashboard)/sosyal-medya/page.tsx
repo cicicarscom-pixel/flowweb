@@ -81,10 +81,12 @@ export default function SosyalMedyaPage() {
     const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
     
     const accountId = searchParams.get('accountId') || hashParams.get('accountId');
-    const errorParam = searchParams.get('error') || hashParams.get('error') || searchParams.get('error_description') || hashParams.get('error_description');
+    const errorParam = searchParams.get('error') || hashParams.get('error');
+    const errorMessage = searchParams.get('error_message') || hashParams.get('error_message') || searchParams.get('error_description') || hashParams.get('error_description');
 
-    if (errorParam) {
-       alert("Bağlantı sırasında bir hata oluştu: " + errorParam);
+    if (errorParam || errorMessage) {
+       const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
+       alert("Bağlantı sırasında bir hata oluştu: " + displayError);
        window.history.replaceState({}, '', window.location.pathname);
     } else if (accountId) {
       fetchAccounts(true);

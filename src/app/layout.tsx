@@ -1,6 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
+  metadataBase: new URL("https://flow.workigom.com"),
   title: "Workigom Flow",
   description: "Workigom Flow Dashboard",
   openGraph: {

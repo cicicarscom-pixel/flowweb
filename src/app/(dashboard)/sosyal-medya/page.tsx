@@ -8,10 +8,24 @@ const PLATFORMS_DATA = [
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥" },
   { id: "instagram", name: "Instagram", color: "#E1306C", glow: "rgba(225,48,108,0.3)", icon: "📸" },
   { id: "linkedin", name: "LinkedIn", color: "#0A66C2", glow: "rgba(10,102,194,0.3)", icon: "💼" },
+  { id: "twitter", name: "X", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "✖️" },
   { id: "tiktok", name: "TikTok", color: "#010101", glow: "rgba(105,201,208,0.3)", icon: "🎵" },
   { id: "youtube", name: "YouTube", color: "#FF0000", glow: "rgba(255,0,0,0.3)", icon: "▶️" },
-  { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
+  { id: "pinterest", name: "Pinterest", color: "#E60023", glow: "rgba(230,0,35,0.3)", icon: "📌" },
   { id: "googlebusiness", name: "Google Business", color: "#4285F4", glow: "rgba(66,133,244,0.3)", icon: "🏢" },
+  { id: "reddit", name: "Reddit", color: "#FF4500", glow: "rgba(255,69,0,0.3)", icon: "🤖" },
+  { id: "telegram", name: "Telegram", color: "#2AABEE", glow: "rgba(42,171,238,0.3)", icon: "✈️" },
+  { id: "bluesky", name: "Bluesky", color: "#0085ff", glow: "rgba(0,133,255,0.3)", icon: "☁️" },
+  { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
+  { id: "snapchat", name: "Snapchat", color: "#fffc00", glow: "rgba(255,252,0,0.3)", icon: "👻" },
+  { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
+  { id: "discord", name: "Discord", color: "#5865F2", glow: "rgba(88,101,242,0.3)", icon: "👾" },
+  { id: "meta_ads", name: "Meta Ads", color: "#0668E1", glow: "rgba(6,104,225,0.3)", icon: "📈", isAd: true },
+  { id: "google_ads", name: "Google Ads", color: "#EA4335", glow: "rgba(234,67,53,0.3)", icon: "📊", isAd: true },
+  { id: "linkedin_ads", name: "LinkedIn Ads", color: "#0A66C2", glow: "rgba(10,102,194,0.3)", icon: "💼", isAd: true },
+  { id: "tiktok_ads", name: "TikTok Ads", color: "#010101", glow: "rgba(255,255,255,0.3)", icon: "📱", isAd: true },
+  { id: "pinterest_ads", name: "Pinterest Ads", color: "#E60023", glow: "rgba(230,0,35,0.3)", icon: "📌", isAd: true },
+  { id: "x_ads", name: "X Ads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "✖️", isAd: true },
 ];
 
 function ScrollableContainer({ children }: { children: React.ReactNode }) {
@@ -272,7 +286,7 @@ export default function SosyalMedyaPage() {
                   <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2, color: "#e5e2e3" }}>
                     {p.name}
                   </p>
-                  <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.id === 'tiktok' ? '#69C9D0' : (p.color || "#4edea3") }} className="truncate">
+                  <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.id.includes('tiktok') ? '#69C9D0' : (p.color || "#4edea3") }} className="truncate">
                     {acc.account_name && acc.account_name !== p.name && acc.account_name !== 'unknown' 
                       ? (acc.account_name.startsWith('@') ? acc.account_name : `@${acc.account_name}`) 
                       : `@${p.name.toLowerCase()}_hesabi`}
@@ -338,7 +352,7 @@ export default function SosyalMedyaPage() {
                 <button 
                   onClick={() => handleConnectZernio(p.id)}
                   disabled={isConnecting === p.id}
-                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.id === 'tiktok' ? '#69C9D0' : p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.id.includes('tiktok') ? '#69C9D0' : p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
                 >
                   {isConnecting === p.id ? "Bağlanıyor..." : "Hesap Bağla"}
                 </button>

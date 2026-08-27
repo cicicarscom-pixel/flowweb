@@ -172,21 +172,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
       <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
 
 
-        {/* Asistan Talimatı Oluştur */}
-        <div>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
-          <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <textarea
-              value={customInstruction}
-              onChange={(e) => setCustomInstruction(e.target.value)}
-              placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
-              style={{
-                width: "100%", minHeight: 80, background: "transparent", border: "none",
-                color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none"
-              }}
-            />
-          </div>
-        </div>
+
 
         {/* Bağlı Servisler */}
         <div style={{ position: "relative" }}>
@@ -401,6 +387,22 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             </div>
           )}
 
+          {/* Asistan Talimatı Oluştur */}
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <textarea
+                value={customInstruction}
+                onChange={(e) => setCustomInstruction(e.target.value)}
+                placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
+                style={{
+                  width: "100%", minHeight: 80, background: "transparent", border: "none",
+                  color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none"
+                }}
+              />
+            </div>
+          </div>
+
           <button 
             onClick={handleSave}
             disabled={isSaving}
@@ -423,7 +425,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         </div>
 
         {/* Right Column: Canlı Test */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
           <div className="glass" style={{ borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", overflow: "hidden", display: "flex", flexDirection: "column", flex: 1, minHeight: 500 }}>
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>

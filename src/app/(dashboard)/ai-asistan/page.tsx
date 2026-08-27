@@ -170,16 +170,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
 
       {/* Top Section: Toggles, Textarea, Bağlı Servisler */}
       <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
-        {/* WhatsApp Asistanı Toggle */}
-        <div>
-          <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
-              <Toggle on={botConfig.whatsapp} onChange={() => handleToggle('whatsapp', !botConfig.whatsapp)} />
-            </div>
-          </div>
-        </div>
+
 
         {/* Asistan Talimatı Oluştur */}
         <div>
@@ -205,39 +196,51 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           
           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Bağlı Servisler</h3>
           <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(255,122,89,0.3)", background: "rgba(255,122,89,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
-            
-            {/* Google Drive */}
-            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <span style={{ fontSize: 22 }}>G</span>
-                <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
-                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {/* Google Drive */}
+              <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <span style={{ fontSize: 22 }}>G</span>
+                  <div>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
+                      <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+                    </div>
                   </div>
                 </div>
+                <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                  Bağla
+                </button>
               </div>
-              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Bağla
-              </button>
+
+              {/* WhatsApp */}
+              <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
+                  <div>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
+                      <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+                    </div>
+                  </div>
+                </div>
+                <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                  Bağla
+                </button>
+              </div>
             </div>
 
-            {/* WhatsApp */}
-            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
-                <div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
-                    <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
-                  </div>
+            {/* WhatsApp Asistanı Toggle */}
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+              <div className="glass" style={{ width: "50%", minWidth: 300, borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
+                  <Toggle on={botConfig.whatsapp} onChange={() => handleToggle('whatsapp', !botConfig.whatsapp)} />
                 </div>
               </div>
-              <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                Bağla
-              </button>
             </div>
             
           </div>

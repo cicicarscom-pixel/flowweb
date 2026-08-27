@@ -276,3 +276,71 @@ ALTER TABLE ai_audit_logs ENABLE ROW LEVEL SECURITY;
 ### [22.08.2026] Dashboard Yapay Zeka Veri Bağlantıları ve Profil Senkronizasyonu
 - **Dashboard Güncellemeleri:** AI Asistan günlük özet kutusundaki ve Sosyal Medya etkileşim trendindeki görsel amaçlı sahte veriler (mock data) kaldırıldı. Flow projelerinde mesaj/yorum istatistikleri ve yaklaşan randevular doğrudan ilgili Supabase tablolarına; sosyal medya etkileşim büyümesi ise Zernio üzerinden gerçek verilere bağlandı.
 - **Ledger Profil Yedekleme (Fallback) Sistemi:** Ledger uygulamasında, "Profil Bilgilerim" ekranının form alanlarında veritabanı boş olsa dahi (authorized_person, avatar_url) Google (OAuth) session'ından gelen verileri (user_metadata) varsayılan olarak göstermesi ve düzgün senkronize olması sağlandı.
+
+## GitHub Token
+ghp_***REDACTED***
+
+
+---
+
+# WORKIGOM AI CORE - STEP 2 & 3: FINAL IMPLEMENTATION (LEDGER SHARED BACKEND)
+
+Ağustos 2026 itibarıyla kullanıcı kararıyla AI Core altyapısı frontend (Flow/Flowweb) içinden çıkartılmış, omnichannel (WAHA, Zernio, Web, Mobile) uyumluluğu için Ledger backend'indeki Edge Function shared katmanına (C:\Users\roman\ledger\supabase\functions\shared) taşınmıştır.
+
+## 1. Mimari Prensipler (Clean AI Execution)
+
+- **Doğru Konum (Canonical Backend):** Bütün botlar ve arayüzler aynı zekâyı kullanır. AI Core frontend modülü değil, backend application altyapısıdır.
+- **Provider İzolasyonu:** GeminiClient saf bir LLM provider olarak refaktör edilmiş olup GeminiTurnResult dönmektedir. İçerisinde tool logic barındırmaz.
+- **Güvenli Tool Executor:** ToolExecutor security-critical verileri (örn. organizationId) LLM argümanlarından almak yerine her zaman server-side AIContext'ten alır.
+- **Domain Katmanı ve Concurrency:** Tool'lar (Örn: CreatePendingAppointmentTool) veritabanı logici taşımaz. AppointmentService gibi domain servislerini çağırır. Concurrency ve slot çakışma (collision) güvenliği DB repository/RPC seviyesinde (Idempotency, State Guards) sağlanır.
+- **4 Katmanlı Prompt Sistemi:** PromptBuilder; SYSTEM POLICY, BUSINESS CONTEXT, BOT PERSONALITY ve CHANNEL CONTEXT metinlerini güvenli bir şekilde birleştirir.
+- **Döngü Sınırı:** İşlemin sonsuz döngüye girmemesi için MAX_TOOL_ROUNDS = 5 olarak belirlenmiştir.
+
+## 2. Klasör Yapısı (ledger/supabase/functions/shared/)
+
+`	ext
+application/
+├── usecases/
+│   └── HandleIncomingMessageUseCase.ts (Omnichannel Router & DI Consumer)
+│
+ai/
+├── AIOrchestrator.ts (Loop Yöneticisi)
+├── PromptBuilder.ts (4-Katmanlı Prompt)
+├── types.ts (GeminiTurnResult, AIContext)
+└── tools/
+    ├── ToolRegistry.ts
+    ├── ToolExecutor.ts (Güvenli argüman yöneticisi)
+    ├── types.ts
+    ├── appointments/
+    │   ├── ListBusinessServicesTool.ts
+    │   ├── ListAvailableSlotsTool.ts
+    │   └── CreatePendingAppointmentTool.ts
+    └── rag/
+        └── SearchDriveKnowledgeTool.ts
+
+domain/
+├── appointment/
+│   └── AppointmentService.ts (Idempotency & Concurrency)
+└── knowledge/
+    └── DriveKnowledgeService.ts
+
+infrastructure/
+├── clients/
+│   ├── GeminiClient.ts (Saf Provider)
+│   ├── WahaClient.ts
+│   └── ZernioClient.ts
+└── repositories/
+    ├── AppointmentRepository.ts
+    └── DriveKnowledgeRepository.ts
+
+container.ts (Dependency Injection Initializer)
+`
+
+## 3. RAG ve Veritabanı (Vector Search)
+Tenant-safe doküman araması için pgvector eklentisi zorunlu kılınmıştır. Yalnızca aktif organizasyona ait evraklarda arama yapılabilmesi için match_company_documents adında bir RPC fonksiyonu (20260826000000_rag_rpc.sql) oluşturulmuştur.
+
+## 4. Webhook Entegrasyonları (WAHA & Zernio)
+waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementasyonları temizlenmiştir. Her iki webhook'ta da şu an:
+1. container.ts üzerinden createMessageUseCase(supabaseAdmin) çağrılır.
+2. İş mantığı (Bot ayarlarının alınması, RAG aramaları, 5-loop tool execution vb.) HandleIncomingMessageUseCase üzerinden AIOrchestrator'a devredilir.
+3. AI kararı (Metin döndürme veya işlem yapma) yine router aracılığıyla uygun kanaldan (WhatsApp veya Instagram) müşteriye iletilir.

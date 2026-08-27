@@ -394,4 +394,17 @@ otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu e
 ### Yapilan Degisiklikler ve Mimari Kararlar:
 1. **Multi-Tenancy & Zernio Sync (Organizasyon Fallback Sistemi):** Kullanicilarin Zernio ile senkronize olabilmesi icin gereken organizasyon baglantisinda (organization_members), bireysel (freelancer) kullanicilarin organizasyon kaydi bulunmamasi durumunda yasanilan Organizasyon bulunamadi hatasi giderilmistir.
 2. **Kural:** Zernio Edge Functions (zernio-client, vb.) cagrilirken, kullanicinin bagli oldugu bir organization_id yoksa, zorunlu olarak kullanicinin kendi benzersiz kimligi (userId) izole bir kiraci (tenant) olarak kullanilarak (fallback) Zernioya iletilecektir. Boylece coklu kiraci (multi-tenancy) izolasyonu bozulmadan bireysel hesaplar da Zernioyu sorunsuz kullanabilir.
-3. **Guvenilir Oturum Okumasi (Session Destructuring):** React Native tarafinda hot-reload ve onbellek kayiplari nedeniyle olusan gecersiz oturum hatalarini onlemek icin hatali getSession okumalari iptal edilmis, yerine garanti sunan supabase.auth.getUser metodu standart kabul edilmistir.
+3. **Guvenilir Oturum Okumasi (Session Destructuring):** React Native tarafinda hot-reload ve onbellek kayiplari nedeniyle olusan gecersiz oturum hatalarini onlemek icin hatali getSession okumalari iptal edilmis, yerine garanti sunan supabase.auth.getUser metodu standart kabul edilmistir.### 🚨 Kritik Kural: Sosyal Medya (Zernio) Mimarisi ve Çoklu Hesaplar
+
+**Zernio Profile ≠ Workigom Organization**
+
+Zernio'da bir "Profile", platform (Instagram, Facebook vs.) başına en fazla bir hesap alabilir. Aynı profile ikinci bir Instagram hesabı bağlanırsa, ilk hesabın üzerine yazar ve geçmiş veriler kaybolur.
+
+Bu veri kaybını önlemek ve bir Workigom işletmesine sınırsız sosyal hesap ekleme yeteneği kazandırmak için mimari şöyledir:
+
+- **Workigom Organization** → İçerisinde 1..N adet **Zernio Profile** barındırır.
+- **Zernio Profile (Slot)** → Sadece platform başına 1 hesabın yerleştirildiği teknik bir konteynerdir (Kullanıcıya gösterilmez).
+- **Workigom Social Account** → Organizasyon altındaki tüm sosyal hesapların düz (flat) listesidir. Gerçek ccountId değerleri üzerinden post atılır ve DM yanıtlanır.
+
+Yeni hesap eklendiğinde (esolve_zernio_profile_for_platform RPC ile) backend ilgili platform için boş bir slot/profile arar; yoksa deterministic bir isim (wg_{org_id}_01) ve Idempotency-Key ile otomatik yeni profile oluşturur.
+- **Frontend UI Kuralı (Web & Mobil):** Zernio'nun çoklu profil yeteneğinden faydalandığımız için, kullanıcı "Yeni Hesap Bağla" listesinde daha önce bağladığı bir platformu (ör. Instagram) görmeye devam ETMELİDİR. Frontend'de isConnected(platform) tabanlı filtreleme YAPILMAZ. Hangi Zernio profiline ekleneceği veya yeni profil açılıp açılmayacağı tamamen backend esolveProfileForPlatform() sorumluluğundadır.

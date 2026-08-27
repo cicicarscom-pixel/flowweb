@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -196,12 +196,7 @@ export default function SosyalMedyaPage() {
     };
   };
 
-  const connectedPlatformIds = accounts.map(a => {
-    const id = a.platform.toLowerCase();
-    return id.includes('google') ? 'googlebusiness' : id;
-  });
-
-  const availablePlatforms = PLATFORMS_DATA.filter(p => !connectedPlatformIds.includes(p.id));
+  const availablePlatforms = PLATFORMS_DATA;
 
   return (
     <div style={{ padding: "28px 32px", maxWidth: 1200 }}>
@@ -369,3 +364,4 @@ export default function SosyalMedyaPage() {
     </div>
   );
 }
+

@@ -36,6 +36,8 @@ export default function BotScreen() {
     autoReply: true,
     smartRouting: false,
   });
+  const [customInstruction, setCustomInstruction] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -57,6 +59,44 @@ export default function BotScreen() {
         social: !!data.is_active,
       }));
       if (data.system_prompt) setSystemPrompt(data.system_prompt);
+      if (data.custom_instruction) setCustomInstruction(data.custom_instruction);
+      if (data.tone) setSelectedTone(data.tone);
+      if (data.role) setSelectedRole(data.role);
+      if (data.character) setSelectedCharacter(data.character);
+    }
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const updateData = {
+        system_prompt: systemPrompt,
+        custom_instruction: customInstruction,
+        tone: selectedTone,
+        role: selectedRole,
+        character: selectedCharacter,
+      };
+
+      const { data: existingData } = await supabase
+        .from('bot_settings')
+        .select('id')
+        .eq('merchant_id', session.user.id)
+        .limit(1);
+
+      if (existingData && existingData.length > 0) {
+        await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
+      } else {
+        await supabase.from('bot_settings').insert([{ merchant_id: session.user.id, ...updateData }]);
+      }
+      
+      alert('Ayarlar başarıyla kaydedildi!');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -154,6 +194,8 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
           <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
             <textarea
+              value={customInstruction}
+              onChange={(e) => setCustomInstruction(e.target.value)}
               placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
               style={{
                 width: "100%", minHeight: 80, background: "transparent", border: "none",
@@ -364,7 +406,10 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             </div>
           )}
 
-          <button style={{ 
+          <button 
+            onClick={handleSave}
+            disabled={isSaving}
+            style={{ 
             background: "linear-gradient(135deg, #C2478D 0%, #FF7A59 100%)",
             border: "1px solid rgba(255,255,255,0.15)",
             borderRadius: 16, 
@@ -373,11 +418,12 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             fontSize: 16, 
             fontWeight: 600,
             letterSpacing: "0.02em",
-            cursor: "pointer", 
+            cursor: isSaving ? "not-allowed" : "pointer", 
+            opacity: isSaving ? 0.7 : 1,
             boxShadow: "0 0 20px rgba(194,71,141,0.25)", 
             marginTop: 8
           }}>
-            Değişiklikleri Kaydet
+            {isSaving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
           </button>
         </div>
 

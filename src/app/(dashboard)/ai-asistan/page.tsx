@@ -390,7 +390,13 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           {/* Asistan Talimatı Oluştur */}
           <div>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
-            <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="glass" style={{ 
+              borderRadius: 24, 
+              padding: "16px", 
+              background: "rgba(194,71,141,0.03)", 
+              border: "2px solid #C2478D",
+              boxShadow: "0 0 20px rgba(194,71,141,0.15)"
+            }}>
               <textarea
                 value={customInstruction}
                 onChange={(e) => setCustomInstruction(e.target.value)}

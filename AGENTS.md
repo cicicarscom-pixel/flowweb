@@ -408,3 +408,9 @@ Bu veri kaybını önlemek ve bir Workigom işletmesine sınırsız sosyal hesap
 
 Yeni hesap eklendiğinde (esolve_zernio_profile_for_platform RPC ile) backend ilgili platform için boş bir slot/profile arar; yoksa deterministic bir isim (wg_{org_id}_01) ve Idempotency-Key ile otomatik yeni profile oluşturur.
 - **Frontend UI Kuralı (Web & Mobil):** Zernio'nun çoklu profil yeteneğinden faydalandığımız için, kullanıcı "Yeni Hesap Bağla" listesinde daha önce bağladığı bir platformu (ör. Instagram) görmeye devam ETMELİDİR. Frontend'de isConnected(platform) tabanlı filtreleme YAPILMAZ. Hangi Zernio profiline ekleneceği veya yeni profil açılıp açılmayacağı tamamen backend esolveProfileForPlatform() sorumluluğundadır.
+
+### [27.08.2026] Mobil Platform UI/UX ve Hata Giderimi
+1. **Frontend Patch:** Mobil arayüzdeki hizalama hatalarını çözen yapı low reposuna sorunsuz eklendi.
+2. **Dashboard Neon UI:** Flow mobil uygulamasının ana sayfasında yer alan yatay kaydırılabilir görsel alanına alttan taşan neon mavi (#00a2ff) bir shadow glow eklendi. overflow: hidden kullanan React Native görünümlerinde gölgenin çalışması için dışarıya ikinci bir sarıcı View katmanı uygulandı.
+3. **Expo Native Crash Çözümü:** xpo-image-picker SDK 50+ sürümündeki katı JSMediaTypes casting kuralına takılarak profil fotoğrafı yüklerken uygulamanın çökmesi hatası giderildi ('image' parametresi array içerisinde 'images' olarak düzeltildi).
+4. **Bağımlılık İhlali:** MuhasebecimScreen içerisinde geçersiz noktalanan import dizini (../../../../../shared) onarılarak uygulamanın derlenmesi sağlandı.

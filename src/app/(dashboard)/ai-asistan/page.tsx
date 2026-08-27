@@ -170,16 +170,8 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
 
       {/* Top Section: Toggles, Textarea, Bağlı Servisler */}
       <div style={{ display: "flex", flexDirection: "column", gap: 32, marginBottom: 32 }}>
-        {/* Ai Asistan Main Toggle */}
+        {/* WhatsApp Asistanı Toggle */}
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, padding: "0 4px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 10px #22B573" }} />
-              <span style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>Ai Asistan</span>
-            </div>
-            <Toggle on={botConfig.social} onChange={() => handleToggle('social', !botConfig.social)} />
-          </div>
-          
           <div className="glass" style={{ borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>

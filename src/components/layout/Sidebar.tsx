@@ -30,7 +30,9 @@ export default function Sidebar() {
           .single();
           
         if (profile) {
-          setUserName(profile.authorized_person || profile.business_name || "Kullanıcı");
+          const metadata = session.user.user_metadata;
+          const googleName = metadata?.full_name || metadata?.name;
+          setUserName(profile.authorized_person || profile.business_name || googleName || "Kullanıcı");
           let av = profile.avatar_url;
           if (av && av.startsWith('file://')) {
             av = null;

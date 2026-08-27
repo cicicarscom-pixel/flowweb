@@ -45,8 +45,11 @@ export default function ProfilPage() {
         .single();
         
       if (profile) {
+        const metadata = session.user.user_metadata;
+        const googleName = metadata?.full_name || metadata?.name;
+        
         setBusinessName(profile.business_name || "");
-        setAuthorizedPerson(profile.authorized_person || "");
+        setAuthorizedPerson(profile.authorized_person || googleName || "");
         setCategory(profile.category || "Diğer");
         setPhone(profile.phone_number || "");
         

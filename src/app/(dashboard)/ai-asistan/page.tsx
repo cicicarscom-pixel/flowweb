@@ -401,9 +401,11 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                 value={customInstruction}
                 onChange={(e) => setCustomInstruction(e.target.value)}
                 placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
+                className="focus:outline-none focus:ring-0 focus:border-transparent"
                 style={{
-                  width: "100%", minHeight: 80, background: "transparent", border: "none",
-                  color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none"
+                  width: "100%", minHeight: 110, background: "transparent", border: "none",
+                  color: "rgba(255,255,255,0.85)", fontSize: 14, outline: "none", resize: "none",
+                  boxShadow: "none"
                 }}
               />
             </div>

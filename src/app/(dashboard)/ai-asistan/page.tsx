@@ -154,26 +154,35 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     setIsTyping(true);
 
     try {
+      // Web arayüzünde seçilen ayarları birleştirip gönderelim
       const fullSystemPrompt = `${systemPrompt}\n\nRol: ${selectedRole}\nKarakter: ${selectedCharacter}\nTon: ${selectedTone}\nÖzel Talimat: ${customInstruction}`;
       
-      // Geçmiş mesajları düz metin olarak birleştir (Edge function'ın chat geçmişi beklemediği varsayımıyla)
-      const chatHistory = newMessages.map(m => `${m.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${m.content}`).join('\n');
-      const finalPrompt = `Aşağıdaki sistem talimatlarına kesinlikle uyarak son kullanıcı mesajına yanıt ver.\n\n[SİSTEM TALİMATLARI]\n${fullSystemPrompt}\n\n[SOHBET GEÇMİŞİ]\n${chatHistory}\n\nAsistan:`;
-
       const { data, error } = await supabase.functions.invoke('gemini-chat', {
         body: {
-          prompt: finalPrompt,
-          mode: 'chat'
+          prompt: inputValue.trim(),
+          mode: 'playground',
+          customInstruction: fullSystemPrompt
         }
       });
 
       if (error || data?.error) {
         setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${error?.message || data?.error || 'Bilinmeyen Hata'}` }]);
       } else {
-        const reply = data?.text || data?.generatedText || data?.reply || data?.message || data?.response || JSON.stringify(data);
-        // Fallback to formatting the response nicely if the edge function returns a different field
-        let textContent = typeof reply === 'string' ? reply : (data?.content || "Cevap alınamadı.");
-        setMessages(prev => [...prev, { role: 'bot', content: textContent }]);
+        let responseText = "Cevap alınamadı.";
+        if (data && data.text) {
+          responseText = data.text;
+        } else if (data && data.adCopy) {
+          responseText = data.adCopy;
+        } else if (data && typeof data === 'string') {
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.text) responseText = parsed.text;
+            else if (parsed.adCopy) responseText = parsed.adCopy;
+          } catch (e) {
+            responseText = data;
+          }
+        }
+        setMessages(prev => [...prev, { role: 'bot', content: responseText }]);
       }
     } catch (e: any) {
       setMessages(prev => [...prev, { role: 'bot', content: 'Sistem hatası oluştu.' }]);

@@ -414,3 +414,7 @@ Yeni hesap eklendiğinde (esolve_zernio_profile_for_platform RPC ile) backend i
 2. **Dashboard Neon UI:** Flow mobil uygulamasının ana sayfasında yer alan yatay kaydırılabilir görsel alanına alttan taşan neon mavi (#00a2ff) bir shadow glow eklendi. overflow: hidden kullanan React Native görünümlerinde gölgenin çalışması için dışarıya ikinci bir sarıcı View katmanı uygulandı.
 3. **Expo Native Crash Çözümü:** xpo-image-picker SDK 50+ sürümündeki katı JSMediaTypes casting kuralına takılarak profil fotoğrafı yüklerken uygulamanın çökmesi hatası giderildi ('image' parametresi array içerisinde 'images' olarak düzeltildi).
 4. **Bağımlılık İhlali:** MuhasebecimScreen içerisinde geçersiz noktalanan import dizini (../../../../../shared) onarılarak uygulamanın derlenmesi sağlandı.
+
+## 📂 Proje Dizinleri ve Depolar (Repositories)
+- **Web (Next.js):** C:\Users\roman\flowweb (GitHub: https://github.com/cicicarscom-pixel/flowweb)
+- **Mobil (React Native):** C:\Users\roman\flow (GitHub: https://github.com/cicicarscom-pixel/flow)

@@ -154,14 +154,26 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     setIsTyping(true);
 
     try {
-      const { simulateChat } = await import('@/actions/chat');
       const fullSystemPrompt = `${systemPrompt}\n\nRol: ${selectedRole}\nKarakter: ${selectedCharacter}\nTon: ${selectedTone}\nÖzel Talimat: ${customInstruction}`;
       
-      const res = await simulateChat(newMessages, fullSystemPrompt);
-      if (res.error) {
-        setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${res.error}` }]);
-      } else if (res.text) {
-        setMessages(prev => [...prev, { role: 'bot', content: res.text }]);
+      // Geçmiş mesajları düz metin olarak birleştir (Edge function'ın chat geçmişi beklemediği varsayımıyla)
+      const chatHistory = newMessages.map(m => `${m.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${m.content}`).join('\n');
+      const finalPrompt = `Aşağıdaki sistem talimatlarına kesinlikle uyarak son kullanıcı mesajına yanıt ver.\n\n[SİSTEM TALİMATLARI]\n${fullSystemPrompt}\n\n[SOHBET GEÇMİŞİ]\n${chatHistory}\n\nAsistan:`;
+
+      const { data, error } = await supabase.functions.invoke('gemini-chat', {
+        body: {
+          prompt: finalPrompt,
+          mode: 'chat'
+        }
+      });
+
+      if (error || data?.error) {
+        setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${error?.message || data?.error || 'Bilinmeyen Hata'}` }]);
+      } else {
+        const reply = data?.text || data?.generatedText || data?.reply || data?.message || data?.response || JSON.stringify(data);
+        // Fallback to formatting the response nicely if the edge function returns a different field
+        let textContent = typeof reply === 'string' ? reply : (data?.content || "Cevap alınamadı.");
+        setMessages(prev => [...prev, { role: 'bot', content: textContent }]);
       }
     } catch (e: any) {
       setMessages(prev => [...prev, { role: 'bot', content: 'Sistem hatası oluştu.' }]);

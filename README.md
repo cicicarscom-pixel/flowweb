@@ -344,3 +344,11 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 1. container.ts üzerinden createMessageUseCase(supabaseAdmin) çağrılır.
 2. İş mantığı (Bot ayarlarının alınması, RAG aramaları, 5-loop tool execution vb.) HandleIncomingMessageUseCase üzerinden AIOrchestrator'a devredilir.
 3. AI kararı (Metin döndürme veya işlem yapma) yine router aracılığıyla uygun kanaldan (WhatsApp veya Instagram) müşteriye iletilir.
+
+## Son Guncellemeler
+
+### [28.08.2026] Web ve Mobil "Canli Test" (AI Asistan) Esitlemesi ve Edge Function Onarimi
+1. **Canli Test Web Entegrasyonu:** Web (Next.js) arayuzundeki `ai-asistan/page.tsx` icerisindeki statik Canli Test tasarimi, dinamik bir chat uygulamasina donusturuldu.
+2. **Edge Function (Gemini) Uyumu:** Mobil uygulamada (`usePlayground.ts`) kullanilan `gemini-chat` Supabase Edge Function API yapisi incelenerek, web tarafindaki istek yapisi da mobil ile ayni standarda (`mode: 'playground'`) getirildi.
+3. **Ai Muhasebe (Ledger) Edge Function Duzeltmesi:** `gemini-chat` Edge Function'inin (`ledger` deposunda yer alan) gelen tum istekleri (mode fark etmeksizin) fatura formatinda (Ai Muhasebe) JSON olarak yanitladigi fark edildi. Fonksiyon onarilarak `mode === 'playground'` durumunda normal sohbet (chat) donecek sekilde guncellendi ve deploy edildi.
+4. **Proje Hafizasi Guncellemesi:** Web ve Mobil projelerin klasor dizinleri sistem hafizasina (AGENTS.md) islendi.

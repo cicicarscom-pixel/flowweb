@@ -140,6 +140,36 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isSimulationActive, setIsSimulationActive] = useState(false);
 
+  const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) return;
+    
+    setIsSimulationActive(true);
+    const newMessages = [...messages, { role: 'user', content: inputValue }];
+    setMessages(newMessages);
+    setInputValue('');
+    setIsTyping(true);
+
+    try {
+      const { simulateChat } = await import('@/actions/chat');
+      const fullSystemPrompt = `${systemPrompt}\n\nRol: ${selectedRole}\nKarakter: ${selectedCharacter}\nTon: ${selectedTone}\nÖzel Talimat: ${customInstruction}`;
+      
+      const res = await simulateChat(newMessages, fullSystemPrompt);
+      if (res.error) {
+        setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${res.error}` }]);
+      } else if (res.text) {
+        setMessages(prev => [...prev, { role: 'bot', content: res.text }]);
+      }
+    } catch (e: any) {
+      setMessages(prev => [...prev, { role: 'bot', content: 'Sistem hatası oluştu.' }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
   const roles = [
     { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
     { id: "Berber", label: "Berber", icon: "💈" },
@@ -451,7 +481,11 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             </div>
             
             <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
-              {!isSimulationActive ? (
+              {!isSimulationActive && messages.length === 0 ? (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
+                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
+                </div>
+              ) : (
                 <>
                   <div style={{ textAlign: "center", marginBottom: 8 }}>
                     <span style={{ 
@@ -461,41 +495,37 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     }}>SİMÜLASYON BAŞLADI</span>
                   </div>
                   
-                  {/* User message */}
-                  <div style={{ alignSelf: "flex-end", maxWidth: "85%" }}>
-                    <div style={{ 
-                      background: "rgba(255,255,255,0.1)", borderRadius: "16px 16px 2px 16px", 
-                      padding: "12px 16px", color: "rgba(255,255,255,0.9)", fontSize: 13, lineHeight: 1.5 
-                    }}>
-                      Merhaba, stoklarınızda mavi renk M beden kışlık mont var mı? Fiyatı nedir?
-                    </div>
-                  </div>
+                  {messages.map((msg, idx) => (
+                    msg.role === 'user' ? (
+                      <div key={idx} style={{ alignSelf: "flex-end", maxWidth: "85%" }}>
+                        <div style={{ 
+                          background: "rgba(255,255,255,0.1)", borderRadius: "16px 16px 2px 16px", 
+                          padding: "12px 16px", color: "rgba(255,255,255,0.9)", fontSize: 13, lineHeight: 1.5 
+                        }}>
+                          {msg.content}
+                        </div>
+                      </div>
+                    ) : (
+                      <div key={idx} style={{ alignSelf: "flex-start", maxWidth: "90%" }}>
+                        <div style={{ 
+                          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
+                          borderRadius: "16px 16px 16px 2px", padding: "14px 16px", 
+                          color: "rgba(255,255,255,0.85)", fontSize: 13, lineHeight: 1.6 
+                        }}>
+                          {msg.content}
+                        </div>
+                      </div>
+                    )
+                  ))}
 
-                  {/* Loading indicator */}
-                  <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
-                  </div>
-
-                  {/* Bot message */}
-                  <div style={{ alignSelf: "flex-start", maxWidth: "90%" }}>
-                    <div style={{ 
-                      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: "16px 16px 16px 2px", padding: "14px 16px", 
-                      color: "rgba(255,255,255,0.85)", fontSize: 13, lineHeight: 1.6 
-                    }}>
-                      Merhaba! 👋 Evet, mavi renk M beden kışlık montumuz stoklarımızda mevcuttur. 
-                      Güncel fiyatımız <span style={{color: "#fff", fontWeight: 600}}>1.450 TL</span>'dir. 
-                      Hemen sipariş oluşturmak isterseniz size bir bağlantı gönderebilirim. 
-                      Başka yardımcı olabileceğim bir konu var mı?
+                  {isTyping && (
+                    <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
                     </div>
-                  </div>
+                  )}
                 </>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
-                </div>
               )}
             </div>
 
@@ -503,6 +533,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               <div style={{ position: "relative" }}>
                 <input 
                   type="text" 
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                   placeholder="Asistan ile konuşun..." 
                   onFocus={() => setIsSimulationActive(true)}
                   style={{ 
@@ -511,7 +544,9 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                     color: "#fff", fontSize: 13, outline: "none"
                   }} 
                 />
-                <div style={{ 
+                <div 
+                  onClick={handleSendMessage}
+                  style={{ 
                   position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)",
                   width: 36, height: 36, borderRadius: "50%", background: "rgba(255,122,89,0.15)",
                   display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",

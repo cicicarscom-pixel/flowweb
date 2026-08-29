@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
+import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
 
 // Persona Engine (Phase 5): today's UI still shows a fixed 3-character list
 // (Phase 6 replaces this with a real carousel fetched from ai_personas), but
@@ -55,6 +56,12 @@ export default function BotScreen() {
   });
   const [customInstruction, setCustomInstruction] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  
+  const [wahaStatus, setWahaStatus] = useState<any>(null);
+  const [wahaQrCode, setWahaQrCode] = useState<string | null>(null);
+  const [wahaPhone, setWahaPhone] = useState("");
+  const [wahaPairingCode, setWahaPairingCode] = useState<string | null>(null);
+  const [wahaLoading, setWahaLoading] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -95,6 +102,14 @@ export default function BotScreen() {
       if (aiSettings.customInstruction) setCustomInstruction(aiSettings.customInstruction);
       if (aiSettings.characterSlug && SLUG_TO_CHARACTER[aiSettings.characterSlug]) {
         setSelectedCharacter(SLUG_TO_CHARACTER[aiSettings.characterSlug]);
+      }
+    }
+
+    const wahaRes = await getWahaStatus();
+    if (wahaRes.success && wahaRes.data) {
+      setWahaStatus(wahaRes.data.status);
+      if (wahaRes.data.me) {
+        setWahaPhone(wahaRes.data.me.id.split('@')[0]);
       }
     }
   };
@@ -156,6 +171,46 @@ export default function BotScreen() {
     } else {
       await supabase.from('bot_settings').insert([{ merchant_id: session.user.id, ...updateData }]);
     }
+  };
+
+  const handleWahaConnect = async () => {
+    setWahaLoading(true);
+    setWahaQrCode(null);
+    setWahaPairingCode(null);
+    
+    const startRes = await startWahaSession();
+    if (!startRes.success) {
+      alert(startRes.error);
+      setWahaLoading(false);
+      return;
+    }
+    
+    setTimeout(async () => {
+      const qrRes = await getWahaQrCode();
+      if (qrRes.success && qrRes.data) {
+        setWahaQrCode(qrRes.data.data || qrRes.data);
+      } else {
+        alert("QR alınamadı: " + (qrRes.error || ""));
+      }
+      setWahaLoading(false);
+    }, 2000);
+  };
+
+  const handleGetPairingCode = async () => {
+    if (!wahaPhone.trim()) {
+      alert('Lütfen telefon numaranızı girin (Örn: 90532...)');
+      return;
+    }
+    setWahaLoading(true);
+    setWahaPairingCode(null);
+    
+    const pairingRes = await getWahaPairingCode(wahaPhone.trim());
+    if (pairingRes.success && pairingRes.data) {
+      setWahaPairingCode(pairingRes.data.code);
+    } else {
+      alert("Kod alınamadı: " + (pairingRes.error || ""));
+    }
+    setWahaLoading(false);
   };
 
   
@@ -285,20 +340,62 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               </div>
 
               {/* WhatsApp */}
-              <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
-                  <div>
-                    <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
-                      <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+              <div className="glass" style={{ borderRadius: 16, padding: "16px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                    <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
+                    <div>
+                      <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: wahaStatus === 'WORKING' ? "#22B573" : "#EF4444" }} />
+                        <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                          {wahaStatus === 'WORKING' ? 'Bağlı' : (wahaStatus === 'STARTING' ? 'Başlatılıyor' : 'Bağlı değil')}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  {wahaStatus !== 'WORKING' && (
+                    <button 
+                      onClick={handleWahaConnect}
+                      disabled={wahaLoading}
+                      style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: wahaLoading ? "not-allowed" : "pointer", opacity: wahaLoading ? 0.7 : 1 }}>
+                      {wahaLoading ? 'İşleniyor...' : 'Bağla'}
+                    </button>
+                  )}
                 </div>
-                <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                  Bağla
-                </button>
+                
+                {/* QR and Pairing section */}
+                {wahaQrCode && (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, marginTop: 12, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12 }}>
+                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>WhatsApp'ı açın, Bağlı Cihazlar'dan QR kodu taratın</p>
+                    <img src={wahaQrCode.startsWith('data:image') ? wahaQrCode : `data:image/png;base64,${wahaQrCode}`} style={{ width: 200, height: 200, borderRadius: 8 }} alt="WAHA QR" />
+                    
+                    <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.1)", margin: "8px 0" }} />
+                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>Veya numara ile bağlanın</p>
+                    <div style={{ display: "flex", gap: 8, width: "100%" }}>
+                      <input 
+                        type="text" 
+                        value={wahaPhone} 
+                        onChange={e => setWahaPhone(e.target.value)} 
+                        placeholder="Örn: 90532..."
+                        style={{ flex: 1, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", outline: "none", fontSize: 13 }}
+                      />
+                      <button 
+                        onClick={handleGetPairingCode}
+                        disabled={wahaLoading}
+                        style={{ padding: "8px 16px", borderRadius: 8, background: "#22B573", color: "#fff", border: "none", fontWeight: 600, fontSize: 13, cursor: wahaLoading ? "not-allowed" : "pointer" }}
+                      >
+                        Kod Al
+                      </button>
+                    </div>
+                    {wahaPairingCode && (
+                      <div style={{ marginTop: 8, padding: 12, background: "rgba(34,181,115,0.1)", border: "1px solid rgba(34,181,115,0.3)", borderRadius: 8, width: "100%", textAlign: "center" }}>
+                        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 4 }}>WhatsApp Bildirimini Onaylayıp Bu Kodu Girin:</p>
+                        <p style={{ fontSize: 24, fontWeight: 700, color: "#22B573", letterSpacing: 4 }}>{wahaPairingCode}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

@@ -40,66 +40,71 @@ export interface SaveAiPersonaSettingsResult {
 export async function saveAiPersonaSettings(
   input: SaveAiPersonaSettingsInput,
 ): Promise<SaveAiPersonaSettingsResult> {
-  const supabase = await createClient()
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser()
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
 
-  if (authError || !user) {
-    return { success: false, error: 'Unauthorized' }
-  }
-
-  let personaId: string | null = null
-  let personaDefaults = { persona_intensity: 50, humor_level: 30, modern_adaptation: 70 }
-
-  if (input.characterSlug) {
-    // See lib/supabase/admin.ts for why this one lookup needs the
-    // service-role client (ai_personas rows are still 'draft' pre-Phase-7).
-    const admin = createAdminClient()
-    const { data: persona, error: personaError } = await admin
-      .from('ai_personas')
-      .select('id, default_persona_intensity, default_humor_level, default_modern_adaptation')
-      .eq('slug', input.characterSlug)
-      .maybeSingle()
-
-    if (personaError || !persona) {
-      return { success: false, error: `Persona '${input.characterSlug}' not found` }
+    if (authError || !user) {
+      return { success: false, error: 'Unauthorized' }
     }
 
-    personaId = persona.id
-    personaDefaults = {
-      persona_intensity: persona.default_persona_intensity,
-      humor_level: persona.default_humor_level,
-      modern_adaptation: persona.default_modern_adaptation,
+    let personaId: string | null = null
+    let personaDefaults = { persona_intensity: 50, humor_level: 30, modern_adaptation: 70 }
+
+    if (input.characterSlug) {
+      // See lib/supabase/admin.ts for why this one lookup needs the
+      // service-role client (ai_personas rows are still 'draft' pre-Phase-7).
+      const admin = createAdminClient()
+      const { data: persona, error: personaError } = await admin
+        .from('ai_personas')
+        .select('id, default_persona_intensity, default_humor_level, default_modern_adaptation')
+        .eq('slug', input.characterSlug)
+        .maybeSingle()
+
+      if (personaError || !persona) {
+        return { success: false, error: `Persona '${input.characterSlug}' not found: ${personaError?.message}` }
+      }
+
+      personaId = persona.id
+      personaDefaults = {
+        persona_intensity: persona.default_persona_intensity,
+        humor_level: persona.default_humor_level,
+        modern_adaptation: persona.default_modern_adaptation,
+      }
     }
+
+    // Written with the NORMAL, RLS-respecting client (not the admin client) —
+    // organization_ai_settings' own RLS policy already restricts writes to
+    // `auth.uid() = merchant_id`, so this can never touch another merchant's row.
+    const { error } = await supabase.from('organization_ai_settings').upsert(
+      {
+        merchant_id: user.id,
+        persona_id: personaId,
+        business_role: input.businessRole,
+        tone: input.tone,
+        persona_intensity: input.personaIntensity ?? personaDefaults.persona_intensity,
+        humor_level: input.humorLevel ?? personaDefaults.humor_level,
+        modern_adaptation: input.modernAdaptation ?? personaDefaults.modern_adaptation,
+        custom_instruction: input.customInstruction,
+        assistant_enabled: true,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'merchant_id' },
+    )
+
+    if (error) {
+      console.error('[saveAiPersonaSettings] upsert failed:', error.message)
+      return { success: false, error: `DB Error: ${error.message}` }
+    }
+
+    return { success: true, personaId }
+  } catch (e: any) {
+    console.error('[saveAiPersonaSettings] Unhandled error:', e)
+    return { success: false, error: `Unhandled Exception: ${e.message || String(e)}` }
   }
-
-  // Written with the NORMAL, RLS-respecting client (not the admin client) —
-  // organization_ai_settings' own RLS policy already restricts writes to
-  // `auth.uid() = merchant_id`, so this can never touch another merchant's row.
-  const { error } = await supabase.from('organization_ai_settings').upsert(
-    {
-      merchant_id: user.id,
-      persona_id: personaId,
-      business_role: input.businessRole,
-      tone: input.tone,
-      persona_intensity: input.personaIntensity ?? personaDefaults.persona_intensity,
-      humor_level: input.humorLevel ?? personaDefaults.humor_level,
-      modern_adaptation: input.modernAdaptation ?? personaDefaults.modern_adaptation,
-      custom_instruction: input.customInstruction,
-      assistant_enabled: true,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: 'merchant_id' },
-  )
-
-  if (error) {
-    console.error('[saveAiPersonaSettings] upsert failed:', error.message)
-    return { success: false, error: error.message }
-  }
-
-  return { success: true, personaId }
 }
 
 export interface AiPersonaSettings {

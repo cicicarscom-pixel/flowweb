@@ -39,13 +39,25 @@ export async function startWahaSession() {
   if (!user) return { success: false, error: 'Oturum bulunamadı' };
   
   try {
+    const requestBody = {
+      name: user.id,
+      config: {
+        webhooks: [
+          {
+            url: "https://qybzidylewzsnmlofjul.supabase.co/functions/v1/waha-webhook",
+            events: ["message", "session.status"]
+          }
+        ]
+      }
+    };
+
     const response = await fetch(`${WAHA_BASE_URL}/api/sessions/start`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Api-Key': WAHA_API_KEY,
       },
-      body: JSON.stringify({ name: user.id }),
+      body: JSON.stringify(requestBody),
     });
     
     if (!response.ok) {
@@ -61,7 +73,7 @@ export async function startWahaSession() {
         const retryResponse = await fetch(`${WAHA_BASE_URL}/api/sessions/start`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Api-Key': WAHA_API_KEY },
-          body: JSON.stringify({ name: user.id })
+          body: JSON.stringify(requestBody)
         });
         
         if (!retryResponse.ok) return { success: false, error: 'Oto-onarım başarısız' };

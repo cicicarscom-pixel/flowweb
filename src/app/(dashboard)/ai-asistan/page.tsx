@@ -354,12 +354,19 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                       </div>
                     </div>
                   </div>
-                  {wahaStatus !== 'WORKING' && (
+                  {wahaStatus !== 'WORKING' ? (
                     <button 
                       onClick={handleWahaConnect}
                       disabled={wahaLoading}
                       style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: wahaLoading ? "not-allowed" : "pointer", opacity: wahaLoading ? 0.7 : 1 }}>
                       {wahaLoading ? 'İşleniyor...' : 'Bağla'}
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={handleWahaConnect}
+                      disabled={wahaLoading}
+                      style={{ background: "rgba(34,181,115,0.2)", border: "1px solid rgba(34,181,115,0.4)", borderRadius: 99, padding: "6px 16px", color: "#22B573", fontSize: 12, fontWeight: 600, cursor: wahaLoading ? "not-allowed" : "pointer" }}>
+                      {wahaLoading ? 'İşleniyor...' : 'Yenile'}
                     </button>
                   )}
                 </div>

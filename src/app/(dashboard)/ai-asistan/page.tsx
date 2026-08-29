@@ -3,6 +3,23 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
+
+// Persona Engine (Phase 5): today's UI still shows a fixed 3-character list
+// (Phase 6 replaces this with a real carousel fetched from ai_personas), but
+// saving/loading now goes through organization_ai_settings by slug instead
+// of writing a hand-built system_prompt string into bot_settings. This map
+// is the ONLY place that ties the UI's display labels to the seeded
+// ai_personas.slug values (see ledger/scripts/personas/*.json) — Phase 6
+// removes it entirely once personas are fetched, not hardcoded.
+const CHARACTER_SLUGS: Record<string, string> = {
+  "Albert Einstein": "einstein",
+  "William Shakespeare": "shakespeare",
+  "Mimar Sinan": "mimar-sinan",
+};
+const SLUG_TO_CHARACTER: Record<string, string> = Object.fromEntries(
+  Object.entries(CHARACTER_SLUGS).map(([label, slug]) => [slug, label])
+);
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   return (
@@ -46,55 +63,70 @@ export default function BotScreen() {
   const fetchSettings = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
-    const { data, error } = await supabase
+
+    // bot_settings still drives the channel toggles below (whatsapp/social
+    // active) — untouched by the Persona Engine. Its system_prompt/tone/
+    // role/character columns are no longer read here (see Phase 5 note on
+    // handleSave below) — they stay in the table only as PromptBuilder's
+    // legacy fallback for merchants who never touch these new settings.
+    const { data: botData } = await supabase
       .from('bot_settings')
-      .select('*')
+      .select('whatsapp_bot_active, is_active, system_prompt')
       .eq('merchant_id', session.user.id)
       .maybeSingle();
 
-    if (data) {
+    if (botData) {
       setBotConfig(prev => ({
         ...prev,
-        whatsapp: !!data.whatsapp_bot_active,
-        social: !!data.is_active,
+        whatsapp: !!botData.whatsapp_bot_active,
+        social: !!botData.is_active,
       }));
-      if (data.system_prompt) setSystemPrompt(data.system_prompt);
-      if (data.custom_instruction) setCustomInstruction(data.custom_instruction);
-      if (data.tone) setSelectedTone(data.tone);
-      if (data.role) setSelectedRole(data.role);
-      if (data.character) setSelectedCharacter(data.character);
+      // Shown read-only in "İleri Seviye Ayarlar" as a reference to what's
+      // currently live as fallback — see the caption next to that textarea.
+      if (botData.system_prompt) setSystemPrompt(botData.system_prompt);
+    }
+
+    // Persona Engine (Phase 5): the merchant's actual saved persona/dial
+    // selections now live in organization_ai_settings, not bot_settings.
+    const aiSettings = await getAiPersonaSettings();
+    if (aiSettings) {
+      if (aiSettings.businessRole) setSelectedRole(aiSettings.businessRole);
+      if (aiSettings.tone) setSelectedTone(aiSettings.tone);
+      if (aiSettings.customInstruction) setCustomInstruction(aiSettings.customInstruction);
+      if (aiSettings.characterSlug && SLUG_TO_CHARACTER[aiSettings.characterSlug]) {
+        setSelectedCharacter(SLUG_TO_CHARACTER[aiSettings.characterSlug]);
+      }
     }
   };
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      
-      const updateData = {
-        system_prompt: systemPrompt,
-        custom_instruction: customInstruction,
+      // Persona Engine (Phase 5, guardrail #2): this client no longer builds
+      // or saves any merged prompt string. It only sends the raw selections
+      // — organization_ai_settings.persona_id (resolved server-side from
+      // this slug) is what PersonaService/PersonaPromptBuilder render into
+      // an actual prompt, on the server, at message time (Phase 2/3).
+      // bot_settings.system_prompt/tone/role/character are no longer
+      // written from this screen at all.
+      const characterSlug = CHARACTER_SLUGS[selectedCharacter] ?? null;
+
+      const result = await saveAiPersonaSettings({
+        characterSlug,
+        businessRole: selectedRole,
         tone: selectedTone,
-        role: selectedRole,
-        character: selectedCharacter,
-      };
+        customInstruction,
+      });
 
-      const { data: existingData } = await supabase
-        .from('bot_settings')
-        .select('id')
-        .eq('merchant_id', session.user.id)
-        .limit(1);
-
-      if (existingData && existingData.length > 0) {
-        await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
-      } else {
-        await supabase.from('bot_settings').insert([{ merchant_id: session.user.id, ...updateData }]);
+      if (!result.success) {
+        alert(`Ayarlar kaydedilemedi: ${result.error ?? 'Bilinmeyen hata'}`);
+        return;
       }
-      
+
       alert('Ayarlar başarıyla kaydedildi!');
     } catch (error) {
       console.error(error);
+      alert('Ayarlar kaydedilirken bir hata oluştu.');
     } finally {
       setIsSaving(false);
     }
@@ -154,35 +186,36 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     setIsTyping(true);
 
     try {
-      // Web arayüzünde seçilen ayarları birleştirip gönderelim
-      const fullSystemPrompt = `${systemPrompt}\n\nRol: ${selectedRole}\nKarakter: ${selectedCharacter}\nTon: ${selectedTone}\nÖzel Talimat: ${customInstruction}`;
-      
-      const { data, error } = await supabase.functions.invoke('gemini-chat', {
+      // Persona Engine (Phase 4/5): Canlı Test artık gerçek
+      // PromptBuilder/AIOrchestrator/ToolRegistry pipeline'ını
+      // executionMode "simulation" ile çalıştıran persona-test fonksiyonunu
+      // kullanıyor — gemini-chat'e ve elle birleştirilmiş bir system prompt
+      // string'ine artık hiç gerek yok. Henüz KAYDEDİLMEMİŞ seçimler
+      // (selectedRole/selectedCharacter/selectedTone/customInstruction)
+      // doğrudan gönderiliyor, böylece kullanıcı "Kaydet"e basmadan önce
+      // önizleme yapabiliyor — bu, Faz 5'in DoD'sinin ("Canlı Test'te
+      // görülenle birebir aynı yanıt") tam olarak dayandığı mekanizma.
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setMessages(prev => [...prev, { role: 'bot', content: 'Oturum bulunamadı, lütfen tekrar giriş yapın.' }]);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('persona-test', {
         body: {
-          prompt: inputValue.trim(),
-          mode: 'playground',
-          customInstruction: fullSystemPrompt
+          merchantId: session.user.id,
+          testMessage: inputValue.trim(),
+          personaSlug: CHARACTER_SLUGS[selectedCharacter] ?? null,
+          businessRole: selectedRole,
+          tone: selectedTone,
+          customInstruction: customInstruction,
         }
       });
 
       if (error || data?.error) {
         setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${error?.message || data?.error || 'Bilinmeyen Hata'}` }]);
       } else {
-        let responseText = "Cevap alınamadı.";
-        if (data && data.text) {
-          responseText = data.text;
-        } else if (data && data.adCopy) {
-          responseText = data.adCopy;
-        } else if (data && typeof data === 'string') {
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.text) responseText = parsed.text;
-            else if (parsed.adCopy) responseText = parsed.adCopy;
-          } catch (e) {
-            responseText = data;
-          }
-        }
-        setMessages(prev => [...prev, { role: 'bot', content: responseText }]);
+        setMessages(prev => [...prev, { role: 'bot', content: data?.text || "Cevap alınamadı." }]);
       }
     } catch (e: any) {
       setMessages(prev => [...prev, { role: 'bot', content: 'Sistem hatası oluştu.' }]);
@@ -422,15 +455,18 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                   <p style={{ fontSize: 12, color: "#FF7A59", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
                   <span style={{ fontSize: 11, color: "rgba(255,122,89,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
                 </div>
+                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 10, lineHeight: 1.5 }}>
+                  Bu alan artık kaydedilmiyor — yukarıdaki Karakter/Ton/Rol seçimleri ve "Asistan Talimatı Oluştur" kutusu kullanılıyor. Burada gördüğünüz metin, hiç persona seçmemiş eski hesaplar için hâlâ geçerli olan önceki yapılandırmanızın salt okunur bir yansımasıdır.
+                </p>
                 <textarea
                   value={systemPrompt}
-                  onChange={e => setSystemPrompt(e.target.value)}
+                  readOnly
                   style={{
                     width: "100%", minHeight: 200, background: "rgba(255,122,89,0.04)",
                     border: "1px solid rgba(255,122,89,0.15)", borderRadius: 12,
-                    padding: "14px", color: "rgba(255,255,255,0.85)", fontSize: 13,
+                    padding: "14px", color: "rgba(255,255,255,0.55)", fontSize: 13,
                     lineHeight: 1.7, resize: "vertical", outline: "none",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "Inter, sans-serif", cursor: "default",
                   }}
                 />
 

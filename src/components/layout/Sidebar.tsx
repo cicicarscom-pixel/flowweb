@@ -27,12 +27,14 @@ export default function Sidebar() {
           .from("profiles")
           .select("authorized_person, business_name, avatar_url")
           .eq("id", session.user.id)
-          .single();
+          .maybeSingle();
           
+        const metadata = session.user.user_metadata;
+        const googleName = metadata?.full_name || metadata?.name;
+        
+        setUserName(profile?.authorized_person || profile?.business_name || googleName || "Kullanıcı");
+
         if (profile) {
-          const metadata = session.user.user_metadata;
-          const googleName = metadata?.full_name || metadata?.name;
-          setUserName(profile.authorized_person || profile.business_name || googleName || "Kullanıcı");
           let av = profile.avatar_url;
           if (av && av.startsWith('file://')) {
             av = null;
@@ -44,8 +46,12 @@ export default function Sidebar() {
           if (av) {
             setAvatar(av);
           } else {
-            setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff');
+            setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || googleName || 'Esnaf') + '&background=00daf3&color=fff');
           }
+        } else if (metadata?.avatar_url || metadata?.picture) {
+          setAvatar(metadata.avatar_url || metadata.picture);
+        } else {
+           setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(googleName || 'Esnaf') + '&background=00daf3&color=fff');
         }
       }
     };

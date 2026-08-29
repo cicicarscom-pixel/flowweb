@@ -16,7 +16,6 @@ import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } fr
 const CHARACTER_SLUGS: Record<string, string> = {
   "Albert Einstein": "einstein",
   "William Shakespeare": "shakespeare",
-  "Mimar Sinan": "mimar-sinan",
 };
 const SLUG_TO_CHARACTER: Record<string, string> = Object.fromEntries(
   Object.entries(CHARACTER_SLUGS).map(([label, slug]) => [slug, label])
@@ -289,7 +288,6 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   const characters = [
     { id: "Albert Einstein", label: "Albert Einstein", icon: "😎" },
     { id: "William Shakespeare", label: "William Shakespeare", icon: "📜" },
-    { id: "Mimar Sinan", label: "Mimar Sinan", icon: "📐" },
   ];
 
   const tones = [

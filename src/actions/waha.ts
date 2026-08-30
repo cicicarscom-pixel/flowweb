@@ -45,7 +45,7 @@ export async function startWahaSession() {
         webhooks: [
           {
             url: "https://qybzidylewzsnmlofjul.supabase.co/functions/v1/waha-webhook",
-            events: ["message", "message.any", "session.status"]
+            events: ["message", "session.status"]
           }
         ]
       },
@@ -138,3 +138,4 @@ export async function getWahaPairingCode(phoneNumber: string) {
     return { success: false, error: error.message };
   }
 }
+

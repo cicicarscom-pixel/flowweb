@@ -146,6 +146,31 @@ export default function BotScreen() {
     }
   };
 
+  // Poll WAHA status when QR is showing or status is not yet WORKING
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (wahaQrCode || wahaPairingCode || (wahaStatus && wahaStatus !== 'WORKING' && wahaStatus !== 'STOPPED')) {
+      interval = setInterval(async () => {
+        const wahaRes = await getWahaStatus();
+        if (wahaRes.success && wahaRes.data) {
+          if (wahaRes.data.status !== wahaStatus) {
+            setWahaStatus(wahaRes.data.status);
+          }
+          if (wahaRes.data.status === 'WORKING') {
+            setWahaQrCode(null);
+            setWahaPairingCode(null);
+            if (wahaRes.data.me) {
+              setWahaPhone(wahaRes.data.me.id.split('@')[0]);
+            }
+          }
+        }
+      }, 3000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [wahaQrCode, wahaPairingCode, wahaStatus]);
+
   const handleToggle = async (key: 'social' | 'whatsapp', newValue: boolean) => {
     setBotConfig(c => ({ ...c, [key]: newValue }));
     const { data: { session } } = await supabase.auth.getSession();

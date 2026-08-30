@@ -54,6 +54,7 @@ export default function BotScreen() {
     smartRouting: false,
   });
   const [customInstruction, setCustomInstruction] = useState("");
+  const [timezone, setTimezone] = useState("Europe/Istanbul");
   const [isSaving, setIsSaving] = useState(false);
   
   const [wahaStatus, setWahaStatus] = useState<any>(null);
@@ -600,6 +601,35 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               </div>
             </div>
           )}
+
+          {/* Saat Dilimi (Timezone) Ayarı */}
+          <div className="glass" style={{
+            borderRadius: 20, padding: "16px 20px", marginTop: 8,
+            border: "1.5px solid rgba(255,122,89,0.5)",
+            background: "rgba(255,122,89,0.03)",
+            display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Saat Dilimi (Timezone)</h3>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Randevu ve çalışma saatlerinin doğru hesaplanabilmesi için</p>
+            </div>
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              style={{
+                background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,122,89,0.3)",
+                color: "#fff", padding: "8px 12px", borderRadius: 8, outline: "none", fontSize: 14,
+                cursor: "pointer", minWidth: 200
+              }}
+            >
+              <option value="Europe/Istanbul" style={{ background: "#1a1a1a" }}>Türkiye (Europe/Istanbul)</option>
+              <option value="Europe/London" style={{ background: "#1a1a1a" }}>İngiltere (Europe/London)</option>
+              <option value="Europe/Berlin" style={{ background: "#1a1a1a" }}>Almanya (Europe/Berlin)</option>
+              <option value="America/New_York" style={{ background: "#1a1a1a" }}>ABD Doğu (America/New_York)</option>
+              <option value="America/Los_Angeles" style={{ background: "#1a1a1a" }}>ABD Batı (America/Los_Angeles)</option>
+              <option value="Asia/Dubai" style={{ background: "#1a1a1a" }}>BAE (Asia/Dubai)</option>
+            </select>
+          </div>
 
           {/* Asistan Talimatı Oluştur */}
           <div>

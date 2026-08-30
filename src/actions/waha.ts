@@ -44,8 +44,8 @@ export async function startWahaSession() {
       config: {
         webhooks: [
           {
-            url: "https://qybzidylewzsnmlofjul.supabase.co/functions/v1/waha-webhook",
-            events: ["message", "session.status"]
+            url: (process.env.NEXT_PUBLIC_SITE_URL || "https://flow.workigom.com") + "/api/waha",
+            events: ["message", "message.any", "session.status"]
           }
         ]
       }

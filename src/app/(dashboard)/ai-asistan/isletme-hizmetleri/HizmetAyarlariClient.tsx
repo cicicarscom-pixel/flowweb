@@ -59,7 +59,7 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
                 <div 
                   key={svc.id}
                   onClick={() => setSelectedService(svc)}
-                  className={group flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors \}
+                  className={`group flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${selectedService?.id === svc.id ? 'border-secondary/50 bg-secondary/5' : 'border-dark-border bg-dark-surface hover:border-dark-border/80'}`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-medium" style={{ backgroundColor: svc.color || '#3b82f6', color: '#fff' }}>
@@ -100,18 +100,17 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
             <form action={handleSave} className="flex-1 space-y-5">
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Adı</label>
-                <input name="name" key={\
-ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="text" />
+                <input name="name" key={`name-${selectedService?.id || 'new'}`} defaultValue={selectedService?.name || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="text" />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-2">Fiyat</label>
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
-                    <input name="price" key={\price-\\} defaultValue={selectedService?.price || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" step="0.01" />
+                    <input name="price" key={`price-${selectedService?.id || 'new'}`} defaultValue={selectedService?.price || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" step="0.01" />
                   </div>
                   <div className="w-32">
-                    <select name="currency" key={\cur-\\} defaultValue={selectedService?.currency || 'TL'} className="w-full bg-dark-surface border border-dark-border rounded-lg pl-4 pr-10 py-2.5 text-white appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    <select name="currency" key={`cur-${selectedService?.id || 'new'}`} defaultValue={selectedService?.currency || 'TL'} className="w-full bg-dark-surface border border-dark-border rounded-lg pl-4 pr-10 py-2.5 text-white appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500">
                       <option value="TL">TL</option>
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
@@ -119,7 +118,7 @@ ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg
                   </div>
                   <span className="text-dark-muted">/</span>
                   <div className="w-40">
-                    <select name="unit" key={\unit-\\} defaultValue={selectedService?.unit || 'seans'} className="w-full bg-dark-surface border border-dark-border rounded-lg pl-4 pr-10 py-2.5 text-white appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                    <select name="unit" key={`unit-${selectedService?.id || 'new'}`} defaultValue={selectedService?.unit || 'seans'} className="w-full bg-dark-surface border border-dark-border rounded-lg pl-4 pr-10 py-2.5 text-white appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500">
                       <option value="seans">seans</option>
                       <option value="saat">saat</option>
                       <option value="adet">adet</option>
@@ -130,12 +129,12 @@ ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg
 
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-2">Açıklama (İsteğe bağlı)</label>
-                <textarea name="description" key={\desc-\\} defaultValue={selectedService?.description || ''} className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-3 text-white placeholder-dark-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" rows={3}></textarea>
+                <textarea name="description" key={`desc-${selectedService?.id || 'new'}`} defaultValue={selectedService?.description || ''} className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-3 text-white placeholder-dark-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" rows={3}></textarea>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Süre (Dakika)</label>
-                <input name="duration_minutes" key={\dur-\\} defaultValue={selectedService?.duration_minutes || 30} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" />
+                <input name="duration_minutes" key={`dur-${selectedService?.id || 'new'}`} defaultValue={selectedService?.duration_minutes || 30} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" />
               </div>
               
               <input type="hidden" name="color" value={selectedService?.color || '#F97316'} />

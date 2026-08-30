@@ -21,14 +21,15 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
         window.location.reload(); 
       } catch (err) {
         console.error(err);
-        alert('Hizmet kaydedilirken hata oluþtu.');
+        alert('Hizmet kaydedilirken hata oluï¿½tu.');
       }
     });
   };
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    if (!confirm('Bu hizmeti silmek istediðinize emin misiniz?')) return;
+    if (!confirm('Bu hizmeti silmek istediï¿½inize emin misiniz?')) return;
     
     startTransition(async () => {
       try {
@@ -36,7 +37,7 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
         window.location.reload();
       } catch (err) {
         console.error(err);
-        alert('Hizmet silinirken hata oluþtu.');
+        alert('Hizmet silinirken hata oluï¿½tu.');
       }
     });
   };
@@ -44,8 +45,8 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
   return (
     <div className="flex-1 overflow-y-auto p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-on-surface mb-2">Hizmet Ayarlarý</h1>
-        <p className="text-dark-muted text-sm">Müþterileriniz randevu alýrken hizmetleri bu listeden seçebilir.</p>
+        <h1 className="text-2xl font-bold text-on-surface mb-2">Hizmet Ayarlarï¿½</h1>
+        <p className="text-dark-muted text-sm">Mï¿½ï¿½terileriniz randevu alï¿½rken hizmetleri bu listeden seï¿½ebilir.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl">
@@ -73,7 +74,7 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
                     <button className="w-8 h-8 rounded hover:bg-white/5 flex items-center justify-center text-dark-muted hover:text-on-surface transition-colors">
                       <i className="fa-solid fa-pen text-xs"></i>
                     </button>
-                    <button onClick={(e) => handleDelete(svc.id, e)} className="w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400 hover:bg-red-900/40 transition-colors">
+                    <button type="button" onClick={(e) => handleDelete(svc.id, e)} className="relative z-10 w-8 h-8 rounded bg-red-900/20 border border-red-900/30 flex items-center justify-center text-red-400 hover:bg-red-900/40 transition-colors">
                       <i className="fa-solid fa-trash-can text-xs"></i>
                     </button>
                   </div>
@@ -88,17 +89,17 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
           </div>
         </div>
 
-        {/* Sað Kolon */}
+        {/* Saï¿½ Kolon */}
         <div className="lg:col-span-7">
           <div className="bg-dark-card border border-dark-border rounded-xl p-6 h-full flex flex-col">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'}</h2>
+              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? 'Hizmet Dï¿½zenle' : 'Yeni Hizmet Ekle'}</h2>
               <p className="text-sm text-dark-muted">Hizmet bilgilerini girin ve kaydedin.</p>
             </div>
             
             <form action={handleSave} className="flex-1 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Adý</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Adï¿½</label>
                 <input name="name" key={\
 ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="text" />
               </div>
@@ -128,12 +129,12 @@ ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Açýklama (Ýsteðe baðlý)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Aï¿½ï¿½klama (ï¿½steï¿½e baï¿½lï¿½)</label>
                 <textarea name="description" key={\desc-\\} defaultValue={selectedService?.description || ''} className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-3 text-white placeholder-dark-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" rows={3}></textarea>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Süre (Dakika)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Sï¿½re (Dakika)</label>
                 <input name="duration_minutes" key={\dur-\\} defaultValue={selectedService?.duration_minutes || 30} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" />
               </div>
               

@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { createBusinessService, updateBusinessService, deleteBusinessService } from '@/actions/businessServices';
 
-export default function HizmetAyarlariClient({ initialServices, merchantId }: { initialServices: any[], merchantId: string }) {
+export default function HizmetAyarlarıiClient({ initialServices, merchantId }: { initialServices: any[], merchantId: string }) {
   const [services, setServices] = useState(initialServices);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
@@ -21,7 +21,7 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
         window.location.reload(); 
       } catch (err) {
         console.error(err);
-        alert('Hizmet kaydedilirken hata olu�tu.');
+        alert('Hizmet kaydedilirken hata oluştu.');
       }
     });
   };
@@ -29,7 +29,7 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm('Bu hizmeti silmek istedi�inize emin misiniz?')) return;
+    if (!confirm('Bu hizmeti silmek istediğinize emin misiniz?')) return;
     
     startTransition(async () => {
       try {
@@ -37,7 +37,7 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
         window.location.reload();
       } catch (err) {
         console.error(err);
-        alert('Hizmet silinirken hata olu�tu.');
+        alert('Hizmet silinirken hata oluştu.');
       }
     });
   };
@@ -45,8 +45,8 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
   return (
     <div className="flex-1 overflow-y-auto p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-on-surface mb-2">Hizmet Ayarlar�</h1>
-        <p className="text-dark-muted text-sm">M��terileriniz randevu al�rken hizmetleri bu listeden se�ebilir.</p>
+        <h1 className="text-2xl font-bold text-on-surface mb-2">Hizmet Ayarları</h1>
+        <p className="text-dark-muted text-sm">Müşterileriniz randevu alırken hizmetleri bu listeden seçebilir.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl">
@@ -89,17 +89,17 @@ export default function HizmetAyarlariClient({ initialServices, merchantId }: { 
           </div>
         </div>
 
-        {/* Sa� Kolon */}
+        {/* Sağ Kolon */}
         <div className="lg:col-span-7">
           <div className="bg-dark-card border border-dark-border rounded-xl p-6 h-full flex flex-col">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? 'Hizmet D�zenle' : 'Yeni Hizmet Ekle'}</h2>
+              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'}</h2>
               <p className="text-sm text-dark-muted">Hizmet bilgilerini girin ve kaydedin.</p>
             </div>
             
             <form action={handleSave} className="flex-1 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Ad�</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Adı</label>
                 <input name="name" key={\
 ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="text" />
               </div>
@@ -129,12 +129,12 @@ ame-\\} defaultValue={selectedService?.name || ''} required className="w-full bg
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">A��klama (�ste�e ba�l�)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Açıklama (İsteğe bağlı)</label>
                 <textarea name="description" key={\desc-\\} defaultValue={selectedService?.description || ''} className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-3 text-white placeholder-dark-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" rows={3}></textarea>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Tahmini S�re (Dakika)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Süre (Dakika)</label>
                 <input name="duration_minutes" key={\dur-\\} defaultValue={selectedService?.duration_minutes || 30} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" />
               </div>
               

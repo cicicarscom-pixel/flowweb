@@ -7,10 +7,12 @@ export default async function IsletmeHizmetleriPage() {
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session) {
-    return <div>Oturum bulunamadý.</div>;
+    return <div>Oturum bulunamadÄ±.</div>;
   }
   
   const services = await getBusinessServices(session.user.id);
   
-  return <HizmetAyarlariClient initialServices={services} merchantId={session.user.id} />;
+  return (
+    <HizmetAyarlariClient initialServices={services} merchantId={session.user.id} />
+  );
 }

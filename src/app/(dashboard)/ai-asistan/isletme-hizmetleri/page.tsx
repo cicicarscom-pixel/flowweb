@@ -1,9 +1,9 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { getBusinessServices } from '@/actions/businessServices';
 import HizmetAyarlariClient from './HizmetAyarlariClient';
 
 export default async function IsletmeHizmetleriPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session) {

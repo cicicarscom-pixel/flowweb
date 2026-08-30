@@ -1,10 +1,10 @@
 'use server'
 
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function getBusinessServices(merchantId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('business_services')
     .select('*')
@@ -16,7 +16,7 @@ export async function getBusinessServices(merchantId: string) {
 }
 
 export async function createBusinessService(merchantId: string, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const payload = {
     merchant_id: merchantId,
@@ -39,7 +39,7 @@ export async function createBusinessService(merchantId: string, formData: FormDa
 }
 
 export async function updateBusinessService(id: string, formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const payload = {
     name: formData.get('name') as string,
@@ -62,7 +62,7 @@ export async function updateBusinessService(id: string, formData: FormData) {
 }
 
 export async function deleteBusinessService(id: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.from('business_services').delete().eq('id', id);
   
   if (error) throw new Error(error.message);

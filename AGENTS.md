@@ -1,29 +1,29 @@
-ï»¿# Workigom Flow â€” Agent KurallarÄ± ve Proje HafÄ±zasÄ±
+# Workigom Flow — Agent Kuralları ve Proje Hafızası
 
-## ğŸš¨ Kritik Kural: Ortak VeritabanÄ± EtkileÅŸimi (Web & Mobil)
+## ?? Kritik Kural: Ortak Veritabanı Etkileşimi (Web & Mobil)
 
-**Web ve Mobil versiyonlar AYNI (Supabase) veritabanÄ±nÄ± paylaÅŸmaktadÄ±r.** 
-- Web tarafÄ±nda bir veritabanÄ± (ÅŸema, tablo, edge function) veya query deÄŸiÅŸikliÄŸi yaptÄ±ÄŸÄ±nÄ±zda, bunun Mobil (React Native) uygulamasÄ±nÄ± da doÄŸrudan etkileyeceÄŸini ve bozabileceÄŸini DAÄ°MA hesaba katÄ±n.
-- Herhangi bir API metodolojisi (`.single()` vb.) veya veri modeli deÄŸiÅŸikliÄŸi yapmadan Ã¶nce, bunun her iki platformdaki koda nasÄ±l yansÄ±yacaÄŸÄ±nÄ± kontrol edin.
+**Web ve Mobil versiyonlar AYNI (Supabase) veritabanını paylaşmaktadır.** 
+- Web tarafında bir veritabanı (şema, tablo, edge function) veya query değişikliği yaptığınızda, bunun Mobil (React Native) uygulamasını da doğrudan etkileyeceğini ve bozabileceğini DAİMA hesaba katın.
+- Herhangi bir API metodolojisi (`.single()` vb.) veya veri modeli değişikliği yapmadan önce, bunun her iki platformdaki koda nasıl yansıyacağını kontrol edin.
 
-## ğŸš¨ Kritik Kural: Expo SDK
+## ?? Kritik Kural: Expo SDK
 
 Read the exact versioned docs at https://docs.expo.dev/versions/v57.0.0/ before writing any code.
 
 ---
 
-## ğŸš¨ Kritik Kural: Dependency Injection
+## ?? Kritik Kural: Dependency Injection
 
-**`tsyringe` KULLANILMAMAKTADIR ve kullanÄ±lMAYACAKTIR.**
+**`tsyringe` KULLANILMAMAKTADIR ve kullanılMAYACAKTIR.**
 
-- `@injectable()`, `@inject()`, `reflect-metadata` â†’ **KESÄ°NLÄ°KLE YASAK**
-- Hermes JS Engine bu dekoratÃ¶rleri desteklemez â†’ Build patlar
-- TÃ¼m baÄŸÄ±mlÄ±lÄ±klar `src/core/container.ts` iÃ§indeki **manuel singleton** sistemiyle yÃ¶netilir
+- `@injectable()`, `@inject()`, `reflect-metadata` › **KESİNLİKLE YASAK**
+- Hermes JS Engine bu dekoratörleri desteklemez › Build patlar
+- Tüm bağımlılıklar `src/core/container.ts` içindeki **manuel singleton** sistemiyle yönetilir
 
-### Yeni servis/repository eklemek iÃ§in:
+### Yeni servis/repository eklemek için:
 
 ```typescript
-// 1. src/core/container.ts iÃ§inde singleton oluÅŸtur
+// 1. src/core/container.ts içinde singleton oluştur
 const myNewRepository = new MyNewRepository();
 
 // 2. resolve() switch'ine ekle (string key veya class ref ile)
@@ -33,69 +33,69 @@ if (cls === MyNewUseCase) return myNewUseCase;
 
 ---
 
-## ğŸ—ï¸ Mimari YapÄ±
+## ??? Mimari Yapı
 
 ### Proje Teknolojileri
 
 - **Frontend**: React Native 0.86, Expo SDK 57, React 19, React Navigation v7
 - **Backend**: Supabase (PostgreSQL + Realtime + Edge Functions)
 - **Auth**: Supabase Auth + AsyncStorage
-- **DI**: Manuel container (`src/core/container.ts`) â€” tsyringe YOK
+- **DI**: Manuel container (`src/core/container.ts`) — tsyringe YOK
 - **Stil**: NativeWind v2 + Tailwind CSS v3, StyleSheet + Glassmorphism, renk paleti `#131315` (bg) / `#4edea3` (primary)
 
-### Katman KurallarÄ± (Clean Architecture)
+### Katman Kuralları (Clean Architecture)
 
 ```
-Domain  â† Application â† Infrastructure â† Presentation
+Domain  ‹ Application ‹ Infrastructure ‹ Presentation
 ```
 
 - **Domain**: Sadece saf TypeScript. React/Supabase import YOK.
-- **Application**: UseCase'ler. Sadece interface'lere baÄŸÄ±mlÄ±, concrete class import YOK.
-- **Infrastructure**: Supabase, WAHA, Zernio implementasyonlarÄ±.
-- **Presentation**: React Native ekranlarÄ± ve hook'lar. Container Ã¼zerinden UseCase Ã§aÄŸÄ±rÄ±r.
+- **Application**: UseCase'ler. Sadece interface'lere bağımlı, concrete class import YOK.
+- **Infrastructure**: Supabase, WAHA, Zernio implementasyonları.
+- **Presentation**: React Native ekranları ve hook'lar. Container üzerinden UseCase çağırır.
 
-### ModÃ¼l YapÄ±sÄ±
+### Modül Yapısı
 
 ```
 src/
-â”œâ”€â”€ core/
-â”‚   â”œâ”€â”€ container.ts          â€” Manuel DI container (singleton'lar burada)
-â”‚   â””â”€â”€ navigation/
-â”‚       â”œâ”€â”€ AppNavigator.js   â€” Root navigator
-â”‚       â””â”€â”€ TabNavigator.js   â€” Tab bar + nested stacks
-â”‚
-â”œâ”€â”€ shared/
-â”‚   â”œâ”€â”€ lib/supabase.js       â€” Supabase client (createClient)
-â”‚   â”œâ”€â”€ errors/               â€” AppError, NetworkError, ValidationError...
-â”‚   â””â”€â”€ ui/                   â€” PaylaÅŸÄ±lan UI bileÅŸenleri
-â”‚
-â””â”€â”€ modules/
-    â”œâ”€â”€ randevu/              â€” ğŸ“… Randevu yÃ¶netimi
-    â”œâ”€â”€ muhasebe/             â€” ğŸ’° AI muhasebe
-    â””â”€â”€ sosyal_medya/         â€” ğŸ“± Bot yÃ¶netimi + sosyal medya
++¦¦ core/
+-   +¦¦ container.ts          — Manuel DI container (singleton'lar burada)
+-   L¦¦ navigation/
+-       +¦¦ AppNavigator.js   — Root navigator
+-       L¦¦ TabNavigator.js   — Tab bar + nested stacks
+-
++¦¦ shared/
+-   +¦¦ lib/supabase.js       — Supabase client (createClient)
+-   +¦¦ errors/               — AppError, NetworkError, ValidationError...
+-   L¦¦ ui/                   — Paylaşılan UI bileşenleri
+-
+L¦¦ modules/
+    +¦¦ randevu/              — ?? Randevu yönetimi
+    +¦¦ muhasebe/             — ?? AI muhasebe
+    L¦¦ sosyal_medya/         — ?? Bot yönetimi + sosyal medya
 ```
 
 ---
 
-## ğŸ“… Randevu ModÃ¼lÃ¼ â€” HafÄ±za NotlarÄ±
+## ?? Randevu Modülü — Hafıza Notları
 
 ### Ekranlar ve Navigasyon
 
 ```
 BotYonetimiScreen
-  â””â”€â–º RandevuScreen        (stack: "RandevuMain")
-        â””â”€â–º HizmetAyarlariScreen  (stack: "HizmetAyarlari")
+  L¦> RandevuScreen        (stack: "RandevuMain")
+        L¦> HizmetAyarlariScreen  (stack: "HizmetAyarlari")
 ```
 
-Navigasyon: `TabNavigator.js` iÃ§indeki `BotYonetimiStack` altÄ±nda tÃ¼m 3 ekran tanÄ±mlÄ±.
+Navigasyon: `TabNavigator.js` içindeki `BotYonetimiStack` altında tüm 3 ekran tanımlı.
 
-### RandevuScreen Ã–zellikleri
+### RandevuScreen Özellikleri
 
-- `stickyHeaderIndices={[0]}` â€” Calendar + Heatmap her zaman ekranda sabit
-- Takvim ÅŸeridi: yatay kaydÄ±rÄ±labilir, seÃ§ili gÃ¼n yeÅŸil/bÃ¼yÃ¼k
-- Heatmap: 3 satÄ±r (Sabah/Ã–ÄŸle/AkÅŸam), 30 dakikalÄ±k slotlar, tÃ¼m satÄ±rlar birlikte kayar
-- Timeline: `useAppointments` hook'undan gelen gerÃ§ek DB verisi
-- FAB: NabÄ±z atan animasyonlu `+` butonu (tab bar + insets Ã¼zerinde)
+- `stickyHeaderIndices={[0]}` — Calendar + Heatmap her zaman ekranda sabit
+- Takvim şeridi: yatay kaydırılabilir, seçili gün yeşil/büyük
+- Heatmap: 3 satır (Sabah/Öğle/Akşam), 30 dakikalık slotlar, tüm satırlar birlikte kayar
+- Timeline: `useAppointments` hook'undan gelen gerçek DB verisi
+- FAB: Nabız atan animasyonlu `+` butonu (tab bar + insets üzerinde)
 
 ### useAppointments Hook (src/modules/randevu/presentation/hooks/useAppointments.ts)
 
@@ -103,41 +103,41 @@ Navigasyon: `TabNavigator.js` iÃ§indeki `BotYonetimiStack` altÄ±nda tÃ¼m 3 ekran
 const { appointments, loading, isSlotBusy, selectedDate, setSelectedDate } = useAppointments();
 ```
 
-- `container.resolve('AppointmentRepository')` ile repo alÄ±r
-- `selectedDate` deÄŸiÅŸince `getAppointmentsByDate()` Ã§eker
+- `container.resolve('AppointmentRepository')` ile repo alır
+- `selectedDate` değişince `getAppointmentsByDate()` çeker
 - `subscribeToAppointments()` ile Realtime dinler, unmount'ta temizler
-- `isSlotBusy(timeSlot: string)` â†’ o saatte Pending/Approved randevu var mÄ±?
-- `extractTime(dateStr)` â€” ISO/space-separated datetime'dan "HH:MM" Ã§Ä±karÄ±r
+- `isSlotBusy(timeSlot: string)` › o saatte Pending/Approved randevu var mı?
+- `extractTime(dateStr)` — ISO/space-separated datetime'dan "HH:MM" çıkarır
 
-### SupabaseAppointmentRepository MetodlarÄ±
+### SupabaseAppointmentRepository Metodları
 
-| Metod | AÃ§Ä±klama |
+| Metod | Açıklama |
 |-------|----------|
-| `create()` | Yeni randevu oluÅŸtur |
+| `create()` | Yeni randevu oluştur |
 | `approve(id)` | Randevu onayla |
 | `cancel(id)` | Randevu iptal et |
 | `findByToken(token)` | Token ile randevu bul |
-| `findAvailableHours(date, serviceId)` | MÃ¼sait saatleri listele |
-| `getAppointmentsByDate(date)` | GÃ¼ne gÃ¶re randevularÄ± Ã§ek |
-| `subscribeToAppointments(date, cb)` | Realtime dinle, unsubscribe fn dÃ¶ner |
+| `findAvailableHours(date, serviceId)` | Müsait saatleri listele |
+| `getAppointmentsByDate(date)` | Güne göre randevuları çek |
+| `subscribeToAppointments(date, cb)` | Realtime dinle, unsubscribe fn döner |
 
 ### Supabase Realtime
 
 - Table: `appointments`
-- Publication: `supabase_realtime` â€” appointments tablosu ekli olmalÄ±
-- Filter: `date=eq.${date}` â€” sadece seÃ§ili gÃ¼nÃ¼n deÄŸiÅŸikliklerini dinler
-- Her event'te tÃ¼m liste yeniden Ã§ekilir (tutarlÄ±lÄ±k garantisi iÃ§in)
+- Publication: `supabase_realtime` — appointments tablosu ekli olmalı
+- Filter: `date=eq.${date}` — sadece seçili günün değişikliklerini dinler
+- Her event'te tüm liste yeniden çekilir (tutarlılık garantisi için)
 
 ---
 
-## ğŸ¨ TasarÄ±m Sistemi
+## ?? Tasarım Sistemi
 
 ### Renk Paleti (Dark Theme)
 
 ```
 Background:   #131315
 Surface:      rgba(32,31,34,0.4)  (glassmorphism)
-Primary:      #4edea3  (yeÅŸil vurgu)
+Primary:      #4edea3  (yeşil vurgu)
 On-Primary:   #003824
 Secondary:    #ffb95f  (turuncu)
 Tertiary:     #c0c1ff  (mor)
@@ -161,7 +161,7 @@ Border:       rgba(60,74,66,0.2)
 }
 ```
 
-### FAB KonumlandÄ±rma (Tab Bar ÃœstÃ¼nde)
+### FAB Konumlandırma (Tab Bar Üstünde)
 
 ```javascript
 const insets = useSafeAreaInsets();
@@ -173,12 +173,12 @@ const fabBottom = tabBarBottom + tabBarHeight + 14;
 
 ---
 
-## ğŸ” Supabase YapÄ±landÄ±rmasÄ±
+## ?? Supabase Yapılandırması
 
 ### Client (src/shared/lib/supabase.js)
 
 ```javascript
-import 'react-native-url-polyfill/auto';      // ZORUNLU â€” React Native'de URL.
+import 'react-native-url-polyfill/auto';      // ZORUNLU — React Native'de URL.
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
 
@@ -189,7 +189,7 @@ export const supabase = createClient(
 );
 ```
 
-### .env DeÄŸiÅŸkenleri
+### .env Değişkenleri
 
 ```
 EXPO_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
@@ -198,38 +198,38 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJxxx...
 
 ---
 
-## âš ï¸ Bilinen Sorunlar ve Ã‡Ã¶zÃ¼mleri
+## ?? Bilinen Sorunlar ve Çözümleri
 
-| Sorun | Ã‡Ã¶zÃ¼m |
+| Sorun | Çözüm |
 |-------|-------|
-| `TypeInfo not known for "X"` | tsyringe kalÄ±ntÄ±sÄ± var. `container.resolve(X)` ile resolve et, `@injectable` kaldÄ±r |
-| `declare class` TypeScript hatasÄ± | Babel TypeScript plugin sÄ±rasÄ± sorunu. `tsyringe` kaldÄ±r, `reflect-metadata` import etme |
-| `Element type is invalid: got undefined` | Named/default export karÄ±ÅŸÄ±klÄ±ÄŸÄ±. Component export'larÄ±nÄ± kontrol et |
-| `SafeAreaView has been deprecated` | `react-native-safe-area-context`'ten import et, `react-native`'den deÄŸil |
-| FAB tab bar'Ä±n altÄ±nda kalÄ±yor | `useSafeAreaInsets` kullan, hardcoded bottom deÄŸeri verme |
-| Realtime Ã§alÄ±ÅŸmÄ±yor | Supabase panelinde `supabase_realtime` publication'a tabloyu ekle |
+| `TypeInfo not known for "X"` | tsyringe kalıntısı var. `container.resolve(X)` ile resolve et, `@injectable` kaldır |
+| `declare class` TypeScript hatası | Babel TypeScript plugin sırası sorunu. `tsyringe` kaldır, `reflect-metadata` import etme |
+| `Element type is invalid: got undefined` | Named/default export karışıklığı. Component export'larını kontrol et |
+| `SafeAreaView has been deprecated` | `react-native-safe-area-context`'ten import et, `react-native`'den değil |
+| FAB tab bar'ın altında kalıyor | `useSafeAreaInsets` kullan, hardcoded bottom değeri verme |
+| Realtime çalışmıyor | Supabase panelinde `supabase_realtime` publication'a tabloyu ekle |
 
 ---
 
-## ğŸ§­ Navigasyon YapÄ±sÄ±
+## ?? Navigasyon Yapısı
 
 ```
 App.js
-â””â”€â”€ AppNavigator (Stack)
-    â”œâ”€â”€ AuthScreen
-    â””â”€â”€ TabNavigator (Bottom Tabs)
-        â”œâ”€â”€ Tab: Dashboard
-        â”œâ”€â”€ Tab: Muhasebe â†’ AiMuhasebeScreen
-        â”œâ”€â”€ Tab: BotYonetimi (BotYonetimiStack)
-        â”‚   â”œâ”€â”€ BotYonetimiScreen    ("BotYonetimiMain")
-        â”‚   â”œâ”€â”€ RandevuScreen        ("RandevuMain")
-        â”‚   â””â”€â”€ HizmetAyarlariScreen ("HizmetAyarlari")
-        â””â”€â”€ Tab: SosyalMedya
+L¦¦ AppNavigator (Stack)
+    +¦¦ AuthScreen
+    L¦¦ TabNavigator (Bottom Tabs)
+        +¦¦ Tab: Dashboard
+        +¦¦ Tab: Muhasebe › AiMuhasebeScreen
+        +¦¦ Tab: BotYonetimi (BotYonetimiStack)
+        -   +¦¦ BotYonetimiScreen    ("BotYonetimiMain")
+        -   +¦¦ RandevuScreen        ("RandevuMain")
+        -   L¦¦ HizmetAyarlariScreen ("HizmetAyarlari")
+        L¦¦ Tab: SosyalMedya
 ```
 
 ---
 
-## ğŸ“¦ Ã–nemli Paketler
+## ?? Önemli Paketler
 
 ```json
 {
@@ -248,42 +248,42 @@ App.js
 
 ---
 
-## ğŸ“ Son GeliÅŸtirme GÃ¼nlÃ¼ÄŸÃ¼ (25 Temmuz 2026)
+## ?? Son Geliştirme Günlüğü (25 Temmuz 2026)
 
-### YapÄ±lan DeÄŸiÅŸiklikler ve Ã‡Ã¶zÃ¼len Hatalar:
-1. **Paket TemizliÄŸi:** `tsyringe`, `reflect-metadata` ve gereksiz Babel decorator plugin'leri `package.json`'dan kaldÄ±rÄ±ldÄ±.
-2. **KonfigÃ¼rasyon TemizliÄŸi:** `tsconfig.json` dosyasÄ±ndaki `experimentalDecorators` ve `emitDecoratorMetadata` flag'leri kaldÄ±rÄ±ldÄ±.
-3. **DokÃ¼mantasyon Senkronizasyonu:** AGENTS.md dosyasÄ± mevcut teknoloji yÄ±ÄŸÄ±nÄ±na (Expo 57 / RN 0.86 / React 19) gÃ¶re gÃ¼ncellendi.
-4. **Mimari DÃ¼zenlemeler:** Eksik `index.ts` dosyalarÄ± (randevu, persona_engine, business-profile) oluÅŸturuldu. BotYonetimiScreen'deki derin (deep) import kural ihlalleri barrel export Ã¼zerinden tek satÄ±ra indirgendi.
-5. **Container BaÄŸlantÄ±larÄ±:** Eksik olan `wahaService` ve `transactionRepository` container DI sistemine resolve olarak eklendi. `container` nesnesi `core/index.ts` Ã¼zerinden dÄ±ÅŸa aktarÄ±ldÄ±.
-
----
-
-## ğŸ“ GeÃ§miÅŸ GeliÅŸtirme GÃ¼nlÃ¼ÄŸÃ¼ (5 Temmuz 2026)
-
-### YapÄ±lan DeÄŸiÅŸiklikler ve Ã‡Ã¶zÃ¼len Hatalar:
-1. **Zernio Client ve Analytics Cache GÃ¼ncellemesi:** Supabase Edge Functions altÄ±ndaki `ZernioClient.ts` dosyasÄ± gÃ¼ncellenerek sosyal medya platformlarÄ± (YouTube, LinkedIn, Instagram, Google Business, vb.) iÃ§in analytics metotlarÄ± Ã¶nbellekleme (cache) desteÄŸi ile entegre edildi.
-2. **Hata YÃ¶netimi ve Silme Ä°ÅŸlemi:** Zernio hesabÄ±nÄ± ayÄ±rma (`disconnect-account`) iÅŸlemi doÄŸrudan ZernioClient iÃ§indeki metoda baÄŸlandÄ±.
-3. **VeritabanÄ± Migration'Ä±:** Analytics cache iÃ§in yeni bir Supabase veritabanÄ± migration'Ä± (`20260705000000_analytics_cache.sql`) oluÅŸturuldu.
-4. **BaÄŸÄ±mlÄ±lÄ±klar:** `package.json` ve `package-lock.json` dosyalarÄ± gÃ¼ncellendi.
+### Yapılan Değişiklikler ve Çözülen Hatalar:
+1. **Paket Temizliği:** `tsyringe`, `reflect-metadata` ve gereksiz Babel decorator plugin'leri `package.json`'dan kaldırıldı.
+2. **Konfigürasyon Temizliği:** `tsconfig.json` dosyasındaki `experimentalDecorators` ve `emitDecoratorMetadata` flag'leri kaldırıldı.
+3. **Dokümantasyon Senkronizasyonu:** AGENTS.md dosyası mevcut teknoloji yığınına (Expo 57 / RN 0.86 / React 19) göre güncellendi.
+4. **Mimari Düzenlemeler:** Eksik `index.ts` dosyaları (randevu, persona_engine, business-profile) oluşturuldu. BotYonetimiScreen'deki derin (deep) import kural ihlalleri barrel export üzerinden tek satıra indirgendi.
+5. **Container Bağlantıları:** Eksik olan `wahaService` ve `transactionRepository` container DI sistemine resolve olarak eklendi. `container` nesnesi `core/index.ts` üzerinden dışa aktarıldı.
 
 ---
 
-## ğŸ“ GeÃ§miÅŸ GeliÅŸtirme GÃ¼nlÃ¼ÄŸÃ¼ (27 Haziran 2026)
+## ?? Geçmiş Geliştirme Günlüğü (5 Temmuz 2026)
 
-### YapÄ±lan DeÄŸiÅŸiklikler ve Ã‡Ã¶zÃ¼len Hatalar:
-1. **GitHub Senkronizasyonu:** Local `master` dalÄ± `origin/master` ile gÃ¼ncel olmasÄ±na raÄŸmen en son gÃ¼ncellemelerin (Randevu Realtime, RAG Drive senkronizasyonu, dual prompt ve RGB border) `origin/main` dalÄ±nda olduÄŸu fark edildi. Local repo `main` dalÄ±na geÃ§irilerek gÃ¼ncel kod Ã§ekildi.
-2. **Randevu ModÃ¼lÃ¼ i18n:** `RandevuScreen.js` ve `HizmetAyarlariScreen.js` ekranlarÄ±ndaki tÃ¼m hardcoded TÃ¼rkÃ§e kelimeler temizlenerek `tr.json`, `en.json` ve `de.json` dosyalarÄ±na baÄŸlandÄ±. `useTranslation` hook'u ile dinamik yerelleÅŸtirme tamamlandÄ±.
-3. **Animated Ref Render EriÅŸimi Ã‡Ã¶zÃ¼ldÃ¼:** `RandevuScreen.js` ve `AiUretimScreen.js`'deki Animated Value'larÄ±n render esnasÄ±nda ref Ã¼zerinden `.current` olarak okunmasÄ± nedeniyle linter'Ä±n fÄ±rlattÄ±ÄŸÄ± `Cannot access refs during render` hatasÄ±, `useState` tabanlÄ± `Animated.Value` tanÄ±mlamasÄ±na geÃ§ilerek tamamen Ã§Ã¶zÃ¼ldÃ¼.
-4. **TypeScript Path Aliases & Anti-Bypass Entegrasyonu:** `tsconfig.json` dosyasÄ±nda `@domain/*`, `@application/*`, `@infrastructure/*` ve `@presentation/*` alias'larÄ±na `randevu` modÃ¼lÃ¼ dahil edildi. Projedeki tÃ¼m relative path import'lar path alias'larÄ±na geÃ§irilerek ESLint'in `no-restricted-imports` (Anti-Bypass) kuralÄ± yeÅŸile Ã§ekildi.
-5. **KapsamlÄ± Linter KontrolÃ¼:** `npm run lint` Ã§alÄ±ÅŸtÄ±rÄ±larak tÃ¼m 42 hata giderildi ve linter **0 hata** ile tamamlandÄ±.
-6. **Sistem TalimatÄ± KartÄ±na GÃ¶k Mavisi Neon Ã‡erÃ§eve ve DÃ¶nen Aura GÃ¶lgesi Entegrasyonu:** 
-    - `BotYonetimiScreen.js` iÃ§indeki Sistem TalimatÄ± kartÄ±na, kartÄ±n tÃ¼m kenarlarÄ±nÄ± eÅŸit kalÄ±nlÄ±kta kaplayan (`borderWidth: 1.5`) solid `#00a2ff` (gÃ¶k mavisi) renginde sÃ¼rekli parlayan neon bir sÄ±nÄ±r Ã§izgisi uygulandÄ±.
-    - **DÃ¶nen Aura GÃ¶lgesi (blue_glow):** YumuÅŸak geÃ§iÅŸli gÃ¶k mavisi, lacivert ve turkuaz tonlarÄ±ndan oluÅŸan dairesel bir conic gradient resim (`blue_glow.png`) Ã¼retildi. Bu resim kartÄ±n arkasÄ±na yerleÅŸtirilerek native `blurRadius={12}` ile bulanÄ±klaÅŸtÄ±rÄ±ldÄ± ve 8 saniyelik lineer bir dÃ¶ngÃ¼de dÃ¶nen bir `Animated.View` ile dÃ¶ndÃ¼rÃ¼lerek kart etrafÄ±nda dÃ¶nen/dolaÅŸan hareketli bir mavi aura gÃ¶lgesi elde edildi.
-    - **YuvarlatÄ±lmÄ±ÅŸ KÃ¶ÅŸeler ve BoÅŸluk DÃ¼zenlemesi:** Ana `ScrollView` bileÅŸenine `contentContainerStyle={{ paddingHorizontal: 16 }}` uygulanarak kartlarÄ±n ekran kenarlarÄ±na yapÄ±ÅŸmasÄ± Ã¶nlendi ve mavi Ã§izginin `borderRadius: 20` olan yuvarlatÄ±lmÄ±ÅŸ kÃ¶ÅŸeleri gÃ¶rÃ¼nÃ¼r kÄ±lÄ±ndÄ±.
-    - **Ä°Ã§ Ã‡erÃ§eve/Siyah-Gri GÃ¶lge SÄ±zÄ±ntÄ±sÄ±nÄ±n Ã–nlenmesi (Solid Background):** KartÄ±n arka planÄ± yarÄ± saydam yerine tamamen opak koyu gri (`#1c1b1d`) olarak gÃ¼ncellendi. Bu sayede Android shadow motorunun `elevation` nedeniyle kartÄ±n arkasÄ±nda oluÅŸturduÄŸu koyu sistem gÃ¶lgesinin cam katmanÄ±n iÃ§inden sÄ±zarak mavi Ã§izginin altÄ±nda ikinci bir koyu Ã§erÃ§eve oluÅŸturmasÄ± (shadow bleed-through) engellendi.
-    - Kart iÃ§i hazÄ±r rol preset butonlarÄ±nÄ±n aktif kenarlÄ±k/yazÄ± renkleri de turkuazdan `#00a2ff` (gÃ¶k mavisi) tonuna gÃ¼ncellenerek gÃ¶rsel uyum tamamlandÄ±.
-    - "AI Karakter TalimatÄ±" (`botInstruction`) kutusu `height: 280` olarak (eski 140px deÄŸerinden 2 kat daha bÃ¼yÃ¼k) sabitlendi ve `showsVerticalScrollIndicator={true}` eklenerek yapÄ±ÅŸtÄ±rÄ±lan uzun metinlerde kutunun bÃ¼yÃ¼mesi Ã¶nlenip yan kaydÄ±rma Ã§ubuÄŸu ile gezilebilmesi saÄŸlandÄ±.
+### Yapılan Değişiklikler ve Çözülen Hatalar:
+1. **Zernio Client ve Analytics Cache Güncellemesi:** Supabase Edge Functions altındaki `ZernioClient.ts` dosyası güncellenerek sosyal medya platformları (YouTube, LinkedIn, Instagram, Google Business, vb.) için analytics metotları önbellekleme (cache) desteği ile entegre edildi.
+2. **Hata Yönetimi ve Silme İşlemi:** Zernio hesabını ayırma (`disconnect-account`) işlemi doğrudan ZernioClient içindeki metoda bağlandı.
+3. **Veritabanı Migration'ı:** Analytics cache için yeni bir Supabase veritabanı migration'ı (`20260705000000_analytics_cache.sql`) oluşturuldu.
+4. **Bağımlılıklar:** `package.json` ve `package-lock.json` dosyaları güncellendi.
+
+---
+
+## ?? Geçmiş Geliştirme Günlüğü (27 Haziran 2026)
+
+### Yapılan Değişiklikler ve Çözülen Hatalar:
+1. **GitHub Senkronizasyonu:** Local `master` dalı `origin/master` ile güncel olmasına rağmen en son güncellemelerin (Randevu Realtime, RAG Drive senkronizasyonu, dual prompt ve RGB border) `origin/main` dalında olduğu fark edildi. Local repo `main` dalına geçirilerek güncel kod çekildi.
+2. **Randevu Modülü i18n:** `RandevuScreen.js` ve `HizmetAyarlariScreen.js` ekranlarındaki tüm hardcoded Türkçe kelimeler temizlenerek `tr.json`, `en.json` ve `de.json` dosyalarına bağlandı. `useTranslation` hook'u ile dinamik yerelleştirme tamamlandı.
+3. **Animated Ref Render Erişimi Çözüldü:** `RandevuScreen.js` ve `AiUretimScreen.js`'deki Animated Value'ların render esnasında ref üzerinden `.current` olarak okunması nedeniyle linter'ın fırlattığı `Cannot access refs during render` hatası, `useState` tabanlı `Animated.Value` tanımlamasına geçilerek tamamen çözüldü.
+4. **TypeScript Path Aliases & Anti-Bypass Entegrasyonu:** `tsconfig.json` dosyasında `@domain/*`, `@application/*`, `@infrastructure/*` ve `@presentation/*` alias'larına `randevu` modülü dahil edildi. Projedeki tüm relative path import'lar path alias'larına geçirilerek ESLint'in `no-restricted-imports` (Anti-Bypass) kuralı yeşile çekildi.
+5. **Kapsamlı Linter Kontrolü:** `npm run lint` çalıştırılarak tüm 42 hata giderildi ve linter **0 hata** ile tamamlandı.
+6. **Sistem Talimatı Kartına Gök Mavisi Neon Çerçeve ve Dönen Aura Gölgesi Entegrasyonu:** 
+    - `BotYonetimiScreen.js` içindeki Sistem Talimatı kartına, kartın tüm kenarlarını eşit kalınlıkta kaplayan (`borderWidth: 1.5`) solid `#00a2ff` (gök mavisi) renginde sürekli parlayan neon bir sınır çizgisi uygulandı.
+    - **Dönen Aura Gölgesi (blue_glow):** Yumuşak geçişli gök mavisi, lacivert ve turkuaz tonlarından oluşan dairesel bir conic gradient resim (`blue_glow.png`) üretildi. Bu resim kartın arkasına yerleştirilerek native `blurRadius={12}` ile bulanıklaştırıldı ve 8 saniyelik lineer bir döngüde dönen bir `Animated.View` ile döndürülerek kart etrafında dönen/dolaşan hareketli bir mavi aura gölgesi elde edildi.
+    - **Yuvarlatılmış Köşeler ve Boşluk Düzenlemesi:** Ana `ScrollView` bileşenine `contentContainerStyle={{ paddingHorizontal: 16 }}` uygulanarak kartların ekran kenarlarına yapışması önlendi ve mavi çizginin `borderRadius: 20` olan yuvarlatılmış köşeleri görünür kılındı.
+    - **İç Çerçeve/Siyah-Gri Gölge Sızıntısının Önlenmesi (Solid Background):** Kartın arka planı yarı saydam yerine tamamen opak koyu gri (`#1c1b1d`) olarak güncellendi. Bu sayede Android shadow motorunun `elevation` nedeniyle kartın arkasında oluşturduğu koyu sistem gölgesinin cam katmanın içinden sızarak mavi çizginin altında ikinci bir koyu çerçeve oluşturması (shadow bleed-through) engellendi.
+    - Kart içi hazır rol preset butonlarının aktif kenarlık/yazı renkleri de turkuazdan `#00a2ff` (gök mavisi) tonuna güncellenerek görsel uyum tamamlandı.
+    - "AI Karakter Talimatı" (`botInstruction`) kutusu `height: 280` olarak (eski 140px değerinden 2 kat daha büyük) sabitlendi ve `showsVerticalScrollIndicator={true}` eklenerek yapıştırılan uzun metinlerde kutunun büyümesi önlenip yan kaydırma çubuğu ile gezilebilmesi sağlandı.
 
 
 
@@ -301,121 +301,121 @@ App.js
 
 ---
 
-## ğŸ“… AI Muhasebe â€” HafÄ±za NotlarÄ± (18 Temmuz 2026)
+## ?? AI Muhasebe — Hafıza Notları (18 Temmuz 2026)
 
-### 1. 4 FazlÄ± AI Fatura Entegrasyonu Mimari KararlarÄ±
-Flow (MÃ¼kellef) ile Ledger (MÃ¼ÅŸavir) arasÄ±ndaki entegrasyon iÃ§in 4 fazlÄ± akÄ±ÅŸ kabul edildi:
-1. **Veri Yakalama (Flow):** Fatura fotoÄŸrafÄ±/PDF'i yÃ¼klenir, Gemini AI JSON olarak veriyi ayrÄ±ÅŸtÄ±rÄ±r.
-2. **Proaktif Chat (Flow):** AI mÃ¼kellefe faturanÄ±n tÃ¼rÃ¼ne gÃ¶re soru sorar:
-   - AlÄ±ÅŸ FaturasÄ±: "Ã–dendi mi?" (Evet/HayÄ±r) -> HayÄ±r ise "Tarih?"
-   - SatÄ±ÅŸ FaturasÄ±: "Tahsil edildi mi?" (Evet/HayÄ±r) -> HayÄ±r ise "Tarih?"
-3. **Draft KuyruÄŸu (Flow -> Backend):** Veriler doÄŸrudan \	ransactions\ tablosuna yazÄ±lmaz. Yeni oluÅŸturulan \submit-accounting-draft\ Edge Function'Ä± ile \ccounting_drafts\ tablosuna "pending_approval" statÃ¼sÃ¼ ile iletilir. Mobil uygulamanÄ±n doÄŸrudan DB yazma yetkisi (RLS) kÄ±sÄ±tlandÄ±.
-4. **MÃ¼ÅŸavir OnayÄ± (Ledger):** MÃ¼ÅŸavir kendi ekranÄ±nda bu draft'larÄ± Split-View (GÃ¶rsel + Data) olarak inceler, onaylayarak \	ransactions\ tablosuna aktarÄ±r.
+### 1. 4 Fazlı AI Fatura Entegrasyonu Mimari Kararları
+Flow (Mükellef) ile Ledger (Müşavir) arasındaki entegrasyon için 4 fazlı akış kabul edildi:
+1. **Veri Yakalama (Flow):** Fatura fotoğrafı/PDF'i yüklenir, Gemini AI JSON olarak veriyi ayrıştırır.
+2. **Proaktif Chat (Flow):** AI mükellefe faturanın türüne göre soru sorar:
+   - Alış Faturası: "Ödendi mi?" (Evet/Hayır) -> Hayır ise "Tarih?"
+   - Satış Faturası: "Tahsil edildi mi?" (Evet/Hayır) -> Hayır ise "Tarih?"
+3. **Draft Kuyruğu (Flow -> Backend):** Veriler doğrudan \	ransactions\ tablosuna yazılmaz. Yeni oluşturulan \submit-accounting-draft\ Edge Function'ı ile \ccounting_drafts\ tablosuna "pending_approval" statüsü ile iletilir. Mobil uygulamanın doğrudan DB yazma yetkisi (RLS) kısıtlandı.
+4. **Müşavir Onayı (Ledger):** Müşavir kendi ekranında bu draft'ları Split-View (Görsel + Data) olarak inceler, onaylayarak \	ransactions\ tablosuna aktarır.
 
-### 2. TÃ¼rkiye (TR-TR) Fatura AyrÄ±ÅŸtÄ±rma ÅemasÄ± Kesin KurallarÄ±
-- **DÃ¼z (Flat) JSON:** Ä°Ã§ iÃ§e obje kullanÄ±lmayacak. TÃ¼m KDV ve matrah alanlarÄ± (1, 8, 10, 18, 20) doÄŸrudan \at1Base\, \at1Amount\ ÅŸeklinde dÃ¶ndÃ¼rÃ¼lecek. Bulunmayan veriler \ \ (sÄ±fÄ±r) olacak, \
-ull\ veya boÅŸ string dÃ¶nÃ¼lmeyecek.
-- **Ä°ÅŸlem YÃ¶nÃ¼ (\invoiceType\):** Belgedeki alÄ±cÄ±/satÄ±cÄ± VKN'si ile Flow kullanÄ±cÄ±sÄ±nÄ±n (iÅŸletmenin) VKN'si karÅŸÄ±laÅŸtÄ±rÄ±lacak. Ä°ÅŸletme alÄ±cÄ±ysa \purchase_invoice\, satÄ±cÄ±ysa \sales_invoice\ dÃ¶necek.
-- **AÃ§Ä±klama (\description\):** Sadece karÅŸÄ± tarafÄ±n firma adÄ± kullanÄ±lacak. ÃœrÃ¼n, hizmet, iÅŸlem Ã¶zeti uydurulmayacak veya eklenmeyecek.
-- **Tevkifat:** Varsa aynen "1/10" gibi string olarak yazÄ±lacak.
-- **Matematiksel Uyum:** UyuÅŸmazlÄ±k durumunda veriler deÄŸiÅŸtirilmeyecek, JSON iÃ§indeki \eviewFlags\ dizisine \AMOUNT_MISMATCH\ eklenecek.
+### 2. Türkiye (TR-TR) Fatura Ayrıştırma Şeması Kesin Kuralları
+- **Düz (Flat) JSON:** İç içe obje kullanılmayacak. Tüm KDV ve matrah alanları (1, 8, 10, 18, 20) doğrudan \at1Base\, \at1Amount\ şeklinde döndürülecek. Bulunmayan veriler \ \ (sıfır) olacak, \
+ull\ veya boş string dönülmeyecek.
+- **İşlem Yönü (\invoiceType\):** Belgedeki alıcı/satıcı VKN'si ile Flow kullanıcısının (işletmenin) VKN'si karşılaştırılacak. İşletme alıcıysa \purchase_invoice\, satıcıysa \sales_invoice\ dönecek.
+- **Açıklama (\description\):** Sadece karşı tarafın firma adı kullanılacak. Ürün, hizmet, işlem özeti uydurulmayacak veya eklenmeyecek.
+- **Tevkifat:** Varsa aynen "1/10" gibi string olarak yazılacak.
+- **Matematiksel Uyum:** Uyuşmazlık durumunda veriler değiştirilmeyecek, JSON içindeki \eviewFlags\ dizisine \AMOUNT_MISMATCH\ eklenecek.
 
-### [26.07.2026] YapÄ±lan Son GÃ¼ncellemeler
-- **VeritabanÄ± UyumsuzluklarÄ± Giderildi:** `transactions` tablosundaki geÃ§ersiz `name` sÃ¼tunu kod bazÄ±nda temizlendi. AI AsistanÄ±n dÃ¶ndÃ¼rdÃ¼ÄŸÃ¼ `title`, `type` ve `status` alanlarÄ±nÄ±n `SupabaseTransactionRepository` ve `TransactionMapper` tarafÄ±ndan sorunsuz iÅŸlenip veritabanÄ±na eklenmesi saÄŸlandÄ±. VeritabanÄ±ndaki eski migration Ã§akÄ±ÅŸmalarÄ± temizlendi.
-- **OdemeTakvimiScreen Yeni TasarÄ±m:** `OdemeTakvimiScreen`, grid yapÄ±sÄ±ndan "Neo-Fintech Noir" tarzÄ±, dikey listeli ve Gelir/Gider olarak ikiye bÃ¶lÃ¼nmÃ¼ÅŸ kart tasarÄ±mÄ±na geÃ§irildi. Giderler kÄ±rmÄ±zÄ± (`#ff3b30`), gelirler yeÅŸil (`#22c55e`) olarak renklendirildi.
-- **Filtreleme MantÄ±ÄŸÄ± DÃ¼zeltildi:** Takvim ekranÄ±nda iÅŸlemlerin hem gelir hem gidere dÃ¼ÅŸmesine neden olan `t.amount > 0` ÅŸartÄ± kaldÄ±rÄ±larak; `t.type === 'income'` / `'sales'` (gelir) ve `t.type === 'expense'` / `'ALIS'` (gider) kurallarÄ±yla kesin bir ayrÄ±m yapÄ±ldÄ±.
-- **GerÃ§ek ZamanlÄ± GÃ¼ncelleme:** `AiMuhasebeScreen` (Dashboard), `transactions` tablosuna yapÄ±lan eklemeleri de dinleyecek (realtime subscription) ÅŸekilde geniÅŸletildi ve `useFocusEffect` ile ekran aÃ§Ä±ldÄ±kÃ§a verilerin anÄ±nda gÃ¼ncellenmesi garantilendi.
+### [26.07.2026] Yapılan Son Güncellemeler
+- **Veritabanı Uyumsuzlukları Giderildi:** `transactions` tablosundaki geçersiz `name` sütunu kod bazında temizlendi. AI Asistanın döndürdüğü `title`, `type` ve `status` alanlarının `SupabaseTransactionRepository` ve `TransactionMapper` tarafından sorunsuz işlenip veritabanına eklenmesi sağlandı. Veritabanındaki eski migration çakışmaları temizlendi.
+- **OdemeTakvimiScreen Yeni Tasarım:** `OdemeTakvimiScreen`, grid yapısından "Neo-Fintech Noir" tarzı, dikey listeli ve Gelir/Gider olarak ikiye bölünmüş kart tasarımına geçirildi. Giderler kırmızı (`#ff3b30`), gelirler yeşil (`#22c55e`) olarak renklendirildi.
+- **Filtreleme Mantığı Düzeltildi:** Takvim ekranında işlemlerin hem gelir hem gidere düşmesine neden olan `t.amount > 0` şartı kaldırılarak; `t.type === 'income'` / `'sales'` (gelir) ve `t.type === 'expense'` / `'ALIS'` (gider) kurallarıyla kesin bir ayrım yapıldı.
+- **Gerçek Zamanlı Güncelleme:** `AiMuhasebeScreen` (Dashboard), `transactions` tablosuna yapılan eklemeleri de dinleyecek (realtime subscription) şekilde genişletildi ve `useFocusEffect` ile ekran açıldıkça verilerin anında güncellenmesi garantilendi.
 
-## ğŸ“ GeÃ§miÅŸ GeliÅŸtirme GÃ¼nlÃ¼ÄŸÃ¼ (28 Temmuz 2026) - WAHA/Zernio AyrÄ±mÄ± & Zernio Medya Optimizasyonu
-### YapÄ±lan DeÄŸiÅŸiklikler ve Mimari Kararlar:
-1. **Zernio Medya YÃ¼kleme Optimizasyonu (Backend):** Ai_muhasebeci/supabase iÃ§indeki zernio-client edge fonksiyonu, resimleri base64/url olarak gÃ¶ndermek yerine Zernio Media API'sine yÃ¼kleyip 'mediaIds' dizisi ile gÃ¶nderecek ÅŸekilde optimize edildi.
-2. **Zernio Fallback Cron (Backend):** Her gece 03:00'da kaÃ§Ä±rÄ±lan Zernio mesajlarÄ±nÄ±/yorumlarÄ±nÄ± eÅŸitlemek iÃ§in 'pg_cron' kullanan yeni bir Supabase SQL migration dosyasÄ± oluÅŸturuldu.
-3. **Abonelik Mimarisine HazÄ±rlÄ±k (Sosyal Medya AsistanÄ±):** Basic (Sadece WhatsApp/WAHA) ve Premium (Tam sosyal medya/Zernio) paket ayrÄ±mÄ± kararÄ± alÄ±ndÄ±. Bu kapsamda 'Sosyal Medya AsistanÄ±' ÅŸalteri, BotYonetimiScreen ekranÄ±ndan sÃ¶kÃ¼lerek doÄŸrudan SosyalMedyaScreen ekranÄ±na taÅŸÄ±ndÄ±.
-4. **WAHA Temel Talimat AlanÄ±:** BotYonetimiScreen iÃ§erisine kilitli olmayan (Basic pakete aÃ§Ä±k) 'Asistan TalimatÄ± OluÅŸtur' metin kutusu eklendi. Buraya girilen deÄŸer doÄŸrudan Custom Role (Ã–zel Karakter) olarak WAHA system_instruction'Ä±na beslenmek Ã¼zere baÄŸlandÄ±.
+## ?? Geçmiş Geliştirme Günlüğü (28 Temmuz 2026) - WAHA/Zernio Ayrımı & Zernio Medya Optimizasyonu
+### Yapılan Değişiklikler ve Mimari Kararlar:
+1. **Zernio Medya Yükleme Optimizasyonu (Backend):** Ai_muhasebeci/supabase içindeki zernio-client edge fonksiyonu, resimleri base64/url olarak göndermek yerine Zernio Media API'sine yükleyip 'mediaIds' dizisi ile gönderecek şekilde optimize edildi.
+2. **Zernio Fallback Cron (Backend):** Her gece 03:00'da kaçırılan Zernio mesajlarını/yorumlarını eşitlemek için 'pg_cron' kullanan yeni bir Supabase SQL migration dosyası oluşturuldu.
+3. **Abonelik Mimarisine Hazırlık (Sosyal Medya Asistanı):** Basic (Sadece WhatsApp/WAHA) ve Premium (Tam sosyal medya/Zernio) paket ayrımı kararı alındı. Bu kapsamda 'Sosyal Medya Asistanı' şalteri, BotYonetimiScreen ekranından sökülerek doğrudan SosyalMedyaScreen ekranına taşındı.
+4. **WAHA Temel Talimat Alanı:** BotYonetimiScreen içerisine kilitli olmayan (Basic pakete açık) 'Asistan Talimatı Oluştur' metin kutusu eklendi. Buraya girilen değer doğrudan Custom Role (Özel Karakter) olarak WAHA system_instruction'ına beslenmek üzere bağlandı.
 
 
-## ğŸ“ Son GeliÅŸtirme GÃ¼nlÃ¼ÄŸÃ¼ (9 AÄŸustos 2026)
+## ?? Son Geliştirme Günlüğü (9 Ağustos 2026)
 
-### YapÄ±lan DeÄŸiÅŸiklikler ve Ã‡Ã¶zÃ¼len Hatalar:
-1. **Zernio AI YanÄ±t HatasÄ± (Bug) DÃ¼zeltildi:** `HandleIncomingMessageUseCase.ts` iÃ§erisindeki ZernioClient fonksiyon Ã§aÄŸrÄ±larÄ± (sendMessage, likeComment, replyToComment) dÃ¼zeltilerek `.inbox` ve `.comments` alt modÃ¼llerine yÃ¶nlendirildi. Bu sayede AI'Ä±n Instagram'a yanÄ±t verememesi (TypeError) sorunu Ã§Ã¶zÃ¼ldÃ¼.
-2. **Ä°letiÅŸim RaporlarÄ± Senkronizasyonu:** `InboxScreen.js`'de silinen mesajlarÄ±n ve yorumlarÄ±n anasayfadaki (Dashboard) `ai_communication_logs` tablosundan da eÅŸ zamanlÄ± olarak silinmesi saÄŸlandÄ±.
-3. **Manuel Rapor Temizleme Butonu:** Dashboard Ã¼zerindeki `CommunicationLogsTable.js` bileÅŸeninin altÄ±na, eski ve takÄ±lÄ± kalmÄ±ÅŸ raporlarÄ± temizlemek iÃ§in bir "RaporlarÄ± Temizle" butonu eklendi. Ä°ÅŸlemin Ã§alÄ±ÅŸmasÄ± iÃ§in `useCommunicationLogs.ts` hook'una `clearLogs` fonksiyonu yazÄ±ldÄ±.
-4. **Supabase RLS Policy Eklendi:** `ai_communication_logs` tablosu iÃ§in eksik olan DELETE yetkisi (Row Level Security), yeni bir SQL migration dosyasÄ± (`20260809223300_ai_communication_logs_delete_policy.sql`) oluÅŸturularak canlÄ± veritabanÄ±na push edildi.
+### Yapılan Değişiklikler ve Çözülen Hatalar:
+1. **Zernio AI Yanıt Hatası (Bug) Düzeltildi:** `HandleIncomingMessageUseCase.ts` içerisindeki ZernioClient fonksiyon çağrıları (sendMessage, likeComment, replyToComment) düzeltilerek `.inbox` ve `.comments` alt modüllerine yönlendirildi. Bu sayede AI'ın Instagram'a yanıt verememesi (TypeError) sorunu çözüldü.
+2. **İletişim Raporları Senkronizasyonu:** `InboxScreen.js`'de silinen mesajların ve yorumların anasayfadaki (Dashboard) `ai_communication_logs` tablosundan da eş zamanlı olarak silinmesi sağlandı.
+3. **Manuel Rapor Temizleme Butonu:** Dashboard üzerindeki `CommunicationLogsTable.js` bileşeninin altına, eski ve takılı kalmış raporları temizlemek için bir "Raporları Temizle" butonu eklendi. İşlemin çalışması için `useCommunicationLogs.ts` hook'una `clearLogs` fonksiyonu yazıldı.
+4. **Supabase RLS Policy Eklendi:** `ai_communication_logs` tablosu için eksik olan DELETE yetkisi (Row Level Security), yeni bir SQL migration dosyası (`20260809223300_ai_communication_logs_delete_policy.sql`) oluşturularak canlı veritabanına push edildi.
 
-### [11.08.2026] Bildirimler EkranÄ± & AI Bildirim AltyapÄ±sÄ± (Flow)
-1. **Bildirimler UI/UX:** Glassmorphism tasarÄ±m stili ile \BildirimlerScreen.js\ oluÅŸturuldu ve \AppNavigator\'a eklendi.
-2. **Dinamik Ã‡an Ä°konu:** \DashboardScreen\ Ã¼st menÃ¼sÃ¼ndeki bildirim Ã§anÄ±, veritabanÄ±ndan okunmamÄ±ÅŸ bildirim sayÄ±sÄ±nÄ± alÄ±p kÄ±rmÄ±zÄ± bir rozet gÃ¶sterecek ÅŸekilde gÃ¼ncellendi.
-3. **GerÃ§ek ZamanlÄ± Silme & Okuma:** KullanÄ±cÄ±lar bildirimleri okuyabilir veya Ã§Ã¶pe atÄ±p Supabase'den silebilirler.
-4. **AI Bildirim Entegrasyonu:** Ledger tarafÄ±ndaki yapay zeka asistanÄ±nÄ±n isme veya profile Ã¶zel anÄ±nda in-app bildirim atabilmesini saÄŸlayan veritabanÄ± altyapÄ±sÄ± ve araÃ§lar tamamlandÄ±.
+### [11.08.2026] Bildirimler Ekranı & AI Bildirim Altyapısı (Flow)
+1. **Bildirimler UI/UX:** Glassmorphism tasarım stili ile \BildirimlerScreen.js\ oluşturuldu ve \AppNavigator\'a eklendi.
+2. **Dinamik Çan İkonu:** \DashboardScreen\ üst menüsündeki bildirim çanı, veritabanından okunmamış bildirim sayısını alıp kırmızı bir rozet gösterecek şekilde güncellendi.
+3. **Gerçek Zamanlı Silme & Okuma:** Kullanıcılar bildirimleri okuyabilir veya çöpe atıp Supabase'den silebilirler.
+4. **AI Bildirim Entegrasyonu:** Ledger tarafındaki yapay zeka asistanının isme veya profile özel anında in-app bildirim atabilmesini sağlayan veritabanı altyapısı ve araçlar tamamlandı.
 
 
 ### [14.08.2026] Web ve Mobil Platform UI/UX Senkronizasyonu
-1. **Mobil ArayÃ¼z Web ile EÅŸitlendi:** Web versiyonunda bulunan ÅŸÄ±k, cam gÃ¶rÃ¼nÃ¼mlÃ¼ yatay kaydÄ±rÄ±labilir (horizontal) Sosyal Medya hesap kartlarÄ±, aynen Flow mobil (React Native) uygulamasÄ±na uyarlandÄ±.
-2. **Emoji Ä°konlar ve Glow Efekti:** Standart marka ikonlarÄ± iptal edildi; yerine Web versiyonunda kullanÄ±lan emojiler (ğŸ‘¥, ğŸ“¸ vb.) getirildi ve kart etrafÄ±ndaki neon parlama (glow) efekti %20 oranÄ±nda gÃ¼Ã§lendirilerek Ã§ok daha estetik bir gÃ¶rÃ¼nÃ¼m elde edildi.
-3. **Dashboard Paritesi:** Web tarafÄ±ndaki eski paneller temizlenip, gÃ¼ncel 'Son Aktiviteler' ve 'Ä°letiÅŸim RaporlarÄ±' Web Dashboard'a dahil edilerek Mobil ekranla tam senkron saÄŸlandÄ±.
+1. **Mobil Arayüz Web ile Eşitlendi:** Web versiyonunda bulunan şık, cam görünümlü yatay kaydırılabilir (horizontal) Sosyal Medya hesap kartları, aynen Flow mobil (React Native) uygulamasına uyarlandı.
+2. **Emoji İkonlar ve Glow Efekti:** Standart marka ikonları iptal edildi; yerine Web versiyonunda kullanılan emojiler (??, ?? vb.) getirildi ve kart etrafındaki neon parlama (glow) efekti %20 oranında güçlendirilerek çok daha estetik bir görünüm elde edildi.
+3. **Dashboard Paritesi:** Web tarafındaki eski paneller temizlenip, güncel 'Son Aktiviteler' ve 'İletişim Raporları' Web Dashboard'a dahil edilerek Mobil ekranla tam senkron sağlandı.
 
-### [15.08.2026] Ãƒâ€¡apraz Platform VeritabanÃ„Â± Senkronizasyonu & Hata Giderimleri
-1. **Ai Randevu (Web):** Ai Randevu YÃƒÂ¶netimi ekranÃ„Â±ndaki takvim gÃƒÂ¼nleri yana kaydÃ„Â±rÃ„Â±labilir (drag-to-scroll) hale getirildi.
-2. **Ortak VeritabanÃ„Â± UyumsuzluÃ„Å¸u (406 HatasÃ„Â±):** Dashboard ve AI Muhasebe (Web) ekranlarÃ„Â±nda, organizasyon ÃƒÂ¼yelerini ÃƒÂ§eken .single() metotlarÃ„Â± boÃ…Å¸ sonuÃƒÂ§ dÃƒÂ¶nebileceÃ„Å¸i iÃƒÂ§in 406 Not Acceptable hatasÃ„Â± veriyordu. Bunlar gÃƒÂ¼venli olan .maybeSingle() ile deÃ„Å¸iÃ…Å¸tirildi ve sÃ„Â±fÃ„Â±r hata (No errors) durumuna ulaÃ…Å¸Ã„Â±ldÃ„Â±.
-3. **Sosyal Medya Entegrasyonu (Web):** Web versiyonundaki "Hesap BaÃ„Å¸la" uyarÃ„Â± mesajÃ„Â± kaldÃ„Â±rÃ„Â±larak, mobil versiyondaki Supabase Edge Function (zernio-client) tabanlÃ„Â± gÃƒÂ¼venli Instagram/Zernio yetkilendirme linki alma ve yÃƒÂ¶nlendirme sistemi web versiyonuna entegre edildi.
-4. **Gelen Kutusu (Web):** Gelen Kutusu (/gelen-kutusu) ekranÃ„Â±ndaki comments tablosu sorgusunda yer alan geÃƒÂ§ersiz posts iliÃ…Å¸kisi (posts(media_urls, title)) kaldÃ„Â±rÃ„Â±larak sadece .select('*') bÃ„Â±rakÃ„Â±ldÃ„Â± ve "400 Bad Request" hatasÃ„Â± giderildi. TÃƒÂ¼m iletiÃ…Å¸im raporlarÃ„Â± sÃ„Â±fÃ„Â±r hata ile yÃƒÂ¼klenebilir hale geldi.
-5. **Agent KurallarÃ„Â±:** Web ve Mobil projelerin kalÃ„Â±cÃ„Â± hafÃ„Â±zasÃ„Â±na (AGENTS.md) ÃƒÂ§apraz veritabanÃ„Â± etkileÃ…Å¸imi hakkÃ„Â±nda yeni "ÄŸÅ¸Å¡Â¨ Kritik Kural: Ortak VeritabanÃ„Â± EtkileÃ…Å¸imi" kuralÃ„Â± iÃ…Å¸lendi.
+### [15.08.2026] Ã‡apraz Platform VeritabanÄ± Senkronizasyonu & Hata Giderimleri
+1. **Ai Randevu (Web):** Ai Randevu YÃ¶netimi ekranÄ±ndaki takvim gÃ¼nleri yana kaydÄ±rÄ±labilir (drag-to-scroll) hale getirildi.
+2. **Ortak VeritabanÄ± UyumsuzluÄŸu (406 HatasÄ±):** Dashboard ve AI Muhasebe (Web) ekranlarÄ±nda, organizasyon Ã¼yelerini Ã§eken .single() metotlarÄ± boÅŸ sonuÃ§ dÃ¶nebileceÄŸi iÃ§in 406 Not Acceptable hatasÄ± veriyordu. Bunlar gÃ¼venli olan .maybeSingle() ile deÄŸiÅŸtirildi ve sÄ±fÄ±r hata (No errors) durumuna ulaÅŸÄ±ldÄ±.
+3. **Sosyal Medya Entegrasyonu (Web):** Web versiyonundaki "Hesap BaÄŸla" uyarÄ± mesajÄ± kaldÄ±rÄ±larak, mobil versiyondaki Supabase Edge Function (zernio-client) tabanlÄ± gÃ¼venli Instagram/Zernio yetkilendirme linki alma ve yÃ¶nlendirme sistemi web versiyonuna entegre edildi.
+4. **Gelen Kutusu (Web):** Gelen Kutusu (/gelen-kutusu) ekranÄ±ndaki comments tablosu sorgusunda yer alan geÃ§ersiz posts iliÅŸkisi (posts(media_urls, title)) kaldÄ±rÄ±larak sadece .select('*') bÄ±rakÄ±ldÄ± ve "400 Bad Request" hatasÄ± giderildi. TÃ¼m iletiÅŸim raporlarÄ± sÄ±fÄ±r hata ile yÃ¼klenebilir hale geldi.
+5. **Agent KurallarÄ±:** Web ve Mobil projelerin kalÄ±cÄ± hafÄ±zasÄ±na (AGENTS.md) Ã§apraz veritabanÄ± etkileÅŸimi hakkÄ±nda yeni "ğŸš¨ Kritik Kural: Ortak VeritabanÄ± EtkileÅŸimi" kuralÄ± iÅŸlendi.
 
-### [18.08.2026] Zernio Private Reply (Gizli DM) 24 Saat KuralÄ± Optimizasyonu
-1. **Web ve Mobil Private Reply Senkronizasyonu:** Yorumlara DM gÃ¶nderilirken geÃ§miÅŸ bir sohbet bulunduÄŸunda sistemin standart 'send-message' yÃ¶ntemine (Instagram'Ä±n 24 saat aktif konuÅŸma kuralÄ±na) takÄ±lÄ±p hata vermesi sorunu Ã§Ã¶zÃ¼ldÃ¼. ArtÄ±k her iki platformda da bir yorumdan DM butonuna basÄ±ldÄ±ÄŸÄ±nda geÃ§miÅŸe bakÄ±lmaksÄ±zÄ±n doÄŸrudan (24 saat kuralÄ±nÄ± delen) 'send-private-reply' metodu tetiklenmektedir. Mobil (React Native) uygulamaya da web versiyonu ile aynÄ± olan satÄ±riÃ§i (inline) Ã–zel YanÄ±t gÃ¶nderme yeteneÄŸi entegre edildi.
+### [18.08.2026] Zernio Private Reply (Gizli DM) 24 Saat Kuralı Optimizasyonu
+1. **Web ve Mobil Private Reply Senkronizasyonu:** Yorumlara DM gönderilirken geçmiş bir sohbet bulunduğunda sistemin standart 'send-message' yöntemine (Instagram'ın 24 saat aktif konuşma kuralına) takılıp hata vermesi sorunu çözüldü. Artık her iki platformda da bir yorumdan DM butonuna basıldığında geçmişe bakılmaksızın doğrudan (24 saat kuralını delen) 'send-private-reply' metodu tetiklenmektedir. Mobil (React Native) uygulamaya da web versiyonu ile aynı olan satıriçi (inline) Özel Yanıt gönderme yeteneği entegre edildi.
 
-### [19.08.2026] Ã‡apraz Platform Profil & MÃ¼ÅŸavir BaÄŸlantÄ±sÄ± Senkronizasyonu
-1. **Flow Web ve Mobil Profil Paritesi:** Web tarafÄ±nda (/profil) ve Mobil tarafÄ±nda (ProfilScreen) kullanÄ±cÄ± profilleri tamamen eÅŸitlendi. Her iki platforma da "Åirket Tam AdÄ±", "Vergi NumarasÄ± (VKN)" ve "Vergi Dairesi" alanlarÄ± eklendi.
-2. **Ortak VeritabanÄ± (Organization Legal Profiles):** KullanÄ±cÄ±nÄ±n VKN bilgileri \profiles\ tablosu yerine, doÄŸrudan MÃ¼ÅŸavirin (Ledger) gÃ¶rebileceÄŸi \organization_legal_profiles\ tablosuna (kullanÄ±cÄ±nÄ±n \organization_id\si Ã¼zerinden) baÄŸlandÄ±. BÃ¶ylece Esnaf bilgilerini gÃ¼ncellediÄŸinde MÃ¼ÅŸavirin ekranÄ±nda anÄ±nda gÃ¼ncelleniyor.
-3. **Muhasebecim ArayÃ¼zÃ¼ (GerÃ§ek Veri):** Hem Web hem de Mobil "Muhasebecim" ekranlarÄ±ndaki sahte zamanlayÄ±cÄ±lÄ± (mock) gÃ¶rselleÅŸtirme kaldÄ±rÄ±larak, sayfa yÃ¼klendiÄŸinde \ccountant_taxpayer_links\ tablosundan kullanÄ±cÄ±nÄ±n gerÃ§ekten bir mÃ¼ÅŸavire baÄŸlÄ± olup olmadÄ±ÄŸÄ± sorgulanmaya baÅŸlandÄ±. BaÄŸlantÄ± varsa otomatik "BaÄŸarÄ±yla BaÄŸlandÄ±" ekranÄ± gÃ¶steriliyor.
-4. **MÃ¼ÅŸavir BaÄŸlantÄ±sÄ± Tetikleyicisi (PostgreSQL Trigger):** MÃ¼ÅŸavir (Ledger Ã¼zerinden) yeni bir mÃ¼kellef baÄŸladÄ±ÄŸÄ±nda Esnafa otomatik anlÄ±k bildirim fÄ±rlatmasÄ± iÃ§in \ccountant_taxpayer_links\ tablosuna bir \AFTER INSERT\ PostgreSQL tetikleyicisi eklendi.
-5. **Gelen Kutusu Realtime Bildirimleri:** Web tarafÄ±nda Gelen Kutusu sayfasÄ±nÄ±n \
-otifications\ tablosu iÃ§in CanlÄ± Websocket (Realtime) aboneliÄŸi eksikti. Bu eklendi; bÃ¶ylece asistan veya tetikleyici bir bildirim gÃ¶nderdiÄŸinde kullanÄ±cÄ±nÄ±n sayfasÄ± yenilenmeden Ã§an ikonu ve bildirim listesi gÃ¼ncelleniyor.
-6. **Yapay Zeka VKN/Ä°sim Arama Hata Ã‡Ã¶zÃ¼mÃ¼:** \ledger-ai-chat\ Edge fonksiyonunda TÃ¼rkÃ§e karakterleri dÃ¶nÃ¼ÅŸtÃ¼ren RegExp (replace) kodlamasÄ±nda yaÅŸanan UTF-8 bozulmasÄ± giderildi. Yapay zeka artÄ±k "YILMAZ Ä°NÅAAT TAAHHÃœT..." gibi uzun ve TÃ¼rkÃ§e karakterli resmi adlarÄ± veritabanÄ±nda doÄŸru bir ÅŸekilde % wildcard'a Ã§evirerek eÅŸleÅŸtirebiliyor.
-### [20.08.2026] V2 DDD Tablo TemizliÄŸi ve Gelecek GÃ¶revler
-1. **Gereksiz Tablolar Temizlendi**: V1 mimarisinden kalan taxpayers, invoices, invoice_schemas, ledger_chat_history tablolarÄ± Supabase Ã¼zerinden kalÄ±cÄ± olarak silindi. Storage Avatar yÃ¼klemeleri iÃ§in eksik RLS kurallarÄ± eklendi.
-2. **BUGÃœN YAPILACAKLAR (Bekleyen GÃ¶revler)**:
-   - **GÃ¶rev 1:** Mobil/Web arasÄ± profil fotoÄŸrafÄ± (Avatar) senkronizasyonunun web (FlowWeb) tarafÄ±nda hala gÃ¶rÃ¼ntÃ¼lenememesi sorunu (URL veya CORS/RLS kaynaklÄ± olabilir) detaylÄ±ca incelenip Ã§Ã¶zÃ¼lecek.
-   - **GÃ¶rev 2:** VeritabanÄ±ndaki eski test kullanÄ±cÄ±larÄ± tamamen silinip temiz kullanÄ±cÄ±lar oluÅŸturulacak.
-   - **GÃ¶rev 3:** Supabase Ã¼zerinde Google Login (Google ile GiriÅŸ Yap) entegrasyonu aktif edilecek ve test edilecek.
+### [19.08.2026] Çapraz Platform Profil & Müşavir Bağlantısı Senkronizasyonu
+1. **Flow Web ve Mobil Profil Paritesi:** Web tarafında (/profil) ve Mobil tarafında (ProfilScreen) kullanıcı profilleri tamamen eşitlendi. Her iki platforma da "Şirket Tam Adı", "Vergi Numarası (VKN)" ve "Vergi Dairesi" alanları eklendi.
+2. **Ortak Veritabanı (Organization Legal Profiles):** Kullanıcının VKN bilgileri \profiles\ tablosu yerine, doğrudan Müşavirin (Ledger) görebileceği \organization_legal_profiles\ tablosuna (kullanıcının \organization_id\si üzerinden) bağlandı. Böylece Esnaf bilgilerini güncellediğinde Müşavirin ekranında anında güncelleniyor.
+3. **Muhasebecim Arayüzü (Gerçek Veri):** Hem Web hem de Mobil "Muhasebecim" ekranlarındaki sahte zamanlayıcılı (mock) görselleştirme kaldırılarak, sayfa yüklendiğinde \ccountant_taxpayer_links\ tablosundan kullanıcının gerçekten bir müşavire bağlı olup olmadığı sorgulanmaya başlandı. Bağlantı varsa otomatik "Bağarıyla Bağlandı" ekranı gösteriliyor.
+4. **Müşavir Bağlantısı Tetikleyicisi (PostgreSQL Trigger):** Müşavir (Ledger üzerinden) yeni bir mükellef bağladığında Esnafa otomatik anlık bildirim fırlatması için \ccountant_taxpayer_links\ tablosuna bir \AFTER INSERT\ PostgreSQL tetikleyicisi eklendi.
+5. **Gelen Kutusu Realtime Bildirimleri:** Web tarafında Gelen Kutusu sayfasının \
+otifications\ tablosu için Canlı Websocket (Realtime) aboneliği eksikti. Bu eklendi; böylece asistan veya tetikleyici bir bildirim gönderdiğinde kullanıcının sayfası yenilenmeden çan ikonu ve bildirim listesi güncelleniyor.
+6. **Yapay Zeka VKN/İsim Arama Hata Çözümü:** \ledger-ai-chat\ Edge fonksiyonunda Türkçe karakterleri dönüştüren RegExp (replace) kodlamasında yaşanan UTF-8 bozulması giderildi. Yapay zeka artık "YILMAZ İNŞAAT TAAHHÜT..." gibi uzun ve Türkçe karakterli resmi adları veritabanında doğru bir şekilde % wildcard'a çevirerek eşleştirebiliyor.
+### [20.08.2026] V2 DDD Tablo Temizliği ve Gelecek Görevler
+1. **Gereksiz Tablolar Temizlendi**: V1 mimarisinden kalan taxpayers, invoices, invoice_schemas, ledger_chat_history tabloları Supabase üzerinden kalıcı olarak silindi. Storage Avatar yüklemeleri için eksik RLS kuralları eklendi.
+2. **BUGÜN YAPILACAKLAR (Bekleyen Görevler)**:
+   - **Görev 1:** Mobil/Web arası profil fotoğrafı (Avatar) senkronizasyonunun web (FlowWeb) tarafında hala görüntülenememesi sorunu (URL veya CORS/RLS kaynaklı olabilir) detaylıca incelenip çözülecek.
+   - **Görev 2:** Veritabanındaki eski test kullanıcıları tamamen silinip temiz kullanıcılar oluşturulacak.
+   - **Görev 3:** Supabase üzerinde Google Login (Google ile Giriş Yap) entegrasyonu aktif edilecek ve test edilecek.
 
-### [21.08.2026] MÃ¼ÅŸavir Profil & BaÄŸlantÄ± Entegrasyonu (Flow & Ledger Senkronizasyonu)
-3. **Ledger Profil EkranÄ±:** MÃ¼ÅŸavirlerin kendi profil bilgilerini (Ä°ÅŸletme AdÄ±, Yetkili KiÅŸi AdÄ± SoyadÄ±, Telefon vb.) dÃ¼zenleyebilecekleri ve galeriden Profil FotoÄŸrafÄ± yÃ¼kleyebilecekleri (Supabase Storage 'avatars' bucket Ã¼zerinden) Ã¶zel bir '/profil' ekranÄ± eklendi.
-4. **Flow BaÄŸlantÄ± KartÄ±:** EsnafÄ±n (Flow) "Muhasebecim" sayfasÄ±nda yer alan sahte zamanlayÄ±cÄ±lÄ± baÄŸlantÄ± gÃ¶rÃ¼nÃ¼mÃ¼ kaldÄ±rÄ±larak gerÃ§ek veritabanÄ±na baÄŸlandÄ±. ArtÄ±k aktif bir baÄŸlantÄ± varsa doÄŸrudan mÃ¼ÅŸavirin gÃ¼ncel profili, iÅŸletme adÄ± ve fotoÄŸrafÄ± "BaÄŸlÄ±" rozeti ile Glassmorphism kartÄ±nda gÃ¶sterilmektedir.
+### [21.08.2026] Müşavir Profil & Bağlantı Entegrasyonu (Flow & Ledger Senkronizasyonu)
+3. **Ledger Profil Ekranı:** Müşavirlerin kendi profil bilgilerini (İşletme Adı, Yetkili Kişi Adı Soyadı, Telefon vb.) düzenleyebilecekleri ve galeriden Profil Fotoğrafı yükleyebilecekleri (Supabase Storage 'avatars' bucket üzerinden) özel bir '/profil' ekranı eklendi.
+4. **Flow Bağlantı Kartı:** Esnafın (Flow) "Muhasebecim" sayfasında yer alan sahte zamanlayıcılı bağlantı görünümü kaldırılarak gerçek veritabanına bağlandı. Artık aktif bir bağlantı varsa doğrudan müşavirin güncel profili, işletme adı ve fotoğrafı "Bağlı" rozeti ile Glassmorphism kartında gösterilmektedir.
 
-### [22.08.2026] Dashboard Yapay Zeka Veri BaÄŸlantÄ±larÄ± ve Profil Senkronizasyonu
-1. **Flow Web ve Mobil (React Native) Dashboard GÃ¼ncellemeleri:** AI Asistan gÃ¼nlÃ¼k Ã¶zet kutusundaki ve Sosyal Medya etkileÅŸim trendindeki gÃ¶rsel amaÃ§lÄ± sahte veriler (mock data) kaldÄ±rÄ±ldÄ±.
-2. **GerÃ§ek VeritabanÄ± ve Zernio API Entegrasyonu:** Flow projelerinde mesaj/yorum istatistikleri ve yaklaÅŸan randevular doÄŸrudan ilgili Supabase tablolarÄ±na; sosyal medya etkileÅŸim bÃ¼yÃ¼mesi ise Zernio Ã¼zerinden gerÃ§ek verilere baÄŸlandÄ±.
-3. **Ledger Web Profil Yedekleme (Fallback) Sistemi:** Ledger uygulamasÄ±nda, "Profil Bilgilerim" ekranÄ±nÄ±n form alanlarÄ±nda veritabanÄ± boÅŸ olsa dahi (authorized_person, avatar_url) Google (OAuth) session'Ä±ndan gelen verileri (user_metadata) varsayÄ±lan olarak gÃ¶stermesi ve dÃ¼zgÃ¼n senkronize olmasÄ± saÄŸlandÄ±.
+### [22.08.2026] Dashboard Yapay Zeka Veri Bağlantıları ve Profil Senkronizasyonu
+1. **Flow Web ve Mobil (React Native) Dashboard Güncellemeleri:** AI Asistan günlük özet kutusundaki ve Sosyal Medya etkileşim trendindeki görsel amaçlı sahte veriler (mock data) kaldırıldı.
+2. **Gerçek Veritabanı ve Zernio API Entegrasyonu:** Flow projelerinde mesaj/yorum istatistikleri ve yaklaşan randevular doğrudan ilgili Supabase tablolarına; sosyal medya etkileşim büyümesi ise Zernio üzerinden gerçek verilere bağlandı.
+3. **Ledger Web Profil Yedekleme (Fallback) Sistemi:** Ledger uygulamasında, "Profil Bilgilerim" ekranının form alanlarında veritabanı boş olsa dahi (authorized_person, avatar_url) Google (OAuth) session'ından gelen verileri (user_metadata) varsayılan olarak göstermesi ve düzgün senkronize olması sağlandı.
 
 
-## ğŸ“ Son Gelistirme Gunlugu (24 Agustos 2026) - Multi-Tenancy & Zernio Sync Fallback Mimarisi
+## ?? Son Gelistirme Gunlugu (24 Agustos 2026) - Multi-Tenancy & Zernio Sync Fallback Mimarisi
 
 ### Yapilan Degisiklikler ve Mimari Kararlar:
 1. **Multi-Tenancy & Zernio Sync (Organizasyon Fallback Sistemi):** Kullanicilarin Zernio ile senkronize olabilmesi icin gereken organizasyon baglantisinda (organization_members), bireysel (freelancer) kullanicilarin organizasyon kaydi bulunmamasi durumunda yasanilan Organizasyon bulunamadi hatasi giderilmistir.
 2. **Kural:** Zernio Edge Functions (zernio-client, vb.) cagrilirken, kullanicinin bagli oldugu bir organization_id yoksa, zorunlu olarak kullanicinin kendi benzersiz kimligi (userId) izole bir kiraci (tenant) olarak kullanilarak (fallback) Zernioya iletilecektir. Boylece coklu kiraci (multi-tenancy) izolasyonu bozulmadan bireysel hesaplar da Zernioyu sorunsuz kullanabilir.
-3. **Guvenilir Oturum Okumasi (Session Destructuring):** React Native tarafinda hot-reload ve onbellek kayiplari nedeniyle olusan gecersiz oturum hatalarini onlemek icin hatali getSession okumalari iptal edilmis, yerine garanti sunan supabase.auth.getUser metodu standart kabul edilmistir.### ğŸš¨ Kritik Kural: Sosyal Medya (Zernio) Mimarisi ve Ã‡oklu Hesaplar
+3. **Guvenilir Oturum Okumasi (Session Destructuring):** React Native tarafinda hot-reload ve onbellek kayiplari nedeniyle olusan gecersiz oturum hatalarini onlemek icin hatali getSession okumalari iptal edilmis, yerine garanti sunan supabase.auth.getUser metodu standart kabul edilmistir.### ?? Kritik Kural: Sosyal Medya (Zernio) Mimarisi ve Çoklu Hesaplar
 
-**Zernio Profile â‰  Workigom Organization**
+**Zernio Profile ? Workigom Organization**
 
-Zernio'da bir "Profile", platform (Instagram, Facebook vs.) baÅŸÄ±na en fazla bir hesap alabilir. AynÄ± profile ikinci bir Instagram hesabÄ± baÄŸlanÄ±rsa, ilk hesabÄ±n Ã¼zerine yazar ve geÃ§miÅŸ veriler kaybolur.
+Zernio'da bir "Profile", platform (Instagram, Facebook vs.) başına en fazla bir hesap alabilir. Aynı profile ikinci bir Instagram hesabı bağlanırsa, ilk hesabın üzerine yazar ve geçmiş veriler kaybolur.
 
-Bu veri kaybÄ±nÄ± Ã¶nlemek ve bir Workigom iÅŸletmesine sÄ±nÄ±rsÄ±z sosyal hesap ekleme yeteneÄŸi kazandÄ±rmak iÃ§in mimari ÅŸÃ¶yledir:
+Bu veri kaybını önlemek ve bir Workigom işletmesine sınırsız sosyal hesap ekleme yeteneği kazandırmak için mimari şöyledir:
 
-- **Workigom Organization** â†’ Ä°Ã§erisinde 1..N adet **Zernio Profile** barÄ±ndÄ±rÄ±r.
-- **Zernio Profile (Slot)** â†’ Sadece platform baÅŸÄ±na 1 hesabÄ±n yerleÅŸtirildiÄŸi teknik bir konteynerdir (KullanÄ±cÄ±ya gÃ¶sterilmez).
-- **Workigom Social Account** â†’ Organizasyon altÄ±ndaki tÃ¼m sosyal hesaplarÄ±n dÃ¼z (flat) listesidir. GerÃ§ek ccountId deÄŸerleri Ã¼zerinden post atÄ±lÄ±r ve DM yanÄ±tlanÄ±r.
+- **Workigom Organization** › İçerisinde 1..N adet **Zernio Profile** barındırır.
+- **Zernio Profile (Slot)** › Sadece platform başına 1 hesabın yerleştirildiği teknik bir konteynerdir (Kullanıcıya gösterilmez).
+- **Workigom Social Account** › Organizasyon altındaki tüm sosyal hesapların düz (flat) listesidir. Gerçek ccountId değerleri üzerinden post atılır ve DM yanıtlanır.
 
-Yeni hesap eklendiÄŸinde (esolve_zernio_profile_for_platform RPC ile) backend ilgili platform iÃ§in boÅŸ bir slot/profile arar; yoksa deterministic bir isim (wg_{org_id}_01) ve Idempotency-Key ile otomatik yeni profile oluÅŸturur.
-- **Frontend UI KuralÄ± (Web & Mobil):** Zernio'nun Ã§oklu profil yeteneÄŸinden faydalandÄ±ÄŸÄ±mÄ±z iÃ§in, kullanÄ±cÄ± "Yeni Hesap BaÄŸla" listesinde daha Ã¶nce baÄŸladÄ±ÄŸÄ± bir platformu (Ã¶r. Instagram) gÃ¶rmeye devam ETMELÄ°DÄ°R. Frontend'de isConnected(platform) tabanlÄ± filtreleme YAPILMAZ. Hangi Zernio profiline ekleneceÄŸi veya yeni profil aÃ§Ä±lÄ±p aÃ§Ä±lmayacaÄŸÄ± tamamen backend esolveProfileForPlatform() sorumluluÄŸundadÄ±r.
+Yeni hesap eklendiğinde (esolve_zernio_profile_for_platform RPC ile) backend ilgili platform için boş bir slot/profile arar; yoksa deterministic bir isim (wg_{org_id}_01) ve Idempotency-Key ile otomatik yeni profile oluşturur.
+- **Frontend UI Kuralı (Web & Mobil):** Zernio'nun çoklu profil yeteneğinden faydalandığımız için, kullanıcı "Yeni Hesap Bağla" listesinde daha önce bağladığı bir platformu (ör. Instagram) görmeye devam ETMELİDİR. Frontend'de isConnected(platform) tabanlı filtreleme YAPILMAZ. Hangi Zernio profiline ekleneceği veya yeni profil açılıp açılmayacağı tamamen backend esolveProfileForPlatform() sorumluluğundadır.
 
 ### [27.08.2026] Mobil Platform UI/UX ve Hata Giderimi
-1. **Frontend Patch:** Mobil arayÃ¼zdeki hizalama hatalarÄ±nÄ± Ã§Ã¶zen yapÄ± low reposuna sorunsuz eklendi.
-2. **Dashboard Neon UI:** Flow mobil uygulamasÄ±nÄ±n ana sayfasÄ±nda yer alan yatay kaydÄ±rÄ±labilir gÃ¶rsel alanÄ±na alttan taÅŸan neon mavi (#00a2ff) bir shadow glow eklendi. overflow: hidden kullanan React Native gÃ¶rÃ¼nÃ¼mlerinde gÃ¶lgenin Ã§alÄ±ÅŸmasÄ± iÃ§in dÄ±ÅŸarÄ±ya ikinci bir sarÄ±cÄ± View katmanÄ± uygulandÄ±.
-3. **Expo Native Crash Ã‡Ã¶zÃ¼mÃ¼:** xpo-image-picker SDK 50+ sÃ¼rÃ¼mÃ¼ndeki katÄ± JSMediaTypes casting kuralÄ±na takÄ±larak profil fotoÄŸrafÄ± yÃ¼klerken uygulamanÄ±n Ã§Ã¶kmesi hatasÄ± giderildi ('image' parametresi array iÃ§erisinde 'images' olarak dÃ¼zeltildi).
-4. **BaÄŸÄ±mlÄ±lÄ±k Ä°hlali:** MuhasebecimScreen iÃ§erisinde geÃ§ersiz noktalanan import dizini (../../../../../shared) onarÄ±larak uygulamanÄ±n derlenmesi saÄŸlandÄ±.
+1. **Frontend Patch:** Mobil arayüzdeki hizalama hatalarını çözen yapı low reposuna sorunsuz eklendi.
+2. **Dashboard Neon UI:** Flow mobil uygulamasının ana sayfasında yer alan yatay kaydırılabilir görsel alanına alttan taşan neon mavi (#00a2ff) bir shadow glow eklendi. overflow: hidden kullanan React Native görünümlerinde gölgenin çalışması için dışarıya ikinci bir sarıcı View katmanı uygulandı.
+3. **Expo Native Crash Çözümü:** xpo-image-picker SDK 50+ sürümündeki katı JSMediaTypes casting kuralına takılarak profil fotoğrafı yüklerken uygulamanın çökmesi hatası giderildi ('image' parametresi array içerisinde 'images' olarak düzeltildi).
+4. **Bağımlılık İhlali:** MuhasebecimScreen içerisinde geçersiz noktalanan import dizini (../../../../../shared) onarılarak uygulamanın derlenmesi sağlandı.
 
-## ğŸ“‚ Proje Dizinleri ve Depolar (Repositories)
+## ?? Proje Dizinleri ve Depolar (Repositories)
 - **Web (Next.js):** C:\Users\roman\flowweb (GitHub: https://github.com/cicicarscom-pixel/flowweb)
 - **Mobil (React Native):** C:\Users\roman\flow (GitHub: https://github.com/cicicarscom-pixel/flow)
 
@@ -424,3 +424,16 @@ Yeni hesap eklendiÄŸinde (esolve_zernio_profile_for_platform RPC ile) backend i
 2. **Edge Function (Gemini) Uyumu:** Mobil uygulamada (`usePlayground.ts`) kullanilan `gemini-chat` Supabase Edge Function API yapisi incelenerek, web tarafindaki istek yapisi da mobil ile ayni standarda (`mode: 'playground'`) getirildi.
 3. **Ai Muhasebe (Ledger) Edge Function Duzeltmesi:** `gemini-chat` Edge Function'inin (`ledger` deposunda yer alan) gelen tum istekleri (mode fark etmeksizin) fatura formatinda (Ai Muhasebe) JSON olarak yanitladigi fark edildi. Fonksiyon onarilarak `mode === 'playground'` durumunda normal sohbet (chat) donecek sekilde guncellendi ve deploy edildi.
 4. **Proje Hafizasi Guncellemesi:** Web ve Mobil projelerin klasor dizinleri sistem hafizasina (AGENTS.md) islendi.
+
+### [30.08.2026] WAHA Engine Krizi & AI Business Services (Hizmet Ayarları) Pipeline
+1. **WAHA (WhatsApp) Engine Değişimi & Çifte Yanıt Çözümü:**
+   - WhatsApp'ın güncellenen DOM yapısı sebebiyle WAHA konteynerindeki (Puppeteer tabanlı) WEBJS motorunun sürekli çökmesi ve QR kodun tıkanması sorunu teşhis edildi. Motor NOWEB (Baileys tabanlı) olarak değiştirildi.
+   - NOWEB motorunun mesajları çifte işlemesini önlemek için, WAHA webhook fonksiyonunun (waha-webhook/index.ts) yalnızca event === 'message' dinlediği teyit edildi (mesaj başı tek işleme). Ayrıca NOWEB formatındaki fallback'ler (payload.data?.from) koda eklendi.
+   - Üretim ortamını kirleten (Dashboard'a düşen) koşulsuz DEBUG_WEBHOOK logları silinerek veri temizliği sağlandı.
+2. **AI İşletme Hizmetleri (Business Services) Mimarisi:**
+   - **Veritabanı:** Ledger deposunda yeni bir migration (20260830100000_business_services.sql) oluşturuldu. usiness_services tablosu merchant_id tenant yapısıyla korumaya alındı.
+   - **Web (Flowweb):** Next.js Server Components, Server Actions (src/actions/businessServices.ts) ve SSR kurallarına (wait createClient()) uygun Client Component (HizmetAyarlariClient) entegre edildi. Flow panelinden dinamik hizmet kaydı aktif edildi.
+   - **Backend/AI (Ledger):** AI Asistanının hizmetleri okuması için ListBusinessServicesTool.ts gerçek tablo verilerine bağlandı.
+3. **?? Kritik Mimari Kural (LLM Empty State Hallucination Koruması):**
+   - Tool'ların (araçların) boş veri döndürmesi durumunda LLM'in o boşluğu (örn: hizmet listesi) varsayılan verilerle (cilt bakımı, manikür vb.) uydurarak doldurmasını (halüsinasyon) engellemek adına, ListBusinessServicesTool içerisine **sistem notu** (system_note) eklendi.
+   - Kural: Eğer liste boşsa, AI'a doğrudan "Sistemde hizmet yok, asla uydurma, 'hizmet bulunmamaktadır' de" komutu data payload'ının içinde system_note olarak iletilir. Bu yöntem tüm dinamik liste çeken AI araçlarında standart olarak uygulanmalıdır.

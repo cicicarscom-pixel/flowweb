@@ -3,60 +3,108 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function getAppointments(dateStr?: string) {
+export async function getAppointmentsByDate(dateStr: string) {
   const supabase = await createClient()
-  let query = supabase.from('appointments').select('*').order('time_start', { ascending: true })
-  
-  if (dateStr) {
-    query = query.eq('date', dateStr)
-  }
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return { data: [], error: 'Unauthorized' }
 
-  const { data, error } = await query
+  const { data, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('organization_id', session.user.id)
+    .like('date', `${dateStr}%`)
+    .in('status', ['Pending', 'Approved'])
+    .order('date', { ascending: true })
 
-  if (error) {
-    console.error('Error fetching appointments:', error)
-    return []
-  }
-  return data
+  if (error) return { data: [], error: error.message }
+  return { data: data || [], error: null }
 }
 
-export async function createAppointment(formData: FormData) {
+export async function getAvailableSlots(dateStr: string, serviceId: string) {
   const supabase = await createClient()
-  
-  const customer_name = formData.get('customer_name') as string
-  const service_id = formData.get('service_id') as string
-  const date = formData.get('date') as string
-  const time_start = formData.get('time_start') as string
-  const time_end = formData.get('time_end') as string
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return { data: [], error: 'Unauthorized' }
 
-  const { error } = await supabase.from('appointments').insert({
-    customer_name,
-    service_id,
-    date,
-    time_start,
-    time_end,
-    status: 'pending' // default status
-  })
+  const { data: service } = await supabase
+    .from('business_services')
+    .select('duration_minutes')
+    .eq('id', serviceId)
+    .eq('merchant_id', session.user.id)
+    .single()
 
-  if (error) {
-    return { success: false, message: error.message }
+  const duration = service?.duration_minutes || 30
+
+  const { data: taken } = await supabase
+    .from('appointments')
+    .select('date')
+    .eq('organization_id', session.user.id)
+    .like('date', `${dateStr}%`)
+    .in('status', ['Pending', 'Approved'])
+
+  const takenTimes = new Set(
+    (taken || []).map((r) => {
+      const d = r.date || ''
+      const t = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || ''
+      return t.substring(0, 5)
+    })
+  )
+
+  const slots: string[] = []
+  for (let h = 9; h < 18; h++) {
+    for (let m = 0; m < 60; m += duration) {
+      const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+      if (!takenTimes.has(time)) slots.push(time)
+    }
   }
 
-  revalidatePath('/appointments')
-  return { success: true }
+  return { data: slots, error: null }
 }
 
-export async function updateAppointmentStatus(id: string, status: string) {
+export async function createAppointment(input: {
+  customerName?: string
+  customerPhone: string
+  serviceId: string
+  employeeId?: string
+  date: string // "YYYY-MM-DDTHH:MM:SS" formatında tam ISO datetime
+}) {
   const supabase = await createClient()
-  
-  const { error } = await supabase.from('appointments')
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return { data: null, error: 'Unauthorized' }
+
+  const { data, error } = await supabase
+    .from('appointments')
+    .insert({
+      organization_id: session.user.id,
+      customer_phone: input.customerPhone,
+      customer_name: input.customerName || null,
+      service_id: input.serviceId,
+      employee_id: input.employeeId || null,
+      date: input.date,
+      status: 'Pending',
+      booking_token: crypto.randomUUID(),
+    })
+    .select()
+    .single()
+
+  if (error) return { data: null, error: error.message }
+  revalidatePath('/ai-asistan/randevu')
+  return { data, error: null }
+}
+
+export async function updateAppointmentStatus(id: string, status: 'Approved' | 'Cancelled') {
+  const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session) return { data: null, error: 'Unauthorized' }
+
+  const { data, error } = await supabase
+    .from('appointments')
     .update({ status })
     .eq('id', id)
+    .eq('organization_id', session.user.id) // RLS'e ek, kod seviyesinde de garanti
+    .select()
+    .single()
 
-  if (error) {
-    return { success: false, message: error.message }
-  }
-
-  revalidatePath('/appointments')
-  return { success: true }
+  if (error) return { data: null, error: error.message }
+  revalidatePath('/ai-asistan/randevu')
+  return { data, error: null }
 }

@@ -48,7 +48,8 @@ export async function startWahaSession() {
             events: ["message", "message.any", "session.status"]
           }
         ]
-      }
+      },
+      engine: "NOWEB"
     };
 
     const response = await fetch(`${WAHA_BASE_URL}/api/sessions/start`, {

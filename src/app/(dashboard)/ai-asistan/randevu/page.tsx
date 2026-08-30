@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+ï»¿import { createClient } from '@/lib/supabase/server'
 import { getAppointmentsByDate } from '@/actions/appointments'
 import { getBusinessServices } from '@/actions/businessServices'
 import RandevuClient from './RandevuClient'
@@ -12,7 +12,7 @@ export default async function RandevuPage() {
     redirect('/login')
   }
 
-  // Bugünün tarihini YYYY-MM-DD formatýnda al
+  // BugÃ¼nÃ¼n tarihini YYYY-MM-DD formatÄ±nda al
   const today = new Date().toISOString().split('T')[0]
 
   let businessServices = []
@@ -20,7 +20,7 @@ export default async function RandevuPage() {
     businessServices = await getBusinessServices(session.user.id)
   } catch (error) {
     console.error('getBusinessServices Error:', error)
-    // Hata durumunda boþ liste ile devam ediyoruz ki sayfa çökmesin
+    // Hata durumunda boÅŸ liste ile devam ediyoruz ki sayfa Ã§Ã¶kmesin
   }
 
   const appointmentsRes = await getAppointmentsByDate(today)

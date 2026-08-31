@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
@@ -117,13 +117,9 @@ export default function SharePage() {
       const base64Data = isBase64 ? localImage?.split(',')[1] : undefined;
       const mimeType = isBase64 ? localImage?.match(/data:(.*?);/)?.[1] : undefined;
       
-      const wantsImageEdit = aiPrompt.toLowerCase().match(/resm|görsel|düzenle|çiz|ekle|değiştir|yap/i);
-      
       const { data, error } = await supabase.functions.invoke('gemini-chat', {
         body: {
-          prompt: wantsImageEdit 
-            ? `Şu anki görseli kullanarak şu kullanıcı talimatına göre yeni bir görsel üret/düzenle: ${aiPrompt}`
-            : `SADECE bir sosyal medya gönderi metni (caption) üret. KESİNLİKLE yeni bir görsel üretme (imagePrompt boş kalsın). Eğer sana bir görsel verildiyse o görseli analiz et ve şu kullanıcı talimatına göre metin yaz: ${aiPrompt}`,
+          prompt: `SADECE bir sosyal medya gönderi metni (caption) üret. KESİNLİKLE yeni bir görsel üretme. Eğer sana bir görsel verildiyse o görseli analiz et ve şu kullanıcı talimatına göre metin yaz: ${aiPrompt}`,
           image: isBase64 ? base64Data : undefined,
           mimeType: isBase64 ? mimeType : undefined,
           mode: 'social'
@@ -134,10 +130,6 @@ export default function SharePage() {
         throw new Error(error?.message || data?.error);
       }
 
-      if (data?.generatedImage) {
-        setLocalImage(`data:image/jpeg;base64,${data.generatedImage}`);
-      }
-      
       if (data?.text) {
         setLocalText(data.text);
         setIsEditingCaption(true);

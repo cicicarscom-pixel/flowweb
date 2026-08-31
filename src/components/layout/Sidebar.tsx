@@ -62,6 +62,7 @@ export default function Sidebar() {
     { href: "/", label: "Anasayfa", icon: "⬡", color: "#FF7A59" },
     { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#FF7A59" },
     { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#F59E0B" },
+    { href: "/musteriler", label: "Müşteriler", icon: "👥", color: "#10B981" },
     { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#C2478D" },
     { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#EF4444" },
     { href: "/analiz", label: "Analiz", icon: "◈", color: "#22B573" },

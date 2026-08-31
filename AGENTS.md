@@ -477,3 +477,7 @@ dokunulmasına yol açar.
 - **Troubleshooting**: Fixed a leftover syntax error (unclosed bracket) in `whatsapp-webhook/index.ts` that was breaking all edge function deployments. Fixed a Next.js server component `createClient(cookies())` type error that was causing Vercel builds to fail, and installed missing dependencies (`country-state-city`, `react-easy-crop`).
 - **RAG Notice**: Documented that Drive/RAG feature development is postponed by user decision.
 
+
+
+## 🚨 Kritik Kural: Deploy Süreci ve Yasaklı Fonksiyonlar
+Deploy komutları ASLA toplu (supabase functions deploy argümansız) çalıştırılmaz, her zaman hedef fonksiyon adıyla tek tek çalıştırılır. Deploy sırasında yasaklı veya hedef dışı bir fonksiyonda hata çıkarsa, o dosyaya dokunulmaz — durum olduğu gibi raporlanır ve talimat beklenir.

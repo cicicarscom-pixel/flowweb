@@ -292,7 +292,7 @@ Yap:
 KIRMIZI ÇİZGİLER (asla ihlal etme):
 - ledger'ın core/finance/audit/analytics/ai şemalarına DOKUNMA.
 - bot_settings tablosuna DOKUNMA.
-- gemini-chat, whatsapp-webhook, ledger-ai-chat, ledger-process-document, mutabakat-chat, ledger-generate-schema, ledger-isleyici-api dosyalarına DOKUNMA.
+- whatsapp-webhook, ledger-ai-chat, ledger-process-document, mutabakat-chat, ledger-generate-schema, ledger-isleyici-api, ledger-gemini-chat, ledger_mimar_google_api dosyalarına DOKUNMA.
 
 Doğrula ve bana/kullanıcıya raporla:
 - Migration hatasız uygulandı mı?

@@ -437,3 +437,32 @@ Yeni hesap eklendi�inde (esolve_zernio_profile_for_platform RPC ile) backend il
 3. **?? Kritik Mimari Kural (LLM Empty State Hallucination Korumas�):**
    - Tool'lar�n (ara�lar�n) bo� veri d�nd�rmesi durumunda LLM'in o bo�lu�u (�rn: hizmet listesi) varsay�lan verilerle (cilt bak�m�, manik�r vb.) uydurarak doldurmas�n� (hal�sinasyon) engellemek ad�na, ListBusinessServicesTool i�erisine **sistem notu** (system_note) eklendi.
    - Kural: E�er liste bo�sa, AI'a do�rudan "Sistemde hizmet yok, asla uydurma, 'hizmet bulunmamaktad�r' de" komutu data payload'�n�n i�inde system_note olarak iletilir. Bu y�ntem t�m dinamik liste �eken AI ara�lar�nda standart olarak uygulanmal�d�r.
+## 🚨 Kritik Kural: Fonksiyon Sahipliği ve İsimlendirme (31.08.2026)
+
+Her Supabase Edge Function'ın TEK bir sahibi vardır, isminden bellidir:
+
+**ledger- öneki → Ledger'a ait, mali müşavir/muhasebe amaçlı, ASLA DOKUNULMAZ:**
+| Fonksiyon | Amaç |
+|---|---|
+| ledger-ai-chat | Mali müşavir ↔ mükellef sohbet köprüsü (şu an client'tan çağrılmıyor, yetim) |
+| ledger-process-document | Belge işleme |
+| mutabakat-chat | Mutabakat sohbeti |
+| ledger-generate-schema | Şema üretimi |
+| ledger-isleyici-api | İşleyici API |
+| ledger_mimar_google_api | Google API entegrasyonu |
+| ledger-gemini-chat | Fatura/işlem fotoğrafı → JSON (eski gemini-chat'in muhasebe kısmı) |
+
+**low- öneki veya persona-engine'e özgü isimler → Flow'a ait, sosyal medya + WhatsApp/
+Instagram müşteri ilişkileri, serbestçe geliştirilebilir:**
+| Fonksiyon | Amaç |
+|---|---|
+| flow-gemini-chat | Sosyal medya gönderi metni (caption) üretimi |
+| persona-test | Canlı Test / persona önizleme (executionMode: simulation) |
+| waha-webhook | WhatsApp gerçek müşteri mesajları → AIOrchestrator |
+| zernio-webhook | Instagram/sosyal medya gerçek müşteri mesajları → AIOrchestrator |
+
+KURAL: Yeni bir fonksiyon eklerken önce hangi platforma ait olduğuna karar ver, ismini
+buna göre önekle (ledger- veya flow-), ve eğer ledger- ise yukarıdaki yasaklı listeye
+ekle. İki platformun aynı fonksiyonu paylaşması (eski gemini-chat'in başına geldiği gibi)
+KESİNLİKLE YAPILMAZ — paylaşım, bir platform için yapılan düzeltmenin diğerine yanlışlıkla
+dokunulmasına yol açar.

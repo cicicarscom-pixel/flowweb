@@ -29,6 +29,7 @@ export interface SaveAiPersonaSettingsInput {
   personaIntensity?: number
   humorLevel?: number
   modernAdaptation?: number
+  appointmentModuleEnabled?: boolean
 }
 
 export interface SaveAiPersonaSettingsResult {
@@ -89,6 +90,7 @@ export async function saveAiPersonaSettings(
         humor_level: input.humorLevel ?? personaDefaults.humor_level,
         modern_adaptation: input.modernAdaptation ?? personaDefaults.modern_adaptation,
         custom_instruction: input.customInstruction,
+        appointment_module_enabled: input.appointmentModuleEnabled ?? true,
         assistant_enabled: true,
         updated_at: new Date().toISOString(),
       },
@@ -115,6 +117,7 @@ export interface AiPersonaSettings {
   personaIntensity: number
   humorLevel: number
   modernAdaptation: number
+  appointmentModuleEnabled: boolean
 }
 
 // Paired "load" action — mirrors saveAiPersonaSettings' need for admin-level
@@ -156,5 +159,6 @@ export async function getAiPersonaSettings(): Promise<AiPersonaSettings | null> 
     personaIntensity: settings.persona_intensity,
     humorLevel: settings.humor_level,
     modernAdaptation: settings.modern_adaptation,
+    appointmentModuleEnabled: settings.appointment_module_enabled ?? true,
   }
 }

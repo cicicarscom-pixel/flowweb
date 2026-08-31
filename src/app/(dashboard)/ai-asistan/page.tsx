@@ -55,6 +55,7 @@ export default function BotScreen() {
   });
   const [customInstruction, setCustomInstruction] = useState("");
   const [timezone, setTimezone] = useState("Europe/Istanbul");
+  const [appointmentModuleEnabled, setAppointmentModuleEnabled] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
   const [wahaStatus, setWahaStatus] = useState<any>(null);
@@ -100,6 +101,7 @@ export default function BotScreen() {
       if (aiSettings.businessRole) setSelectedRole(aiSettings.businessRole);
       if (aiSettings.tone) setSelectedTone(aiSettings.tone);
       if (aiSettings.customInstruction) setCustomInstruction(aiSettings.customInstruction);
+      if (aiSettings.appointmentModuleEnabled !== undefined) setAppointmentModuleEnabled(aiSettings.appointmentModuleEnabled);
       if (aiSettings.characterSlug && SLUG_TO_CHARACTER[aiSettings.characterSlug]) {
         setSelectedCharacter(SLUG_TO_CHARACTER[aiSettings.characterSlug]);
       }
@@ -131,6 +133,7 @@ export default function BotScreen() {
         businessRole: selectedRole,
         tone: selectedTone,
         customInstruction,
+        appointmentModuleEnabled,
       });
 
       if (!result.success) {
@@ -289,6 +292,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           businessRole: selectedRole,
           tone: selectedTone,
           customInstruction: customInstruction,
+          appointmentModuleEnabled,
         }
       });
 
@@ -630,6 +634,15 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
               <option value="Asia/Dubai" style={{ background: "#1a1a1a" }}>BAE (Asia/Dubai)</option>
             </select>
           </div>
+
+            {/* Randevu / Rezervasyon Modülü Ayarı */}
+            <div className="glass" style={{ borderRadius: 20, padding: "16px 20px", marginTop: 8, border: "1.5px solid rgba(255,122,89,0.5)", background: "rgba(255,122,89,0.03)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Randevu / Rezervasyon Özelliği</h3>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Kapatırsanız AI randevu almaya çalışmaz, sadece işletme bilginize ve talimatlarınıza göre yanıt verir.</p>
+              </div>
+              <Toggle on={appointmentModuleEnabled} onChange={() => setAppointmentModuleEnabled(v => !v)} />
+            </div>
 
           {/* Asistan Talimatı Oluştur */}
           <div>

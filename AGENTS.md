@@ -466,3 +466,7 @@ buna göre önekle (ledger- veya flow-), ve eğer ledger- ise yukarıdaki yasakl
 ekle. İki platformun aynı fonksiyonu paylaşması (eski gemini-chat'in başına geldiği gibi)
 KESİNLİKLE YAPILMAZ — paylaşım, bir platform için yapılan düzeltmenin diğerine yanlışlıkla
 dokunulmasına yol açar.
+
+## Phase 6 (August 31 2026)
+**Note:** Drive/RAG feature development is currently an end-to-end placeholder and has been formally POSTPONED per user decision. Do not attempt to wire up actual embeddings, PGVector, or vector search logic until explicitly instructed to resume.
+

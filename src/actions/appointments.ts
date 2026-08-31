@@ -8,7 +8,7 @@ export async function getAppointmentsByDate(dateStr: string) {
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
 
-  const { data, error } = await supabase
+  const { data: appointments, error } = await supabase
     .from('appointments')
     .select('*')
     .eq('organization_id', session.user.id)
@@ -17,7 +17,41 @@ export async function getAppointmentsByDate(dateStr: string) {
     .order('date', { ascending: true })
 
   if (error) return { data: [], error: error.message }
-  return { data: data || [], error: null }
+  if (!appointments || appointments.length === 0) return { data: [], error: null }
+
+  const appointmentIds = appointments.map((a) => a.id)
+
+  const { data: links } = await supabase
+    .from('appointment_services')
+    .select('appointment_id, service_id')
+    .in('appointment_id', appointmentIds)
+
+  const { data: services } = await supabase
+    .from('business_services')
+    .select('id, name')
+    .eq('merchant_id', session.user.id)
+
+  const serviceNameById = new Map((services || []).map((s) => [s.id, s.name]))
+
+  const servicesByAppointment = new Map<string, string[]>()
+  for (const link of links || []) {
+    const name = serviceNameById.get(link.service_id)
+    if (!name) continue
+    const list = servicesByAppointment.get(link.appointment_id) || []
+    list.push(name)
+    servicesByAppointment.set(link.appointment_id, list)
+  }
+
+  const enriched = appointments.map((a) => ({
+    ...a,
+    services:
+      servicesByAppointment.get(a.id) ||
+      (a.service_id && serviceNameById.get(a.service_id)
+        ? [serviceNameById.get(a.service_id) as string]
+        : []),
+  }))
+
+  return { data: enriched, error: null }
 }
 
 export async function getAvailableSlots(dateStr: string, serviceId: string) {

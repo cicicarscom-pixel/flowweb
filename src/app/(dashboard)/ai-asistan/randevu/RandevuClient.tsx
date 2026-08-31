@@ -276,7 +276,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 const d = appt.date || '';
                 const t = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
                 const timeStr = t.substring(0, 5);
-                const svcName = getServiceName(appt.service_id);
+                const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : getServiceName(appt.service_id);
 
                 return (
                   <div key={appt.id} style={{ display: "flex", gap: 16 }}>

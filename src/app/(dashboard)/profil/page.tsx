@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
+import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 
 
 import { createClient } from "@/lib/supabase/client";
@@ -321,6 +322,7 @@ export default function ProfilPage() {
           </div>
         </form>
       </div>
+      <AiDataResetPanel />
     </div>
   );
 }

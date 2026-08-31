@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
@@ -821,6 +822,8 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
           </div>
         </Link>
       </div>
+
+      <AiDataResetPanel />
       
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes fadeIn {

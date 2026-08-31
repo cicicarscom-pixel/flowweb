@@ -63,7 +63,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                 selectedCustomer.history.map((appt: any) => (
                   <div key={appt.id} style={{ padding: 12, background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
                     <div style={{ fontSize: 14, color: 'var(--text-100)', marginBottom: 4 }}>
-                      {appt.business_services?.name || 'Bilinmeyen Hizmet'}
+                      {appt.services?.length > 0 ? appt.services.join(' + ') : 'Bilinmeyen Hizmet'}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-300)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{formatDate(appt.date)}</span>

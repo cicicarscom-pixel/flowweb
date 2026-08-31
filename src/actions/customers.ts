@@ -11,34 +11,42 @@ export async function getCustomers() {
       throw new Error("Unauthorized")
     }
 
-    const { data, error } = await supabase
+    // 1. Fetch customers
+    const { data: customersData, error: customersError } = await supabase
       .from('customers')
-      .select(`
-        id,
-        name,
-        phone,
-        created_at,
-        appointments (
-          id,
-          date,
-          status,
-          business_services (
-            name
-          )
-        )
-      `)
+      .select('id, name, phone, created_at')
       .eq('organization_id', session.user.id)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error("Error fetching customers:", error)
+    if (customersError) {
+      console.error("Error fetching customers:", customersError)
       return []
     }
 
-    // Process data to calculate total appointments and last visit
-    const processedData = data.map((customer: any) => {
-      const appointments = customer.appointments || []
-      const sortedAppts = [...appointments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    // 2. Fetch all appointments for this organization
+    const { data: appointmentsData, error: apptError } = await supabase
+      .from('appointments')
+      .select(`
+        id,
+        date,
+        status,
+        customer_phone,
+        business_services (
+          name
+        )
+      `)
+      .eq('organization_id', session.user.id)
+
+    if (apptError) {
+      console.error("Error fetching appointments for customers:", apptError)
+    }
+
+    const apptList = appointmentsData || []
+
+    // 3. Map in JS by phone number
+    const processedData = (customersData || []).map((customer: any) => {
+      const customerAppts = apptList.filter((a: any) => a.customer_phone === customer.phone)
+      const sortedAppts = [...customerAppts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       const lastVisit = sortedAppts.length > 0 ? sortedAppts[0].date : null
       
       return {
@@ -46,7 +54,7 @@ export async function getCustomers() {
         name: customer.name || 'İsimsiz',
         phone: customer.phone,
         created_at: customer.created_at,
-        total_appointments: appointments.length,
+        total_appointments: customerAppts.length,
         last_visit: lastVisit,
         history: sortedAppts
       }

@@ -12,8 +12,11 @@ export default async function RandevuPage() {
     redirect('/login')
   }
 
-  // Bug�n�n tarihini YYYY-MM-DD format�nda al
-  const today = new Date().toISOString().split('T')[0]
+  // Bugünün tarihini YYYY-MM-DD formatında al (Yerel Saat Dilimine Göre)
+  const now = new Date()
+  const offsetMs = now.getTimezoneOffset() * 60 * 1000
+  const localDate = new Date(now.getTime() - offsetMs)
+  const today = localDate.toISOString().split('T')[0]
 
   let businessServices = []
   try {

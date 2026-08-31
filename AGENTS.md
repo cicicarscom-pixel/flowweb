@@ -470,3 +470,10 @@ dokunulmasÄ±na yol aÃ§ar.
 ## Phase 6 (August 31 2026)
 **Note:** Drive/RAG feature development is currently an end-to-end placeholder and has been formally POSTPONED per user decision. Do not attempt to wire up actual embeddings, PGVector, or vector search logic until explicitly instructed to resume.
 
+
+### Conversation Summary (31.08.2026)
+- **Phase 5 (Customer CRM & Recognition)**: Identified that the AI couldn't save customer names because the DB didn't support it in the flow. Upgraded `appointments` and `customers` tables. Added returning customer recognition so AI skips asking names for known users. Built the 'Müþteriler' page in Flowweb to display the CRM data.
+- **Phase 6 (TAM PAKET - AI Appointment & Culture)**: Implemented a robust 13-step plan. Added an ON/OFF toggle for the appointment module to `organization_ai_settings` and Flowweb. Created the `UpdateAppointmentTool` to reschedule slots without duplicating appointments. Added automatic merchant notifications for appointment actions. Improved the prompt builder to strictly use Turkish/English cultural addressing (e.g., 'Bey', 'Haným', 'Mr.') and ignore raw '@lid' WA IDs.
+- **Troubleshooting**: Fixed a leftover syntax error (unclosed bracket) in `whatsapp-webhook/index.ts` that was breaking all edge function deployments. Fixed a Next.js server component `createClient(cookies())` type error that was causing Vercel builds to fail, and installed missing dependencies (`country-state-city`, `react-easy-crop`).
+- **RAG Notice**: Documented that Drive/RAG feature development is postponed by user decision.
+

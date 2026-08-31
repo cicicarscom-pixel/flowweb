@@ -352,3 +352,13 @@ waha-webhook ve zernio-webhook uÃ§ noktalarÄ±ndaki eski 'God Object' implementas
 2. **Edge Function (Gemini) Uyumu:** Mobil uygulamada (`usePlayground.ts`) kullanilan `gemini-chat` Supabase Edge Function API yapisi incelenerek, web tarafindaki istek yapisi da mobil ile ayni standarda (`mode: 'playground'`) getirildi.
 3. **Ai Muhasebe (Ledger) Edge Function Duzeltmesi:** `gemini-chat` Edge Function'inin (`ledger` deposunda yer alan) gelen tum istekleri (mode fark etmeksizin) fatura formatinda (Ai Muhasebe) JSON olarak yanitladigi fark edildi. Fonksiyon onarilarak `mode === 'playground'` durumunda normal sohbet (chat) donecek sekilde guncellendi ve deploy edildi.
 4. **Proje Hafizasi Guncellemesi:** Web ve Mobil projelerin klasor dizinleri sistem hafizasina (AGENTS.md) islendi.
+
+### [31.08.2026] AI Asistan Randevu ve Kültürel Hitap Modülleri (TAM PAKET)
+1. **Müþteri Tanýma (CRM):** AI'nin tekrar eden müþterileri tanýmasý ve isimlerini `customers` tablosuna kaydetmesi/okumasý saðlandý. Flowweb'de `Müþteriler` (CRM) sayfasý oluþturuldu.
+2. **Kültürel Hitap Entegrasyonu:** `SYSTEM_POLICY` üzerinden dil/cinsiyet bazlý hitap yeteneði (ör. 'Volkan Bey', 'Ayþe Haným') kazandýrýldý.
+3. **Randevu Modülü Kapatma/Açma:** Flowweb'de Randevu Özelliðini açýp kapatmak için Toggle eklendi.
+4. **Randevu Güncelleme (Reschedule):** Mevcut randevu saatinin güncellenebilmesi için `updateAppointmentDateTime` fonksiyonu ve `UpdateAppointmentTool` yazýldý.
+5. **Ýþletme Bildirimleri:** Randevu iþlemlerinde `notifications` tablosuna kayýt düþmesi saðlandý.
+6. **Bug Düzeltmeleri:** Vercel TypeScript hatalarý (`createClient`) ve Edge Function syntax hatalarý giderildi.
+7. **RAG/Drive Ertelemesi:** Drive/RAG geliþtirmelerinin þimdilik durdurulduðu notu eklendi.
+

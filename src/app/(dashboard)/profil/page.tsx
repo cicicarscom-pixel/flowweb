@@ -211,6 +211,12 @@ export default function ProfilPage() {
 
   return (
     <div style={{ padding: "40px", maxWidth: 800, margin: "0 auto", width: "100%" }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        select.glass-input option {
+          background-color: #17151A;
+          color: #ffffff;
+        }
+      `}} />
       <h1 style={{ fontSize: 28, fontWeight: 600, color: "#fff", marginBottom: 8, fontFamily: "Outfit, sans-serif" }}>Profil Ayarları</h1>
       <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz.</p>
       

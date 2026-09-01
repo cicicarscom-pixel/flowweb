@@ -46,20 +46,28 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div 
-      ref={containerRef}
-      onMouseDown={handleMouseDown}
-      onMouseLeave={handleMouseLeave}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-      style={{ 
-        display: "flex", overflowX: "auto", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10, 
-        cursor: isDown ? "grabbing" : "grab",
-        scrollbarWidth: "none", msOverflowStyle: "none"
-      }}
-    >
-      <style dangerouslySetInnerHTML={{__html: `div::-webkit-scrollbar { display: none; }`}} />
-      {children}
+    <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+      `}} />
+      <div 
+        ref={containerRef}
+        className="hide-scroll"
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        style={{ 
+          display: "flex", overflowX: "auto", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10, 
+          cursor: isDown ? "grabbing" : "grab",
+          overscrollBehaviorX: "contain",
+          WebkitOverflowScrolling: "touch",
+          userSelect: "none"
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -287,7 +295,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               </div>
               
               {/* Heatmap Grid */}
-              <div style={{ flex: 1, overflowX: "auto", paddingBottom: 6 }}>
+              <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}>
                 <div style={{ display: "flex", gap: 6 }}>
                   {Array.from({ length: 11 }).map((_, col) => (
                     <div key={col} style={{ display: "flex", flexDirection: "column", gap: 6 }}>

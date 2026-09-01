@@ -6,21 +6,12 @@ import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
+import { getPublishedPersonas, PublicPersona } from "@/actions/personas";
+import AICharacterPanel from "@/components/ai-asistan/AICharacterPanel";
+import AdvancedPersonaSettings from "@/components/ai-asistan/AdvancedPersonaSettings";
 
 // Persona Engine (Phase 5): today's UI still shows a fixed 3-character list
-// (Phase 6 replaces this with a real carousel fetched from ai_personas), but
-// saving/loading now goes through organization_ai_settings by slug instead
-// of writing a hand-built system_prompt string into bot_settings. This map
-// is the ONLY place that ties the UI's display labels to the seeded
-// ai_personas.slug values (see ledger/scripts/personas/*.json) — Phase 6
-// removes it entirely once personas are fetched, not hardcoded.
-const CHARACTER_SLUGS: Record<string, string> = {
-  "Albert Einstein": "einstein",
-  "William Shakespeare": "shakespeare",
-};
-const SLUG_TO_CHARACTER: Record<string, string> = Object.fromEntries(
-  Object.entries(CHARACTER_SLUGS).map(([label, slug]) => [slug, label])
-);
+// Persona Engine Phase 6: Removed hardcoded CHARACTER_SLUGS.
 
 function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   return (
@@ -97,15 +88,22 @@ export default function BotScreen() {
 
     // Persona Engine (Phase 5): the merchant's actual saved persona/dial
     // selections now live in organization_ai_settings, not bot_settings.
+    const pRes = await getPublishedPersonas();
+    if (pRes) {
+      setPersonas(pRes);
+    }
+    setPersonasLoading(false);
+
     const aiSettings = await getAiPersonaSettings();
     if (aiSettings) {
       if (aiSettings.businessRole) setSelectedRole(aiSettings.businessRole);
       if (aiSettings.tone) setSelectedTone(aiSettings.tone);
       if (aiSettings.customInstruction) setCustomInstruction(aiSettings.customInstruction);
       if (aiSettings.appointmentModuleEnabled !== undefined) setAppointmentModuleEnabled(aiSettings.appointmentModuleEnabled);
-      if (aiSettings.characterSlug && SLUG_TO_CHARACTER[aiSettings.characterSlug]) {
-        setSelectedCharacter(SLUG_TO_CHARACTER[aiSettings.characterSlug]);
-      }
+      if (aiSettings.characterSlug) setSelectedPersonaSlug(aiSettings.characterSlug);
+      if (aiSettings.personaIntensity !== undefined) setPersonaIntensity(aiSettings.personaIntensity);
+      if (aiSettings.humorLevel !== undefined) setHumorLevel(aiSettings.humorLevel);
+      if (aiSettings.modernAdaptation !== undefined) setModernAdaptation(aiSettings.modernAdaptation);
     }
 
     const wahaRes = await getWahaStatus();
@@ -122,13 +120,16 @@ export default function BotScreen() {
     setAppointmentModuleEnabled(newValue);
     
     // Anında veritabanına kaydet (kullanıcı kaydet butonuna basmayı unutabiliyor)
-    const characterSlug = CHARACTER_SLUGS[selectedCharacter] ?? null;
+    const characterSlug = selectedPersonaSlug;
     await saveAiPersonaSettings({
       characterSlug,
       businessRole: selectedRole,
       tone: selectedTone,
       customInstruction,
       appointmentModuleEnabled: newValue,
+      personaIntensity,
+      humorLevel,
+      modernAdaptation,
     });
   };
 
@@ -142,7 +143,7 @@ export default function BotScreen() {
       // an actual prompt, on the server, at message time (Phase 2/3).
       // bot_settings.system_prompt/tone/role/character are no longer
       // written from this screen at all.
-      const characterSlug = CHARACTER_SLUGS[selectedCharacter] ?? null;
+      const characterSlug = selectedPersonaSlug;
 
       const result = await saveAiPersonaSettings({
         characterSlug,
@@ -150,6 +151,9 @@ export default function BotScreen() {
         tone: selectedTone,
         customInstruction,
         appointmentModuleEnabled,
+        personaIntensity,
+        humorLevel,
+        modernAdaptation,
       });
 
       if (!result.success) {
@@ -266,7 +270,12 @@ Eğer bir konuyu çözemiyorsan, insan temsilcisine yönlendirirsin.
 Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
 
   const [selectedRole, setSelectedRole] = useState("Kebapçı");
-  const [selectedCharacter, setSelectedCharacter] = useState("Albert Einstein");
+  const [selectedPersonaSlug, setSelectedPersonaSlug] = useState<string | null>(null);
+  const [personas, setPersonas] = useState<PublicPersona[]>([]);
+  const [personasLoading, setPersonasLoading] = useState(true);
+  const [personaIntensity, setPersonaIntensity] = useState(50);
+  const [humorLevel, setHumorLevel] = useState(50);
+  const [modernAdaptation, setModernAdaptation] = useState(50);
   const [selectedTone, setSelectedTone] = useState("Standart");
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isSimulationActive, setIsSimulationActive] = useState(false);
@@ -304,11 +313,14 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         body: {
           merchantId: session.user.id,
           testMessage: inputValue.trim(),
-          personaSlug: CHARACTER_SLUGS[selectedCharacter] ?? null,
+          personaSlug: selectedPersonaSlug,
           businessRole: selectedRole,
           tone: selectedTone,
           customInstruction: customInstruction,
           appointmentModuleEnabled,
+          personaIntensity,
+          humorLevel,
+          modernAdaptation,
         }
       });
 
@@ -324,24 +336,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
     }
   };
 
-  const roles = [
-    { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
-    { id: "Berber", label: "Berber", icon: "💈" },
-    { id: "Oto Tamir", label: "Oto Tamir", icon: "🔧" },
-    { id: "Market", label: "Market", icon: "🛍️" },
-  ];
 
-  const characters = [
-    { id: "Albert Einstein", label: "Albert Einstein", icon: "😎" },
-    { id: "William Shakespeare", label: "William Shakespeare", icon: "📜" },
-  ];
-
-  const tones = [
-    { id: "Standart", label: "Standart", icon: "😐" },
-    { id: "Komik", label: "Komik", icon: "😆" },
-    { id: "Resmi", label: "Resmi", icon: "👔" },
-    { id: "Samimi", label: "Samimi", icon: "🤗" },
-  ];
 
   return (
     <div style={{ padding: "28px 32px", width: "100%", flex: 1 }}>
@@ -470,157 +465,28 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
         
         {/* Left Column: AI Kişiliği & Advanced Settings */}
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-          {/* AI Kişiliği (Purple Box) */}
-          <div className="glass" style={{ 
-            borderRadius: 24, 
-            padding: "24px 28px", 
-            border: "2px solid #C2478D",
-            boxShadow: "0 0 20px rgba(194,71,141,0.15)",
-            background: "rgba(194,71,141,0.03)"
-          }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 24, color: "#fff" }}>AI Kişiliği</h3>
-            
-            {/* İşletme Rolü */}
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                <span>🏢</span> İŞLETME ROLÜ
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {roles.map(r => (
-                  <button
-                    key={r.id}
-                    onClick={() => setSelectedRole(r.id)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 8,
-                      padding: "10px 16px", borderRadius: 99,
-                      background: selectedRole === r.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedRole === r.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedRole === r.id ? "#C2478D" : "var(--text-secondary)",
-                      fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{r.icon}</span>
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Karakter */}
-            <div style={{ marginBottom: 24 }}>
-              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                <span>🧠</span> KARAKTER
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {characters.map(c => (
-                  <button
-                    key={c.id}
-                    onClick={() => setSelectedCharacter(c.id)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 8,
-                      padding: "10px 16px", borderRadius: 99,
-                      background: selectedCharacter === c.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedCharacter === c.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedCharacter === c.id ? "#C2478D" : "var(--text-secondary)",
-                      fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{c.icon}</span>
-                    {c.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Üslup */}
-            <div>
-              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                <span>🎭</span> ÜSLUP
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {tones.map(t => (
-                  <button
-                    key={t.id}
-                    onClick={() => setSelectedTone(t.id)}
-                    style={{
-                      display: "flex", alignItems: "center", gap: 8,
-                      padding: "10px 16px", borderRadius: 99,
-                      background: selectedTone === t.id ? "rgba(194,71,141,0.15)" : "rgba(255,255,255,0.03)",
-                      border: selectedTone === t.id ? "1px solid rgba(194,71,141,0.4)" : "1px solid rgba(255,255,255,0.08)",
-                      cursor: "pointer", color: selectedTone === t.id ? "#C2478D" : "var(--text-secondary)",
-                      fontSize: 14, fontWeight: 500, transition: "all 0.2s",
-                    }}
-                  >
-                    <span style={{ fontSize: 16 }}>{t.icon}</span>
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* İleri Seviye Ayarlar Accordion Toggle */}
-          <div 
-            onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-            className="glass" 
-            style={{ 
-              borderRadius: 99, 
-              padding: "12px 16px 12px 24px", 
-              border: "2px solid #C2478D",
-              boxShadow: "0 0 20px rgba(194,71,141,0.15)",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              cursor: "pointer",
-              background: "rgba(194,71,141,0.03)",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ color: "#FF7A59", fontWeight: "bold", fontSize: 18 }}>{'</>'}</span>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>İleri Seviye Ayarlar</span>
-            </div>
-            <div style={{
-              width: 40, height: 40, borderRadius: "50%",
-              background: "rgba(255,255,255,0.1)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              transform: isAdvancedOpen ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.3s ease",
-            }}>
-              <span style={{ color: "#fff", fontSize: 20 }}>⚙️</span>
-            </div>
-          </div>
-
-          {/* System prompt card (Advanced Settings) */}
-          {isAdvancedOpen && (
-            <div style={{ position: "relative", marginTop: -8, animation: "fadeIn 0.3s ease" }}>
-              <div style={{ position: "absolute", inset: -1, borderRadius: 22, background: "radial-gradient(ellipse at 50% 0%, rgba(255,122,89,0.25) 0%, transparent 70%)", filter: "blur(20px)", pointerEvents: "none" }} />
-              <div className="glass" style={{
-                borderRadius: 20, padding: "22px", position: "relative",
-                border: "1.5px solid rgba(255,122,89,0.5)",
-                boxShadow: "0 0 40px rgba(255,122,89,0.1), inset 0 0 20px rgba(255,122,89,0.03)",
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <p style={{ fontSize: 12, color: "#FF7A59", fontWeight: 600, letterSpacing: "0.08em", fontFamily: "JetBrains Mono, monospace" }}>SİSTEM TALİMATI · BAĞLAM PENCERESI</p>
-                  <span style={{ fontSize: 11, color: "rgba(255,122,89,0.6)", fontFamily: "JetBrains Mono, monospace" }}>{systemPrompt.length} token</span>
-                </div>
-                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 10, lineHeight: 1.5 }}>
-                  Bu alan artık kaydedilmiyor — yukarıdaki Karakter/Ton/Rol seçimleri ve "Asistan Talimatı Oluştur" kutusu kullanılıyor. Burada gördüğünüz metin, hiç persona seçmemiş eski hesaplar için hâlâ geçerli olan önceki yapılandırmanızın salt okunur bir yansımasıdır.
-                </p>
-                <textarea
-                  value={systemPrompt}
-                  readOnly
-                  style={{
-                    width: "100%", minHeight: 200, background: "rgba(255,122,89,0.04)",
-                    border: "1px solid rgba(255,122,89,0.15)", borderRadius: 12,
-                    padding: "14px", color: "rgba(255,255,255,0.55)", fontSize: 13,
-                    lineHeight: 1.7, resize: "vertical", outline: "none",
-                    fontFamily: "Inter, sans-serif", cursor: "default",
-                  }}
-                />
-
-              </div>
-            </div>
-          )}
+          <AICharacterPanel
+            selectedRole={selectedRole}
+            onSelectRole={setSelectedRole}
+            personas={personas}
+            personasLoading={personasLoading}
+            selectedPersonaSlug={selectedPersonaSlug}
+            onSelectPersona={(p) => setSelectedPersonaSlug(p ? p.slug : null)}
+            selectedTone={selectedTone}
+            onSelectTone={setSelectedTone}
+            personaIntensity={personaIntensity}
+            onPersonaIntensityChange={setPersonaIntensity}
+            humorLevel={humorLevel}
+            onHumorLevelChange={setHumorLevel}
+            modernAdaptation={modernAdaptation}
+            onModernAdaptationChange={setModernAdaptation}
+          />
+          
+          <AdvancedPersonaSettings
+            isOpen={isAdvancedOpen}
+            onToggle={() => setIsAdvancedOpen(!isAdvancedOpen)}
+            systemPrompt={systemPrompt}
+          />
 
           {/* Saat Dilimi (Timezone) Ayarı */}
           <div className="glass" style={{

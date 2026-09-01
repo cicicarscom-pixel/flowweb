@@ -117,6 +117,21 @@ export default function BotScreen() {
     }
   };
 
+    const handleAppointmentToggle = async () => {
+    const newValue = !appointmentModuleEnabled;
+    setAppointmentModuleEnabled(newValue);
+    
+    // Anında veritabanına kaydet (kullanıcı kaydet butonuna basmayı unutabiliyor)
+    const characterSlug = CHARACTER_SLUGS[selectedCharacter] ?? null;
+    await saveAiPersonaSettings({
+      characterSlug,
+      businessRole: selectedRole,
+      tone: selectedTone,
+      customInstruction,
+      appointmentModuleEnabled: newValue,
+    });
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
@@ -642,7 +657,7 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Randevu / Rezervasyon Özelliği</h3>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Kapatırsanız AI randevu almaya çalışmaz, sadece işletme bilginize ve talimatlarınıza göre yanıt verir.</p>
               </div>
-              <Toggle on={appointmentModuleEnabled} onChange={() => setAppointmentModuleEnabled(v => !v)} />
+              <Toggle on={appointmentModuleEnabled} onChange={handleAppointmentToggle} />
             </div>
 
           {/* Asistan Talimatı Oluştur */}

@@ -22,6 +22,8 @@ export interface PublicPersona {
   icon: string | null
   category: string | null
   shortBio: string | null
+  avatarUrl: string | null
+  thumbnailUrl: string | null
   defaultPersonaIntensity: number
   defaultHumorLevel: number
   defaultModernAdaptation: number
@@ -33,7 +35,7 @@ export async function getPublishedPersonas(): Promise<PublicPersona[]> {
   const { data, error } = await supabase
     .from('ai_personas')
     .select(
-      'id, slug, name, icon, category, short_bio, default_persona_intensity, default_humor_level, default_modern_adaptation',
+      'id, slug, name, icon, category, short_bio, avatar_url, thumbnail_url, default_persona_intensity, default_humor_level, default_modern_adaptation',
     )
     .eq('status', 'published')
     .eq('is_active', true)
@@ -54,6 +56,11 @@ export async function getPublishedPersonas(): Promise<PublicPersona[]> {
     icon: p.icon,
     category: p.category,
     shortBio: p.short_bio,
+    // thumbnail_url is preferred for the carousel (smaller asset); avatar_url
+    // is the fallback so the card still shows something once only one of the
+    // two has been uploaded.
+    avatarUrl: p.thumbnail_url ?? p.avatar_url,
+    thumbnailUrl: p.thumbnail_url,
     defaultPersonaIntensity: p.default_persona_intensity,
     defaultHumorLevel: p.default_humor_level,
     defaultModernAdaptation: p.default_modern_adaptation,

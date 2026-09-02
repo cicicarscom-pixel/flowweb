@@ -11,15 +11,34 @@
 // ==============================================================================
 
 import PillGroup, { PillItem } from "./PillGroup";
+import RoleCarousel from "./RoleCarousel";
 import PersonaCarousel from "./PersonaCarousel";
 import PersonaSlider from "./PersonaSlider";
 import type { PublicPersona } from "@/actions/personas";
 
-const ROLES: PillItem[] = [
-  { id: "Kebapçı", label: "Kebapçı", icon: "🥙" },
-  { id: "Berber", label: "Berber", icon: "💈" },
-  { id: "Oto Tamir", label: "Oto Tamir", icon: "🔧" },
-  { id: "Market", label: "Market", icon: "🛍️" },
+// İşletme Rolü: hâlâ hardcoded (ai_personas gibi bir tabloya modellenmiyor —
+// bkz. dosya başındaki not), ama artık her rol kendi görseliyle KARAKTER
+// bölümüyle aynı kart dilini paylaşıyor (RoleCarousel + PersonaCard compact).
+// id değerleri, mevcut organization_ai_settings.business_role kayıtlarıyla
+// birebir eşleşmesi için DEĞİŞTİRİLMEDİ (ör. "Kebapçı") — sadece 11 yeni
+// sektör eklendi ve tamamına public/ai-asistan/roles/ altında bir görsel
+// bağlandı.
+const ROLES: (PillItem & { avatarUrl: string })[] = [
+  { id: "Kebapçı", label: "Kebapçı", icon: "🥙", avatarUrl: "/ai-asistan/roles/kebapci.png" },
+  { id: "Berber", label: "Berber", icon: "💈", avatarUrl: "/ai-asistan/roles/berber.png" },
+  { id: "Oto Tamir", label: "Oto Tamir", icon: "🔧", avatarUrl: "/ai-asistan/roles/oto-tamir.png" },
+  { id: "Market", label: "Market", icon: "🛍️", avatarUrl: "/ai-asistan/roles/market.png" },
+  { id: "Bayan Giyim", label: "Bayan Giyim", icon: "👗", avatarUrl: "/ai-asistan/roles/bayan-giyim.png" },
+  { id: "Çiçekçi", label: "Çiçekçi", icon: "💐", avatarUrl: "/ai-asistan/roles/cicekci.png" },
+  { id: "Diş Kliniği", label: "Diş Kliniği", icon: "🦷", avatarUrl: "/ai-asistan/roles/dis-klinigi.png" },
+  { id: "Giyim Mağazası", label: "Giyim Mağazası", icon: "👕", avatarUrl: "/ai-asistan/roles/giyim-magazasi.png" },
+  { id: "Kurumsal Şirket", label: "Kurumsal Şirket", icon: "🏢", avatarUrl: "/ai-asistan/roles/kurumsal-sirket.png" },
+  { id: "Muayenehane", label: "Muayenehane", icon: "🩺", avatarUrl: "/ai-asistan/roles/muayenehane.png" },
+  { id: "Pet Shop", label: "Pet Shop", icon: "🐾", avatarUrl: "/ai-asistan/roles/pet-shop.png" },
+  { id: "Restoran", label: "Restoran", icon: "🍽️", avatarUrl: "/ai-asistan/roles/restoran.png" },
+  { id: "Telefon Tamiri", label: "Telefon Tamiri", icon: "📱", avatarUrl: "/ai-asistan/roles/telefon-tamiri.png" },
+  { id: "Unlu Mamüller", label: "Unlu Mamüller", icon: "🥐", avatarUrl: "/ai-asistan/roles/unlu-mamuller.png" },
+  { id: "Veteriner", label: "Veteriner", icon: "🐶", avatarUrl: "/ai-asistan/roles/veteriner.png" },
 ];
 
 const TONES: PillItem[] = [
@@ -69,7 +88,7 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
         <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
           <span>🏢</span> İŞLETME ROLÜ
         </p>
-        <PillGroup items={ROLES} selectedId={props.selectedRole} onSelect={props.onSelectRole} />
+        <RoleCarousel roles={ROLES} selectedId={props.selectedRole} onSelect={props.onSelectRole} />
       </div>
 
       <div style={{ marginBottom: 24 }}>

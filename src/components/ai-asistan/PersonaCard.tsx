@@ -19,6 +19,10 @@ interface PersonaCardProps {
   selected: boolean;
   onSelect: () => void;
   title?: string;
+  // Secondary selectors (İşletme Rolü, Üslup) reuse this same card shape at a
+  // smaller footprint — same avatar-ring language, no description line, so
+  // they read as siblings of the karakter cards instead of a bolted-on style.
+  compact?: boolean;
 }
 
 export default function PersonaCard({
@@ -30,7 +34,12 @@ export default function PersonaCard({
   selected,
   onSelect,
   title,
+  compact = false,
 }: PersonaCardProps) {
+  const cardWidth = compact ? 96 : 168;
+  const avatarSize = compact ? 60 : 92;
+  const iconFontSize = compact ? 26 : 38;
+
   return (
     <button
       onClick={onSelect}
@@ -39,13 +48,13 @@ export default function PersonaCard({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: 168,
+        width: cardWidth,
         flexShrink: 0,
-        padding: "22px 14px 18px",
-        borderRadius: 22,
+        padding: compact ? "14px 8px 12px" : "22px 14px 18px",
+        borderRadius: compact ? 18 : 22,
         background: selected ? `${accentColor}1F` : "rgba(255,255,255,0.03)",
         border: `1.5px solid ${selected ? accentColor : "rgba(255,255,255,0.08)"}`,
-        boxShadow: selected ? `0 0 24px ${accentColor}66` : "none",
+        boxShadow: selected ? `0 0 ${compact ? 16 : 24}px ${accentColor}66` : "none",
         cursor: "pointer",
         transition: "all 0.2s ease",
         textAlign: "center",
@@ -53,17 +62,17 @@ export default function PersonaCard({
     >
       <div
         style={{
-          width: 92,
-          height: 92,
+          width: avatarSize,
+          height: avatarSize,
           borderRadius: "50%",
           border: `2.5px solid ${accentColor}`,
-          boxShadow: `0 0 18px ${accentColor}80`,
+          boxShadow: `0 0 ${compact ? 10 : 18}px ${accentColor}80`,
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(255,255,255,0.05)",
-          marginBottom: 14,
+          marginBottom: compact ? 8 : 14,
           flexShrink: 0,
         }}
       >
@@ -75,13 +84,13 @@ export default function PersonaCard({
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
-          <span style={{ fontSize: 38 }}>{icon}</span>
+          <span style={{ fontSize: iconFontSize }}>{icon}</span>
         )}
       </div>
 
       <span
         style={{
-          fontSize: 14,
+          fontSize: compact ? 11.5 : 14,
           fontWeight: 700,
           color: "#fff",
           lineHeight: 1.25,

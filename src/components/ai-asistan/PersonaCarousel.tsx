@@ -15,6 +15,7 @@
 // personas never requires touching this palette.
 // ==============================================================================
 
+import { useRef, useState, MouseEvent } from "react";
 import PersonaCard from "./PersonaCard";
 import type { PublicPersona } from "@/actions/personas";
 
@@ -45,8 +46,70 @@ interface PersonaCarouselProps {
 }
 
 export default function PersonaCarousel({ personas, loading, selectedSlug, onSelect }: PersonaCarouselProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const dragDistance = useRef(0);
+
+  const handleMouseDown = (e: MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
+    dragDistance.current = 0;
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
+    dragDistance.current += Math.abs(e.movementX);
+  };
+
+  const handleClickCapture = (e: MouseEvent) => {
+    if (dragDistance.current > 5) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 10 }}>
+    <div 
+      ref={scrollRef}
+      onMouseDown={handleMouseDown}
+      onMouseLeave={handleMouseLeave}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      onClickCapture={handleClickCapture}
+      className="hide-scrollbar-carousel"
+      style={{ 
+        display: "flex", 
+        gap: 14, 
+        overflowX: "auto", 
+        paddingBottom: 10,
+        cursor: isDragging ? "grabbing" : "grab",
+        userSelect: "none",
+        // Hiding scrollbar in modern browsers
+        scrollbarWidth: "none",
+        msOverflowStyle: "none"
+      }}
+    >
+      <style>{`
+        .hide-scrollbar-carousel::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       <PersonaCard
         label="Standart"
         icon="🤖"

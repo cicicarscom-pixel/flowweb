@@ -8,7 +8,6 @@ import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersona
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
 import { getPublishedPersonas, PublicPersona } from "@/actions/personas";
 import AICharacterPanel from "@/components/ai-asistan/AICharacterPanel";
-import AdvancedPersonaSettings from "@/components/ai-asistan/AdvancedPersonaSettings";
 
 // Persona Engine (Phase 5): today's UI still shows a fixed 3-character list
 // Persona Engine Phase 6: Removed hardcoded CHARACTER_SLUGS.
@@ -66,12 +65,13 @@ export default function BotScreen() {
 
     // bot_settings still drives the channel toggles below (whatsapp/social
     // active) — untouched by the Persona Engine. Its system_prompt/tone/
-    // role/character columns are no longer read here (see Phase 5 note on
-    // handleSave below) — they stay in the table only as PromptBuilder's
-    // legacy fallback for merchants who never touch these new settings.
+    // role/character columns are no longer read here at all ("Tek Yapı"
+    // refactor, Eylül 2026 — the "İleri Seviye Ayarlar" panel that used to
+    // display system_prompt read-only was removed; that column is still
+    // written by nothing and read by nothing on this screen anymore).
     const { data: botData } = await supabase
       .from('bot_settings')
-      .select('whatsapp_bot_active, is_active, system_prompt')
+      .select('whatsapp_bot_active, is_active')
       .eq('merchant_id', session.user.id)
       .maybeSingle();
 
@@ -81,9 +81,6 @@ export default function BotScreen() {
         whatsapp: !!botData.whatsapp_bot_active,
         social: !!botData.is_active,
       }));
-      // Shown read-only in "İleri Seviye Ayarlar" as a reference to what's
-      // currently live as fallback — see the caption next to that textarea.
-      if (botData.system_prompt) setSystemPrompt(botData.system_prompt);
     }
 
     // Persona Engine (Phase 5): the merchant's actual saved persona/dial
@@ -261,14 +258,6 @@ export default function BotScreen() {
     setWahaLoading(false);
   };
 
-  
-  const [systemPrompt, setSystemPrompt] = useState(`Sen workigomFlow işletmesinin AI asistanısın. Müşterilere samimi, profesyonel ve yardımsever bir şekilde yanıt verirsin.
-
-Müşteri soruları için: fiyat, ürün, stok, kargo bilgileri hakkında yönlendirme yaparsın.
-Eğer bir konuyu çözemiyorsan, insan temsilcisine yönlendirirsin.
-
-Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
-
   const [selectedRole, setSelectedRole] = useState("Kebapçı");
   const [selectedPersonaSlug, setSelectedPersonaSlug] = useState<string | null>(null);
   const [personas, setPersonas] = useState<PublicPersona[]>([]);
@@ -277,7 +266,6 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
   const [humorLevel, setHumorLevel] = useState(50);
   const [modernAdaptation, setModernAdaptation] = useState(50);
   const [selectedTone, setSelectedTone] = useState("Standart");
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [isSimulationActive, setIsSimulationActive] = useState(false);
 
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
@@ -481,12 +469,18 @@ Ton: Samimi ama profesyonel. Kısa ve net cevaplar ver.`);
             modernAdaptation={modernAdaptation}
             onModernAdaptationChange={setModernAdaptation}
           />
-          
-          <AdvancedPersonaSettings
-            isOpen={isAdvancedOpen}
-            onToggle={() => setIsAdvancedOpen(!isAdvancedOpen)}
-            systemPrompt={systemPrompt}
-          />
+
+          {/*
+            "İleri Seviye Ayarlar" (AdvancedPersonaSettings) paneli kaldırıldı
+            ("Tek Yapı" refactor, Eylül 2026). Bu panel zaten Phase 5'ten beri
+            hiçbir şey kaydetmiyordu — sadece bot_settings.system_prompt'a
+            (artık gerçek bot davranışı için hiç okunmayan bir legacy kolona)
+            daha önce yazılmış, dondurulmuş bir metni salt-okunur gösteriyordu.
+            Kültürel/dil adaptasyonu artık burada yapılandırılabilir bir ayar
+            değil — sunucu tarafında (ledger reposu, PromptBuilder.ts →
+            SYSTEM_POLICY madde 1) her merchant için sabit ve kapatılamaz
+            şekilde gömülü (bkz. mobil taraftaki aynı temizlik).
+          */}
 
           {/* Saat Dilimi (Timezone) Ayarı */}
           <div className="glass" style={{

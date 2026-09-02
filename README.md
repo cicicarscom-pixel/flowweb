@@ -353,14 +353,14 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 3. **Ai Muhasebe (Ledger) Edge Function Duzeltmesi:** `gemini-chat` Edge Function'inin (`ledger` deposunda yer alan) gelen tum istekleri (mode fark etmeksizin) fatura formatinda (Ai Muhasebe) JSON olarak yanitladigi fark edildi. Fonksiyon onarilarak `mode === 'playground'` durumunda normal sohbet (chat) donecek sekilde guncellendi ve deploy edildi.
 4. **Proje Hafizasi Guncellemesi:** Web ve Mobil projelerin klasor dizinleri sistem hafizasina (AGENTS.md) islendi.
 
-### [31.08.2026] AI Asistan Randevu ve K�lt�rel Hitap Mod�lleri (TAM PAKET)
-1. **M��teri Tan�ma (CRM):** AI'nin tekrar eden m��terileri tan�mas� ve isimlerini `customers` tablosuna kaydetmesi/okumas� sa�land�. Flowweb'de `M��teriler` (CRM) sayfas� olu�turuldu.
-2. **K�lt�rel Hitap Entegrasyonu:** `SYSTEM_POLICY` �zerinden dil/cinsiyet bazl� hitap yetene�i (�r. 'Volkan Bey', 'Ay�e Han�m') kazand�r�ld�.
-3. **Randevu Mod�l� Kapatma/A�ma:** Flowweb'de Randevu �zelli�ini a��p kapatmak i�in Toggle eklendi.
-4. **Randevu G�ncelleme (Reschedule):** Mevcut randevu saatinin g�ncellenebilmesi i�in `updateAppointmentDateTime` fonksiyonu ve `UpdateAppointmentTool` yaz�ld�.
-5. **��letme Bildirimleri:** Randevu i�lemlerinde `notifications` tablosuna kay�t d��mesi sa�land�.
-6. **Bug D�zeltmeleri:** Vercel TypeScript hatalar� (`createClient`) ve Edge Function syntax hatalar� giderildi.
-7. **RAG/Drive Ertelemesi:** Drive/RAG geli�tirmelerinin �imdilik durduruldu�u notu eklendi.
+### [31.08.2026] AI Asistan Randevu ve K�lt�rel Hitap Mod�lleri (TAM PAKET)
+1. **M��teri Tan�ma (CRM):** AI'nin tekrar eden m��terileri tan�mas� ve isimlerini `customers` tablosuna kaydetmesi/okumas� sa�land�. Flowweb'de `M��teriler` (CRM) sayfas� olu�turuldu.
+2. **K�lt�rel Hitap Entegrasyonu:** `SYSTEM_POLICY` �zerinden dil/cinsiyet bazl� hitap yetene�i (�r. 'Volkan Bey', 'Ay�e Han�m') kazand�r�ld�.
+3. **Randevu Mod�l� Kapatma/A�ma:** Flowweb'de Randevu �zelli�ini a��p kapatmak i�in Toggle eklendi.
+4. **Randevu G�ncelleme (Reschedule):** Mevcut randevu saatinin g�ncellenebilmesi i�in `updateAppointmentDateTime` fonksiyonu ve `UpdateAppointmentTool` yaz�ld�.
+5. **��letme Bildirimleri:** Randevu i�lemlerinde `notifications` tablosuna kay�t d��mesi sa�land�.
+6. **Bug D�zeltmeleri:** Vercel TypeScript hatalar� (`createClient`) ve Edge Function syntax hatalar� giderildi.
+7. **RAG/Drive Ertelemesi:** Drive/RAG geli�tirmelerinin �imdilik durduruldu�u notu eklendi.
 
 
 ### [01.09.2026] Mobil ve Web Modüllerinde Tasarım Eşitlemesi, CRM Entegrasyonu ve Bug Fix'ler
@@ -371,3 +371,8 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni lex-direction: column ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
 6. **Flow Web - Takvim Scroll UX İyileştirmeleri:** Takvim ve Yoğunluk Haritası container'larına yatay kaydırma çubuklarını gizleyen CSS sınıfları eklendi. overscroll-behavior-x: contain eklenerek sağa-sola swipe yaparken tüm ekranın kayması (swipe to go back veya page scroll) engellendi, native mobil hissi yaratıldı.
 7. **Flow Web - Ülke Listesi Dropdown Renk Düzeltmesi:** Profil ekranındaki ülke, şehir, ilçe <select> etiketlerindeki <option>'ların varsayılan beyaz/açık renk arka planları #17151A olacak şekilde güncellenerek, üzerine gelen beyaz metinlerin okunamaması sorunu (koyu tema uyumsuzluğu) çözüldü.
+
+### [02.09.2026] Persona Engine "Tek Yapı" Refaktörü — Kültürel/Dil Adaptasyonu Sunucuya Taşındı
+1. **Kritik Bulgu:** Mobildeki "İleri Seviye Ayarlar" panelinin gösterdiği prompt önizlemesinin (kültürel/dil adaptasyon kuralı dahil) gerçek müşteri botuna hiç ulaşmadığı, web'deki `AdvancedPersonaSettings.tsx` panelinin ise zaten Phase 5'ten beri `bot_settings.system_prompt`'a bir daha hiç yazılmayan, dondurulmuş/legacy bir metni salt-okunur gösterdiği doğrulandı.
+2. **Kültürel/Dil Adaptasyonu Sunucuya (Ledger) Taşındı:** Platform uluslararası müşterilere hizmet verdiği için, kültürel/dil adaptasyonu artık configüre edilebilir bir ayar değil — ledger reposundaki `shared/ai/PromptBuilder.ts` dosyasının `SYSTEM_POLICY`'sine her zaman geçerli, kapatılamaz yeni bir kural (madde 1: "DİL VE KÜLTÜREL ADAPTASYON") eklendi: müşteri hangi dilde yazarsa bot o dilde, o kültürün günlük ifade/espri anlayışına uygun şekilde cevap veriyor — persona/karakter/rol seçiminden bağımsız.
+3. **"İleri Seviye Ayarlar" Paneli Kaldırıldı (Web):** Artık gerçek bir işlevi kalmayan `AdvancedPersonaSettings.tsx` bileşeni ve `ai-asistan/page.tsx`'teki `systemPrompt`/`isAdvancedOpen` state'i, ilgili render bloğu ve `bot_settings.system_prompt` okuması tamamen kaldırıldı. Aynı temizlik mobil (flow) tarafında da yapıldı — "Tek Yapı": tek gerçek akış artık UI seçimleri → `organization_ai_settings` → sunucuda `PersonaService` + `PersonaPromptBuilder` → gerçek prompt.

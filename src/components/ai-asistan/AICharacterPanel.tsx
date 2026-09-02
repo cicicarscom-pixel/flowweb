@@ -10,8 +10,9 @@
 // render once a real persona is selected — "Standart" has no dials to tune.
 // ==============================================================================
 
-import PillGroup, { PillItem } from "./PillGroup";
+import { PillItem } from "./PillGroup";
 import RoleCarousel from "./RoleCarousel";
+import ToneCarousel from "./ToneCarousel";
 import PersonaCarousel from "./PersonaCarousel";
 import PersonaSlider from "./PersonaSlider";
 import type { PublicPersona } from "@/actions/personas";
@@ -41,11 +42,20 @@ const ROLES: (PillItem & { avatarUrl: string })[] = [
   { id: "Veteriner", label: "Veteriner", icon: "🐶", avatarUrl: "/ai-asistan/roles/veteriner.png" },
 ];
 
-const TONES: PillItem[] = [
-  { id: "Standart", label: "Standart", icon: "😐" },
+// Üslup: mevcut 4 tanesi aynen korundu (organization_ai_settings.tone
+// kayıtlarıyla uyum için id'ler değişmedi), üzerine 5 yeni mizaç eklendi.
+// Görseli olmayanlar (Standart/Komik/Resmi/Samimi) emoji ile kalıyor —
+// "Standart" için robot emojisi, tıpkı KARAKTER'deki Standart kartı gibi.
+const TONES: (PillItem & { avatarUrl?: string })[] = [
+  { id: "Standart", label: "Standart", icon: "🤖" },
   { id: "Komik", label: "Komik", icon: "😆" },
   { id: "Resmi", label: "Resmi", icon: "👔" },
   { id: "Samimi", label: "Samimi", icon: "🤗" },
+  { id: "Neşeli", label: "Neşeli", icon: "😄", avatarUrl: "/ai-asistan/tones/neseli.png" },
+  { id: "Sakin", label: "Sakin", icon: "😌", avatarUrl: "/ai-asistan/tones/sakin.png" },
+  { id: "Dedikoducu", label: "Dedikoducu", icon: "🗣️", avatarUrl: "/ai-asistan/tones/dedikoducu.png" },
+  { id: "Huysuz", label: "Huysuz", icon: "😤", avatarUrl: "/ai-asistan/tones/huysuz.png" },
+  { id: "Sinirli", label: "Sinirli", icon: "😠", avatarUrl: "/ai-asistan/tones/sinirli.png" },
 ];
 
 interface AICharacterPanelProps {
@@ -107,7 +117,7 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
         <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
           <span>🎭</span> ÜSLUP
         </p>
-        <PillGroup items={TONES} selectedId={props.selectedTone} onSelect={props.onSelectTone} />
+        <ToneCarousel tones={TONES} selectedId={props.selectedTone} onSelect={props.onSelectTone} />
       </div>
 
       {showDials && (

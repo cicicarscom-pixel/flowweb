@@ -125,10 +125,11 @@ export default function SosyalMedyaPage() {
       }
 
       const { data } = await supabase
+        .schema('integration')
         .from('social_accounts')
         .select('*')
-        .eq('profile_id', organizationId)
-        .eq('status', 'active');
+        .eq('organization_id', organizationId)
+        .eq('is_active', true);
 
       if (data) {
         setAccounts(data);
@@ -178,7 +179,7 @@ export default function SosyalMedyaPage() {
       await supabase.functions.invoke('zernio-client', {
         body: { action: 'disconnect-account', payload: { accountId } }
       });
-      await supabase.from('social_accounts').update({ status: 'inactive' }).eq('zernio_account_id', accountId);
+      await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
       
       fetchAccounts();
     } catch (err) {
@@ -284,8 +285,8 @@ export default function SosyalMedyaPage() {
                     {p.name}
                   </p>
                   <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.id.includes('tiktok') ? '#69C9D0' : (p.color || "#22B573") }} className="truncate">
-                    {acc.account_name && acc.account_name !== p.name && acc.account_name !== 'unknown' 
-                      ? (acc.account_name.startsWith('@') ? acc.account_name : `@${acc.account_name}`) 
+                    {acc.username && acc.username !== p.name && acc.username !== 'unknown'
+                      ? (acc.username.startsWith('@') ? acc.username : `@${acc.username}`)
                       : `@${p.name.toLowerCase()}_hesabi`}
                   </p>
                   <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 14 }}>

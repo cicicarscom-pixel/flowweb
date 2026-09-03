@@ -90,8 +90,8 @@ export async function replyToMessage(messageId: string, replyContent: string) {
 
 export async function getSocialAccounts() {
   const supabase = await createClient()
-  const { data, error } = await supabase.from('social_accounts').select('*')
-  
+  const { data, error } = await supabase.schema('integration').from('social_accounts').select('*')
+
   if (error) {
     console.error('Error fetching social accounts:', error)
     return []

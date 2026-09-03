@@ -89,10 +89,11 @@ export default function SharePage() {
         const organizationId = orgMember?.organization_id || userId;
 
         const { data } = await supabase
+          .schema('integration')
           .from('social_accounts')
           .select('*')
-          .eq('profile_id', organizationId)
-          .eq('status', 'active');
+          .eq('organization_id', organizationId)
+          .eq('is_active', true);
 
         const accounts = data || [];
         setZernioAccounts(accounts);
@@ -516,7 +517,7 @@ export default function SharePage() {
                         )}
                         <div className="flex flex-col items-start overflow-hidden text-left">
                           <span className="text-[#F6F1EC] text-[12px] font-semibold truncate w-full">{platformConfig.name}</span>
-                          <span className="text-[#A79E96]/60 text-[10px] truncate w-full">@{acc.account_name || platformKey}</span>
+                          <span className="text-[#A79E96]/60 text-[10px] truncate w-full">@{acc.username || platformKey}</span>
                         </div>
                       </div>
                       {isSelected && (

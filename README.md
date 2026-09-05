@@ -385,6 +385,16 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 **Not:** Bu onarımdan sonra ilk gerçek hesap bağlama denemesinde AI asistanın yeni bağlanan hesap üzerinden de (WAHA'daki gibi standart şekilde) mesajlara yanıt verdiği ayrıca doğrulanmalı — `HandleIncomingMessageUseCase.ts`'teki `zernioAccountId` bulma sorgusu da bu düzeltmenin bir parçası olarak `integration.social_accounts`'a taşındı.
 
+### [05.09.2026] Zernio Hesap Bağlama — 6. Zincir Hatası: `sync-accounts`'ta Sütun Adı Uyumsuzluğu (`last_seen_at` vs `last_synced_at`) — "Senkronize Et" HİÇBİR ZAMAN Çalışmamış
+
+**Rapor edilen sorun:** Yukarıdaki 5 hata da düzeltilip Instagram OAuth akışı gerçekten uçtan uca tamamlandıktan (Zernio'dan `account.connected` webhook'u bile alındı) SONRA bile, "Eklediğiniz Hesaplarınız" listesi hâlâ boş kalıyordu — ne "İzin ver" sonrası otomatik, ne de manuel "Senkronize Et" butonuna basınca. Kullanıcı canlı Chrome DevTools Network sekmesinde `zernio-client` isteğinin `200 OK` döndüğünü ve hatta anlamlı boyutta bir yanıt gövdesi taşıdığını doğruladı — yani Zernio'dan hesap verisi gerçekten geliyordu, ama veritabanına hiçbir şey yazılmıyordu.
+
+**Kök neden:** `zernio-client/index.ts`'teki `sync-accounts` case'i, Zernio'dan çekilen hesapları `integration.social_accounts`'a yazarken şu alanı kullanıyordu: `last_seen_at: new Date().toISOString()`. Ancak tablonun gerçek sütun adı `last_seen_at` DEĞİL, `last_synced_at`. PostgREST, var olmayan bir sütuna yazma isteğini reddediyor — ama bu upsert çağrısının dönen `error` değeri hiç kontrol edilmiyordu (`await supabase...upsert(...)` — sonucu hiç yakalamadan). Sonuç: her "Senkronize Et" denemesi sessizce başarısız oluyordu, HTTP 200 dönüyordu, hiçbir konsol hatası basılmıyordu — bu yüzden bugüne kadarki hiçbir testte fark edilemedi. Muhtemelen bu tek sütun-adı yazım hatası, tüm bu araştırma boyunca "hesap bağlandı ama listede görünmüyor" şikayetinin en dipteki, en kalıcı nedeniydi; diğer 5 hata (şema/izin/409 vb.) düzeltilse bile bu yüzden hiçbir zaman hesap listeye düşmüyordu.
+
+**Düzeltme:** `zernio-client/index.ts`, `sync-accounts` case'i — `last_seen_at` → `last_synced_at` olarak düzeltildi, ayrıca upsert çağrısının `error` sonucu artık yakalanıp `console.error` ile loglanıyor (gelecekte benzer bir sessiz başarısızlık anında fark edilebilsin diye). Bu düzeltme doğrudan Supabase'e deploy edildi (zernio-client v99); `ledger` reposundaki kaynağı da senkron.
+
+**Ders:** Bundan sonra `.upsert()`/`.insert()`/`.update()` çağrılarının dönen `error` değeri MUTLAKA yakalanıp loglanmalı — aksi halde bir sütun adı yazım hatası gibi basit bir hata, günlerce "her şey 200 dönüyor ama veri yok" şeklinde teşhisi çok zor bir soruna dönüşebiliyor.
+
 ### [05.09.2026] Zernio Hesap Bağlama — 5. Zincir Hatası: `zernio_profiles` Kalıcılaştırma (Persist) Adımında Şema Eksikliği (409 "profile_name_conflict")
 
 **Rapor edilen sorun:** Yukarıdaki 4 hata da düzeltilip Supabase Dashboard'daki "Exposed schemas" ayarına `integration` eklendikten SONRA bile, Instagram (org `84c54c33-...`) bağlamaya çalışırken hâlâ genel bir hata alınıyordu: `"Hesap bağlama linki alınırken bir hata oluştu: Sosyal medya entegrasyon servisinde bir hata oluştu."` Sunucu tarafı loglarında gerçek hata Zernio API'sinden dönen `409 "A profile with this name already exists"` (`profile_name_conflict`) idi.

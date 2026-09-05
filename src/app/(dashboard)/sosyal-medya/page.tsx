@@ -92,7 +92,8 @@ export default function SosyalMedyaPage() {
       fetchAccounts(true);
       window.history.replaceState({}, '', window.location.pathname);
     } else {
-      fetchAccounts();
+      // OAUTH geri dönüşlerinde URL'de parametre olmasa bile yeni eklenen hesabı çekmek için her zaman senkronize et
+      fetchAccounts(true);
     }
 
     // Web Focus Radar: Kullanıcı tarayıcı sekmesine döndüğünde Zernio hesaplarını anlık sync et

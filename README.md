@@ -385,6 +385,22 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 **Not:** Bu onarımdan sonra ilk gerçek hesap bağlama denemesinde AI asistanın yeni bağlanan hesap üzerinden de (WAHA'daki gibi standart şekilde) mesajlara yanıt verdiği ayrıca doğrulanmalı — `HandleIncomingMessageUseCase.ts`'teki `zernioAccountId` bulma sorgusu da bu düzeltmenin bir parçası olarak `integration.social_accounts`'a taşındı.
 
+### [05.09.2026] Zernio Hesap Bağlama — 5. Zincir Hatası: `zernio_profiles` Kalıcılaştırma (Persist) Adımında Şema Eksikliği (409 "profile_name_conflict")
+
+**Rapor edilen sorun:** Yukarıdaki 4 hata da düzeltilip Supabase Dashboard'daki "Exposed schemas" ayarına `integration` eklendikten SONRA bile, Instagram (org `84c54c33-...`) bağlamaya çalışırken hâlâ genel bir hata alınıyordu: `"Hesap bağlama linki alınırken bir hata oluştu: Sosyal medya entegrasyon servisinde bir hata oluştu."` Sunucu tarafı loglarında gerçek hata Zernio API'sinden dönen `409 "A profile with this name already exists"` (`profile_name_conflict`) idi.
+
+**Kök neden zinciri:**
+1. `zernio-client/index.ts`'teki `get-connect-url` case'i, `resolve_zernio_profile_for_platform` RPC'si `is_new: true` döndürdüğünde Zernio'nun API'sinde yeni bir profil oluşturuyor (`POST /api/v1/profiles`), sonra bu profilin gerçek `zernio_profile_id`'sini ve `status: 'active'` durumunu bizim veritabanımıza geri yazıyordu — **ama bu geri-yazma sorgusu da (satır ~185) `.schema('integration')` çağrısından yoksundu**, yani sessizce (nonexistent) `public.zernio_profiles`'a yazmaya çalışıp hiçbir etkisi olmadan geçiyordu.
+2. Sonuç: Zernio tarafında profil başarıyla oluşturulmasına rağmen, bizim veritabanımızdaki ilgili `integration.zernio_profiles` satırı sonsuza kadar `status='provisioning', zernio_profile_id=NULL` durumunda "takılı" kalıyordu.
+3. `resolve_zernio_profile_for_platform` fonksiyonunun "provisioning" fallback sorgusu sadece `profile_slot`/`id` seçiyor, var olan bir `zernio_profile_id`'yi hiç kontrol etmiyor/döndürmüyor — bu yüzden bu takılı satır için her seferinde `is_new: true` raporluyordu.
+4. Bu da `zernio-client`'ı, Zernio'nun API'sinde **aynı deterministic isimle (`wg_{org_id}_{slot}`) ikinci bir profil daha oluşturmaya** zorluyordu — Zernio bunu, ilk oluşturmadaki idempotency-key önbelleği süresi dolduğunda `409 profile_name_conflict` ile reddediyordu. Bu durum, aynı organizasyon için ikinci bir platform (örn. Instagram, WhatsApp'tan sonra) bağlanmaya çalışıldığında ortaya çıkıyordu.
+
+**Düzeltme:**
+- `zernio-client/index.ts` (satır ~185): geri-yazma sorgusuna `.schema('integration')` eklendi, ayrıca hata durumunda sessiz kalmaması için `console.error` logu eklendi.
+- `20260905050000_backfill_stuck_zernio_profile_ids.sql`: sistemde bu hatadan etkilenen (ve `function_logs`'tan gerçek Zernio profil ID'leri geri kurtarılan) her iki takılı satır (org `84c54c33-...` ve `c879d92b-...`) canlı veritabanında `status='active'` ve doğru `zernio_profile_id` ile düzeltildi (bu veri onarımı migration olarak canlıya zaten uygulandı; kod değişikliği sadece **yeniden oluşmasını** önlüyor).
+
+**Doğrulama notu:** Bu, `.schema('integration')` eksikliği örüntüsünün (bkz. 03.09.2026 kaydı, madde 4) bulunan **5.** ve — kod tabanındaki tüm `.from('zernio_profiles')`/`.from('social_accounts')` çağrıları grep ile tek tek doğrulanarak — **sonuncusu** oldu.
+
 ### [02.09.2026] Persona Engine "Tek Yapı" Refaktörü — Kültürel/Dil Adaptasyonu Sunucuya Taşındı
 1. **Kritik Bulgu:** Mobildeki "İleri Seviye Ayarlar" panelinin gösterdiği prompt önizlemesinin (kültürel/dil adaptasyon kuralı dahil) gerçek müşteri botuna hiç ulaşmadığı, web'deki `AdvancedPersonaSettings.tsx` panelinin ise zaten Phase 5'ten beri `bot_settings.system_prompt`'a bir daha hiç yazılmayan, dondurulmuş/legacy bir metni salt-okunur gösterdiği doğrulandı.
 2. **Kültürel/Dil Adaptasyonu Sunucuya (Ledger) Taşındı:** Platform uluslararası müşterilere hizmet verdiği için, kültürel/dil adaptasyonu artık configüre edilebilir bir ayar değil — ledger reposundaki `shared/ai/PromptBuilder.ts` dosyasının `SYSTEM_POLICY`'sine her zaman geçerli, kapatılamaz yeni bir kural (madde 1: "DİL VE KÜLTÜREL ADAPTASYON") eklendi: müşteri hangi dilde yazarsa bot o dilde, o kültürün günlük ifade/espri anlayışına uygun şekilde cevap veriyor — persona/karakter/rol seçiminden bağımsız.

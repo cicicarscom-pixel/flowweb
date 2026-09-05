@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { getZernioConnectUrl, disconnectZernioAccount, syncZernioAccounts } from "@/actions/zernio";
 
 const PLATFORMS_DATA = [
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥" },
@@ -120,7 +119,9 @@ export default function SosyalMedyaPage() {
       const organizationId = orgMember?.organization_id || userId;
 
       if (syncWithZernio) {
-        await syncZernioAccounts();
+        await supabase.functions.invoke('zernio-client', {
+          body: { action: 'sync-accounts', payload: { userId, organizationId } }
+        });
       }
 
       const { data } = await supabase
@@ -152,13 +153,14 @@ export default function SosyalMedyaPage() {
       const organizationName = (orgMember?.organizations as any)?.name || 'Bireysel Hesap';
 
       const redirectUrl = window.location.origin + '/sosyal-medya'; 
-      const res = await getZernioConnectUrl(platformId, redirectUrl);
-      
-      if (!res.success) throw new Error(res.error);
+      const { data, error } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'get-connect-url', payload: { platform: platformId, redirectUrl, organizationId, organizationName, userId, profileId: organizationId } }
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      if (res.authUrl) {
-        // eslint-disable-next-line react-hooks/immutability
-        window.location.href = res.authUrl;
+      if (data?.data?.authUrl) {
+        window.location.href = data.data.authUrl;
       }
     } catch (err: any) {
       console.warn("Error connecting account:", err);
@@ -174,8 +176,10 @@ export default function SosyalMedyaPage() {
     try {
       setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
       
-      const res = await disconnectZernioAccount(accountId);
-      if (!res.success) throw new Error(res.error);
+      await supabase.functions.invoke('zernio-client', {
+        body: { action: 'disconnect-account', payload: { accountId } }
+      });
+      await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
       
       fetchAccounts();
     } catch (err) {

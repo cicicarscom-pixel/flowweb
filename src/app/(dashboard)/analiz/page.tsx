@@ -125,7 +125,7 @@ export default function AnalyticsScreen() {
       const _toDate = new Date().toISOString().split('T')[0];
       const _fromDate = new Date(Date.now() - (selectedTimeRange.days || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
-      let queryArgs: any = { fromDate: _fromDate, toDate: _toDate };
+      const queryArgs: any = { fromDate: _fromDate, toDate: _toDate };
       if (selectedPlatform.id !== 'all') {
          queryArgs.platform = selectedPlatform.id === 'googlebusiness' ? 'google' : selectedPlatform.id;
       }
@@ -134,7 +134,7 @@ export default function AnalyticsScreen() {
       const singleAccountId = targetAccounts && targetAccounts.length > 0 ? targetAccounts[0].zernio_account_id : undefined;
       const accountPayload = { query: { accountId: singleAccountId, fromDate: _fromDate, toDate: _toDate } };
 
-      let newZernioData = {
+      const newZernioData = {
         timelineData: [] as any[],
         timelineDataLikes: [] as any[],
         demographics: [] as any[],
@@ -153,7 +153,7 @@ export default function AnalyticsScreen() {
       const actualData = dailyRes?.data?.data?.data || dailyRes?.data?.data || {};
       
       if (actualData.dailyData) {
-         let mappedTimeline = actualData.dailyData.map((d: any) => ({
+         const mappedTimeline = actualData.dailyData.map((d: any) => ({
            views: d.metrics?.impressions || 0,
            likes: d.metrics?.likes || 0,
            date: d.date ? d.date.substring(5,10) : ''

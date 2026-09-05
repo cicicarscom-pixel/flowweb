@@ -161,7 +161,7 @@ export default function ProfilPage() {
       
       // Keep mobile's AddressSelector compatibility if it expects an object. 
       // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
-      let addressToSave = addressObj;
+      const addressToSave = addressObj;
 
       await supabase
         .from("profiles")

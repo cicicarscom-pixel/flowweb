@@ -108,7 +108,7 @@ void main() {
  const uRes = gl.getUniformLocation(prog, 'u_resolution');
 
  let animationFrameId: number;
- let startTime = Date.now();
+ const startTime = Date.now();
 
  function render() {
  if (!canvas || !gl) return;

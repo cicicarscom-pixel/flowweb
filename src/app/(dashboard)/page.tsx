@@ -21,7 +21,7 @@ export default function DashboardHomePage() {
     const fetchData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        let merchantId = session?.user?.id || null;
+        const merchantId = session?.user?.id || null;
 
         // Bot Status
         if (merchantId) {
@@ -35,7 +35,7 @@ export default function DashboardHomePage() {
 
         // Finance Stats (Transactions + Finance Documents)
         let inc = 0, exp = 0;
-        let upcoming: any[] = [];
+        const upcoming: any[] = [];
         const today = new Date().toISOString().split('T')[0];
 
         const { data: transactions } = await supabase.from('transactions').select('*');

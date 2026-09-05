@@ -78,6 +78,12 @@ export default function SharePage() {
   const [ytPrivacy, setYtPrivacy] = useState('public');
   const [ytCustomCaption, setYtCustomCaption] = useState('');
 
+  // UI State
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
+  const [isSharing, setIsSharing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
+
   useEffect(() => {
     const fetchAccounts = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -152,11 +158,6 @@ export default function SharePage() {
     }
   };
   
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
-  const [isSharing, setIsSharing] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isCropperOpen, setIsCropperOpen] = useState(false);
-
   const [tags, setTags] = useState<string[]>(['yaz', 'yenisezon']);
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [newTagText, setNewTagText] = useState("");

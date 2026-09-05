@@ -2,29 +2,40 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations();
+  const locale = useLocale();
   const [dateStr, setDateStr] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
 
   useEffect(() => {
-    setDateStr(new Date().toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
     fetchUnreadCount();
-    
+
     const channel = supabase.channel('header_notifications')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
         fetchUnreadCount();
       })
       .subscribe();
-      
+
     return () => {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  useEffect(() => {
+    // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile
+    // göre (next-intl'in useLocale() ile döndürdüğü 'tr' | 'en' | 'de')
+    // biçimleniyor, örn. İngilizce'de "Friday, September 5, 2026". Dil
+    // değiştiğinde (bkz. LanguageSwitcher → router.refresh()) bu effect
+    // yeniden çalışıp tarihi doğru dilde yeniden biçimlendirir.
+    setDateStr(new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+  }, [locale]);
 
   const fetchUnreadCount = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -41,15 +52,15 @@ export default function Header() {
     if (count !== null) setUnreadCount(count);
   };
   
-  let pageTitle = "Anasayfa";
-  if (pathname === "/") pageTitle = "Anasayfa";
-  else if (pathname.includes("ai-asistan")) pageTitle = "Ai Asistan";
+  let pageTitle = t("header.titles.home");
+  if (pathname === "/") pageTitle = t("header.titles.home");
+  else if (pathname.includes("ai-asistan")) pageTitle = t("header.titles.aiAssistant");
   else if (pathname.includes("ai-muhasebe")) {
-    pageTitle = pathname.includes("odeme-takvimi") ? "Ai Muhasebe / Ödeme Takvimi" : "Ai Muhasebe";
+    pageTitle = pathname.includes("odeme-takvimi") ? t("header.titles.aiAccountingPaymentCalendar") : t("header.titles.aiAccounting");
   }
-  else if (pathname.includes("sosyal-medya")) pageTitle = "Sosyal Medya";
-  else if (pathname.includes("analiz")) pageTitle = "Analiz";
-  else if (pathname.includes("gelen-kutusu")) pageTitle = "Gelen Kutusu";
+  else if (pathname.includes("sosyal-medya")) pageTitle = t("header.titles.socialMedia");
+  else if (pathname.includes("analiz")) pageTitle = t("header.titles.analytics");
+  else if (pathname.includes("gelen-kutusu")) pageTitle = t("header.titles.inbox");
 
   return (
     <header className="glass-strong" style={{

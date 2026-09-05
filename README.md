@@ -347,6 +347,28 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 ## Son Guncellemeler
 
+### [05.09.2026] Uluslararasılaştırma (i18n) — Faz 1: next-intl Altyapısı, Otomatik Dil Algılama, Sidebar/Header Çevirisi
+
+**Tetikleyici:** Platform uluslararası kullanıcılara açılacağı için, kullanıcının açık talebi üzerine ("otomatik dil algılaması olmalı ve tüm arayüz İngilizceye/başka dillere kolay çevrilebilmeli") `flow`, `flowweb` ve `ledger` repoları i18n hazırlığı açısından denetlendi (tam denetim raporu `flow/README.md`'de). Bu depo (`flowweb`) denetim öncesinde **sıfır** i18n altyapısına sahipti — `<html lang="en">` bile içerikle uyumsuzdu (her şey Türkçe), tarayıcı dili algılama yoktu, ~500-650 hardcoded Türkçe string ~35-40 dosyaya yayılmıştı.
+
+**Mimari karar — URL öneki yok, çerez tabanlı dil:** Bu panel girişli bir dashboard (`/login` hariç SEO'ya duyarlı hiçbir sayfa yok — `src/proxy.ts` zaten girişsiz her isteği `/login`'e yönlendiriyor), o yüzden `/en/...`, `/de/...` gibi URL önekleri eklemek yerine `next-intl`'in **"without i18n routing"** modu kullanıldı: dil bir `NEXT_LOCALE` çerezinde tutuluyor, URL yapısı ve mevcut Türkçe route slug'ları (`/ai-muhasebe`, `/sosyal-medya` vb.) hiç değişmedi.
+
+**Eklenen/değişen dosyalar:**
+1. `package.json` — `next-intl` bağımlılığı eklendi.
+2. `next.config.ts` — `createNextIntlPlugin` ile sarmalandı.
+3. `src/i18n/request.ts` (yeni) — dil çözümleme mantığı: (1) kullanıcının daha önce manuel seçtiği dil varsa (çerez) o kazanır, (2) yoksa tarayıcının `Accept-Language` başlığından otomatik algılama yapılır, (3) o da yoksa `tr` varsayılanına düşülür (mevcut içeriğin büyük çoğunluğu henüz sadece Türkçe olduğu için varsayılan bilinçli olarak `tr` seçildi, `en` değil).
+4. `messages/{tr,en,de}.json` (yeni) — ilk namespace'ler: `common` (dil seçici metinleri, "Pro Plan", "Çıkış Yap"), `nav` (Sidebar menü etiketleri), `header` (sayfa başlıkları).
+5. `src/actions/locale.ts` (yeni) — `setLocale()` server action'ı, seçilen dili `NEXT_LOCALE` çerezine yazar (1 yıl kalıcı).
+6. `src/components/layout/LanguageSwitcher.tsx` (yeni) — TR/EN/DE arası anlık geçiş yapan, seçili dili vurgulayan küçük bir buton grubu. `src/components/layout/Sidebar.tsx`'in alt kısmına (her sayfada görünür, global chrome) eklendi.
+7. `src/app/layout.tsx` — `NextIntlClientProvider` ile sarmalandı, `<html lang="en">` (yanlış/hardcoded) yerine gerçek çözümlenen dile göre dinamik `lang` attribute'u.
+8. `src/components/layout/Sidebar.tsx` ve `Header.tsx` — **ilk tam çevrilen dosyalar (kanıt niteliğinde):** nav menü etiketleri, "Pro Plan", "Çıkış Yap", sayfa başlıkları artık `useTranslations()` üzerinden geliyor; `Header.tsx`'teki hardcoded `toLocaleDateString("tr-TR", ...)` çağrısı `useLocale()`'den gelen dile göre dinamikleşti (İngilizce'de "Friday, September 5, 2026" gibi doğru biçimleniyor).
+
+**Bu turda bilinçli olarak ele alınmayan, sonraki dalgaya bırakılan bulgular (flow/README.md'deki tam denetimden):**
+- Geri kalan ~35-40 dosyadaki (en yoğunları: `gelen-kutusu/page.tsx` 1105 satır, `sosyal-medya/share/page.tsx` 806 satır, `ai-asistan/page.tsx` 711 satır) hardcoded Türkçe metinler henüz çevrilmedi — yeni bir dil seçildiğinde şu an sadece Sidebar/Header İngilizce/Almanca olur, sayfa içerikleri hâlâ Türkçe görünür (bu beklenen ara durumdur, hata değildir).
+- **Kritik mimari engel, bir sonraki dalgadan önce çözülmeli:** `src/components/ai-asistan/AICharacterPanel.tsx`'teki AI persona rol/ton dizileri (`ROLES`, `TONES` — örn. `{ id: "Kebapçı", label: "Kebapçı" }`) hem görünen etiket hem de `organization_ai_settings.business_role`/`.tone` sütunlarına yazılan veri anahtarı olarak aynı Türkçe string'i kullanıyor. Bu metinleri doğrudan çevirmek, veritabanındaki kayıtlı verileri ve mobil ile paylaşılan AI prompt mantığını bozar — önce stabil bir `id` (değişmez, Türkçe kalabilir) / `labelKey` (çevrilebilir) ayrımı yapılmalı.
+- 19 yerde `.toLocaleDateString('tr-TR', ...)` gibi hardcoded locale çağrısı ve 7+ yerde hardcoded `₺` sembolü hâlâ duruyor (Header.tsx dışındakiler).
+- `sosyal-medya/posts/page.tsx` gibi bazı dosyalarda İngilizce tablo başlıkları ile Türkçe alert mesajları karışık halde — mekanik bir "her string'i çevir" yaklaşımı yerine dosya dosya değerlendirme gerekiyor.
+
 ### [28.08.2026] Web ve Mobil "Canli Test" (AI Asistan) Esitlemesi ve Edge Function Onarimi
 1. **Canli Test Web Entegrasyonu:** Web (Next.js) arayuzundeki `ai-asistan/page.tsx` icerisindeki statik Canli Test tasarimi, dinamik bir chat uygulamasina donusturuldu.
 2. **Edge Function (Gemini) Uyumu:** Mobil uygulamada (`usePlayground.ts`) kullanilan `gemini-chat` Supabase Edge Function API yapisi incelenerek, web tarafindaki istek yapisi da mobil ile ayni standarda (`mode: 'playground'`) getirildi.
@@ -384,6 +406,24 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 **Doğrulama:** Canlı tarayıcıda (kullanıcı oturum açmış haldeyken) WhatsApp bağlama akışı test edildi — Meta'nın gerçek WhatsApp Business Embedded Signup ekranına kadar sorunsuz ulaşıldı. Facebook OAuth sırasında görülen "HTTP_TRANSPORT_ERROR" ayrı, yerel internet kesintisinden (`net::ERR_INTERNET_DISCONNECTED`) kaynaklanan, kodla ilgisi olmayan geçici bir durumdu.
 
 **Not:** Bu onarımdan sonra ilk gerçek hesap bağlama denemesinde AI asistanın yeni bağlanan hesap üzerinden de (WAHA'daki gibi standart şekilde) mesajlara yanıt verdiği ayrıca doğrulanmalı — `HandleIncomingMessageUseCase.ts`'teki `zernioAccountId` bulma sorgusu da bu düzeltmenin bir parçası olarak `integration.social_accounts`'a taşındı.
+
+### [05.09.2026] Zernio Admin Paneli — Profil İsimlerinin İnsan-Okunur Hale Getirilmesi (`wg_{orgId}_{slot}` → "İşletme Adı — email")
+
+**Rapor edilen sorun:** Yukarıdaki 6 zincir hatası da çözülüp hesap bağlama tamamen sorunsuz çalışır hale geldikten sonra, kullanıcı Zernio'nun kendi admin panelindeki (zernio.com/dashboard) profil seçici listesinin kriptik teknik isimlerle (`wg_84c54c33-40b4-45fa-a0cc-bb424f3f4609_1`, eski dönemden kalma `User_aa524f52-fe6...` gibi) dolu olduğunu, bunun da kötü niyetli/sorunlu bir kullanıcıyı bulup banlamak veya anlık oturumunu kapatmak istediğinde hangi profilin hangi gerçek Workigom işletmesine/kullanıcısına ait olduğunu ayırt etmesini çok zorlaştırdığını bildirdi.
+
+**Kök neden:** `zernio-client/index.ts`'teki `get-connect-url` case'i, yeni bir Zernio profili oluştururken ismi tamamen deterministik-ama-okunaksız bir teknik anahtardan (`wg_${orgId}_${slot}`) üretiyordu. Bu isim sadece 409 "profil adı çakışması" hatasını (bkz. 5. Zincir Hatası) önlemek için tasarlanmıştı; hiçbir admin-okunabilirlik kaygısı yoktu. Zernio tarafında profilin `name` alanı bizim kendi veritabanımızdaki hiçbir kayıtla eşleşmiyor (biz sadece dönen `zernio_profile_id`'yi saklıyoruz), bu yüzden bu alanı değiştirmek mevcut hiçbir bağlama/senkronizasyon mantığını bozmuyor.
+
+**Çözüm:**
+1. **`zernio-client/index.ts`'e yeni `buildReadableProfileLabel(orgId, profileSlot)` yardımcı fonksiyonu eklendi.** Bu fonksiyon organizasyonun sahibi olan kullanıcının `profiles.business_name` (yoksa `organizations.name`'e düşer) ve `profiles.email` bilgilerini okuyup `"İşletme Adı — email"` formatında bir etiket üretir (örn. `"Hamurcu lahmacun — workigom.com@gmail.com"`). Aynı organizasyonun birden fazla Zernio profil slotu varsa (çoklu hesap mimarisi), çakışmayı önlemek için sona `(#slot)` eklenir — email zaten kullanıcı bazında benzersiz olduğundan tek-slotlu (yaygın) durumda ek bir UUID/suffix'e gerek kalmadı, isim admin için temiz kalıyor.
+2. **`get-connect-url`'ün `is_new` dalı** artık yeni profil oluştururken `wg_${orgId}_${slot}` yerine bu okunur etiketi kullanıyor; `Idempotency-Key` (409 koruması) ve profil oluşturma/DB'ye yazma akışının geri kalanı hiç değişmedi.
+3. **`ProfileApi.ts`'e yeni `updateProfile(profileId, name)` metodu eklendi** (Zernio Node SDK'sının `PUT /v1/profiles/{profileId}` endpoint'ini sarmalıyor).
+4. **Mevcut 2 canlı profilin geriye dönük düzeltilmesi için** yeni, ayrı bir admin/bakım fonksiyonu (`zernio-admin-rename-profiles`) yazılıp deploy edildi. Bu fonksiyon hiçbir dışarıdan parametre almaz — her zaman `integration.zernio_profiles` tablosundaki TÜM aktif profilleri okuyup yukarıdaki aynı etiketleme kuralıyla yeniden adlandırır; bu sayede tamamen idempotent'tir ve gelecekte yeni organizasyonlar eklendiğinde veya bir işletme adı/email değiştiğinde güvenle tekrar tekrar çalıştırılabilir. Bu fonksiyon çalıştırılarak mevcut 2 profil başarıyla yeniden adlandırıldı:
+   - `84c54c33-...` (mehmet güleç) → `"mehmet güleç — manoliskotron@gmail.com"`
+   - `c879d92b-...` (Hamurcu lahmacun) → `"Hamurcu lahmacun — workigom.com@gmail.com"`
+
+**Doğrulama:** `zernio-admin-rename-profiles` fonksiyonu Supabase'in kendi `pg_net` uzantısı üzerinden tetiklenip yanıtı doğrulandı — her iki profil için de Zernio API'sinden `success: true` döndü. `zernio-client` v100 olarak deploy edildi (yeni `buildReadableProfileLabel` içeriyor).
+
+**Not:** Legacy/artık kullanılmayan `User_aa524f52-fe6...` ve `User_AI_Esnaf_Shar...` profilleri bu kapsamın dışında bırakıldı (henüz temizlenmesi istenmedi) — istenirse ayrı bir adımda ele alınabilir.
 
 ### [05.09.2026] Zernio Hesap Bağlama — 6. Zincir Hatası: `sync-accounts`'ta Sütun Adı Uyumsuzluğu (`last_seen_at` vs `last_synced_at`) — "Senkronize Et" HİÇBİR ZAMAN Çalışmamış
 

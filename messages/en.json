@@ -1,0 +1,34 @@
+{
+  "common": {
+    "language": {
+      "title": "Language",
+      "subtitle": "Choose the panel language",
+      "turkish": "Türkçe",
+      "english": "English",
+      "german": "Deutsch",
+      "systemDefault": "Automatic (Browser Language)"
+    },
+    "proPlan": "Pro Plan",
+    "signOut": "Sign Out"
+  },
+  "nav": {
+    "home": "Home",
+    "aiAssistant": "AI Assistant",
+    "aiAccounting": "AI Accounting",
+    "customers": "Customers",
+    "socialMedia": "Social Media",
+    "inbox": "Inbox",
+    "analytics": "Analytics"
+  },
+  "header": {
+    "titles": {
+      "home": "Home",
+      "aiAssistant": "AI Assistant",
+      "aiAccounting": "AI Accounting",
+      "aiAccountingPaymentCalendar": "AI Accounting / Payment Calendar",
+      "socialMedia": "Social Media",
+      "analytics": "Analytics",
+      "inbox": "Inbox"
+    }
+  }
+}

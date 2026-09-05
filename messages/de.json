@@ -1,0 +1,34 @@
+{
+  "common": {
+    "language": {
+      "title": "Sprache",
+      "subtitle": "Wählen Sie die Panel-Sprache",
+      "turkish": "Türkçe",
+      "english": "English",
+      "german": "Deutsch",
+      "systemDefault": "Automatisch (Browsersprache)"
+    },
+    "proPlan": "Pro-Plan",
+    "signOut": "Abmelden"
+  },
+  "nav": {
+    "home": "Startseite",
+    "aiAssistant": "KI-Assistent",
+    "aiAccounting": "KI-Buchhaltung",
+    "customers": "Kunden",
+    "socialMedia": "Social Media",
+    "inbox": "Posteingang",
+    "analytics": "Analyse"
+  },
+  "header": {
+    "titles": {
+      "home": "Startseite",
+      "aiAssistant": "KI-Assistent",
+      "aiAccounting": "KI-Buchhaltung",
+      "aiAccountingPaymentCalendar": "KI-Buchhaltung / Zahlungskalender",
+      "socialMedia": "Social Media",
+      "analytics": "Analyse",
+      "inbox": "Posteingang"
+    }
+  }
+}

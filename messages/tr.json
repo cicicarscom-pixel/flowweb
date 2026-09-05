@@ -1,0 +1,34 @@
+{
+  "common": {
+    "language": {
+      "title": "Dil",
+      "subtitle": "Panel dilini seçin",
+      "turkish": "Türkçe",
+      "english": "English",
+      "german": "Deutsch",
+      "systemDefault": "Tarayıcı Diline Göre Otomatik"
+    },
+    "proPlan": "Pro Plan",
+    "signOut": "Çıkış Yap"
+  },
+  "nav": {
+    "home": "Anasayfa",
+    "aiAssistant": "Ai Asistan",
+    "aiAccounting": "Ai Muhasebe",
+    "customers": "Müşteriler",
+    "socialMedia": "Sosyal Medya",
+    "inbox": "Gelen Kutusu",
+    "analytics": "Analiz"
+  },
+  "header": {
+    "titles": {
+      "home": "Anasayfa",
+      "aiAssistant": "Ai Asistan",
+      "aiAccounting": "Ai Muhasebe",
+      "aiAccountingPaymentCalendar": "Ai Muhasebe / Ödeme Takvimi",
+      "socialMedia": "Sosyal Medya",
+      "analytics": "Analiz",
+      "inbox": "Gelen Kutusu"
+    }
+  }
+}

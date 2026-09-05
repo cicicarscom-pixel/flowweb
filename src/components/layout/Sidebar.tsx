@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Sidebar() {
     const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations();
   
   const handleLogout = async () => {
     const supabase = createClient();
@@ -59,13 +62,13 @@ export default function Sidebar() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Anasayfa", icon: "⬡", color: "#FF7A59" },
-    { href: "/ai-asistan", label: "Ai Asistan", icon: "◉", color: "#FF7A59" },
-    { href: "/ai-muhasebe", label: "Ai Muhasebe", icon: "▤", color: "#F59E0B" },
-    { href: "/musteriler", label: "Müşteriler", icon: "👥", color: "#10B981" },
-    { href: "/sosyal-medya", label: "Sosyal Medya", icon: "◎", color: "#C2478D" },
-    { href: "/gelen-kutusu", label: "Gelen Kutusu", icon: "📥", color: "#EF4444" },
-    { href: "/analiz", label: "Analiz", icon: "◈", color: "#22B573" },
+    { href: "/", label: t("nav.home"), icon: "⬡", color: "#FF7A59" },
+    { href: "/ai-asistan", label: t("nav.aiAssistant"), icon: "◉", color: "#FF7A59" },
+    { href: "/ai-muhasebe", label: t("nav.aiAccounting"), icon: "▤", color: "#F59E0B" },
+    { href: "/musteriler", label: t("nav.customers"), icon: "👥", color: "#10B981" },
+    { href: "/sosyal-medya", label: t("nav.socialMedia"), icon: "◎", color: "#C2478D" },
+    { href: "/gelen-kutusu", label: t("nav.inbox"), icon: "📥", color: "#EF4444" },
+    { href: "/analiz", label: t("nav.analytics"), icon: "◈", color: "#22B573" },
   ];
 
   return (
@@ -126,22 +129,25 @@ export default function Sidebar() {
             />
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userName}</p>
-              <p style={{ fontSize: 10, color: "var(--text-muted)" }}>Pro Plan</p>
+              <p style={{ fontSize: 10, color: "var(--text-muted)" }}>{t("common.proPlan")}</p>
             </div>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573", flexShrink: 0 }} />
           </div>
         </Link>
 
-        <button 
+        <button
           onClick={handleLogout}
           style={{
             width: "100%", padding: "8px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             background: "rgba(239,68,68, 0.05)", border: "1px solid rgba(239,68,68, 0.2)",
             borderRadius: 8, color: "#EF4444", fontSize: 12, fontWeight: 600, cursor: "pointer",
+            marginBottom: 12,
           }}
         >
-          <span style={{ fontSize: 14 }}>⏻</span> Çıkış Yap
+          <span style={{ fontSize: 14 }}>⏻</span> {t("common.signOut")}
         </button>
+
+        <LanguageSwitcher />
       </div>
     </aside>
   );

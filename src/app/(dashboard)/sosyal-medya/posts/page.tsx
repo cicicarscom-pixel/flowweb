@@ -2,16 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
-const FILTERS = [
-  { id: 'all', label: 'Tümü' },
-  { id: 'scheduled', label: 'Planlanan' },
-  { id: 'published', label: 'Yayınlanan' },
-  { id: 'failed', label: 'Hatalı' }
-];
+const FILTER_IDS = ['all', 'scheduled', 'published', 'failed'] as const;
 
 export default function TumGonderilerPage() {
+  const t = useTranslations();
+  const FILTERS = FILTER_IDS.map((id) => ({ id, label: t(`postsPage.filters.${id}`) }));
   const [activeFilter, setActiveFilter] = useState('all');
   const [posts, setPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,7 +92,7 @@ export default function TumGonderilerPage() {
 
         if (error) {
           console.error("Bulk delete error:", error);
-          alert("Gönderiler silinirken hata oluştu: " + error.message);
+          alert(t("postsPage.errors.bulkDeleteFailed", { message: error.message }));
         } else {
           setPosts(prev => prev.map(p => selectedPostIds.includes(p.id) ? { ...p, status: 'deleted' } : p));
           setSelectedPostIds([]);
@@ -117,7 +115,7 @@ export default function TumGonderilerPage() {
 
         if (error) {
           console.error("Delete error:", error);
-          alert("Gönderi silinirken hata oluştu: " + error.message);
+          alert(t("postsPage.errors.deleteFailed", { message: error.message }));
         } else {
           setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
           setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
@@ -125,7 +123,7 @@ export default function TumGonderilerPage() {
       }
     } catch (err) {
       console.error("Delete exception:", err);
-      alert("İşlem sırasında hata oluştu.");
+      alert(t("postsPage.errors.genericError"));
     } finally {
       setIsDeleting(false);
       setDeleteModal({ isOpen: false, postId: null, isBulk: false });
@@ -166,15 +164,15 @@ export default function TumGonderilerPage() {
   const getStatusLabel = (status: string) => {
     const s = (status || '').toLowerCase();
     switch(s) {
-      case 'scheduled': return 'Planlandı';
-      case 'published': return 'Yayınlandı';
-      case 'failed': return 'Hatalı';
-      default: return 'Bilinmiyor';
+      case 'scheduled': return t("postsPage.status.scheduled");
+      case 'published': return t("postsPage.status.published");
+      case 'failed': return t("postsPage.status.failed");
+      default: return t("postsPage.status.unknown");
     }
   };
 
   const formatDate = (isoString: string) => {
-    if (!isoString) return 'Belirtilmedi';
+    if (!isoString) return t("postsPage.dateNotSpecified");
     const d = new Date(isoString);
     return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   };
@@ -228,7 +226,7 @@ export default function TumGonderilerPage() {
             className="ml-auto px-4 py-2 rounded-full border border-[#EF4444] bg-[#EF4444]/20 text-[#EF4444] text-[12px] font-bold hover:bg-[#EF4444]/30 transition-colors flex items-center gap-2"
           >
             <i className="fa-regular fa-trash-can"></i>
-            {selectedPostIds.length} Seçiliyi Sil
+            {t("postsPage.bulkDeleteButton", { count: selectedPostIds.length })}
           </button>
         )}
       </div>
@@ -335,7 +333,7 @@ export default function TumGonderilerPage() {
                   {/* Profile */}
                   <div style={{ width: 150 }} className="flex items-center">
                     <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mr-2 shrink-0"></div>
-                    <span className="text-[#F6F1EC] text-[12px] truncate">Workigom Flow Profil</span>
+                    <span className="text-[#F6F1EC] text-[12px] truncate">{t("postsPage.defaultProfileName")}</span>
                   </div>
 
                   {/* Metrics */}
@@ -357,19 +355,19 @@ export default function TumGonderilerPage() {
                   {/* Actions */}
                   <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
                     {(item.status || '').toLowerCase() === 'failed' && (
-                      <button className="w-7 h-7 rounded bg-[#EF4444]/20 border border-[#EF4444]/40 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/30 transition-colors" title="Yeniden Dene">
+                      <button className="w-7 h-7 rounded bg-[#EF4444]/20 border border-[#EF4444]/40 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/30 transition-colors" title={t("postsPage.actions.retry")}>
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>
                       </button>
                     )}
                     {(item.status || '').toLowerCase() === 'published' && (
-                      <button className="w-7 h-7 rounded bg-[#C2478D]/10 border border-[#C2478D]/30 flex items-center justify-center text-[#C2478D] hover:bg-[#C2478D]/20 transition-colors" title="Analiz">
+                      <button className="w-7 h-7 rounded bg-[#C2478D]/10 border border-[#C2478D]/30 flex items-center justify-center text-[#C2478D] hover:bg-[#C2478D]/20 transition-colors" title={t("postsPage.actions.analyze")}>
                         <i className="fa-solid fa-cloud-arrow-down text-[12px]"></i>
                       </button>
                     )}
-                    <button 
+                    <button
                       onClick={() => handleDeletePost(item.id)}
                       className="w-7 h-7 rounded bg-[#EF4444]/10 border border-[#EF4444]/30 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/20 transition-colors"
-                      title="Sil"
+                      title={t("postsPage.actions.delete")}
                     >
                       <i className="fa-regular fa-trash-can text-[12px]"></i>
                     </button>
@@ -381,7 +379,7 @@ export default function TumGonderilerPage() {
           ) : (
             <div className="flex flex-col items-center justify-center mt-20 w-full">
               <i className="fa-regular fa-file-lines text-4xl text-[#A79E96] opacity-50 mb-4"></i>
-              <p className="text-[#A79E96] text-sm">Bu duruma ait gönderi bulunamadı.</p>
+              <p className="text-[#A79E96] text-sm">{t("postsPage.emptyState")}</p>
             </div>
           )}
 
@@ -394,7 +392,7 @@ export default function TumGonderilerPage() {
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transition-all transform duration-200 ease-out">
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <h3 className="text-gray-900 font-semibold flex items-center gap-2">
-                <i className="fa-regular fa-trash-can text-[#EF4444]"></i> Gönderiyi sil
+                <i className="fa-regular fa-trash-can text-[#EF4444]"></i> {t("postsPage.deleteModal.title")}
               </h3>
               <button 
                 onClick={() => !isDeleting && setDeleteModal({ isOpen: false, postId: null, isBulk: false })}
@@ -407,9 +405,9 @@ export default function TumGonderilerPage() {
             
             <div className="p-5">
               <p className="text-gray-600 text-sm mb-5">
-                {deleteModal.isBulk 
-                  ? `${selectedPostIds.length} gönderiyi nasıl silmek istediğinizi seçin.`
-                  : 'Bu gönderiyi nasıl silmek istediğinizi seçin.'}
+                {deleteModal.isBulk
+                  ? t("postsPage.deleteModal.bulkDescription", { count: selectedPostIds.length })
+                  : t("postsPage.deleteModal.singleDescription")}
               </p>
               
               <div className="flex flex-col gap-3">
@@ -423,9 +421,9 @@ export default function TumGonderilerPage() {
                     <i className="fa-regular fa-trash-can text-lg"></i>
                   </div>
                   <div>
-                    <h4 className="text-gray-900 font-medium mb-1">Sadece Workigom Flow'dan sil</h4>
+                    <h4 className="text-gray-900 font-medium mb-1">{t("postsPage.deleteModal.panelOnlyTitle")}</h4>
                     <p className="text-gray-500 text-xs leading-relaxed">
-                      Workigom Flow panelinizden kaldırılır. Gönderi Facebook ve Instagram'da yayınlanmaya devam eder.
+                      {t("postsPage.deleteModal.panelOnlyDescription")}
                     </p>
                   </div>
                 </button>
@@ -440,14 +438,14 @@ export default function TumGonderilerPage() {
                     <i className="fa-solid fa-globe text-lg"></i>
                   </div>
                   <div>
-                    <h4 className="text-gray-900 font-medium mb-1">Platformlardan ve Workigom Flow'dan sil</h4>
+                    <h4 className="text-gray-900 font-medium mb-1">{t("postsPage.deleteModal.platformsTitle")}</h4>
                     <p className="text-gray-500 text-xs leading-relaxed mb-3">
-                      Facebook'tan kalıcı olarak silinir ve Workigom Flow'dan kaldırılır.
+                      {t("postsPage.deleteModal.platformsDescription")}
                     </p>
                     <div className="flex items-start gap-2 bg-yellow-50 p-2.5 rounded-lg border border-yellow-100">
                       <i className="fa-solid fa-triangle-exclamation text-yellow-600 text-xs mt-0.5 shrink-0"></i>
                       <p className="text-yellow-700 text-[11px] leading-relaxed">
-                        Instagram API üzerinden silmeyi desteklemediğinden, Instagram'dan manuel olarak silinmesi gerekebilir.
+                        {t("postsPage.deleteModal.instagramWarning")}
                       </p>
                     </div>
                   </div>

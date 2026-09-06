@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
+import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 
 
@@ -9,21 +10,23 @@ import { createClient } from "@/lib/supabase/client";
 
 
 export default function ProfilPage() {
+  const t = useTranslations();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   
   const [businessName, setBusinessName] = useState("");
   const [authorizedPerson, setAuthorizedPerson] = useState("");
-  const [category, setCategory] = useState("Diğer");
+  const [category, setCategory] = useState(t("profilPage.defaults.otherCategory"));
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
     const [addressObj, setAddressObj] = useState({ country: "", city: "", district: "", fullAddress: "" });
   const [avatar, setAvatar] = useState("");
-  
+
   const [vkn, setVkn] = useState("");
   const [taxOffice, setTaxOffice] = useState("");
   const [organizationId, setOrganizationId] = useState("");
+  const [isErrorMessage, setIsErrorMessage] = useState(false);
   
   const supabase = createClient();
 
@@ -51,7 +54,7 @@ export default function ProfilPage() {
         
         setBusinessName(profile.business_name || "");
         setAuthorizedPerson(profile.authorized_person || googleName || "");
-        setCategory(profile.category || "Diğer");
+        setCategory(profile.category || t("profilPage.defaults.otherCategory"));
         setPhone(profile.phone_number || "");
         
         // Handle address object from mobile AddressSelector
@@ -75,7 +78,7 @@ export default function ProfilPage() {
         }
         
         if (!av) {
-            av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || 'Esnaf') + '&background=00daf3&color=fff';
+            av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || t("profilPage.defaults.fallbackBusinessName")) + '&background=00daf3&color=fff';
         }
         setAvatar(av);
       }
@@ -141,11 +144,13 @@ export default function ProfilPage() {
       
       await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', session.user.id);
       
-      setMessage("Profil fotoğrafı güncellendi.");
+      setIsErrorMessage(false);
+      setMessage(t("profilPage.messages.avatarUpdated"));
       setTimeout(() => setMessage(""), 3000);
     } catch (error: any) {
       console.error("Avatar upload error:", error);
-      setMessage("Fotoğraf yükleme hatası: " + error.message);
+      setIsErrorMessage(true);
+      setMessage(t("profilPage.messages.avatarUploadError", { error: error.message }));
       setTimeout(() => setMessage(""), 3000);
     }
   };
@@ -157,7 +162,7 @@ export default function ProfilPage() {
     
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Oturum bulunamadı");
+      if (!session) throw new Error(t("profilPage.messages.noSession"));
       
       // Keep mobile's AddressSelector compatibility if it expects an object. 
       // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
@@ -198,16 +203,18 @@ export default function ProfilPage() {
         }
       }
       
-      setMessage("Profil başarıyla güncellendi!");
+      setIsErrorMessage(false);
+      setMessage(t("profilPage.messages.profileUpdated"));
       setTimeout(() => setMessage(""), 3000);
     } catch (err: any) {
-      setMessage("Hata: " + err.message);
+      setIsErrorMessage(true);
+      setMessage(t("profilPage.messages.errorPrefix", { error: err.message }));
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div style={{ padding: 40, color: "#fff" }}>Yükleniyor...</div>;
+  if (loading) return <div style={{ padding: 40, color: "#fff" }}>{t("profilPage.loading")}</div>;
 
   return (
     <div style={{ padding: "40px", maxWidth: 800, margin: "0 auto", width: "100%" }}>
@@ -217,11 +224,11 @@ export default function ProfilPage() {
           color: #ffffff;
         }
       `}} />
-      <h1 style={{ fontSize: 28, fontWeight: 600, color: "#fff", marginBottom: 8, fontFamily: "Outfit, sans-serif" }}>Profil Ayarları</h1>
-      <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz.</p>
-      
+      <h1 style={{ fontSize: 28, fontWeight: 600, color: "#fff", marginBottom: 8, fontFamily: "Outfit, sans-serif" }}>{t("profilPage.header.title")}</h1>
+      <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>{t("profilPage.header.subtitle")}</p>
+
       {message && (
-        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: message.includes("Hata") ? "rgba(239,68,68, 0.1)" : "rgba(34,181,115, 0.1)", color: message.includes("Hata") ? "#EF4444" : "#22B573", border: '1px solid ' + (message.includes("Hata") ? "rgba(239,68,68, 0.2)" : "rgba(34,181,115, 0.2)") }}>
+        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: isErrorMessage ? "rgba(239,68,68, 0.1)" : "rgba(34,181,115, 0.1)", color: isErrorMessage ? "#EF4444" : "#22B573", border: '1px solid ' + (isErrorMessage ? "rgba(239,68,68, 0.2)" : "rgba(34,181,115, 0.2)") }}>
           {message}
         </div>
       )}
@@ -229,7 +236,7 @@ export default function ProfilPage() {
       <div className="glass-strong" style={{ padding: 32, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
             <label style={{ cursor: "pointer", position: "relative" }}>
-              <img src={avatar} alt="Avatar" style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(255,122,89, 0.3)" }} />
+              <img src={avatar} alt={t("profilPage.avatarAlt")} style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(255,122,89, 0.3)" }} />
               <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
               <div style={{ position: "absolute", bottom: -8, right: -8, background: "var(--primary)", color: "#000", padding: 6, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
@@ -241,89 +248,89 @@ export default function ProfilPage() {
           
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Yetkili Kişi Adı Soyadı</label>
-              <input type="text" value={authorizedPerson} onChange={e => setAuthorizedPerson(e.target.value)} placeholder="Örn: Mehmet Yılmaz" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", marginBottom: 20 }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.authorizedPerson")}</label>
+              <input type="text" value={authorizedPerson} onChange={e => setAuthorizedPerson(e.target.value)} placeholder={t("profilPage.fields.authorizedPersonPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", marginBottom: 20 }} />
             </div>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>İşletme Adı</label>
-              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="İşletmenizin adını girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.businessName")}</label>
+              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder={t("profilPage.fields.businessNamePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>E-posta</label>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.email")}</label>
               <input type="email" value={email} disabled className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: 0.6 }} />
             </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Telefon</label>
-              <input type="text" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Telefon numarasını girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.phone")}</label>
+              <input type="text" value={phone} onChange={e => setPhone(e.target.value)} placeholder={t("profilPage.fields.phonePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Mağaza Kategorisi</label>
-              <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder="Örn: Cafe & Restoran, Kuaför..." className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.storeCategory")}</label>
+              <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder={t("profilPage.fields.storeCategoryPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
           </div>
-          
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Vergi Numarası (VKN)</label>
-              <input type="text" value={vkn} onChange={e => setVkn(e.target.value)} placeholder="VKN girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.taxId")}</label>
+              <input type="text" value={vkn} onChange={e => setVkn(e.target.value)} placeholder={t("profilPage.fields.taxIdPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
             <div>
-              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Vergi Dairesi</label>
-              <input type="text" value={taxOffice} onChange={e => setTaxOffice(e.target.value)} placeholder="Vergi dairesini girin" className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.taxOffice")}</label>
+              <input type="text" value={taxOffice} onChange={e => setTaxOffice(e.target.value)} placeholder={t("profilPage.fields.taxOfficePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
             </div>
           </div>
-          
+
                     <div>
-            <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>Adres Bilgileri</label>
+            <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.addressInfo")}</label>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
-                            <select 
-                value={addressObj.country} 
+                            <select
+                value={addressObj.country}
                 onChange={e => setAddressObj({...addressObj, country: e.target.value, city: "", district: ""})}
-                className="glass-input" 
+                className="glass-input"
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }}
               >
-                <option value="">Ülke Seçin</option>
+                <option value="">{t("profilPage.fields.selectCountry")}</option>
                 {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
               </select>
-              
-              <select 
-                value={addressObj.city} 
+
+              <select
+                value={addressObj.city}
                 onChange={e => setAddressObj({...addressObj, city: e.target.value, district: ""})}
                 disabled={!addressObj.country}
-                className="glass-input" 
+                className="glass-input"
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.country ? 1 : 0.5 }}
               >
-                <option value="">Şehir / Eyalet Seçin</option>
+                <option value="">{t("profilPage.fields.selectCityState")}</option>
                 {addressObj.country && State.getStatesOfCountry(addressObj.country).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>)}
               </select>
 
-              <select 
-                value={addressObj.district} 
+              <select
+                value={addressObj.district}
                 onChange={e => setAddressObj({...addressObj, district: e.target.value})}
                 disabled={!addressObj.city}
-                className="glass-input" 
+                className="glass-input"
                 style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.city ? 1 : 0.5 }}
               >
-                <option value="">İlçe Seçin</option>
+                <option value="">{t("profilPage.fields.selectDistrict")}</option>
                 {addressObj.country && addressObj.city && City.getCitiesOfState(addressObj.country, addressObj.city).map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
               </select>
             </div>
-            <textarea 
-              value={addressObj.fullAddress} 
-              onChange={e => setAddressObj({...addressObj, fullAddress: e.target.value})} 
-              rows={3} 
-              placeholder="Açık adresinizi girin" 
-              className="glass-input" 
+            <textarea
+              value={addressObj.fullAddress}
+              onChange={e => setAddressObj({...addressObj, fullAddress: e.target.value})}
+              rows={3}
+              placeholder={t("profilPage.fields.fullAddressPlaceholder")}
+              className="glass-input"
               style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} 
             />
           </div>
           
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
             <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #22B573)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-              {saving ? "Kaydediliyor..." : "Profili Kaydet"}
+              {saving ? t("profilPage.actions.saving") : t("profilPage.actions.save")}
             </button>
           </div>
         </form>

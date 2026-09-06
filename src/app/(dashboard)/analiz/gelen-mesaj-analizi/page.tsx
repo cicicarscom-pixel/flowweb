@@ -1,39 +1,41 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import styles from './page.module.css';
 
-export default function GelenMesajAnaliziPage() {
+export default async function GelenMesajAnaliziPage() {
+ const t = await getTranslations();
  return (
  <div className={`flex-1 flex flex-col h-full bg-surface-container ${styles.customScrollbar}`}>
  <div className="flex-1 overflow-y-auto p-8 space-y-6">
- 
- <h1 className="text-2xl font-semibold text-on-surface mb-6">Analiz (Canlı)</h1>
+
+ <h1 className="text-2xl font-semibold text-on-surface mb-6">{t("analizDetay.title")}</h1>
 
  {/* Filter Bar */}
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
  {/* Tabs */}
  <div className="flex p-1 bg-surface-container rounded-lg border border-outline-variant/10 w-max">
  <Link href="/analiz" className="px-6 py-2 rounded-md text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors">
- Gönderi Analizi
+ {t("analizDetay.tabs.posting")}
  </Link>
  <Link href="/analiz/gelen-mesaj-analizi" className="px-6 py-2 rounded-md text-sm font-medium bg-primary/20 text-primary border border-primary/30 transition-colors">
- Gelen Mesaj Analizi
+ {t("analizDetay.tabs.inbox")}
  </Link>
  </div>
  {/* Controls */}
  <div className="flex items-center gap-3">
  <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
  <i className="fa-solid fa-globe w-4 h-4 flex items-center justify-center"></i>
- Tüm platformlar
+ {t("analizDetay.filters.allPlatforms")}
  <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
  </button>
  <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
  <i className="fa-regular fa-calendar w-4 h-4 flex items-center justify-center"></i>
- Son 30 gün
+ {t("analizDetay.filters.last30Days")}
  <i className="fa-solid fa-chevron-down w-4 h-4 ml-2 flex items-center justify-center"></i>
  </button>
  <button className="flex items-center gap-2 px-4 py-2 bg-surface-container border border-outline-variant/10 rounded-lg text-sm text-on-surface-variant hover:text-on-surface transition-colors">
  <i className="fa-solid fa-download w-4 h-4 flex items-center justify-center"></i>
- Dışa Aktar
+ {t("analizDetay.filters.export")}
  </button>
  </div>
  </div>
@@ -46,12 +48,12 @@ export default function GelenMesajAnaliziPage() {
  <i className="fa-solid fa-inbox w-6 h-6 flex items-center justify-center"></i>
  </div>
  <div className="relative z-10">
- <div className="text-sm text-on-surface-variant mb-1">Alınan</div>
+ <div className="text-sm text-on-surface-variant mb-1">{t("analizDetay.metrics.received.label")}</div>
  <div className="flex items-end gap-2">
  <span className="text-3xl font-bold text-on-surface">2</span>
  <span className="text-xs text-secondary mb-1">%100</span>
  </div>
- <div className="text-xs text-on-surface-variant mt-1">Toplam mesaj</div>
+ <div className="text-xs text-on-surface-variant mt-1">{t("analizDetay.metrics.received.caption")}</div>
  </div>
  </div>
  {/* Card 2: Gönderilen */}
@@ -61,12 +63,12 @@ export default function GelenMesajAnaliziPage() {
  <i className="fa-solid fa-paper-plane w-6 h-6 relative z-10 flex items-center justify-center"></i>
  </div>
  <div>
- <div className="text-sm text-on-surface-variant mb-1">Gönderilen</div>
+ <div className="text-sm text-on-surface-variant mb-1">{t("analizDetay.metrics.sent.label")}</div>
  <div className="flex items-end gap-2">
  <span className="text-3xl font-bold text-on-surface">0</span>
  <span className="text-xs text-on-surface-variant mb-1">%0</span>
  </div>
- <div className="text-xs text-on-surface-variant mt-1">Toplam mesaj</div>
+ <div className="text-xs text-on-surface-variant mt-1">{t("analizDetay.metrics.sent.caption")}</div>
  </div>
  </div>
  {/* Card 3: Okunan */}
@@ -76,12 +78,12 @@ export default function GelenMesajAnaliziPage() {
  <i className="fa-regular fa-eye w-6 h-6 relative z-10 flex items-center justify-center"></i>
  </div>
  <div>
- <div className="text-sm text-on-surface-variant mb-1">Okunan</div>
+ <div className="text-sm text-on-surface-variant mb-1">{t("analizDetay.metrics.read.label")}</div>
  <div className="flex items-end gap-2">
  <span className="text-3xl font-bold text-on-surface">--</span>
  <span className="text-xs text-on-surface-variant mb-1">%0</span>
  </div>
- <div className="text-xs text-on-surface-variant mt-1">Veri yok</div>
+ <div className="text-xs text-on-surface-variant mt-1">{t("analizDetay.metrics.read.caption")}</div>
  </div>
  </div>
  {/* Card 4: Ortalama Yanıt */}
@@ -90,12 +92,12 @@ export default function GelenMesajAnaliziPage() {
  <i className="fa-regular fa-clock w-6 h-6 flex items-center justify-center"></i>
  </div>
  <div>
- <div className="text-sm text-on-surface-variant mb-1">Ortalama Yanıt</div>
+ <div className="text-sm text-on-surface-variant mb-1">{t("analizDetay.metrics.avgResponse.label")}</div>
  <div className="flex items-end gap-2">
- <span className="text-3xl font-bold text-on-surface">12 dk</span>
+ <span className="text-3xl font-bold text-on-surface">{t("analizDetay.metrics.avgResponse.value")}</span>
  <span className="text-xs text-on-surface-variant mb-1">%-</span>
  </div>
- <div className="text-xs text-on-surface-variant mt-1">Ortalama süre</div>
+ <div className="text-xs text-on-surface-variant mt-1">{t("analizDetay.metrics.avgResponse.caption")}</div>
  </div>
  </div>
  </div>
@@ -104,11 +106,11 @@ export default function GelenMesajAnaliziPage() {
  <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-6">
  <div className="flex items-center justify-between mb-6">
  <div>
- <h2 className="text-lg font-semibold text-on-surface">Yanıt Süresi Analizi</h2>
- <p className="text-sm text-on-surface-variant mt-1">Müşteri mesajına ilk yanıtın verilme süresi</p>
+ <h2 className="text-lg font-semibold text-on-surface">{t("analizDetay.responseTimeAnalysis.title")}</h2>
+ <p className="text-sm text-on-surface-variant mt-1">{t("analizDetay.responseTimeAnalysis.subtitle")}</p>
  </div>
  <button className="flex items-center gap-2 px-3 py-1.5 bg-outline-variant border border-outline-variant/10 rounded-md text-sm text-on-surface-variant hover:text-on-surface transition-colors">
- Günlük
+ {t("analizDetay.responseTimeAnalysis.periodButton")}
  <i className="fa-solid fa-chevron-down w-4 h-4 flex items-center justify-center"></i>
  </button>
  </div>
@@ -122,15 +124,15 @@ export default function GelenMesajAnaliziPage() {
  <circle className="text-cyan-400" cx="50%" cy="50%" fill="none" r="48%" stroke="currentColor" strokeDasharray="300" strokeDashoffset="50" strokeLinecap="round" strokeWidth="8"></circle>
  </svg>
  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
- <span className="text-4xl font-bold text-on-surface">12 dk</span>
- <span className="text-xs text-on-surface-variant mt-1">Ortalama Yanıt Süresi</span>
+ <span className="text-4xl font-bold text-on-surface">{t("analizDetay.metrics.avgResponse.value")}</span>
+ <span className="text-xs text-on-surface-variant mt-1">{t("analizDetay.responseTimeAnalysis.gaugeLabel")}</span>
  </div>
  </div>
  </div>
  {/* Line Chart Area (Skeleton) */}
  <div className="lg:col-span-3">
  <div className="flex items-center gap-2 mb-4">
- <span className="text-sm text-on-surface">Günlere Göre Ortalama Yanıt Süresi</span>
+ <span className="text-sm text-on-surface">{t("analizDetay.responseTimeAnalysis.chartTitle")}</span>
  <i className="fa-solid fa-circle-info w-4 h-4 text-on-surface-variant"></i>
  </div>
  <div className="h-48 w-full relative border-l border-b border-outline-variant/10/50 flex items-end">
@@ -167,7 +169,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="flex justify-center mt-8">
  <div className="flex items-center gap-2 text-xs text-on-surface-variant">
  <span className="w-4 h-1 bg-primary rounded-full"></span>
- Ortalama Yanıt Süresi (dk)
+ {t("analizDetay.responseTimeAnalysis.legend")}
  </div>
  </div>
  </div>
@@ -178,7 +180,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
  {/* Platform Distribution */}
  <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-6 flex flex-col h-full">
- <h2 className="text-lg font-semibold text-on-surface mb-6">Platform Dağılımı</h2>
+ <h2 className="text-lg font-semibold text-on-surface mb-6">{t("analizDetay.platformDistribution.title")}</h2>
  <div className="flex-1 flex items-center justify-center gap-8">
  {/* Donut Chart (Skeleton) */}
  <div className="relative w-48 h-48 flex-shrink-0">
@@ -207,7 +209,7 @@ export default function GelenMesajAnaliziPage() {
  </svg>
  {/* Center Text */}
  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
- <span className="text-sm text-on-surface-variant">Toplam</span>
+ <span className="text-sm text-on-surface-variant">{t("analizDetay.platformDistribution.total")}</span>
  <span className="text-3xl font-bold text-on-surface">2</span>
  </div>
  </div>
@@ -223,7 +225,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="flex items-center justify-between text-sm">
  <div className="flex items-center gap-2">
  <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
- <span className="text-on-surface">Web Canlı Destek</span>
+ <span className="text-on-surface">{t("analizDetay.platformDistribution.webLiveSupport")}</span>
  </div>
  <div className="text-on-surface-variant">1 (%50)</div>
  </div>
@@ -245,14 +247,14 @@ export default function GelenMesajAnaliziPage() {
  </div>
  <div className="flex justify-end mt-6">
  <button className="px-4 py-2 border border-primary/30 text-primary rounded-md text-sm hover:bg-primary/10 transition-colors">
- Detayları Gör
+ {t("analizDetay.platformDistribution.viewDetails")}
  </button>
  </div>
  </div>
 
  {/* Activity Heatmap */}
  <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-6 flex flex-col h-full">
- <h2 className="text-lg font-semibold text-on-surface mb-6">Saatlere Göre Aktivite</h2>
+ <h2 className="text-lg font-semibold text-on-surface mb-6">{t("analizDetay.activityHeatmap.title")}</h2>
  <div className="flex-1 flex flex-col">
  {/* Heatmap Grid (Simulated) */}
  <div className="relative flex-1">
@@ -269,7 +271,7 @@ export default function GelenMesajAnaliziPage() {
  <div className="space-y-1">
  {/* Row Pzt */}
  <div className="flex items-center gap-2 h-5">
- <span className="w-6 text-xs text-on-surface-variant">Pzt</span>
+ <span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.mon")}</span>
  <div className="flex-1 flex gap-1 h-full">
  {[...Array(24)].map((_, i) => (
  <div key={`pzt-${i}`} className="flex-1 bg-outline-variant rounded-sm"></div>
@@ -278,7 +280,7 @@ export default function GelenMesajAnaliziPage() {
  </div>
  {/* Row Sal */}
  <div className="flex items-center gap-2 h-5">
- <span className="w-6 text-xs text-on-surface-variant">Sal</span>
+ <span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.tue")}</span>
  <div className="flex-1 flex gap-1 h-full">
  {[...Array(24)].map((_, i) => (
  <div key={`sal-${i}`} className={`flex-1 ${i === 11 ? 'bg-primary' : 'bg-outline-variant'} rounded-sm`}></div>
@@ -287,7 +289,7 @@ export default function GelenMesajAnaliziPage() {
  </div>
  {/* Row Çar */}
  <div className="flex items-center gap-2 h-5">
- <span className="w-6 text-xs text-on-surface-variant">Çar</span>
+ <span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.wed")}</span>
  <div className="flex-1 flex gap-1 h-full">
  {[...Array(24)].map((_, i) => (
  <div key={`car-${i}`} className={`flex-1 ${i === 11 ? 'bg-primary' : 'bg-outline-variant'} rounded-sm`}></div>
@@ -296,7 +298,7 @@ export default function GelenMesajAnaliziPage() {
  </div>
  {/* Row Per */}
  <div className="flex items-center gap-2 h-5">
- <span className="w-6 text-xs text-on-surface-variant">Per</span>
+ <span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.thu")}</span>
  <div className="flex-1 flex gap-1 h-full">
  {[...Array(24)].map((_, i) => (
  <div key={`per-${i}`} className={`flex-1 ${i === 11 ? 'bg-primary' : 'bg-outline-variant'} rounded-sm`}></div>
@@ -304,20 +306,20 @@ export default function GelenMesajAnaliziPage() {
  </div>
  </div>
  {/* Rows Cum, Cmt, Paz (Empty for layout) */}
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cum</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Cmt</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
- <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">Paz</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.fri")}</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.sat")}</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
+ <div className="flex items-center gap-2 h-5"><span className="w-6 text-xs text-on-surface-variant">{t("analizDetay.activityHeatmap.days.sun")}</span><div className="flex-1 flex gap-1 h-full"><div className="w-full bg-outline-variant rounded-sm bg-opacity-50" style={{ background: "repeating-linear-gradient(90deg, #20242F, #20242F calc(4.16% - 2px), transparent calc(4.16% - 2px), transparent 4.16%)" }}></div></div></div>
  </div>
  </div>
  {/* Bottom Legend & Button */}
  <div className="flex items-center justify-between mt-6">
  <div className="flex items-center gap-2 text-xs text-on-surface-variant">
- <span>Düşük</span>
+ <span>{t("analizDetay.activityHeatmap.low")}</span>
  <div className="w-32 h-2 rounded-full bg-gradient-to-r from-outline-variant to-primary"></div>
- <span>Yüksek</span>
+ <span>{t("analizDetay.activityHeatmap.high")}</span>
  </div>
  <button className="px-4 py-2 border border-primary/30 text-primary rounded-md text-sm hover:bg-primary/10 transition-colors">
- Detayları Gör
+ {t("analizDetay.platformDistribution.viewDetails")}
  </button>
  </div>
  </div>
@@ -326,17 +328,17 @@ export default function GelenMesajAnaliziPage() {
 
  {/* Recent Messages Table */}
  <div className="bg-surface-container border border-outline-variant/10 rounded-xl p-6">
- <h2 className="text-lg font-semibold text-on-surface mb-6">Son Mesajlar</h2>
+ <h2 className="text-lg font-semibold text-on-surface mb-6">{t("analizDetay.recentMessages.title")}</h2>
  <div className="overflow-x-auto">
  <table className="w-full text-left text-sm text-on-surface-variant">
  <thead className="text-xs text-on-surface-variant border-b border-outline-variant/10/50">
  <tr>
- <th className="pb-3 font-medium" scope="col">Platform</th>
- <th className="pb-3 font-medium" scope="col">Müşteri</th>
- <th className="pb-3 font-medium" scope="col">Mesaj</th>
- <th className="pb-3 font-medium" scope="col">Tarih</th>
- <th className="pb-3 font-medium" scope="col">Durum</th>
- <th className="pb-3 font-medium" scope="col">Yanıt Süresi</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.platform")}</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.customer")}</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.message")}</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.date")}</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.status")}</th>
+ <th className="pb-3 font-medium" scope="col">{t("analizDetay.recentMessages.columns.responseTime")}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-[#454548]/30">
@@ -353,7 +355,7 @@ export default function GelenMesajAnaliziPage() {
  <td className="py-4 max-w-xs truncate" title="Fiyat teklifi hakkında bilgi alabilir miyim?">Fiyat teklifi hakkında bilgi alabilir miyim?</td>
  <td className="py-4">22 May 2024 14:32</td>
  <td className="py-4">
- <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">Okundu</span>
+ <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">{t("analizDetay.recentMessages.status.read")}</span>
  </td>
  <td className="py-4 text-on-surface">8 dk</td>
  </tr>
@@ -363,14 +365,14 @@ export default function GelenMesajAnaliziPage() {
  <div className="p-1.5 bg-primary/10 rounded-md text-primary">
  <i className="fa-solid fa-globe w-4 h-4 flex items-center justify-center"></i>
  </div>
- <span className="text-on-surface">Web Canlı Destek</span>
+ <span className="text-on-surface">{t("analizDetay.platformDistribution.webLiveSupport")}</span>
  </div>
  </td>
  <td className="py-4 text-on-surface">Elif Kaya</td>
  <td className="py-4 max-w-xs truncate" title="Ürün iade süreci nasıl işliyor?">Ürün iade süreci nasıl işliyor?</td>
  <td className="py-4">22 May 2024 10:15</td>
  <td className="py-4">
- <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">Okundu</span>
+ <span className="px-2 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-md text-xs font-medium">{t("analizDetay.recentMessages.status.read")}</span>
  </td>
  <td className="py-4 text-on-surface">16 dk</td>
  </tr>
@@ -379,7 +381,7 @@ export default function GelenMesajAnaliziPage() {
  </div>
  <div className="flex justify-end mt-4">
  <button className="px-4 py-2 border border-outline-variant/10 text-on-surface-variant rounded-md text-sm hover:text-on-surface hover:bg-outline-variant transition-colors">
- Tümünü Gör
+ {t("analizDetay.recentMessages.viewAll")}
  </button>
  </div>
  </div>

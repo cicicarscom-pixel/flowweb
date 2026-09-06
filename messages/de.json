@@ -80,5 +80,862 @@
       "huysuz": "Mürrisch",
       "sinirli": "Reizbar"
     }
+  },
+  "aiAsistanPage": {
+    "header": {
+      "title": "Bot-Charakterverwaltung",
+      "subtitle": "Legen Sie die Persönlichkeit und Grenzen der KI fest"
+    },
+    "connectedServices": {
+      "title": "Verbundene Dienste",
+      "googleDrive": {
+        "title": "Google Drive (Wissensdatenbank)",
+        "notConnected": "Nicht verbunden",
+        "connect": "Verbinden"
+      },
+      "whatsapp": {
+        "title": "WhatsApp",
+        "connected": "Verbunden",
+        "starting": "Wird gestartet",
+        "notConnected": "Nicht verbunden",
+        "connect": "Verbinden",
+        "refresh": "Aktualisieren",
+        "processing": "Wird verarbeitet...",
+        "qrInstruction": "Öffnen Sie WhatsApp und scannen Sie den QR-Code unter Verknüpfte Geräte",
+        "orConnectWithNumber": "Oder mit einer Telefonnummer verbinden",
+        "phonePlaceholder": "z. B. 90532...",
+        "getCode": "Code erhalten",
+        "confirmCodeLabel": "Bestätigen Sie die WhatsApp-Benachrichtigung und geben Sie diesen Code ein:"
+      },
+      "toggleLabel": "WhatsApp-Assistent"
+    },
+    "timezone": {
+      "title": "Zeitzone",
+      "description": "Für die korrekte Berechnung von Terminen und Arbeitszeiten",
+      "options": {
+        "turkey": "Türkei (Europe/Istanbul)",
+        "uk": "Vereinigtes Königreich (Europe/London)",
+        "germany": "Deutschland (Europe/Berlin)",
+        "usEast": "USA Ost (America/New_York)",
+        "usWest": "USA West (America/Los_Angeles)",
+        "uae": "VAE (Asia/Dubai)"
+      }
+    },
+    "appointmentModule": {
+      "title": "Termin-/Buchungsfunktion",
+      "description": "Wenn Sie dies deaktivieren, versucht die KI keine Termine zu buchen, sondern antwortet nur basierend auf Ihren Geschäftsinformationen und Anweisungen."
+    },
+    "customInstruction": {
+      "title": "Assistentenanweisung erstellen",
+      "placeholder": "z. B. Du bist der Assistent eines Friseursalons, gibst Preisinformationen und vereinbarst Termine..."
+    },
+    "saveButton": {
+      "saving": "Wird gespeichert...",
+      "save": "Änderungen speichern"
+    },
+    "liveTest": {
+      "title": "Live-Test",
+      "emptyState": "Beginnen Sie ein Gespräch mit dem Assistenten...",
+      "simulationStarted": "SIMULATION GESTARTET",
+      "inputPlaceholder": "Sprechen Sie mit dem Assistenten..."
+    },
+    "links": {
+      "appointmentManagement": "KI-Terminverwaltung",
+      "businessServices": "KI-Geschäftsdienste"
+    },
+    "alerts": {
+      "saveFailed": "Einstellungen konnten nicht gespeichert werden: {error}",
+      "unknownError": "Unbekannter Fehler",
+      "saveSuccess": "Einstellungen erfolgreich gespeichert!",
+      "saveError": "Beim Speichern der Einstellungen ist ein Fehler aufgetreten.",
+      "enterPhone": "Bitte geben Sie Ihre Telefonnummer ein (z. B. 90532...)",
+      "qrFailed": "QR-Code konnte nicht abgerufen werden: {error}",
+      "codeFailed": "Code konnte nicht abgerufen werden: {error}",
+      "sessionNotFound": "Sitzung nicht gefunden, bitte melden Sie sich erneut an.",
+      "chatError": "Fehler: {error}",
+      "unknownErrorChat": "Unbekannter Fehler",
+      "noResponse": "Keine Antwort erhalten.",
+      "systemError": "Ein Systemfehler ist aufgetreten."
+    }
+  },
+  "hizmetAyarlari": {
+    "sessionNotFound": "Sitzung nicht gefunden.",
+    "header": {
+      "title": "Diensteinstellungen",
+      "subtitle": "Ihre Kunden können bei der Terminbuchung Dienste aus dieser Liste auswählen."
+    },
+    "activeServices": {
+      "title": "Aktive Dienste ({count}/10)"
+    },
+    "addNewService": "Neuen Dienst hinzufügen",
+    "form": {
+      "editTitle": "Dienst bearbeiten",
+      "newTitle": "Neuen Dienst hinzufügen",
+      "description": "Geben Sie die Dienstdetails ein und speichern Sie sie.",
+      "nameLabel": "Dienstname",
+      "priceLabel": "Preis",
+      "unitOptions": {
+        "session": "Sitzung",
+        "hour": "Stunde",
+        "piece": "Stück"
+      },
+      "descriptionLabel": "Beschreibung (Optional)",
+      "durationLabel": "Geschätzte Dauer (Minuten)",
+      "clearButton": "Leeren",
+      "saveButton": {
+        "saving": "Wird gespeichert...",
+        "save": "Speichern"
+      }
+    },
+    "alerts": {
+      "saveError": "Beim Speichern des Dienstes ist ein Fehler aufgetreten.",
+      "confirmDelete": "Sind Sie sicher, dass Sie diesen Dienst löschen möchten?",
+      "deleteError": "Beim Löschen des Dienstes ist ein Fehler aufgetreten."
+    }
+  },
+  "randevuPage": {
+    "header": {
+      "title": "KI-Terminverwaltung",
+      "subtitle": "Alle deine Termine liegen in den Händen deines freundlichen Assistenten! ✨",
+      "addAppointmentButton": "Neuen Termin hinzufügen"
+    },
+    "calendar": {
+      "days": {
+        "sun": "So",
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa"
+      },
+      "months": {
+        "jan": "Januar",
+        "feb": "Februar",
+        "mar": "März",
+        "apr": "April",
+        "may": "Mai",
+        "jun": "Juni",
+        "jul": "Juli",
+        "aug": "August",
+        "sep": "September",
+        "oct": "Oktober",
+        "nov": "November",
+        "dec": "Dezember"
+      }
+    },
+    "heatmap": {
+      "title": "📊 Tägliche Auslastungskarte",
+      "legendBusy": "BESETZT",
+      "legendFree": "FREI",
+      "rowLabels": {
+        "morning": "MORGEN",
+        "noon": "MITTAG",
+        "evening": "ABEND"
+      },
+      "tip": "Dein KI-Assistent berücksichtigt diesen Kalender beim Schreiben mit deinen Kunden und plant automatisch Termine in deinen freien Zeitfenstern."
+    },
+    "timeline": {
+      "title": "📅 Termine am {date}",
+      "empty": "Für heute sind noch keine Termine geplant.",
+      "unnamedCustomer": "Unbenannt",
+      "unknownService": "Unbekannter Dienst"
+    },
+    "modal": {
+      "title": "Neuen Termin hinzufügen",
+      "subtitle": "Manuell einen Eintrag zum Kalender hinzufügen",
+      "customerNameLabel": "Kundenname",
+      "customerNamePlaceholder": "z. B. Ahmet Yılmaz",
+      "phoneLabel": "Telefonnummer",
+      "serviceTypeLabel": "Dienstleistungsart",
+      "selectPlaceholder": "Auswählen...",
+      "timeLabel": "Uhrzeit",
+      "selectTimePlaceholder": "Uhrzeit auswählen...",
+      "submitButton": "Zum Zauberkalender hinzufügen ✨",
+      "saving": "Wird gespeichert..."
+    },
+    "alerts": {
+      "missingFields": "Dienstleistung, Uhrzeit und Telefonnummer sind erforderlich.",
+      "saveFailed": "Termin konnte nicht gespeichert werden: {error}"
+    }
+  },
+  "aiAsistanComponents": {
+    "liveTestPanel": {
+      "title": "Live-Test",
+      "emptyState": "Beginne das Gespräch mit dem Assistenten...",
+      "simulationStarted": "SIMULATION GESTARTET",
+      "inputPlaceholder": "Chatte mit dem Assistenten..."
+    }
+  },
+  "aiMuhasebePage": {
+    "title": "KI-Buchhaltung",
+    "subtitle": "Verwalten Sie Ihre Finanzlage auf einem einzigen Bildschirm.",
+    "heroTitle": "Finanzübersicht",
+    "heroSubtitle": "Leistung in diesem Monat",
+    "incomeThisMonth": "EINNAHMEN DIESEN MONAT",
+    "expenseThisMonth": "AUSGABEN DIESEN MONAT",
+    "enterIncome": "EINNAHME ERFASSEN",
+    "enterExpense": "AUSGABE ERFASSEN",
+    "myBusiness": {
+      "title": "MEIN UNTERNEHMEN (VERGANGENE ZEITRÄUME)",
+      "description": "Greifen Sie auf Einnahmen-, Ausgaben- und Finanzberichte vergangener Zeiträume zu."
+    },
+    "paymentCalendar": {
+      "title": "ZAHLUNGSKALENDER",
+      "description": "Sehen Sie sich Ihre bevorstehenden Zahlungs- und Inkassopläne an."
+    },
+    "aiAssistant": {
+      "title": "KI-ASSISTENT",
+      "description": "Erhalten Sie Unterstützung bei finanziellen Fragen von Ihrem KI-Assistenten."
+    },
+    "accountantLink": {
+      "title": "STEUERBERATER-VERBINDUNG",
+      "description": "Verbinden Sie Ihr Konto mit Ihrem Steuerberater und teilen Sie Ihre Daten sicher."
+    },
+    "isletmem": {
+      "title": "Mein Unternehmen",
+      "subtitle": "Verfolgen Sie die Finanzlage Ihres Unternehmens.",
+      "todayDate": "Heute: 3. Juli 2026",
+      "periodJune2026": "Juni 2026",
+      "periodSep2022": "September 2022",
+      "totalBalance": "GESAMTSALDO",
+      "decreaseFromLastMonth": "4,2 % Rückgang im Vergleich zum Vormonat",
+      "incomes": "Einnahmen",
+      "expenses": "Ausgaben",
+      "invoices": "Rechnungen",
+      "filter": "Filtern",
+      "searchPlaceholder": "Suchen...",
+      "addNew": "Neu hinzufügen",
+      "emptyState": "Für diese Kategorie wurden keine Einträge gefunden.",
+      "smartAnalysis": "Intelligente Analyse",
+      "analysisUnavailable": "Analyse konnte nicht abgerufen werden.",
+      "generateAnalysis": "Analyse erstellen"
+    },
+    "muhasebecim": {
+      "title": "Mein Steuerberater",
+      "subtitle": "Verbinden Sie sich mit Ihrem Steuerberater",
+      "connectToAdvisor": "Mit Ihrem Steuerberater verbinden",
+      "connectToAdvisorDescription": "Beschleunigen Sie Ihre Finanzprozesse durch sicheres Teilen Ihrer Daten.",
+      "enterAccountantCode": "Steuerberater-Code eingeben",
+      "enterAccountantCodeDescription": "Verknüpfen Sie Ihr Konto, indem Sie den von Ihrem Steuerberater erhaltenen Einladungscode eingeben.",
+      "codePlaceholder": "Z. B.: ABC-12345",
+      "pleaseWait": "Bitte warten...",
+      "verify": "Bestätigen",
+      "shareYourCode": "Ihren eigenen Code teilen",
+      "shareYourCodeDescription": "Wenn Ihr Steuerberater Sie zur Plattform einladen möchte, teilen Sie den folgenden Code mit ihm. Lassen Sie sich von Ihrem Steuerberater hinzufügen.",
+      "copiedAlert": "Kopiert: Ihr Identifikationscode wurde in die Zwischenablage kopiert.",
+      "codeVerified": "Code bestätigt",
+      "connectFeaturesIntro": "Wenn Sie sich mit diesem Steuerberater verbinden;",
+      "features": {
+        "invoicesShared": "Rechnungen werden geteilt",
+        "incomeExpenseTransferred": "Einnahmen und Ausgaben werden übertragen",
+        "documentRequestsReceived": "Dokumentanfragen werden empfangen",
+        "aiAccountingWorksTogether": "KI-Buchhaltung arbeitet zusammen"
+      },
+      "connecting": "Verbindung wird hergestellt...",
+      "connect": "Verbinden",
+      "connected": "Verbunden",
+      "accountantAvatarAlt": "Steuerberater-Avatar",
+      "phoneNumber": "Telefonnummer",
+      "emailAddress": "E-Mail-Adresse",
+      "connectedSuccessMessage": "Ihr Konto wurde erfolgreich verbunden. Alle Ihre Dokumente, Rechnungen und Finanzdaten werden sicher mit Ihrem Steuerberater synchronisiert.",
+      "backToAccountingPanel": "Zurück zum Buchhaltungspanel",
+      "defaultFirmName": "Ihr Steuerberater",
+      "defaultRepresentative": "Steuerberater-Vertreter",
+      "sampleFirmName": "Beispiel-Steuerberatungskanzlei",
+      "sampleAccountantName": "Beispiel-Steuerberater",
+      "enterValidCodeAlert": "Bitte geben Sie einen gültigen Steuerberater-Code ein."
+    },
+    "odemeTakvimi": {
+      "title": "Zahlungskalender",
+      "subtitle": "Ihre Einnahmen- und Ausgabentransaktionen",
+      "incomes": "Einnahmen",
+      "expenses": "Ausgaben",
+      "incomeTransaction": "Einnahmenbuchung",
+      "expenseTransaction": "Ausgabenbuchung",
+      "completed": "Abgeschlossen",
+      "pending": "Ausstehend",
+      "paid": "Bezahlt",
+      "payable": "Zu zahlen",
+      "noIncomeRecords": "Keine Einnahmenbuchungen gefunden",
+      "noExpenseRecords": "Keine Ausgabenbuchungen gefunden"
+    }
+  },
+  "veriGirisiPage": {
+    "header": {
+      "title": "KI-Dateneingabe"
+    },
+    "transactionTypes": {
+      "income": "Einnahme",
+      "expense": "Ausgabe",
+      "assistant": "Assistent"
+    },
+    "chat": {
+      "greetingAssistant": "Hallo! Wie kann ich Ihnen bei finanziellen Angelegenheiten helfen?",
+      "greetingDocument": "Hallo! Sie können den Vorgang erfassen, indem Sie ein {type}-Dokument hochladen oder eingeben.",
+      "draftSaved": "Ihr Vorgang wurde als Entwurf gespeichert.",
+      "documentUploaded": "Dokument hochgeladen: {fileName}",
+      "documentAnalyzed": "Das Dokument wurde erfolgreich analysiert und gespeichert.",
+      "uploadedImageAlt": "Hochgeladenes Bild",
+      "inputPlaceholder": "Nachricht an Gemini senden..."
+    },
+    "loading": "Wird geladen..."
+  },
+  "musteriler": {
+    "title": "Kunden",
+    "subtitle": "Ihr gesamtes Kundenportfolio und vergangene Termine",
+    "empty": "Noch keine Kunden erfasst.",
+    "appointmentCount": "{count} Termine",
+    "lastVisit": "Zuletzt: {date}",
+    "pastAppointments": "Vergangene Termine",
+    "noAppointments": "Keine Termine erfasst.",
+    "unknownService": "Unbekannte Dienstleistung"
+  },
+  "profilPage": {
+    "loading": "Wird geladen...",
+    "avatarAlt": "Avatar",
+    "header": {
+      "title": "Profileinstellungen",
+      "subtitle": "Verwalten Sie hier Ihre Unternehmens- und Steuerdaten."
+    },
+    "defaults": {
+      "otherCategory": "Sonstiges",
+      "fallbackBusinessName": "Unternehmen"
+    },
+    "messages": {
+      "avatarUpdated": "Profilfoto aktualisiert.",
+      "avatarUploadError": "Fehler beim Hochladen des Fotos: {error}",
+      "noSession": "Sitzung nicht gefunden",
+      "profileUpdated": "Profil erfolgreich aktualisiert!",
+      "errorPrefix": "Fehler: {error}"
+    },
+    "fields": {
+      "authorizedPerson": "Name des Bevollmächtigten",
+      "authorizedPersonPlaceholder": "Z. B.: Max Mustermann",
+      "businessName": "Unternehmensname",
+      "businessNamePlaceholder": "Geben Sie den Namen Ihres Unternehmens ein",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "phonePlaceholder": "Geben Sie Ihre Telefonnummer ein",
+      "storeCategory": "Geschäftskategorie",
+      "storeCategoryPlaceholder": "Z. B.: Café & Restaurant, Friseur...",
+      "taxId": "Steuernummer",
+      "taxIdPlaceholder": "Steuernummer eingeben",
+      "taxOffice": "Finanzamt",
+      "taxOfficePlaceholder": "Finanzamt eingeben",
+      "addressInfo": "Adressdaten",
+      "selectCountry": "Land auswählen",
+      "selectCityState": "Stadt / Bundesland auswählen",
+      "selectDistrict": "Bezirk auswählen",
+      "fullAddressPlaceholder": "Geben Sie Ihre vollständige Adresse ein"
+    },
+    "actions": {
+      "saving": "Wird gespeichert...",
+      "save": "Profil speichern"
+    }
+  },
+  "loginPage": {
+    "alerts": {
+      "googleLoginError": "Google-Anmeldefehler: {error}",
+      "unknownError": "Ein unbekannter Fehler ist aufgetreten. Bitte überprüfen Sie Ihre Umgebungsvariablen."
+    },
+    "hero": {
+      "titleLine1": "Die Kommandozentrale",
+      "titleLine2": "Ihres Unternehmens.",
+      "subtitle": "Verwalten Sie alle Ihre Abläufe, Aufgaben und Arbeitsabläufe an einem Ort.",
+      "floatingCard": {
+        "title": "Neue Aufgabe",
+        "status": "Zugewiesen"
+      },
+      "copyright": "© {year} Workigom Inc. Alle Rechte vorbehalten."
+    },
+    "form": {
+      "loginTitle": "Melden Sie sich bei Ihrem Konto an",
+      "signupTitle": "Konto erstellen",
+      "loginSubtitle": "Melden Sie sich an, um auf Ihre Arbeitsabläufe zuzugreifen.",
+      "signupSubtitle": "Treten Sie der Workigom Flow-Welt bei.",
+      "googleRedirecting": "Weiterleitung...",
+      "googleLoginButton": "Mit Google anmelden",
+      "googleSignupButton": "Mit Google registrieren",
+      "orWithEmail": "oder mit E-Mail",
+      "fullNameLabel": "Vor- und Nachname",
+      "fullNamePlaceholder": "Ihr vollständiger Name",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "beispiel@firma.com",
+      "passwordLabel": "Passwort",
+      "forgotPassword": "Passwort vergessen",
+      "processing": "Wird verarbeitet...",
+      "loginButton": "Anmelden",
+      "signupButton": "Registrieren",
+      "noAccountYet": "Noch kein Konto?",
+      "alreadyHaveAccount": "Bereits ein Konto?",
+      "createFreeAccount": "Kostenloses Konto erstellen"
+    }
+  },
+  "analizPage": {
+    "platforms": {
+      "all": "Alle"
+    },
+    "timeRanges": {
+      "last7Days": "Letzte 7 Tage",
+      "last30Days": "Letzte 30 Tage",
+      "last90Days": "Letzte 90 Tage",
+      "last1Year": "Letztes 1 Jahr"
+    },
+    "header": {
+      "title": "Analytik & Statistiken",
+      "subtitle": "Sehen Sie sich die Performance all Ihrer Social-Media-Kanäle im Detail an"
+    },
+    "tabs": {
+      "posting": "Beitragsanalyse",
+      "inbox": "Posteingangsanalyse"
+    },
+    "posting": {
+      "totalPosts": "BEITRÄGE GESAMT",
+      "totalComments": "KOMMENTARE GESAMT",
+      "totalFollowers": "FOLLOWER GESAMT",
+      "totalReviews": "BEWERTUNGEN",
+      "engagement": {
+        "title": "Interaktion & Impressionen",
+        "subtitle": "Veränderung von Aufrufen und Likes im gewählten Zeitraum",
+        "views": "Aufrufe",
+        "likes": "Likes",
+        "noData": "Keine Diagrammdaten gefunden."
+      },
+      "followerGrowth": {
+        "title": "Follower-Wachstum",
+        "subtitle": "Nettoveränderung der Follower im gewählten Zeitraum",
+        "followers": "Follower"
+      },
+      "demographics": {
+        "title": "Demografie-Analyse"
+      }
+    },
+    "inbox": {
+      "messagesReceived": "EMPFANGENE NACHRICHTEN",
+      "messagesSent": "GESENDETE NACHRICHTEN",
+      "readRate": "GELESEN",
+      "avgResponseLabel": "DURCHSCHN. ANTWORTZEIT",
+      "avgResponseValue": "1,2 Min.",
+      "responseTimeAnalysis": {
+        "title": "Antwortzeit-Analyse",
+        "subtitle": "Wie schnell Sie auf Nachrichten reagieren, ist entscheidend für die Kundenzufriedenheit.",
+        "greatSpeed": "HERVORRAGENDE GESCHWINDIGKEIT"
+      }
+    }
+  },
+  "analizDetay": {
+    "title": "Analyse (Live)",
+    "tabs": {
+      "posting": "Beitragsanalyse",
+      "inbox": "Nachrichtenanalyse"
+    },
+    "filters": {
+      "allPlatforms": "Alle Plattformen",
+      "last30Days": "Letzte 30 Tage",
+      "export": "Exportieren"
+    },
+    "metrics": {
+      "received": {
+        "label": "Empfangen",
+        "caption": "Nachrichten gesamt"
+      },
+      "sent": {
+        "label": "Gesendet",
+        "caption": "Nachrichten gesamt"
+      },
+      "read": {
+        "label": "Gelesen",
+        "caption": "Keine Daten"
+      },
+      "avgResponse": {
+        "label": "Durchschn. Antwort",
+        "value": "12 Min.",
+        "caption": "Durchschnittliche Zeit"
+      }
+    },
+    "responseTimeAnalysis": {
+      "title": "Antwortzeit-Analyse",
+      "subtitle": "Zeit bis zur ersten Antwort auf Kundennachrichten",
+      "periodButton": "Täglich",
+      "gaugeLabel": "Durchschnittliche Antwortzeit",
+      "chartTitle": "Durchschnittliche Antwortzeit nach Tag",
+      "legend": "Durchschnittliche Antwortzeit (Min.)"
+    },
+    "platformDistribution": {
+      "title": "Plattformverteilung",
+      "total": "Gesamt",
+      "webLiveSupport": "Web-Live-Chat",
+      "viewDetails": "Details anzeigen"
+    },
+    "activityHeatmap": {
+      "title": "Aktivität nach Uhrzeit",
+      "days": {
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa",
+        "sun": "So"
+      },
+      "low": "Niedrig",
+      "high": "Hoch"
+    },
+    "recentMessages": {
+      "title": "Letzte Nachrichten",
+      "columns": {
+        "platform": "Plattform",
+        "customer": "Kunde",
+        "message": "Nachricht",
+        "date": "Datum",
+        "status": "Status",
+        "responseTime": "Antwortzeit"
+      },
+      "status": {
+        "read": "Gelesen"
+      },
+      "viewAll": "Alle anzeigen"
+    }
+  },
+  "gelenKutusuPage": {
+    "header": {
+      "title": "Posteingang",
+      "subtitle": "Verwalten Sie hier alle Ihre Kundeninteraktionen.",
+      "selectedCount": "{count} ausgewählt",
+      "selectMode": "Auswählen"
+    },
+    "tabs": {
+      "messages": "Nachrichten (DM)",
+      "comments": "Kommentare",
+      "reviews": "Bewertungen",
+      "notifications": "Benachrichtigungen"
+    },
+    "actions": {
+      "selectAll": "Alle auswählen",
+      "delete": "Löschen",
+      "cancel": "Abbrechen",
+      "reply": "Antworten",
+      "hide": "Ausblenden",
+      "send": "Senden"
+    },
+    "messages": {
+      "empty": "Noch keine Nachrichten vorhanden.",
+      "inputPlaceholder": "Nachricht schreiben...",
+      "selectConversationPrompt": "Wählen Sie eine Unterhaltung aus, um zu chatten.",
+      "tapToSeeLastMessage": "Tippen, um die letzte Nachricht zu sehen",
+      "confirmDeleteSelected": "Möchten Sie die ausgewählten {count} Elemente wirklich löschen?"
+    },
+    "comments": {
+      "empty": "Noch keine Kommentare vorhanden.",
+      "postDetailNotFound": "Beitragsdetails nicht gefunden.",
+      "latestLabel": "Letzte",
+      "fallbackUsername": "Benutzer",
+      "fallbackReplyAuthor": "Kommentar",
+      "storeLabel": "Geschäft",
+      "youBadge": "Sie",
+      "replyPlaceholder": "Antwort schreiben..."
+    },
+    "reviews": {
+      "empty": "Noch keine Bewertungen vorhanden."
+    },
+    "notifications": {
+      "empty": "Noch keine Benachrichtigungen vorhanden."
+    },
+    "privateReply": {
+      "title": "Private Nachricht senden (DM)",
+      "description": "Senden Sie eine private Nachricht an @{name}:",
+      "placeholder": "Schreiben Sie hier Ihre Nachricht...",
+      "successAlert": "Nachricht erfolgreich gesendet!",
+      "errorAlertPrefix": "Fehler beim Senden der Nachricht: "
+    }
+  },
+  "sosyalMedyaPage": {
+    "errors": {
+      "connectError": "Bei der Verbindung ist ein Fehler aufgetreten",
+      "noSession": "Sitzung nicht gefunden",
+      "connectLinkError": "Beim Abrufen des Verbindungslinks ist ein Fehler aufgetreten",
+      "disconnectError": "Beim Trennen der Verbindung ist ein Fehler aufgetreten"
+    },
+    "confirmDisconnect": "Möchten Sie die Verbindung zu diesem Konto wirklich trennen?",
+    "quickLinks": {
+      "allPosts": {
+        "title": "Alle Beiträge",
+        "subtitle": "Verwalten Sie Ihren Veröffentlichungsfluss"
+      },
+      "shareCenter": {
+        "title": "Freigabecenter",
+        "subtitle": "Teilen Sie die von Ihnen erstellten Inhalte"
+      }
+    },
+    "connectedAccounts": {
+      "title": "Ihre verbundenen Konten",
+      "subtitle": "Verwalten Sie alle Ihre Kanäle an einem Ort",
+      "syncButton": "Synchronisieren"
+    },
+    "status": {
+      "connected": "Verbunden",
+      "activeAndSynced": "Aktiv und synchronisiert"
+    },
+    "accountSuffix": "_konto",
+    "disconnectButton": "Verbindung trennen",
+    "noConnectedAccounts": "Sie haben keine verbundenen Social-Media-Konten.",
+    "newAccount": {
+      "title": "Neues Konto verbinden",
+      "subtitle": "Erreichen Sie Ihr Publikum auf anderen Plattformen"
+    },
+    "notConnectedYet": "Noch nicht verbunden",
+    "connecting": "Verbindung wird hergestellt...",
+    "connectButton": "Konto verbinden",
+    "allPlatformsConnected": "Sie haben alle beliebten Plattformen verbunden!"
+  },
+  "sosyalMedyaInbox": {
+    "tapToSeeLastMessage": "Tippen, um die letzte Nachricht zu sehen",
+    "title": "Posteingang",
+    "tabs": {
+      "messages": "Nachrichten",
+      "comments": "Kommentare"
+    },
+    "noMessagesInTab": "In diesem Tab gibt es keine Nachrichten.",
+    "noCommentsInTab": "In diesem Tab gibt es keine Kommentare.",
+    "messagePlaceholder": "Nachricht schreiben...",
+    "selectConversation": "Wählen Sie eine Unterhaltung aus, um sie anzuzeigen.",
+    "commentsInSidebar": "Kommentare werden in der Liste links angezeigt."
+  },
+  "postsPage": {
+    "filters": {
+      "all": "Alle",
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen"
+    },
+    "bulkDeleteButton": "{count} Ausgewählte löschen",
+    "status": {
+      "scheduled": "Geplant",
+      "published": "Veröffentlicht",
+      "failed": "Fehlgeschlagen",
+      "unknown": "Unbekannt"
+    },
+    "dateNotSpecified": "Nicht angegeben",
+    "defaultProfileName": "Workigom Flow Profil",
+    "actions": {
+      "retry": "Erneut versuchen",
+      "analyze": "Analyse",
+      "delete": "Löschen"
+    },
+    "emptyState": "Für diesen Status wurden keine Beiträge gefunden.",
+    "deleteModal": {
+      "title": "Beitrag löschen",
+      "bulkDescription": "Wählen Sie, wie Sie {count} Beiträge löschen möchten.",
+      "singleDescription": "Wählen Sie, wie Sie diesen Beitrag löschen möchten.",
+      "panelOnlyTitle": "Nur aus Workigom Flow löschen",
+      "panelOnlyDescription": "Der Beitrag wird aus Ihrem Workigom Flow-Panel entfernt. Er bleibt auf Facebook und Instagram weiterhin veröffentlicht.",
+      "platformsTitle": "Von Plattformen und Workigom Flow löschen",
+      "platformsDescription": "Der Beitrag wird dauerhaft von Facebook gelöscht und aus Workigom Flow entfernt.",
+      "instagramWarning": "Da Instagram das Löschen über die API nicht unterstützt, müssen Sie den Beitrag möglicherweise manuell auf Instagram löschen."
+    },
+    "errors": {
+      "bulkDeleteFailed": "Beim Löschen der Beiträge ist ein Fehler aufgetreten: {message}",
+      "deleteFailed": "Beim Löschen des Beitrags ist ein Fehler aufgetreten: {message}",
+      "genericError": "Bei der Verarbeitung ist ein Fehler aufgetreten."
+    }
+  },
+  "sharePage": {
+    "header": {
+      "title": "Freigabe-Center"
+    },
+    "contentInput": {
+      "label": "Was möchten wir teilen?",
+      "placeholder": "Z. B.: Ein energiegeladener Beitrag für unsere neue Sommerkollektion..."
+    },
+    "imageContainer": {
+      "cropButton": "Zuschneiden (Instagram 4:5)",
+      "selectTitle": "Bild & Video auswählen oder generieren",
+      "selectSubtitle": "Tippen Sie, um aus Ihrer Galerie hinzuzufügen."
+    },
+    "captionEditor": {
+      "title": "Inhaltstext",
+      "editPlaceholder": "KI-generierter Text oder Ihr eigener Text...",
+      "emptyPreview": "Der von der KI erstellte Inhaltstext wird hier angezeigt. Fortschrittliche Sprachmodelle erstellen passende Texte für Ihre Zielgruppe...",
+      "aiPromptPlaceholder": "Zum Bild passenden Text generieren...",
+      "addTagButton": "Tag hinzufügen"
+    },
+    "accounts": {
+      "label": "Verbundene Konten (Plattformen)",
+      "noneConnected": "Noch kein Konto verbunden.",
+      "connectLink": "Konto verbinden"
+    },
+    "platforms": {
+      "storyWarning": "Der Inhalt verschwindet nach 24 Stunden. Medien erforderlich.",
+      "firstCommentLabel": "Erster Kommentar (Optional)",
+      "firstCommentPlaceholder": "Geben Sie den Link oder die Notiz ein, die Sie dem ersten Kommentar hinzufügen möchten...",
+      "customCaptionLabel": "Individuelle Beschreibung (Optional)",
+      "customCaptionPlaceholder": "Leer lassen, um den Haupttext zu verwenden..."
+    },
+    "instagram": {
+      "aiLabelTitle": "Als KI-generiert kennzeichnen",
+      "aiLabelDescription": "Fügt das KI-Inhaltslabel von Instagram hinzu. Verwenden Sie dies, wenn die Medien vollständig oder größtenteils mit KI erstellt wurden."
+    },
+    "linkedin": {
+      "firstCommentPlaceholder": "Fügen Sie einen ersten Kommentar hinzu, um die Interaktion zu steigern."
+    },
+    "twitter": {
+      "threadToggle": "Thread erstellen",
+      "threadDescription": "Der Haupttext wird der erste Tweet. Darunter können weitere Tweets zum Thread hinzugefügt werden."
+    },
+    "tiktok": {
+      "saveToInboxTitle": "In TikTok-Entwürfen speichern",
+      "saveToInboxDescription": "Das Video wird nicht direkt veröffentlicht, sondern als Entwurf hochgeladen. Auf Wunsch können Sie über TikTok vor der Veröffentlichung Musik hinzufügen."
+    },
+    "pinterest": {
+      "titleLabel": "Titel (Optional)",
+      "titlePlaceholder": "Geben Sie einen individuellen Titel für Ihren Pin ein...",
+      "titleHint": "Nicht erforderlich. Wenn leer gelassen, wird die erste Zeile des Haupttextes als Titel verwendet.",
+      "linkLabel": "Ziel-Link (Optional)",
+      "linkHint": "Legt die URL fest, zu der der Pin beim Anklicken führt."
+    },
+    "youtube": {
+      "titlePlaceholder": "Videotitel...",
+      "descriptionLabel": "Videobeschreibung (Optional)"
+    },
+    "publishing": {
+      "label": "Veröffentlichung",
+      "scheduledTab": "Geplant",
+      "nowTab": "Jetzt",
+      "scheduledDateTimeLabel": "Geplante Veröffentlichung (Datum & Uhrzeit)",
+      "timezoneLabel": "Zeitzone",
+      "nowInfo": "Der Beitrag wird sofort auf allen ausgewählten Plattformen veröffentlicht."
+    },
+    "publishButton": {
+      "loading": "Wird hochgeladen... {progress}%",
+      "now": "Jetzt teilen"
+    },
+    "errors": {
+      "noText": "Bitte geben Sie einen Text zum Teilen ein.",
+      "noPlatform": "Bitte wählen Sie mindestens eine Plattform aus.",
+      "invalidDateFormat": "Ungültiges Datumsformat. Bitte im Format 'TAG.MONAT.JAHR STUNDE:MINUTE' eingeben (z. B. 16.08.2026 16:26).",
+      "publishFailed": "Beim Teilen des Beitrags ist ein Fehler aufgetreten: {message}",
+      "captionGenerationFailed": "Fehler: {message}"
+    },
+    "success": {
+      "published": "Beitrag erfolgreich geteilt!"
+    }
+  },
+  "dashboardHome": {
+    "aiSummary": {
+      "eyebrow": "KI-ASSISTENT · TAGESZUSAMMENFASSUNG",
+      "messagesComments": "Heute wurden <msg>{messages} Nachrichten</msg> und <cmt>{comments} Kommentare</cmt> automatisch beantwortet.",
+      "trendUp": "Das Engagement in Ihren sozialen Medien ist um <pct>{trend}%</pct> gestiegen!",
+      "trendAnalyzing": "Ihr Social-Media-Engagement der letzten 7 Tage wird analysiert.",
+      "appointmentsToday": "Sie haben heute <ap>{count} Termine</ap>.",
+      "noAppointmentsToday": "Für heute sind keine Termine geplant.",
+      "statusActive": "AKTIV",
+      "statusInactive": "AUS"
+    },
+    "finance": {
+      "monthlyIncome": "Monatliche Einnahmen",
+      "monthlyExpense": "Monatliche Ausgaben"
+    },
+    "invoiceScanner": {
+      "eyebrow": "RECHNUNGSSCANNER · LETZTE RECHNUNG",
+      "imageAlt": "Rechnungsdokument",
+      "fields": {
+        "supplier": "Lieferant",
+        "date": "Datum",
+        "vat": "MwSt.",
+        "total": "Gesamt"
+      },
+      "newInvoiceButton": "+ Neue Rechnung scannen"
+    },
+    "appointments": {
+      "label": "HEUTIGE TERMINE",
+      "empty": "Für heute sind keine Termine geplant.",
+      "defaultTitle": "Termin"
+    },
+    "social": {
+      "allAccounts": "Alle Konten",
+      "liveAnalysis": "LIVE-ANALYSE",
+      "totalFollowers": "Gesamtzahl der Follower",
+      "engagementTrend": "Engagement-Trend",
+      "high": "Hoch"
+    },
+    "recentActivities": {
+      "title": "Letzte Aktivitäten",
+      "viewAll": "ALLE ANZEIGEN",
+      "empty": "Keine aktuellen Aktivitäten."
+    },
+    "activityTypes": {
+      "message": "NACHRICHT",
+      "comment": "KOMMENTAR"
+    },
+    "defaults": {
+      "payment": "Zahlung",
+      "invoicePayment": "Rechnungszahlung",
+      "customer": "Kunde",
+      "user": "Benutzer"
+    },
+    "relativeTime": {
+      "minutesAgo": "vor {count} Min.",
+      "hoursAgo": "vor {count} Std.",
+      "daysAgo": "vor {count} T."
+    },
+    "commLogs": {
+      "title": "Kommunikationsberichte",
+      "columns": {
+        "channel": "Kommunikationskanal",
+        "dateTime": "Datum/Uhrzeit",
+        "status": "Status",
+        "action": "Aktion"
+      },
+      "status": {
+        "success": "Erfolgreich",
+        "pending": "Ausstehend"
+      },
+      "review": "Prüfen",
+      "empty": "Keine Berichte gefunden."
+    }
+  },
+  "cropperModal": {
+    "title": "Bild zuschneiden (Instagram)",
+    "cancel": "Abbrechen",
+    "processing": "Wird zugeschnitten...",
+    "applyButton": "Zuschneiden & Anwenden",
+    "errors": {
+      "cropFailed": "Zuschneiden des Bildes fehlgeschlagen."
+    }
+  },
+  "aiChatInput": {
+    "placeholder": "Nachricht eingeben...",
+    "uploadFile": "Datei hochladen",
+    "selectDocument": "Dokument auswählen"
+  },
+  "aiDataResetPanel": {
+    "dangerZone": {
+      "title": "⚠️ Gefahrenzone",
+      "subtitle": "Diese Aktionen können nicht rückgängig gemacht werden."
+    },
+    "softReset": {
+      "title": "Testdaten zurücksetzen",
+      "description": "Kunden, Termine, Chatverlauf, Benachrichtigungen sowie Social-Media-Nachrichten/-Kommentare werden gelöscht. Ihre Einstellungen (Persona, Dienstleistungen, Verbindungen) bleiben erhalten.",
+      "button": "Zurücksetzen",
+      "warning": "Der gesamte Kunden-, Termin- und Chatverlauf wird dauerhaft gelöscht.",
+      "doneAlert": "Daten wurden zurückgesetzt."
+    },
+    "hardReset": {
+      "title": "Auf Werkseinstellungen zurücksetzen",
+      "description": "Zusätzlich zu den obigen Daten werden auch Ihre Persona-Auswahl und Ihre Dienstleistungsliste gelöscht. Ihre WhatsApp-/Social-Media-Verbindungen bleiben erhalten und müssen nicht neu verbunden werden.",
+      "button": "Werkseinstellungen",
+      "warning": "Alle Daten UND Ihre Einstellungen (Persona, Dienstleistungen) werden dauerhaft gelöscht. Ihr Unternehmen muss von Grund auf neu eingerichtet werden.",
+      "doneAlert": "Auf Werkseinstellungen zurückgesetzt."
+    },
+    "confirmModal": {
+      "instructionRich": "Geben Sie zur Bestätigung <b>{word}</b> ein:",
+      "cancel": "Abbrechen",
+      "deleting": "Wird gelöscht...",
+      "confirmButton": "Ja, zurücksetzen"
+    },
+    "alerts": {
+      "errorPrefix": "Fehler: {error}"
+    }
   }
 }

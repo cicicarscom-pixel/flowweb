@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, KeyboardEvent } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface AiChatInputProps {
   inputText: string;
@@ -14,8 +15,10 @@ export default function AiChatInput({
   inputText,
   setInputText,
   handleSend,
-  placeholder = "İşlemi yazın...",
+  placeholder,
 }: AiChatInputProps) {
+  const t = useTranslations();
+  const resolvedPlaceholder = placeholder ?? t("aiChatInput.placeholder");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -139,7 +142,7 @@ export default function AiChatInput({
                   photo_camera
                 </span>
                 <span className="text-[#F6F1EC] text-sm ml-3">
-                  Dosya yükleyin
+                  {t("aiChatInput.uploadFile")}
                 </span>
               </button>
               <button
@@ -149,7 +152,7 @@ export default function AiChatInput({
                 <span className="material-symbols-outlined text-[#c4c7c5] text-[20px]">
                   picture_as_pdf
                 </span>
-                <span className="text-[#F6F1EC] text-sm ml-3">Belge seçin</span>
+                <span className="text-[#F6F1EC] text-sm ml-3">{t("aiChatInput.selectDocument")}</span>
               </button>
             </div>
           </div>
@@ -160,7 +163,7 @@ export default function AiChatInput({
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder={placeholder}
+                placeholder={resolvedPlaceholder}
                 className="w-full text-[#F6F1EC] text-[20px] leading-[30px] bg-transparent focus:outline-none focus:ring-0 border-0 outline-none resize-none overflow-hidden max-h-[150px] placeholder-[#8e9194] px-1"
                 rows={1}
                 style={{

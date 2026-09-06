@@ -347,6 +347,26 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 ## Son Guncellemeler
 
+### [06.09.2026] Uluslararasılaştırma (i18n) — Faz 3: Kalan ~25 Dosyanın Tam Çevirisi ve Locale/₺ Temizliği
+
+**Tetikleyici:** Faz 2 raporunun sonunda kapsam dışı bırakılan geri kalan hardcoded Türkçe sayfalar/bileşenler ve hardcoded `tr-TR` locale çağrıları için kullanıcı doğrudan talimat verdi: **"Tek seferde tam kapsamlı devam et"** — yani ayrı ayrı dalgalar halinde değil, kalan tüm dosyaların tek seferde bitirilmesi istendi.
+
+**Kapsam ve yöntem:** Toplam 25 dosya (sayfa + bileşen), 9 paralel ajan tarafından, her biri çakışmayan bir `messages/{tr,en,de}.json` namespace'ine önceden atanarak çevrildi; sonra tüm çeviriler merkezi olarak tek bir merge script'i ile birleştirildi ve merge sonrası her dosyadaki **tüm** `t('...')` çağrıları programatik olarak taranıp üç dilin de (tr/en/de) karşılık gelen anahtara sahip olduğu doğrulandı (549 farklı anahtar, sıfır eksik).
+
+**Yeni eklenen namespace'ler (`messages/{tr,en,de}.json`):** `aiAsistanPage`, `aiAsistanComponents` (LiveTestPanel), `hizmetAyarlari`, `randevuPage`, `aiMuhasebePage` (page/isletmem/muhasebecim/odeme-takvimi ortak), `veriGirisiPage`, `musteriler`, `profilPage`, `loginPage`, `analizPage`, `analizDetay`, `gelenKutusuPage`, `sosyalMedyaPage`, `sosyalMedyaInbox`, `postsPage`, `sharePage`, `dashboardHome`, `cropperModal`, `aiChatInput`, `aiDataResetPanel`.
+
+**Değiştirilen dosyalar:** `ai-asistan/page.tsx`, `ai-asistan/randevu/RandevuClient.tsx`, `ai-asistan/isletme-hizmetleri/{page.tsx,HizmetAyarlariClient.tsx}`, `components/ai-asistan/LiveTestPanel.tsx`, `ai-muhasebe/{page,isletmem/page,muhasebecim/page,odeme-takvimi/page,veri-girisi/page}.tsx`, `musteriler/{page.tsx,MusterilerClient.tsx}`, `profil/page.tsx`, `login/page.tsx`, `analiz/{page.tsx,gelen-mesaj-analizi/page.tsx}`, `gelen-kutusu/page.tsx`, `sosyal-medya/{page,inbox/page,posts/page,share/page}.tsx`, `page.tsx` (dashboard ana sayfa), `components/CropperModal.tsx`, `components/chat/AiChatInput.tsx`, `components/settings/AiDataResetPanel.tsx`.
+
+**Locale (`tr-TR`) temizliği:** Faz 1 denetiminde tespit edilen tüm hardcoded `.toLocaleString('tr-TR', ...)` / `.toLocaleDateString('tr-TR', ...)` çağrıları (dashboard ana sayfa, ai-muhasebe/page.tsx, odeme-takvimi/page.tsx, gelen-kutusu/page.tsx, sosyal-medya/inbox/page.tsx — toplam 20 çağrı, 7 dosya) `useLocale()`'den gelen aktif dile göre dinamikleşti. Artık örneğin İngilizce seçiliyken tarih/sayı formatları `en-US` kurallarına göre gösteriliyor.
+
+**₺ (Türk Lirası) sembolü kararı — kasıtlı olarak DEĞİŞTİRİLMEDİ:** Tüm sayfalarda (14 kullanım, 4 dosya) `₺` sembolü aynen bırakıldı. Gerekçe: platformun gerçek işi TRY cinsinden gerçekleşiyor (ABD merkezli bir uygulamanın "$" sembolünü dil değişse bile korumasıyla aynı mantık) — sadece etraftaki sayı biçimlendirmesi (binlik/ondalık ayraç) dile göre değişiyor, para birimi sembolünün kendisi değil.
+
+**Server/Client Component ayrımı:** Her dosya için `"use client"` direktifinin varlığına bakılarak doğru desen seçildi — Server Component'ler `next-intl/server`'dan `getTranslations()` ile `async` yapıldı (örn. `musteriler/page.tsx`, `analiz/gelen-mesaj-analizi/page.tsx`), Client Component'ler `useTranslations()` kullandı.
+
+**Doğrulama:** Merge sonrası yazılan bir Python script'i, değiştirilen 25 dosyanın tamamını tarayıp içindeki her statik `t('namespace.key')` çağrısını çıkardı (549 farklı anahtar) ve üç `messages/*.json` dosyasının da bu anahtarların tümünü içerdiğini teyit etti (sıfır eksik anahtar). Ayrıca `analiz/page.tsx`'teki dinamik anahtar deseni (`t(\`analizPage.timeRanges.\${TIME_RANGE_KEY_BY_ID[tr.id]}\`)`, Faz 2'deki persona id/label ayrımıyla aynı desen) elle doğrulandı.
+
+**Bilinen kapsam dışı (bilinçli olarak bırakıldı):** `src/actions/*.ts` (server action'lardaki hata mesajları — sunucu tarafı loglama/response metinleri, kullanıcıya doğrudan UI olarak gösterilmiyor), `ledger` reposu (Türk vergi mevzuatına özgü, uluslararası vizyonu yok — Faz 1'den beri kapsam dışı).
+
 ### [06.09.2026] Uluslararasılaştırma (i18n) — Faz 2: AI Kişiliği Rol/Üslup Etiketlerinin id/label Ayrımı
 
 **Tetikleyici:** Faz 1 raporunda mimari bir engel (blocker) olarak işaretlenmişti: `AICharacterPanel.tsx` içindeki `ROLES`/`TONES` sabitlerinde `id === label` (Türkçe) — yani "Kebapçı", "Standart" gibi değerler hem ekranda gösterilen metin hem de `organization_ai_settings.business_role`/`.tone` kolonlarına yazılan ham veriydi. Kullanıcı bu engelin çözümünü doğrudan iki örnekle talimatlandırdı: İngilizce'de "Standart" → **"Standard"**, "Kebapçı" → **"Turkish Kebab"** olmalı. Bu, geri kalan 13 rol ve 8 üslup için de aynı desenin uygulanmasını gerektirdi.

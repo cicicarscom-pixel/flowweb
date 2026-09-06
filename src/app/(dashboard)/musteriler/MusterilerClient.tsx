@@ -1,14 +1,17 @@
 'use client'
 
 import { useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function MusterilerClient({ initialCustomers }: { initialCustomers: any[] }) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
 
   const formatDate = (isoStr: string) => {
     if (!isoStr) return '-';
     const d = new Date(isoStr);
-    return d.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString(locale, { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -17,7 +20,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {initialCustomers.length === 0 ? (
           <div className="glass-strong" style={{ padding: 30, textAlign: 'center', color: 'var(--text-300)' }}>
-            Henüz hiç müşteri kaydı yok.
+            {t('musteriler.empty')}
           </div>
         ) : (
           initialCustomers.map(customer => (
@@ -40,8 +43,8 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                 <div style={{ fontSize: 13, color: 'var(--text-300)', marginTop: 4 }}>{customer.phone}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 13, color: 'var(--text-200)' }}>{customer.total_appointments} Randevu</div>
-                <div style={{ fontSize: 12, color: 'var(--text-400)', marginTop: 4 }}>Son: {formatDate(customer.last_visit)}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-200)' }}>{t('musteriler.appointmentCount', { count: customer.total_appointments })}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-400)', marginTop: 4 }}>{t('musteriler.lastVisit', { date: formatDate(customer.last_visit) })}</div>
               </div>
             </div>
           ))
@@ -55,15 +58,15 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-100)' }}>{selectedCustomer.name}</h3>
             <p style={{ margin: '0 0 20px 0', color: 'var(--text-300)', fontSize: 14 }}>{selectedCustomer.phone}</p>
             
-            <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-200)' }}>Geçmiş Randevular</h4>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-200)' }}>{t('musteriler.pastAppointments')}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {selectedCustomer.history.length === 0 ? (
-                <div style={{ fontSize: 13, color: 'var(--text-400)' }}>Kayıtlı randevu yok.</div>
+                <div style={{ fontSize: 13, color: 'var(--text-400)' }}>{t('musteriler.noAppointments')}</div>
               ) : (
                 selectedCustomer.history.map((appt: any) => (
                   <div key={appt.id} style={{ padding: 12, background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
                     <div style={{ fontSize: 14, color: 'var(--text-100)', marginBottom: 4 }}>
-                      {appt.services?.length > 0 ? appt.services.join(' + ') : 'Bilinmeyen Hizmet'}
+                      {appt.services?.length > 0 ? appt.services.join(' + ') : t('musteriler.unknownService')}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-300)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{formatDate(appt.date)}</span>

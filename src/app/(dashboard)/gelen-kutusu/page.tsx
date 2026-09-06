@@ -1,9 +1,12 @@
 ﻿"use client";
 
 import React, { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from '@/lib/supabase/client';
 
 export default function GelenKutusuPage() {
+  const t = useTranslations();
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>('mesajlar');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -50,8 +53,8 @@ export default function GelenKutusuPage() {
     comments.filter(c => !c.hidden).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       if (!postMap.has(pId)) {
-        let snippet = comm.posts?.content || 'Gönderi detayı bulunamadı.';
-        if (snippet && snippet !== 'Gönderi detayı bulunamadı.') {
+        let snippet = comm.posts?.content || t("gelenKutusuPage.comments.postDetailNotFound");
+        if (snippet && snippet !== t("gelenKutusuPage.comments.postDetailNotFound")) {
            const sentences = snippet.match(/[^.!?]+[.!?]+/g);
            if (sentences && sentences.length > 0) {
                snippet = sentences.slice(0, 3).join('').trim();
@@ -197,10 +200,10 @@ export default function GelenKutusuPage() {
       
       setPrivateReplyModal(null);
       setPrivateReplyText("");
-      alert("Mesaj başarıyla gönderildi!");
+      alert(t("gelenKutusuPage.privateReply.successAlert"));
     } catch (e: any) {
       console.error(e);
-      alert("Mesaj gönderilirken hata: " + e.message);
+      alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + e.message);
     } finally {
       setIsSendingPrivateReply(false);
     }
@@ -234,7 +237,7 @@ export default function GelenKutusuPage() {
       const returnedCommentId = data?.commentId || data?.data?.commentId || data?.id || data?.data?.id || `mock_${Date.now()}`;
         
       let finalContent = replyText;
-      const uName = comment.author_name || comment.username || 'Yorum';
+      const uName = comment.author_name || comment.username || t("gelenKutusuPage.comments.fallbackReplyAuthor");
       if (!finalContent.includes(`@${uName}`)) {
           finalContent = `@${uName} ${finalContent}`;
       }
@@ -283,7 +286,7 @@ export default function GelenKutusuPage() {
       if (!error && data) {
         const cachedPics = getCachedPictures();
         const enhancedData = data.map(conv => {
-          let lastMessageSnippet = 'Son mesajı görmek için dokunun';
+          let lastMessageSnippet = t("gelenKutusuPage.messages.tapToSeeLastMessage");
           if (conv.messages && conv.messages.length > 0) {
             const sortedMessages = [...conv.messages].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
             lastMessageSnippet = sortedMessages[0].content;
@@ -475,7 +478,7 @@ export default function GelenKutusuPage() {
 
   const handleDeleteSelected = async () => {
     if (selectedItems.length === 0) return;
-    if (confirm(`Seçilen ${selectedItems.length} öğeyi silmek istediğinize emin misiniz?`)) {
+    if (confirm(t("gelenKutusuPage.messages.confirmDeleteSelected", { count: selectedItems.length }))) {
       try {
         if (activeTab === 'mesajlar') {
           const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
@@ -553,44 +556,44 @@ export default function GelenKutusuPage() {
       {/* Page Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface mb-2">Gelen Kutusu</h1>
-          <p className="text-dark-muted text-sm">Tüm müşteri etkileşimlerini buradan yönetin.</p>
+          <h1 className="text-2xl font-bold text-on-surface mb-2">{t("gelenKutusuPage.header.title")}</h1>
+          <p className="text-dark-muted text-sm">{t("gelenKutusuPage.header.subtitle")}</p>
         </div>
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
           {isSelectionMode ? (
             <>
-              <span className="text-sm font-medium text-dark-muted">{selectedItems.length} Seçildi</span>
-              <button 
+              <span className="text-sm font-medium text-dark-muted">{t("gelenKutusuPage.header.selectedCount", { count: selectedItems.length })}</span>
+              <button
                 onClick={handleSelectAll}
                 className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium flex items-center gap-2"
               >
-                <i className="fa-solid fa-check-double"></i> Tümünü Seç
+                <i className="fa-solid fa-check-double"></i> {t("gelenKutusuPage.actions.selectAll")}
               </button>
-              <button 
+              <button
                 onClick={handleDeleteSelected}
                 disabled={selectedItems.length === 0}
                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                  selectedItems.length > 0 
-                    ? 'bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20' 
+                  selectedItems.length > 0
+                    ? 'bg-red-500/10 text-red-500 border border-red-500/30 hover:bg-red-500/20'
                     : 'bg-dark-card text-dark-muted border border-dark-border'
                 }`}
               >
-                <i className="fa-solid fa-trash-can"></i> Sil
+                <i className="fa-solid fa-trash-can"></i> {t("gelenKutusuPage.actions.delete")}
               </button>
-              <button 
+              <button
                 onClick={() => { setIsSelectionMode(false); setSelectedItems([]); }}
                 className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium"
               >
-                İptal
+                {t("gelenKutusuPage.actions.cancel")}
               </button>
             </>
           ) : (
-            <button 
+            <button
               onClick={() => setIsSelectionMode(true)}
               className="px-4 py-2 rounded-lg border border-dashed border-dark-muted/40 text-dark-muted hover:text-on-surface hover:border-dark-muted transition-colors text-sm font-medium flex items-center gap-2"
             >
-              <i className="fa-solid fa-list-check"></i> Seç
+              <i className="fa-solid fa-list-check"></i> {t("gelenKutusuPage.header.selectMode")}
             </button>
           )}
         </div>
@@ -599,10 +602,10 @@ export default function GelenKutusuPage() {
       {/* Tabs */}
       <div className="flex items-center gap-2 mb-6 border-b border-dark-border pb-1 overflow-x-auto hide-scrollbar">
         {[
-          { id: 'mesajlar', label: 'Mesajlar (DM)', count: conversations.length },
-          { id: 'yorumlar', label: 'Yorumlar', count: comments.length },
-          { id: 'degerlendirmeler', label: 'Değerlendirmeler', count: reviews.length },
-          { id: 'bildirimler', label: 'Bildirimler', count: notifications.filter(n => !n.is_read).length },
+          { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.length },
+          { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: comments.length },
+          { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.length },
+          { id: 'bildirimler', label: t("gelenKutusuPage.tabs.notifications"), count: notifications.filter(n => !n.is_read).length },
         ].map(tab => {
           const isActive = activeTab === tab.id;
           return (
@@ -636,17 +639,17 @@ export default function GelenKutusuPage() {
         ) : activeTab === 'mesajlar' && conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-comments text-4xl mb-4 text-[#A79E96]"></i>
-            <p className="text-[#A79E96] text-sm">Henüz mesaj bulunmuyor.</p>
+            <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.messages.empty")}</p>
           </div>
         ) : activeTab === 'yorumlar' && comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-comment text-4xl mb-4 text-[#A79E96]"></i>
-            <p className="text-[#A79E96] text-sm">Henüz yorum bulunmuyor.</p>
+            <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.comments.empty")}</p>
           </div>
         ) : activeTab === 'degerlendirmeler' && reviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-star text-4xl mb-4 text-[#A79E96]"></i>
-            <p className="text-[#A79E96] text-sm">Henüz değerlendirme bulunmuyor.</p>
+            <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.reviews.empty")}</p>
           </div>
         ) : null}
 
@@ -692,7 +695,7 @@ export default function GelenKutusuPage() {
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-semibold text-on-surface truncate pr-2">{conv.participant_name}</h3>
                         <span className="text-xs text-dark-muted flex-shrink-0">
-                          {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' }) : ''}
+                          {conv.updated_at ? new Date(conv.updated_at).toLocaleTimeString(locale, { hour: '2-digit', minute:'2-digit' }) : ''}
                         </span>
                       </div>
                       <p className={`text-sm truncate ${conv.unread_count > 0 ? 'text-[#FF7A59] font-medium' : 'text-dark-muted'}`}>
@@ -754,7 +757,7 @@ export default function GelenKutusuPage() {
                            <div className={`p-3 rounded-2xl text-sm ${isOutbound ? 'bg-[#3797F0] text-white rounded-br-sm' : 'bg-[#262626] text-white rounded-bl-sm'}`}>
                              {msg.content}
                              <div className={`text-[10px] mt-1 ${isOutbound ? 'text-blue-200/70 text-right' : 'text-gray-400'}`}>
-                               {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute:'2-digit' })}
+                               {new Date(msg.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute:'2-digit' })}
                              </div>
                            </div>
                          </div>
@@ -769,7 +772,7 @@ export default function GelenKutusuPage() {
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') handleSendDM(conversations.find(c => c.id === selectedConvId));
                         }}
-                        placeholder="Mesaj yazın..." 
+                        placeholder={t("gelenKutusuPage.messages.inputPlaceholder")}
                         className="flex-1 bg-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#FF7A59] border border-transparent"
                       />
                       <button 
@@ -784,7 +787,7 @@ export default function GelenKutusuPage() {
                ) : (
                  <div className="flex-1 flex flex-col items-center justify-center text-dark-muted opacity-60">
                     <i className="fa-regular fa-comments text-4xl mb-4"></i>
-                    <p>Mesajlaşmaya başlamak için bir sohbet seçin.</p>
+                    <p>{t("gelenKutusuPage.messages.selectConversationPrompt")}</p>
                  </div>
                )}
             </div>
@@ -824,7 +827,7 @@ export default function GelenKutusuPage() {
                         {postGroup.postContentSnippet}
                       </div>
                       <div className="text-xs text-dark-muted mt-1">
-                        Son: {postGroup.latestCommentAt ? new Date(postGroup.latestCommentAt).toLocaleDateString('tr-TR') : ''}
+                        {t("gelenKutusuPage.comments.latestLabel")}: {postGroup.latestCommentAt ? new Date(postGroup.latestCommentAt).toLocaleDateString(locale) : ''}
                       </div>
                     </div>
                   </div>
@@ -841,7 +844,7 @@ export default function GelenKutusuPage() {
                   .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) // newest first
                   .map((parent: any) => {
                     const parentId = parent.zernio_comment_id || parent.id;
-                    const uName = parent.author_name || parent.username || 'Kullanıcı';
+                    const uName = parent.author_name || parent.username || t("gelenKutusuPage.comments.fallbackUsername");
                     return (
                       <div key={parent.id} className="glass rounded-xl border border-dark-border p-4 flex flex-col gap-3">
                         {/* Parent Header */}
@@ -865,7 +868,7 @@ export default function GelenKutusuPage() {
                             </div>
                             <div className="flex flex-col">
                               <span className="font-semibold text-on-surface text-sm">@{uName}</span>
-                              <span className="text-[10px] text-dark-muted">{new Date(parent.created_at).toLocaleString('tr-TR')}</span>
+                              <span className="text-[10px] text-dark-muted">{new Date(parent.created_at).toLocaleString(locale)}</span>
                             </div>
                           </div>
                         </div>
@@ -885,13 +888,13 @@ export default function GelenKutusuPage() {
                                 setReplyText(`@${uName} `);
                               }}
                             >
-                              <i className="fa-solid fa-reply"></i> Yanıtla
+                              <i className="fa-solid fa-reply"></i> {t("gelenKutusuPage.actions.reply")}
                             </button>
                             <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
                               <i className="fa-solid fa-paper-plane"></i> DM
                             </button>
                             <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
-                              <i className="fa-solid fa-eye-slash"></i> Gizle
+                              <i className="fa-solid fa-eye-slash"></i> {t("gelenKutusuPage.actions.hide")}
                             </button>
                           </div>
                         )}
@@ -916,16 +919,16 @@ export default function GelenKutusuPage() {
                                       )}
                                       <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
                                         {reply.author_picture ? (
-                                          <img src={reply.author_picture} alt="Mağaza" className="w-full h-full object-cover" />
+                                          <img src={reply.author_picture} alt={t("gelenKutusuPage.comments.storeLabel")} className="w-full h-full object-cover" />
                                         ) : (
                                           <i className="fa-solid fa-store text-[10px] text-dark-muted"></i>
                                         )}
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-on-surface text-sm">Mağaza</span>
-                                        <span className="text-[9px] font-bold bg-[#f59e0b]/20 text-[#f59e0b] px-1.5 py-0.5 rounded">Sen</span>
+                                        <span className="font-semibold text-on-surface text-sm">{t("gelenKutusuPage.comments.storeLabel")}</span>
+                                        <span className="text-[9px] font-bold bg-[#f59e0b]/20 text-[#f59e0b] px-1.5 py-0.5 rounded">{t("gelenKutusuPage.comments.youBadge")}</span>
                                       </div>
-                                      <span className="text-[10px] text-dark-muted">{new Date(reply.created_at).toLocaleString('tr-TR')}</span>
+                                      <span className="text-[10px] text-dark-muted">{new Date(reply.created_at).toLocaleString(locale)}</span>
                                     </div>
                                   </div>
                                   
@@ -942,13 +945,13 @@ export default function GelenKutusuPage() {
                                           setReplyText(`@${uName} `);
                                         }}
                                       >
-                                        <i className="fa-solid fa-reply"></i> Yanıtla
+                                        <i className="fa-solid fa-reply"></i> {t("gelenKutusuPage.actions.reply")}
                                       </button>
                                       <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
-                                        <i className="fa-solid fa-eye-slash"></i> Gizle
+                                        <i className="fa-solid fa-eye-slash"></i> {t("gelenKutusuPage.actions.hide")}
                                       </button>
                                       <button className="text-dark-muted hover:text-red-400 transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(reply)}>
-                                        <i className="fa-solid fa-trash-can"></i> Sil
+                                        <i className="fa-solid fa-trash-can"></i> {t("gelenKutusuPage.actions.delete")}
                                       </button>
                                     </div>
                                   )}
@@ -969,7 +972,7 @@ export default function GelenKutusuPage() {
                                 if (e.key === 'Enter') handleSendReply(parent);
                               }}
                               autoFocus
-                              placeholder="Yanıtlama için yazın..." 
+                              placeholder={t("gelenKutusuPage.comments.replyPlaceholder")}
                               className="flex-1 bg-[#131314] rounded-lg px-3 py-2 text-sm text-[#F6F1EC] border border-white/10 focus:border-[#C2478D] focus:outline-none"
                             />
                             <button 
@@ -1014,7 +1017,7 @@ export default function GelenKutusuPage() {
                   <h3 className="font-semibold text-on-surface">{rev.reviewer_name}</h3>
                 </div>
                 <span className="text-xs text-dark-muted">
-                  {rev.created_at ? new Date(rev.created_at).toLocaleDateString('tr-TR') : ''}
+                  {rev.created_at ? new Date(rev.created_at).toLocaleDateString(locale) : ''}
                 </span>
               </div>
               
@@ -1035,7 +1038,7 @@ export default function GelenKutusuPage() {
         {!isLoading && activeTab === 'bildirimler' && notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-bell text-4xl mb-4 text-[#A79E96]"></i>
-            <p className="text-[#A79E96] text-sm">Henüz bildirim bulunmuyor.</p>
+            <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.notifications.empty")}</p>
           </div>
         ) : !isLoading && activeTab === 'bildirimler' && notifications.length > 0 && (
           <div className="flex flex-col gap-4">
@@ -1055,7 +1058,7 @@ export default function GelenKutusuPage() {
                       {notification.title}
                     </h4>
                     <span className="text-xs text-dark-muted">
-                      {new Date(notification.created_at).toLocaleDateString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(notification.created_at).toLocaleDateString(locale, { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <p className="text-sm text-dark-muted leading-relaxed">
@@ -1070,22 +1073,22 @@ export default function GelenKutusuPage() {
         {privateReplyModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="bg-[#1c1b1d] rounded-2xl w-[90%] max-w-md p-6 border border-white/10 shadow-2xl">
-              <h3 className="text-lg font-semibold text-white mb-2">Gizli Mesaj Gönder (DM)</h3>
+              <h3 className="text-lg font-semibold text-white mb-2">{t("gelenKutusuPage.privateReply.title")}</h3>
               <p className="text-sm text-dark-muted mb-4">
-                @{privateReplyModal.author_name || privateReplyModal.username} adlı kullanıcıya özel bir mesaj gönderin:
+                {t("gelenKutusuPage.privateReply.description", { name: privateReplyModal.author_name || privateReplyModal.username })}
               </p>
               <textarea
                 value={privateReplyText}
                 onChange={(e) => setPrivateReplyText(e.target.value)}
                 className="w-full h-24 bg-[#131315] border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-[#C2478D] resize-none mb-4 custom-scrollbar"
-                placeholder="Mesajınızı buraya yazın..."
+                placeholder={t("gelenKutusuPage.privateReply.placeholder")}
               ></textarea>
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setPrivateReplyModal(null)}
                   className="px-4 py-2 rounded-lg font-medium text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                 >
-                  İptal
+                  {t("gelenKutusuPage.actions.cancel")}
                 </button>
                 <button
                   onClick={handleSendPrivateReply}
@@ -1093,7 +1096,7 @@ export default function GelenKutusuPage() {
                   className="px-4 py-2 rounded-lg font-medium text-sm bg-[#C2478D] text-white hover:bg-[#a10ce0] disabled:opacity-50 transition-colors flex items-center gap-2"
                 >
                   {isSendingPrivateReply ? <i className="fa-solid fa-spinner fa-spin"></i> : null}
-                  Gönder
+                  {t("gelenKutusuPage.actions.send")}
                 </button>
               </div>
             </div>

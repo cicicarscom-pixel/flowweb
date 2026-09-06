@@ -1,5 +1,8 @@
-﻿import React, { useState, useCallback } from 'react';
+﻿"use client";
+
+import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
+import { useTranslations } from 'next-intl';
 import { getCroppedImg } from '@/lib/cropImage';
 
 interface CropperModalProps {
@@ -10,6 +13,7 @@ interface CropperModalProps {
 }
 
 export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspectRatio }: CropperModalProps) {
+  const t = useTranslations();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
@@ -27,7 +31,7 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
       onCropComplete(croppedImage);
     } catch (e) {
       console.error(e);
-      alert("Kırpma işlemi başarısız oldu.");
+      alert(t("cropperModal.errors.cropFailed"));
     } finally {
       setIsProcessing(false);
     }
@@ -39,7 +43,7 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-dark-border bg-dark-card">
-          <h2 className="text-on-surface font-semibold">Resmi Kırp (Instagram)</h2>
+          <h2 className="text-on-surface font-semibold">{t("cropperModal.title")}</h2>
           <button onClick={onCancel} className="text-dark-muted hover:text-on-surface transition-colors w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5">
             <i className="fa-solid fa-xmark"></i>
           </button>
@@ -82,17 +86,17 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
               onClick={onCancel}
               className="px-4 py-2 rounded-lg bg-dark-card border border-dark-border text-on-surface hover:bg-dark-border transition-colors text-sm font-medium"
             >
-              İptal
+              {t("cropperModal.cancel")}
             </button>
-            <button 
+            <button
               onClick={handleSave}
               disabled={isProcessing}
               className="px-5 py-2 rounded-lg bg-gradient-to-r from-[#FF7A59] to-[#0080ff] text-black font-semibold text-sm transition-all hover:opacity-90 flex items-center gap-2"
             >
               {isProcessing ? (
-                <><i className="fa-solid fa-circle-notch fa-spin"></i> Kırpılıyor...</>
+                <><i className="fa-solid fa-circle-notch fa-spin"></i> {t("cropperModal.processing")}</>
               ) : (
-                <><i className="fa-solid fa-crop-simple"></i> Kırp ve Uygula</>
+                <><i className="fa-solid fa-crop-simple"></i> {t("cropperModal.applyButton")}</>
               )}
             </button>
           </div>

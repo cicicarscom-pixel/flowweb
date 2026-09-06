@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import CropperModal from '@/components/CropperModal';
 
@@ -16,6 +17,7 @@ const PLATFORMS_DATA = [
 ];
 
 export default function SharePage() {
+  const t = useTranslations();
   const [prompt, setPrompt] = useState("");
   const [localImage, setLocalImage] = useState<string | null>(null);
   const [localText, setLocalText] = useState("");
@@ -141,7 +143,7 @@ export default function SharePage() {
         setIsEditingCaption(true);
       }
     } catch (err: any) {
-      alert("Hata: " + err.message);
+      alert(t("sharePage.errors.captionGenerationFailed", { message: err.message }));
     } finally {
       setIsGeneratingText(false);
     }
@@ -169,7 +171,7 @@ export default function SharePage() {
 
   const handleShare = async () => {
     if (!localText.trim() && !prompt.trim()) {
-      return alert("Lütfen paylaşılacak bir metin girin.");
+      return alert(t("sharePage.errors.noText"));
     }
     
     const platformsToShare = Object.keys(selectedPlatforms).filter(p => selectedPlatforms[p]).map(p => {
@@ -228,7 +230,7 @@ export default function SharePage() {
     }).filter(Boolean);
 
     if (platformsToShare.length === 0) {
-      return alert("Lütfen en az bir platform seçin.");
+      return alert(t("sharePage.errors.noPlatform"));
     }
 
     let finalScheduledFor: string | undefined = undefined;
@@ -242,7 +244,7 @@ export default function SharePage() {
         // Zernio schedule format: YYYY-MM-DDTHH:mm:00 
         finalScheduledFor = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts[0].padStart(2, '0')}:${timeParts[1].padStart(2, '0')}:00`;
       } catch (err) {
-        return alert("Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.");
+        return alert(t("sharePage.errors.invalidDateFormat"));
       }
     }
 
@@ -279,7 +281,7 @@ export default function SharePage() {
       setUploadProgress(100);
       
       setTimeout(() => {
-        alert("Gönderi başarıyla paylaşıldı!");
+        alert(t("sharePage.success.published"));
         setIsSharing(false);
         setUploadProgress(0);
       }, 500);
@@ -288,7 +290,7 @@ export default function SharePage() {
       clearInterval(progressInterval);
       setIsSharing(false);
       setUploadProgress(0);
-      alert("Gönderi paylaşılırken bir hata oluştu: " + e.message);
+      alert(t("sharePage.errors.publishFailed", { message: e.message }));
     }
   };
 
@@ -299,7 +301,7 @@ export default function SharePage() {
           <Link href="/sosyal-medya" className="text-[#A79E96] hover:text-white transition-colors">
             <i className="fa-solid fa-arrow-left text-lg"></i>
           </Link>
-          <h1 className="text-lg font-bold text-[#F6F1EC]">Paylaşım Merkezi</h1>
+          <h1 className="text-lg font-bold text-[#F6F1EC]">{t("sharePage.header.title")}</h1>
         </div>
         <button className="text-[#F6F1EC] hover:bg-white/10 p-2 rounded-full transition-colors">
           <i className="fa-solid fa-ellipsis-vertical"></i>
@@ -312,12 +314,12 @@ export default function SharePage() {
           {/* Input Section */}
           <div>
             <label className="block text-[#A79E96] text-xs font-medium uppercase tracking-wider mb-2 ml-1">
-              Ne Paylaşalım?
+              {t("sharePage.contentInput.label")}
             </label>
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Örn: Yeni yaz koleksiyonumuz için enerjik bir post..."
+              placeholder={t("sharePage.contentInput.placeholder")}
               className="w-full bg-[#201D24]/50 rounded-lg border border-white/10 text-[#F6F1EC] text-base p-3 min-h-[100px] focus:outline-none focus:border-white/20 resize-none"
             ></textarea>
           </div>
@@ -353,7 +355,7 @@ export default function SharePage() {
                         onClick={(e) => { e.stopPropagation(); setIsCropperOpen(true); }}
                         className="absolute bottom-4 right-4 bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-[0_4px_12px_rgba(225,48,108,0.4)] opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center gap-2"
                       >
-                        <i className="fa-solid fa-crop-simple"></i> Kırp (Instagram 4:5)
+                        <i className="fa-solid fa-crop-simple"></i> {t("sharePage.imageContainer.cropButton")}
                       </button>
                     )}
                   </div>
@@ -363,10 +365,10 @@ export default function SharePage() {
                       <i className="fa-regular fa-image text-4xl text-[#FF7A59]"></i>
                     </div>
                     <span className="text-[#A79E96] text-base text-center px-4 font-medium mb-1">
-                      Görsel & Video Seç ya da Üret
+                      {t("sharePage.imageContainer.selectTitle")}
                     </span>
                     <span className="text-[#A79E96]/60 text-xs text-center px-8">
-                      Galerinizden eklemek için dokunun.
+                      {t("sharePage.imageContainer.selectSubtitle")}
                     </span>
                   </div>
                 )}
@@ -382,7 +384,7 @@ export default function SharePage() {
             <div className="relative bg-[#131314] rounded-[17px] p-5 z-10">
               
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-[#F6F1EC] text-lg font-semibold">İçerik Metni</h2>
+                <h2 className="text-[#F6F1EC] text-lg font-semibold">{t("sharePage.captionEditor.title")}</h2>
                 <button 
                   onClick={() => setIsEditingCaption(!isEditingCaption)}
                   className="p-1 hover:bg-white/10 rounded"
@@ -396,12 +398,12 @@ export default function SharePage() {
                   <textarea
                     value={localText}
                     onChange={(e) => setLocalText(e.target.value)}
-                    placeholder="Yapay zeka tarafından üretilen metin veya kendi metniniz..."
+                    placeholder={t("sharePage.captionEditor.editPlaceholder")}
                     className="w-full h-full bg-transparent text-[#F6F1EC] text-sm leading-5 resize-none focus:outline-none min-h-[180px]"
                   ></textarea>
                 ) : (
                   <p className="text-[#A79E96]/80 text-sm leading-5 whitespace-pre-wrap">
-                    {localText || "Yapay zeka tarafından oluşturulan içerik metni burada görünecek. Gelişmiş dil modelleri ile hedef kitlenize uygun metinler hazırlanıyor..."}
+                    {localText || t("sharePage.captionEditor.emptyPreview")}
                   </p>
                 )}
               </div>
@@ -412,7 +414,7 @@ export default function SharePage() {
                   type="text"
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder="Görselle uyumlu bir metin üret..."
+                  placeholder={t("sharePage.captionEditor.aiPromptPlaceholder")}
                   className="flex-1 bg-[#201D24] rounded-full px-4 py-2 text-[#F6F1EC] border border-[#3b494b] focus:outline-none focus:border-[#C2478D] text-sm"
                 />
                 <button 
@@ -474,7 +476,7 @@ export default function SharePage() {
                 ) : (
                   <button onClick={() => setIsAddingTag(true)} className="px-3 py-1 flex items-center gap-1 hover:bg-white/5 rounded-full transition-colors text-[#A79E96]">
                     <i className="fa-solid fa-plus text-xs"></i>
-                    <span className="text-xs font-medium">Etiket ekle</span>
+                    <span className="text-xs font-medium">{t("sharePage.captionEditor.addTagButton")}</span>
                   </button>
                 )}
               </div>
@@ -484,12 +486,12 @@ export default function SharePage() {
 
           {/* Profiles Section */}
           <div className="mt-6">
-            <label className="block text-[#A79E96] text-xs font-medium mb-3">Bağlantılı Hesaplar (Platformlar)</label>
-            
+            <label className="block text-[#A79E96] text-xs font-medium mb-3">{t("sharePage.accounts.label")}</label>
+
             {zernioAccounts.length === 0 ? (
               <div className="text-center p-4 bg-[#201D24]/30 rounded-lg border border-white/5">
-                <p className="text-[#A79E96]/70 text-xs mb-2">Henüz bağlı bir hesap yok.</p>
-                <Link href="/sosyal-medya" className="text-[#22B573] text-xs font-medium">Hesap Bağla</Link>
+                <p className="text-[#A79E96]/70 text-xs mb-2">{t("sharePage.accounts.noneConnected")}</p>
+                <Link href="/sosyal-medya" className="text-[#22B573] text-xs font-medium">{t("sharePage.accounts.connectLink")}</Link>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
@@ -552,12 +554,12 @@ export default function SharePage() {
                       ))}
                     </div>
                   </div>
-                  {fbFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">İçerik 24 saat sonra kaybolur. Medya gerektirir.</p>}
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
-                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder="İlk yoruma eklemek istediğiniz bağlantı veya notu girin..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                  {fbFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">{t("sharePage.platforms.storyWarning")}</p>}
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
+                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder={t("sharePage.platforms.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
                   <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{fbFirstComment.length}/8000</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
                 </div>
               </div>
             )}
@@ -578,21 +580,21 @@ export default function SharePage() {
                       ))}
                     </div>
                   </div>
-                  {igFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">İçerik 24 saat sonra kaybolur. Medya gerektirir.</p>}
+                  {igFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">{t("sharePage.platforms.storyWarning")}</p>}
                   <button onClick={() => setIgAiLabel(!igAiLabel)} className="flex items-start gap-2 mb-4 group text-left">
                     <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center shrink-0 transition-colors ${igAiLabel ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
                       {igAiLabel && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
                     </div>
                     <div>
-                      <p className="text-[#F6F1EC] text-xs font-medium">AI ile üretildi olarak işaretle</p>
-                      <p className="text-[#A79E96]/60 text-[10px] mt-0.5 leading-tight">Instagram'ın AI içerik etiketini ekler. Medya tamamen veya büyük oranda AI ile oluşturulduğunda kullanın.</p>
+                      <p className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.instagram.aiLabelTitle")}</p>
+                      <p className="text-[#A79E96]/60 text-[10px] mt-0.5 leading-tight">{t("sharePage.instagram.aiLabelDescription")}</p>
                     </div>
                   </button>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
-                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder="İlk yoruma eklemek istediğiniz bağlantı veya notu girin..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
+                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder={t("sharePage.platforms.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
                   <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{igFirstComment.length}/2200</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
                 </div>
               </div>
             )}
@@ -606,11 +608,11 @@ export default function SharePage() {
                     <i className="fa-brands fa-linkedin text-[#0A66C2]"></i>
                     <span className="text-[#F6F1EC] font-semibold text-sm">LinkedIn</span>
                   </div>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">İlk Yorum (Opsiyonel)</label>
-                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder="Add a İlk Yorum (Opsiyonel) to boost engagement." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
+                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder={t("sharePage.linkedin.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
                   <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{liFirstComment.length}/1250</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
                 </div>
               </div>
             )}
@@ -628,11 +630,11 @@ export default function SharePage() {
                     <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${twIsThread ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
                       {twIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
                     </div>
-                    <span className="text-[#F6F1EC] text-xs font-medium">Zincir (Thread) oluştur</span>
+                    <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.twitter.threadToggle")}</span>
                   </button>
-                  {twIsThread && <p className="text-[#A79E96]/70 text-[10px] mb-4">Ana metin ilk tweet olur. Altına zincir eklenebilir.</p>}
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
+                  {twIsThread && <p className="text-[#A79E96]/70 text-[10px] mb-4">{t("sharePage.twitter.threadDescription")}</p>}
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
                 </div>
               </div>
             )}
@@ -657,15 +659,15 @@ export default function SharePage() {
                       />
                     </div>
                     <div>
-                      <span className="block text-[#F6F1EC] text-xs font-semibold mb-1">TikTok taslaklarına kaydet</span>
+                      <span className="block text-[#F6F1EC] text-xs font-semibold mb-1">{t("sharePage.tiktok.saveToInboxTitle")}</span>
                       <span className="block text-[#A79E96]/70 text-[10px] leading-relaxed">
-                        Video direkt yayınlanmaz, taslak olarak yüklenir. İsterseniz TikTok üzerinden müzik ekleyip yayınlayabilirsiniz.
+                        {t("sharePage.tiktok.saveToInboxDescription")}
                       </span>
                     </div>
                   </label>
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF7A59]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF7A59]/50"></textarea>
                   <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{ttCustomCaption.length}/2200</p>
                 </div>
               </div>
@@ -681,16 +683,16 @@ export default function SharePage() {
                     <span className="text-[#F6F1EC] font-semibold text-sm">Pinterest</span>
                   </div>
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Başlık (Opsiyonel)</label>
-                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder="Pin'iniz için özel bir başlık girin..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#A79E96]/50 text-[10px] mb-4">Zorunlu değildir. Boş bırakılırsa ana metnin ilk satırı başlık yapılır.</p>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.pinterest.titleLabel")}</label>
+                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder={t("sharePage.pinterest.titlePlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
+                  <p className="text-[#A79E96]/50 text-[10px] mb-4">{t("sharePage.pinterest.titleHint")}</p>
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Hedef Bağlantı (Opsiyonel)</label>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.pinterest.linkLabel")}</label>
                   <input type="url" value={pinLink} onChange={e => setPinLink(e.target.value)} placeholder="https://example.com" className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#A79E96]/50 text-[10px] mb-4">Pin'e tıklandığında gidilecek URL bağlantısını belirler.</p>
+                  <p className="text-[#A79E96]/50 text-[10px] mb-4">{t("sharePage.pinterest.linkHint")}</p>
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Özel Açıklama (Opsiyonel)</label>
-                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
                   <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{pinCustomCaption.length}/500</p>
                 </div>
               </div>
@@ -714,34 +716,34 @@ export default function SharePage() {
                   </div>
 
                   <label className="block text-[#A79E96] text-xs font-medium mb-1">title</label>
-                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder="Video başlığı..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
+                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder={t("sharePage.youtube.titlePlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">Video Açıklaması (Opsiyonel)</label>
-                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder="Ana metni kullanmak için boş bırakın..." className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.descriptionLabel")}</label>
+                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
                 </div>
               </div>
             )}
 
             {/* Publishing Settings */}
             <div className="mt-2 bg-[#201D24]/50 rounded-[14px] border border-white/5 p-4 mb-20">
-              <label className="block text-[#A79E96] text-xs font-medium mb-3">yayıncılık</label>
+              <label className="block text-[#A79E96] text-xs font-medium mb-3">{t("sharePage.publishing.label")}</label>
               <div className="flex bg-[#201D24]/50 p-1 rounded-lg border border-white/5 mb-4">
-                <button onClick={() => setPublishMode('schedule')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'schedule' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#A79E96] hover:text-white'}`}>Planlı</button>
-                <button onClick={() => setPublishMode('now')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'now' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#A79E96] hover:text-white'}`}>Şimdi</button>
+                <button onClick={() => setPublishMode('schedule')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'schedule' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#A79E96] hover:text-white'}`}>{t("sharePage.publishing.scheduledTab")}</button>
+                <button onClick={() => setPublishMode('now')} className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${publishMode === 'now' ? 'bg-[#2a2a2b] text-white shadow-sm' : 'text-[#A79E96] hover:text-white'}`}>{t("sharePage.publishing.nowTab")}</button>
               </div>
               {publishMode === 'schedule' ? (
                 <div className="bg-[#22B573]/10 border border-[#22B573]/30 rounded-lg p-3 flex flex-col gap-3">
                   <div className="flex items-start gap-2">
                     <i className="fa-solid fa-calendar text-[#22B573] mt-0.5"></i>
                     <div className="w-full">
-                      <span className="block text-[#F6F1EC] text-xs font-medium mb-1">Zamanlanmış Yayın (Tarih & Saat)</span>
+                      <span className="block text-[#F6F1EC] text-xs font-medium mb-1">{t("sharePage.publishing.scheduledDateTimeLabel")}</span>
                       <input type="text" value={scheduleDate} onChange={e => setScheduleDate(e.target.value)} className="bg-transparent text-[#22B573] text-sm font-semibold outline-none w-full" />
                     </div>
                   </div>
                   <div className="flex items-start gap-2 border-t border-[#22B573]/20 pt-3">
                     <i className="fa-solid fa-earth-americas text-[#22B573] mt-0.5"></i>
                     <div className="w-full relative">
-                      <span className="block text-[#F6F1EC] text-xs font-medium mb-1">Timezone</span>
+                      <span className="block text-[#F6F1EC] text-xs font-medium mb-1">{t("sharePage.publishing.timezoneLabel")}</span>
                       <select value={timezone} onChange={e => setTimezone(e.target.value)} className="bg-transparent text-[#22B573] text-sm font-semibold outline-none w-full appearance-none cursor-pointer">
                         {TIMEZONES.map(tz => (
                           <option key={tz.value} value={tz.value} className="bg-[#201D24] text-[#F6F1EC]">{tz.label}</option>
@@ -754,7 +756,7 @@ export default function SharePage() {
               ) : (
                 <div className="bg-[#22B573]/10 border border-[#22B573]/30 rounded-lg p-3 flex items-start gap-2">
                   <i className="fa-solid fa-circle-info text-[#22B573] mt-0.5"></i>
-                  <span className="text-[#22B573] text-xs font-medium leading-tight">Gönderi, seçilen tüm platformlarda anında yayınlanacaktır.</span>
+                  <span className="text-[#22B573] text-xs font-medium leading-tight">{t("sharePage.publishing.nowInfo")}</span>
                 </div>
               )}
             </div>
@@ -775,12 +777,12 @@ export default function SharePage() {
                 {isSharing ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin"></i>
-                    <span>Yükleniyor... {uploadProgress}%</span>
+                    <span>{t("sharePage.publishButton.loading", { progress: uploadProgress })}</span>
                   </>
                 ) : (
                   <>
-                    <i className="fa-solid fa-paper-plane"></i> 
-                    <span>Şimdi Paylaş</span>
+                    <i className="fa-solid fa-paper-plane"></i>
+                    <span>{t("sharePage.publishButton.now")}</span>
                   </>
                 )}
               </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 // Canlı Test (Live Test) chat box — extracted verbatim from page.tsx.
 // Purely presentational: page.tsx owns messages/isTyping/inputValue state and
 // the actual persona-test call (handleSendMessage), since that call needs
@@ -30,6 +32,7 @@ export default function LiveTestPanel({
   onSend,
   onReset,
 }: LiveTestPanelProps) {
+  const t = useTranslations();
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <div
@@ -47,7 +50,7 @@ export default function LiveTestPanel({
         <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573" }} />
-            <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Canlı Test</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{t("aiAsistanComponents.liveTestPanel.title")}</span>
           </div>
           <div
             onClick={onReset}
@@ -62,7 +65,7 @@ export default function LiveTestPanel({
         <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
           {!isSimulationActive && messages.length === 0 ? (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-              <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
+              <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{t("aiAsistanComponents.liveTestPanel.emptyState")}</p>
             </div>
           ) : (
             <>
@@ -74,7 +77,7 @@ export default function LiveTestPanel({
                     padding: "4px 12px", borderRadius: 99,
                   }}
                 >
-                  SİMÜLASYON BAŞLADI
+                  {t("aiAsistanComponents.liveTestPanel.simulationStarted")}
                 </span>
               </div>
 
@@ -123,7 +126,7 @@ export default function LiveTestPanel({
               value={inputValue}
               onChange={(e) => onInputChange(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onSend()}
-              placeholder="Asistan ile konuşun..."
+              placeholder={t("aiAsistanComponents.liveTestPanel.inputPlaceholder")}
               onFocus={onInputFocus}
               style={{
                 width: "100%", padding: "14px 48px 14px 20px", borderRadius: 99,

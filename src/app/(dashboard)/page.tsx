@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function DashboardHomePage() {
+  const t = useTranslations();
+  const locale = useLocale();
   const [isLoading, setIsLoading] = useState(true);
   const [aiActive, setAiActive] = useState(true);
   const [financeStats, setFinanceStats] = useState({ income: 0, expense: 0 });
@@ -40,12 +43,12 @@ export default function DashboardHomePage() {
 
         const { data: transactions } = await supabase.from('transactions').select('*');
         if (transactions) {
-          transactions.forEach(t => {
-            if (t.type === 'income') inc += Number(t.amount);
-            if (t.type === 'expense') {
-              exp += Number(t.amount);
-              if (t.date && t.date >= today) {
-                upcoming.push({ ...t, description: t.title || 'Ödeme' });
+          transactions.forEach(tx => {
+            if (tx.type === 'income') inc += Number(tx.amount);
+            if (tx.type === 'expense') {
+              exp += Number(tx.amount);
+              if (tx.date && tx.date >= today) {
+                upcoming.push({ ...tx, description: tx.title || t('dashboardHome.defaults.payment') });
               }
             }
           });
@@ -70,7 +73,7 @@ export default function DashboardHomePage() {
                 } else {
                   const docDate = d.created_at ? new Date(d.created_at).toISOString().split('T')[0] : null;
                   if (docDate && docDate >= today) {
-                    upcoming.push({ id: d.id, date: docDate, amount: amt, description: d.title || 'Fatura Ödemesi', type: 'expense' });
+                    upcoming.push({ id: d.id, date: docDate, amount: amt, description: d.title || t('dashboardHome.defaults.invoicePayment'), type: 'expense' });
                   }
                 }
               }
@@ -129,9 +132,9 @@ export default function DashboardHomePage() {
         if (msgs) {
           merged = [...merged, ...msgs.map(m => ({
             id: 'msg_'+m.id,
-            type: 'MESAJ',
+            type: t('dashboardHome.activityTypes.message'),
             platform: 'WHATSAPP',
-            name: m.sender_name || 'Müşteri',
+            name: m.sender_name || t('dashboardHome.defaults.customer'),
             message: m.message_body || m.content || '',
             date: m.created_at,
             color: "#FF7A59"
@@ -140,9 +143,9 @@ export default function DashboardHomePage() {
         if (comments) {
           merged = [...merged, ...comments.map(c => ({
             id: 'cmt_'+c.id,
-            type: 'YORUM',
+            type: t('dashboardHome.activityTypes.comment'),
             platform: (c.platform || 'INSTAGRAM').toUpperCase(),
-            name: c.username || 'Kullanıcı',
+            name: c.username || t('dashboardHome.defaults.user'),
             message: c.text || c.content || '',
             date: c.created_at,
             color: "#E8A8CD"
@@ -157,8 +160,8 @@ export default function DashboardHomePage() {
         const { data: appts } = await supabase.from('appointments').select('*').order('date', { ascending: true }).limit(5);
         if (appts && appts.length > 0) {
           setAppointments(appts.map(a => ({
-            time: a.date ? new Date(a.date).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : "00:00",
-            title: a.customer_name ? `${a.customer_name} - ${a.service_name || 'Randevu'}` : (a.service_name || 'Randevu'),
+            time: a.date ? new Date(a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : "00:00",
+            title: a.customer_name ? `${a.customer_name} - ${a.service_name || t('dashboardHome.appointments.defaultTitle')}` : (a.service_name || t('dashboardHome.appointments.defaultTitle')),
             color: "#FF7A59"
           })));
         } else {
@@ -195,15 +198,15 @@ export default function DashboardHomePage() {
     }
   };
 
-  const formatCurrency = (amount: number) => Number(amount).toLocaleString('tr-TR');
+  const formatCurrency = (amount: number) => Number(amount).toLocaleString(locale);
   const formatRelativeTime = (dateStr: string) => {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${Math.max(1, mins)}dk önce`;
+    if (mins < 60) return t('dashboardHome.relativeTime.minutesAgo', { count: Math.max(1, mins) });
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}sa önce`;
-    return `${Math.floor(hrs / 24)}g önce`;
+    if (hrs < 24) return t('dashboardHome.relativeTime.hoursAgo', { count: hrs });
+    return t('dashboardHome.relativeTime.daysAgo', { count: Math.floor(hrs / 24) });
   };
 
   function PlatformIcon({ platform, size = 16 }: { platform: string; size?: number }) {
@@ -256,24 +259,35 @@ export default function DashboardHomePage() {
           />
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontSize: 11, color: "rgba(255,122,89,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>AI ASISTAN · GÜNLÜK ÖZET</p>
+          <p style={{ fontSize: 11, color: "rgba(255,122,89,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.aiSummary.eyebrow')}</p>
           <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
-            Bugün <strong style={{ color: "#FF7A59" }}>{dailyStats.messages} mesaj</strong> ve <strong style={{ color: "#22B573" }}>{dailyStats.comments} yorum</strong> otomatik yanıtlandı.
+            {t.rich('dashboardHome.aiSummary.messagesComments', {
+              messages: dailyStats.messages,
+              comments: dailyStats.comments,
+              msg: (chunks) => <strong style={{ color: "#FF7A59" }}>{chunks}</strong>,
+              cmt: (chunks) => <strong style={{ color: "#22B573" }}>{chunks}</strong>,
+            })}
             {socialStats.trend > 0 ? (
-               <> Sosyal medya hesaplarınızın etkileşimi <strong style={{ color: "#F59E0B" }}>%{socialStats.trend}</strong> artış gösterdi!</>
+               <> {t.rich('dashboardHome.aiSummary.trendUp', {
+                    trend: socialStats.trend,
+                    pct: (chunks) => <strong style={{ color: "#F59E0B" }}>{chunks}</strong>,
+                  })}</>
             ) : (
-               <> Son 7 günde sosyal medya etkileşimleriniz analiz ediliyor.</>
+               <> {t('dashboardHome.aiSummary.trendAnalyzing')}</>
             )}
             {appointments.length > 0 ? (
-               <> Bugün <strong style={{ color: "#C2478D" }}>{appointments.length} randevunuz</strong> var.</>
+               <> {t.rich('dashboardHome.aiSummary.appointmentsToday', {
+                    count: appointments.length,
+                    ap: (chunks) => <strong style={{ color: "#C2478D" }}>{chunks}</strong>,
+                  })}</>
             ) : (
-               <> Bugün için planlı randevunuz bulunmuyor.</>
+               <> {t('dashboardHome.aiSummary.noAppointmentsToday')}</>
             )}
           </p>
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingLeft: 20, borderLeft: "1px solid rgba(255,255,255,0.1)", justifyContent: "center" }}>
           <span style={{ fontSize: 10, fontWeight: 700, color: aiActive ? "#FF7A59" : "#A79E96", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>
-            {aiActive ? "AKTİF" : "KAPALI"}
+            {aiActive ? t('dashboardHome.aiSummary.statusActive') : t('dashboardHome.aiSummary.statusInactive')}
           </span>
           <div 
             onClick={toggleAiStatus}
@@ -287,8 +301,8 @@ export default function DashboardHomePage() {
       {/* Financial Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {[
-          { label: "Aylık Gelir", value: `₺${formatCurrency(financeStats.income)}`, change: "+12.4%", up: true, color: "#22B573" },
-          { label: "Aylık Gider", value: `₺${formatCurrency(financeStats.expense)}`, change: "-3.1%", up: false, color: "#EF4444" },
+          { label: t('dashboardHome.finance.monthlyIncome'), value: `₺${formatCurrency(financeStats.income)}`, change: "+12.4%", up: true, color: "#22B573" },
+          { label: t('dashboardHome.finance.monthlyExpense'), value: `₺${formatCurrency(financeStats.expense)}`, change: "-3.1%", up: false, color: "#EF4444" },
         ].map(m => (
           <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>
@@ -306,21 +320,21 @@ export default function DashboardHomePage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {/* Invoice Scanner */}
         <div className="glass neon-orange" style={{ borderRadius: 20, padding: "20px 22px" }}>
-          <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>FATURA TARAYICI · SON FATURA</p>
+          <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
           <div style={{ display: "flex", gap: 16 }}>
             <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)" }}>
               <img
                 src="https://images.unsplash.com/photo-1648500847390-7792256bb95a?w=80&h=100&fit=crop&auto=format"
-                alt="Fatura belgesi"
+                alt={t('dashboardHome.invoiceScanner.imageAlt')}
                 style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
               />
             </div>
             <div style={{ flex: 1 }}>
               {[
-                { label: "Tedarikçi", value: "Ofis Dünyası A.Ş." },
-                { label: "Tarih", value: "03.02.2026" },
-                { label: "KDV", value: "%20" },
-                { label: "Toplam", value: "₺4,820.00" },
+                { label: t('dashboardHome.invoiceScanner.fields.supplier'), value: "Ofis Dünyası A.Ş." },
+                { label: t('dashboardHome.invoiceScanner.fields.date'), value: "03.02.2026" },
+                { label: t('dashboardHome.invoiceScanner.fields.vat'), value: "%20" },
+                { label: t('dashboardHome.invoiceScanner.fields.total'), value: "₺4,820.00" },
               ].map(r => (
                 <div key={r.label} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                   <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{r.label}</span>
@@ -330,13 +344,13 @@ export default function DashboardHomePage() {
             </div>
           </div>
           <button className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
-            + Yeni Fatura Tara
+            {t('dashboardHome.invoiceScanner.newInvoiceButton')}
           </button>
         </div>
 
         {/* Today's timeline */}
         <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>BUGÜNKÜ RANDEVULAR</p>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardHome.appointments.label')}</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {appointments.length > 0 ? appointments.map((a, i) => (
               <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -347,7 +361,7 @@ export default function DashboardHomePage() {
                 </div>
               </div>
             )) : (
-              <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>Bugün için planlı randevu yok.</span>
+              <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.appointments.empty')}</span>
             )}
           </div>
         </div>
@@ -359,19 +373,19 @@ export default function DashboardHomePage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
-            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>Tüm Hesaplar</p>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>{t('dashboardHome.social.allAccounts')}</p>
           </div>
           <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>CANLI ANALİZ</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>{t('dashboardHome.social.liveAnalysis')}</span>
           </div>
         </div>
-        
+
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Toplam Takipçi Kitle</p>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.totalFollowers')}</p>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
-                {socialStats.followers.toLocaleString('tr-TR')}
+                {socialStats.followers.toLocaleString(locale)}
               </p>
               <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#22B573" }}>
                 <span style={{ fontSize: 14 }}>↑</span>
@@ -379,14 +393,14 @@ export default function DashboardHomePage() {
               </div>
             </div>
           </div>
-          
+
           <div style={{ textAlign: "right" }}>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Etkileşim Trendi</p>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.engagementTrend')}</p>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 120, height: 6, borderRadius: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
                 <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #FF7A59, #C2478D)" }} />
               </div>
-              <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>Yüksek</span>
+              <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>{t('dashboardHome.social.high')}</span>
             </div>
           </div>
         </div>
@@ -395,8 +409,8 @@ export default function DashboardHomePage() {
       {/* Son Aktiviteler */}
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <p style={{ fontSize: 16, color: "#fff", fontWeight: 700 }}>Son Aktiviteler</p>
-          <Link href="/sosyal-medya/inbox" style={{ fontSize: 12, color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>TÜMÜNÜ GÖR</Link>
+          <p style={{ fontSize: 16, color: "#fff", fontWeight: 700 }}>{t('dashboardHome.recentActivities.title')}</p>
+          <Link href="/sosyal-medya/inbox" style={{ fontSize: 12, color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>{t('dashboardHome.recentActivities.viewAll')}</Link>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {recentActivities.map(act => (
@@ -419,22 +433,22 @@ export default function DashboardHomePage() {
             </div>
           ))}
           {recentActivities.length === 0 && (
-             <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>Son aktivite bulunmuyor.</span>
+             <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.recentActivities.empty')}</span>
           )}
         </div>
       </div>
 
       {/* İletişim Raporları */}
       <div>
-        <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>İletişim Raporları</p>
+        <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>{t('dashboardHome.commLogs.title')}</p>
         <div className="glass" style={{ borderRadius: 16, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "var(--text-secondary)", textAlign: "left" }}>
-                <th style={{ padding: "16px 20px", fontWeight: 600 }}>İletişim Kanalı</th>
-                <th style={{ padding: "16px 20px", fontWeight: 600 }}>Tarih/Saat</th>
-                <th style={{ padding: "16px 20px", fontWeight: 600 }}>Durum</th>
-                <th style={{ padding: "16px 20px", fontWeight: 600, textAlign: "right" }}>İşlem</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.channel')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.dateTime')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.status')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600, textAlign: "right" }}>{t('dashboardHome.commLogs.columns.action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -445,23 +459,23 @@ export default function DashboardHomePage() {
                     <span style={{ textTransform: 'capitalize' }}>{log.platform || 'WhatsApp'}</span>
                   </td>
                   <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>
-                    {new Date(log.created_at).toLocaleDateString('tr-TR')} {new Date(log.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(log.created_at).toLocaleDateString(locale)} {new Date(log.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                   </td>
                   <td style={{ padding: "16px 20px" }}>
-                    <span style={{ 
-                      color: log.status === 'success' ? "#22B573" : "#F59E0B", 
-                      background: log.status === 'success' ? "rgba(34,181,115,0.1)" : "rgba(245,158,11,0.1)", 
-                      padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700 
+                    <span style={{
+                      color: log.status === 'success' ? "#22B573" : "#F59E0B",
+                      background: log.status === 'success' ? "rgba(34,181,115,0.1)" : "rgba(245,158,11,0.1)",
+                      padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700
                     }}>
-                      {log.status === 'success' ? 'Başarılı' : 'Beklemede'}
+                      {log.status === 'success' ? t('dashboardHome.commLogs.status.success') : t('dashboardHome.commLogs.status.pending')}
                     </span>
                   </td>
-                  <td style={{ padding: "16px 20px", textAlign: "right", color: "#FF7A59", cursor: "pointer", fontWeight: 600 }}>İncele</td>
+                  <td style={{ padding: "16px 20px", textAlign: "right", color: "#FF7A59", cursor: "pointer", fontWeight: 600 }}>{t('dashboardHome.commLogs.review')}</td>
                 </tr>
               ))}
               {commLogs.length === 0 && (
                 <tr>
-                  <td colSpan={4} style={{ padding: "16px 20px", color: "var(--text-secondary)", textAlign: "center" }}>Rapor bulunmuyor.</td>
+                  <td colSpan={4} style={{ padding: "16px 20px", color: "var(--text-secondary)", textAlign: "center" }}>{t('dashboardHome.commLogs.empty')}</td>
                 </tr>
               )}
             </tbody>

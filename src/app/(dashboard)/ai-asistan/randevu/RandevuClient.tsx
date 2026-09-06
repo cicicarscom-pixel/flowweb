@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment } from '@/actions/appointments';
 
@@ -73,6 +74,7 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
 }
 
 export default function RandevuClient({ initialAppointments, services, merchantId, today }: { initialAppointments: any[], services: any[], merchantId: string, today: string }) {
+  const t = useTranslations();
   const supabase = createClient();
   const [currentDate, setCurrentDate] = useState(new Date(today));
   const [selectedDate, setSelectedDate] = useState(today);
@@ -134,8 +136,16 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     const month = currentDate.getMonth();
     const numDays = new Date(year, month + 1, 0).getDate();
     const days = [];
-    const trDays = ['Pzr', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-    
+    const trDays = [
+      t('randevuPage.calendar.days.sun'),
+      t('randevuPage.calendar.days.mon'),
+      t('randevuPage.calendar.days.tue'),
+      t('randevuPage.calendar.days.wed'),
+      t('randevuPage.calendar.days.thu'),
+      t('randevuPage.calendar.days.fri'),
+      t('randevuPage.calendar.days.sat'),
+    ];
+
     for (let i = 1; i <= numDays; i++) {
       const d = new Date(year, month, i);
       days.push({
@@ -145,7 +155,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
       });
     }
     return days;
-  }, [currentDate]);
+  }, [currentDate, t]);
 
   const handlePrevMonth = () => {
     setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
@@ -155,7 +165,20 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
-  const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const monthNames = [
+    t('randevuPage.calendar.months.jan'),
+    t('randevuPage.calendar.months.feb'),
+    t('randevuPage.calendar.months.mar'),
+    t('randevuPage.calendar.months.apr'),
+    t('randevuPage.calendar.months.may'),
+    t('randevuPage.calendar.months.jun'),
+    t('randevuPage.calendar.months.jul'),
+    t('randevuPage.calendar.months.aug'),
+    t('randevuPage.calendar.months.sep'),
+    t('randevuPage.calendar.months.oct'),
+    t('randevuPage.calendar.months.nov'),
+    t('randevuPage.calendar.months.dec'),
+  ];
   const monthYearStr = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
 
   const isSlotBusy = (time: string) => {
@@ -169,7 +192,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   const handleSave = async () => {
     if (!newAppt.service || !newAppt.time || !newAppt.phone) {
-      alert("Hizmet, saat ve telefon zorunludur.");
+      alert(t('randevuPage.alerts.missingFields'));
       return;
     }
     setIsSaving(true);
@@ -183,7 +206,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     });
     
     if (res.error) {
-      alert("Randevu kaydedilemedi: " + res.error);
+      alert(t('randevuPage.alerts.saveFailed', { error: res.error }));
       setIsSaving(false);
       return;
     }
@@ -198,7 +221,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   const getServiceName = (serviceId: string) => {
     const s = services.find(x => x.id === serviceId);
-    return s ? s.name : 'Bilinmeyen Hizmet';
+    return s ? s.name : t('randevuPage.timeline.unknownService');
   };
 
   return (
@@ -210,8 +233,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <span style={{ fontSize: 20 }}>📅</span>
           </div>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>Ai Randevu Yönetimi</h1>
-            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, marginTop: 4 }}>Tüm randevularınız sevimli asistanınızın kontrolünde! ✨</p>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: "#fff", margin: 0 }}>{t('randevuPage.header.title')}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, marginTop: 4 }}>{t('randevuPage.header.subtitle')}</p>
           </div>
         </div>
 
@@ -233,7 +256,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
             onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
           >
-            <span>+</span> Yeni Randevu Ekle
+            <span>+</span> {t('randevuPage.header.addAppointmentButton')}
           </button>
         </div>
       </div>
@@ -273,15 +296,15 @@ export default function RandevuClient({ initialAppointments, services, merchantI
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div className="glass" style={{ borderRadius: 24, padding: "24px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff", margin: 0 }}>📊 Günlük Yoğunluk Haritası</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff", margin: 0 }}>{t('randevuPage.heatmap.title')}</h3>
               <div style={{ display: "flex", gap: 12 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573" }} />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>DOLU</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>{t('randevuPage.heatmap.legendBusy')}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: "transparent", border: "1px solid var(--text-secondary)" }} />
-                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>BOŞ</span>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)" }}>{t('randevuPage.heatmap.legendFree')}</span>
                 </div>
               </div>
             </div>
@@ -289,9 +312,9 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <div style={{ display: "flex", gap: 12 }}>
               {/* Row Labels */}
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", paddingBottom: 6 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>SABAH</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>ÖĞLE</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>AKŞAM</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.morning')}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.noon')}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.evening')}</span>
               </div>
               
               {/* Heatmap Grid */}
@@ -332,7 +355,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <div style={{ marginTop: 24, padding: "16px", background: "rgba(255,122,89,0.05)", borderRadius: 16, border: "1px dashed rgba(255,122,89,0.3)", display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 24 }}>💡</span>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.5 }}>
-                Ai asistanınız, bu takvimi dikkate alarak müşterilerinizle yazışır ve boş saatlerinize otomatik randevu planlar.
+                {t('randevuPage.heatmap.tip')}
               </p>
             </div>
             
@@ -341,19 +364,19 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
           {/* Timeline */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 10 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: "0 0 8px 0" }}>📅 {selectedDate.split('-').reverse().join('.')} Randevuları</h3>
-            
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: "0 0 8px 0" }}>{t('randevuPage.timeline.title', { date: selectedDate.split('-').reverse().join('.') })}</h3>
+
             {appointments.length === 0 ? (
               <div className="glass" style={{ borderRadius: 24, padding: "40px", textAlign: "center", border: "1px dashed rgba(255,255,255,0.1)" }}>
                 <span style={{ fontSize: 48, filter: "grayscale(1) opacity(0.5)" }}>😴</span>
-                <p style={{ color: "var(--text-secondary)", fontSize: 14, fontWeight: 600, marginTop: 16 }}>Bugün için henüz planlanmış bir randevu yok.</p>
+                <p style={{ color: "var(--text-secondary)", fontSize: 14, fontWeight: 600, marginTop: 16 }}>{t('randevuPage.timeline.empty')}</p>
               </div>
             ) : (
               appointments.map((appt: any, i: number) => {
                 const palette = CARD_COLORS[i % CARD_COLORS.length];
                 const d = appt.date || '';
-                const t = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
-                const timeStr = t.substring(0, 5);
+                const rawTime = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
+                const timeStr = rawTime.substring(0, 5);
                 const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : getServiceName(appt.service_id);
 
                 return (
@@ -377,7 +400,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                           {palette.icon}
                         </div>
                         <div>
-                          <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || 'İsimsiz'}</h4>
+                          <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || t('randevuPage.timeline.unnamedCustomer')}</h4>
                           <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
                         </div>
                       </div>
@@ -419,24 +442,24 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, rgba(34,181,115,0.2), rgba(0,198,255,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 12 }}>
                 🪄
               </div>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>Yeni Randevu Ekle</h2>
-              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>Manuel olarak takvime bir kayıt girin</p>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>{t('randevuPage.modal.title')}</h2>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>{t('randevuPage.modal.subtitle')}</p>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Müşteri Adı</label>
-                <input 
-                  type="text" 
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.customerNameLabel')}</label>
+                <input
+                  type="text"
                   value={newAppt.name}
                   onChange={e => setNewAppt({...newAppt, name: e.target.value})}
-                  placeholder="Örn: Ahmet Yılmaz"
+                  placeholder={t('randevuPage.modal.customerNamePlaceholder')}
                   style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
                 />
               </div>
               
               <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Telefon Numarası</label>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.phoneLabel')}</label>
                 <input 
                   type="text" 
                   value={newAppt.phone}
@@ -448,26 +471,26 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
               <div style={{ display: "flex", gap: 16 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Hizmet Türü</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.serviceTypeLabel')}</label>
                   <select
                     value={newAppt.service}
                     onChange={e => setNewAppt({...newAppt, service: e.target.value, time: ''})}
                     style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
                   >
-                    <option value="">Seçiniz...</option>
+                    <option value="">{t('randevuPage.modal.selectPlaceholder')}</option>
                     {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Saat</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.timeLabel')}</label>
                   <select
                     value={newAppt.time}
                     onChange={e => setNewAppt({...newAppt, time: e.target.value})}
                     style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
                     disabled={!newAppt.service}
                   >
-                    <option value="">Saat Seçiniz...</option>
-                    {availableSlots.map(t => <option key={t} value={t}>{t}</option>)}
+                    <option value="">{t('randevuPage.modal.selectTimePlaceholder')}</option>
+                    {availableSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
                   </select>
                 </div>
               </div>
@@ -484,7 +507,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                   transition: "transform 0.2s"
                 }}
               >
-                {isSaving ? "Kaydediliyor..." : "Sihirli Takvime Ekle ✨"}
+                {isSaving ? t('randevuPage.modal.saving') : t('randevuPage.modal.submitButton')}
               </button>
             </div>
           </div>

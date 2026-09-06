@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import { createBusinessService, updateBusinessService, deleteBusinessService } from '@/actions/businessServices';
 
 export default function HizmetAyarlarıiClient({ initialServices, merchantId }: { initialServices: any[], merchantId: string }) {
+  const t = useTranslations();
   const [services, setServices] = useState(initialServices);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
@@ -18,10 +20,10 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
         }
         // Ideally we fetch the updated list here or rely on router.refresh() 
         // which server actions trigger via revalidatePath.
-        window.location.reload(); 
+        window.location.reload();
       } catch (err) {
         console.error(err);
-        alert('Hizmet kaydedilirken hata oluştu.');
+        alert(t("hizmetAyarlari.alerts.saveError"));
       }
     });
   };
@@ -29,15 +31,15 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm('Bu hizmeti silmek istediğinize emin misiniz?')) return;
-    
+    if (!confirm(t("hizmetAyarlari.alerts.confirmDelete"))) return;
+
     startTransition(async () => {
       try {
         await deleteBusinessService(id);
         window.location.reload();
       } catch (err) {
         console.error(err);
-        alert('Hizmet silinirken hata oluştu.');
+        alert(t("hizmetAyarlari.alerts.deleteError"));
       }
     });
   };
@@ -45,15 +47,15 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
   return (
     <div className="flex-1 overflow-y-auto p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-on-surface mb-2">Hizmet Ayarları</h1>
-        <p className="text-dark-muted text-sm">Müşterileriniz randevu alırken hizmetleri bu listeden seçebilir.</p>
+        <h1 className="text-2xl font-bold text-on-surface mb-2">{t("hizmetAyarlari.header.title")}</h1>
+        <p className="text-dark-muted text-sm">{t("hizmetAyarlari.header.subtitle")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl">
         {/* Sol Kolon */}
         <div className="lg:col-span-5 space-y-6">
           <div className="bg-dark-card border border-dark-border rounded-xl p-6">
-            <h3 className="text-sm font-medium text-on-surface mb-4">Aktif Hizmetler ({services.length}/10)</h3>
+            <h3 className="text-sm font-medium text-on-surface mb-4">{t("hizmetAyarlari.activeServices.title", { count: services.length })}</h3>
             <div className="space-y-3">
               {services.map((svc, index) => (
                 <div 
@@ -84,7 +86,7 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
 
             <button onClick={() => setSelectedService(null)} className="w-full py-4 mt-2 rounded-lg border border-dashed border-secondary/50 bg-secondary/5 text-secondary font-medium hover:bg-secondary/10 transition-colors flex items-center justify-center gap-2">
               <i className="fa-solid fa-plus"></i>
-              Yeni Hizmet Ekle
+              {t("hizmetAyarlari.addNewService")}
             </button>
           </div>
         </div>
@@ -93,18 +95,18 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
         <div className="lg:col-span-7">
           <div className="bg-dark-card border border-dark-border rounded-xl p-6 h-full flex flex-col">
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? 'Hizmet Düzenle' : 'Yeni Hizmet Ekle'}</h2>
-              <p className="text-sm text-dark-muted">Hizmet bilgilerini girin ve kaydedin.</p>
+              <h2 className="text-lg font-semibold text-on-surface mb-1">{selectedService ? t("hizmetAyarlari.form.editTitle") : t("hizmetAyarlari.form.newTitle")}</h2>
+              <p className="text-sm text-dark-muted">{t("hizmetAyarlari.form.description")}</p>
             </div>
-            
+
             <form action={handleSave} className="flex-1 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Hizmet Adı</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">{t("hizmetAyarlari.form.nameLabel")}</label>
                 <input name="name" key={`name-${selectedService?.id || 'new'}`} defaultValue={selectedService?.name || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="text" />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Fiyat</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">{t("hizmetAyarlari.form.priceLabel")}</label>
                 <div className="flex items-center gap-3">
                   <div className="flex-1">
                     <input name="price" key={`price-${selectedService?.id || 'new'}`} defaultValue={selectedService?.price || ''} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" step="0.01" />
@@ -119,21 +121,21 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
                   <span className="text-dark-muted">/</span>
                   <div className="w-40">
                     <select name="unit" key={`unit-${selectedService?.id || 'new'}`} defaultValue={selectedService?.unit || 'seans'} className="w-full bg-dark-surface border border-dark-border rounded-lg pl-4 pr-10 py-2.5 text-white appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500">
-                      <option value="seans">seans</option>
-                      <option value="saat">saat</option>
-                      <option value="adet">adet</option>
+                      <option value="seans">{t("hizmetAyarlari.form.unitOptions.session")}</option>
+                      <option value="saat">{t("hizmetAyarlari.form.unitOptions.hour")}</option>
+                      <option value="adet">{t("hizmetAyarlari.form.unitOptions.piece")}</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Açıklama (İsteğe bağlı)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">{t("hizmetAyarlari.form.descriptionLabel")}</label>
                 <textarea name="description" key={`desc-${selectedService?.id || 'new'}`} defaultValue={selectedService?.description || ''} className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-3 text-white placeholder-dark-muted/50 focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none" rows={3}></textarea>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-2">Tahmini Süre (Dakika)</label>
+                <label className="block text-sm font-medium text-on-surface mb-2">{t("hizmetAyarlari.form.durationLabel")}</label>
                 <input name="duration_minutes" key={`dur-${selectedService?.id || 'new'}`} defaultValue={selectedService?.duration_minutes || 30} required className="w-full bg-dark-surface border border-dark-border rounded-lg px-4 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-emerald-500" type="number" />
               </div>
               
@@ -141,10 +143,10 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
               <input type="hidden" name="is_visible" value="true" />
 
               <div className="mt-8 flex items-center justify-end gap-3 pt-4 border-t border-dark-border">
-                <button type="button" onClick={() => setSelectedService(null)} className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-dark-border/50 transition-colors text-sm font-medium">Temizle</button>
+                <button type="button" onClick={() => setSelectedService(null)} className="px-6 py-2.5 rounded-lg border border-dark-border bg-dark-surface text-on-surface hover:bg-dark-border/50 transition-colors text-sm font-medium">{t("hizmetAyarlari.form.clearButton")}</button>
                 <button type="submit" disabled={isPending} className="px-6 py-2.5 rounded-lg bg-secondary text-on-surface hover:bg-secondary/90 transition-colors text-sm font-medium flex items-center gap-2">
                   <i className="fa-regular fa-floppy-disk"></i>
-                  {isPending ? 'Kaydediliyor...' : 'Kaydet'}
+                  {isPending ? t("hizmetAyarlari.form.saveButton.saving") : t("hizmetAyarlari.form.saveButton.save")}
                 </button>
               </div>
             </form>

@@ -80,5 +80,862 @@
       "huysuz": "Grumpy",
       "sinirli": "Irritable"
     }
+  },
+  "aiAsistanPage": {
+    "header": {
+      "title": "Bot Character Management",
+      "subtitle": "Define the AI's personality and boundaries"
+    },
+    "connectedServices": {
+      "title": "Connected Services",
+      "googleDrive": {
+        "title": "Google Drive (Knowledge Base)",
+        "notConnected": "Not connected",
+        "connect": "Connect"
+      },
+      "whatsapp": {
+        "title": "WhatsApp",
+        "connected": "Connected",
+        "starting": "Starting",
+        "notConnected": "Not connected",
+        "connect": "Connect",
+        "refresh": "Refresh",
+        "processing": "Processing...",
+        "qrInstruction": "Open WhatsApp and scan the QR code from Linked Devices",
+        "orConnectWithNumber": "Or connect with a phone number",
+        "phonePlaceholder": "e.g. 90532...",
+        "getCode": "Get Code",
+        "confirmCodeLabel": "Confirm the WhatsApp Notification and Enter This Code:"
+      },
+      "toggleLabel": "WhatsApp Assistant"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "description": "For accurate calculation of appointments and working hours",
+      "options": {
+        "turkey": "Turkey (Europe/Istanbul)",
+        "uk": "United Kingdom (Europe/London)",
+        "germany": "Germany (Europe/Berlin)",
+        "usEast": "US East (America/New_York)",
+        "usWest": "US West (America/Los_Angeles)",
+        "uae": "UAE (Asia/Dubai)"
+      }
+    },
+    "appointmentModule": {
+      "title": "Appointment / Booking Feature",
+      "description": "If you turn this off, the AI won't try to book appointments — it will only respond based on your business info and instructions."
+    },
+    "customInstruction": {
+      "title": "Create Assistant Instructions",
+      "placeholder": "e.g. You are a barber shop assistant, provide pricing and take appointments..."
+    },
+    "saveButton": {
+      "saving": "Saving...",
+      "save": "Save Changes"
+    },
+    "liveTest": {
+      "title": "Live Test",
+      "emptyState": "Start a conversation with the assistant...",
+      "simulationStarted": "SIMULATION STARTED",
+      "inputPlaceholder": "Talk to the assistant..."
+    },
+    "links": {
+      "appointmentManagement": "AI Appointment Management",
+      "businessServices": "AI Business Services"
+    },
+    "alerts": {
+      "saveFailed": "Settings could not be saved: {error}",
+      "unknownError": "Unknown error",
+      "saveSuccess": "Settings saved successfully!",
+      "saveError": "An error occurred while saving settings.",
+      "enterPhone": "Please enter your phone number (e.g. 90532...)",
+      "qrFailed": "Could not get QR code: {error}",
+      "codeFailed": "Could not get code: {error}",
+      "sessionNotFound": "Session not found, please log in again.",
+      "chatError": "Error: {error}",
+      "unknownErrorChat": "Unknown Error",
+      "noResponse": "No response received.",
+      "systemError": "A system error occurred."
+    }
+  },
+  "hizmetAyarlari": {
+    "sessionNotFound": "Session not found.",
+    "header": {
+      "title": "Service Settings",
+      "subtitle": "Your customers can choose services from this list when booking an appointment."
+    },
+    "activeServices": {
+      "title": "Active Services ({count}/10)"
+    },
+    "addNewService": "Add New Service",
+    "form": {
+      "editTitle": "Edit Service",
+      "newTitle": "Add New Service",
+      "description": "Enter and save the service details.",
+      "nameLabel": "Service Name",
+      "priceLabel": "Price",
+      "unitOptions": {
+        "session": "session",
+        "hour": "hour",
+        "piece": "unit"
+      },
+      "descriptionLabel": "Description (Optional)",
+      "durationLabel": "Estimated Duration (Minutes)",
+      "clearButton": "Clear",
+      "saveButton": {
+        "saving": "Saving...",
+        "save": "Save"
+      }
+    },
+    "alerts": {
+      "saveError": "An error occurred while saving the service.",
+      "confirmDelete": "Are you sure you want to delete this service?",
+      "deleteError": "An error occurred while deleting the service."
+    }
+  },
+  "randevuPage": {
+    "header": {
+      "title": "AI Appointment Management",
+      "subtitle": "All your appointments are in the hands of your friendly assistant! ✨",
+      "addAppointmentButton": "Add New Appointment"
+    },
+    "calendar": {
+      "days": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      },
+      "months": {
+        "jan": "January",
+        "feb": "February",
+        "mar": "March",
+        "apr": "April",
+        "may": "May",
+        "jun": "June",
+        "jul": "July",
+        "aug": "August",
+        "sep": "September",
+        "oct": "October",
+        "nov": "November",
+        "dec": "December"
+      }
+    },
+    "heatmap": {
+      "title": "📊 Daily Density Map",
+      "legendBusy": "BUSY",
+      "legendFree": "FREE",
+      "rowLabels": {
+        "morning": "MORNING",
+        "noon": "NOON",
+        "evening": "EVENING"
+      },
+      "tip": "Your AI assistant checks this calendar when messaging your customers and automatically books your open time slots."
+    },
+    "timeline": {
+      "title": "📅 Appointments for {date}",
+      "empty": "No appointments have been scheduled for today yet.",
+      "unnamedCustomer": "Unnamed",
+      "unknownService": "Unknown Service"
+    },
+    "modal": {
+      "title": "Add New Appointment",
+      "subtitle": "Manually add an entry to the calendar",
+      "customerNameLabel": "Customer Name",
+      "customerNamePlaceholder": "e.g. Ahmet Yılmaz",
+      "phoneLabel": "Phone Number",
+      "serviceTypeLabel": "Service Type",
+      "selectPlaceholder": "Select...",
+      "timeLabel": "Time",
+      "selectTimePlaceholder": "Select a time...",
+      "submitButton": "Add to Magic Calendar ✨",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "missingFields": "Service, time, and phone number are required.",
+      "saveFailed": "Failed to save appointment: {error}"
+    }
+  },
+  "aiAsistanComponents": {
+    "liveTestPanel": {
+      "title": "Live Test",
+      "emptyState": "Start chatting with the assistant...",
+      "simulationStarted": "SIMULATION STARTED",
+      "inputPlaceholder": "Chat with the assistant..."
+    }
+  },
+  "aiMuhasebePage": {
+    "title": "AI Accounting",
+    "subtitle": "Manage your financial situation from a single screen.",
+    "heroTitle": "Financial Summary",
+    "heroSubtitle": "This Month's Performance",
+    "incomeThisMonth": "INCOME THIS MONTH",
+    "expenseThisMonth": "EXPENSE THIS MONTH",
+    "enterIncome": "ADD INCOME",
+    "enterExpense": "ADD EXPENSE",
+    "myBusiness": {
+      "title": "MY BUSINESS (PAST PERIODS)",
+      "description": "Access income, expense, and financial reports from past periods."
+    },
+    "paymentCalendar": {
+      "title": "PAYMENT CALENDAR",
+      "description": "View your upcoming payment and collection plans."
+    },
+    "aiAssistant": {
+      "title": "AI ASSISTANT",
+      "description": "Get support on financial matters from your AI assistant."
+    },
+    "accountantLink": {
+      "title": "ACCOUNTANT CONNECTION",
+      "description": "Link your account with your accountant and securely share your data."
+    },
+    "isletmem": {
+      "title": "My Business",
+      "subtitle": "Track your business's financial situation.",
+      "todayDate": "Today: July 3, 2026",
+      "periodJune2026": "June 2026",
+      "periodSep2022": "September 2022",
+      "totalBalance": "TOTAL BALANCE",
+      "decreaseFromLastMonth": "4.2% decrease compared to last month",
+      "incomes": "Income",
+      "expenses": "Expenses",
+      "invoices": "Invoices",
+      "filter": "Filter",
+      "searchPlaceholder": "Search...",
+      "addNew": "Add New",
+      "emptyState": "No records found for this category.",
+      "smartAnalysis": "Smart Analysis",
+      "analysisUnavailable": "Analysis could not be retrieved.",
+      "generateAnalysis": "Generate Analysis"
+    },
+    "muhasebecim": {
+      "title": "My Accountant",
+      "subtitle": "Connect with your accountant",
+      "connectToAdvisor": "Connect with Your Accountant",
+      "connectToAdvisorDescription": "Speed up your financial processes by securely sharing your data.",
+      "enterAccountantCode": "Enter Accountant Code",
+      "enterAccountantCodeDescription": "Link your account by entering the invitation code your accountant gave you.",
+      "codePlaceholder": "E.g.: ABC-12345",
+      "pleaseWait": "Please wait...",
+      "verify": "Verify",
+      "shareYourCode": "Share Your Own Code",
+      "shareYourCodeDescription": "If your accountant wants to invite you to the platform, share the code below with them. Have your accountant add me.",
+      "copiedAlert": "Copied: Your ID code has been copied to the clipboard.",
+      "codeVerified": "Code verified",
+      "connectFeaturesIntro": "If you connect with this accountant;",
+      "features": {
+        "invoicesShared": "Invoices are shared",
+        "incomeExpenseTransferred": "Income and expenses are transferred",
+        "documentRequestsReceived": "Document requests are received",
+        "aiAccountingWorksTogether": "AI Accounting works together"
+      },
+      "connecting": "Connecting...",
+      "connect": "Connect",
+      "connected": "Connected",
+      "accountantAvatarAlt": "Accountant Avatar",
+      "phoneNumber": "Phone Number",
+      "emailAddress": "Email Address",
+      "connectedSuccessMessage": "Your account has been successfully connected. All your documents, invoices, and financial data are securely synced with your accountant.",
+      "backToAccountingPanel": "Back to Accounting Panel",
+      "defaultFirmName": "Your Accountant",
+      "defaultRepresentative": "Accountant Representative",
+      "sampleFirmName": "Sample Accounting Firm",
+      "sampleAccountantName": "Sample Accountant",
+      "enterValidCodeAlert": "Please enter a valid accountant code."
+    },
+    "odemeTakvimi": {
+      "title": "Payment Calendar",
+      "subtitle": "Your income and expense transactions",
+      "incomes": "Income",
+      "expenses": "Expenses",
+      "incomeTransaction": "Income Transaction",
+      "expenseTransaction": "Expense Transaction",
+      "completed": "Completed",
+      "pending": "Pending",
+      "paid": "Paid",
+      "payable": "Payable",
+      "noIncomeRecords": "No income records found",
+      "noExpenseRecords": "No expense records found"
+    }
+  },
+  "veriGirisiPage": {
+    "header": {
+      "title": "AI Data Entry"
+    },
+    "transactionTypes": {
+      "income": "income",
+      "expense": "expense",
+      "assistant": "assistant"
+    },
+    "chat": {
+      "greetingAssistant": "Hello! How can I help you with financial matters?",
+      "greetingDocument": "Hello! You can record the transaction by uploading or typing an {type} document.",
+      "draftSaved": "Your transaction has been saved as a draft.",
+      "documentUploaded": "Document uploaded: {fileName}",
+      "documentAnalyzed": "The document was successfully analyzed and saved.",
+      "uploadedImageAlt": "Uploaded image",
+      "inputPlaceholder": "Send a message to Gemini..."
+    },
+    "loading": "Loading..."
+  },
+  "musteriler": {
+    "title": "Customers",
+    "subtitle": "Your entire customer portfolio and past appointments",
+    "empty": "No customers recorded yet.",
+    "appointmentCount": "{count} Appointments",
+    "lastVisit": "Last: {date}",
+    "pastAppointments": "Past Appointments",
+    "noAppointments": "No appointments recorded.",
+    "unknownService": "Unknown Service"
+  },
+  "profilPage": {
+    "loading": "Loading...",
+    "avatarAlt": "Avatar",
+    "header": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your business and tax information here."
+    },
+    "defaults": {
+      "otherCategory": "Other",
+      "fallbackBusinessName": "Business"
+    },
+    "messages": {
+      "avatarUpdated": "Profile photo updated.",
+      "avatarUploadError": "Photo upload error: {error}",
+      "noSession": "Session not found",
+      "profileUpdated": "Profile updated successfully!",
+      "errorPrefix": "Error: {error}"
+    },
+    "fields": {
+      "authorizedPerson": "Authorized Person's Full Name",
+      "authorizedPersonPlaceholder": "E.g.: John Smith",
+      "businessName": "Business Name",
+      "businessNamePlaceholder": "Enter your business name",
+      "email": "Email",
+      "phone": "Phone",
+      "phonePlaceholder": "Enter your phone number",
+      "storeCategory": "Store Category",
+      "storeCategoryPlaceholder": "E.g.: Cafe & Restaurant, Barber...",
+      "taxId": "Tax ID Number",
+      "taxIdPlaceholder": "Enter tax ID",
+      "taxOffice": "Tax Office",
+      "taxOfficePlaceholder": "Enter tax office",
+      "addressInfo": "Address Information",
+      "selectCountry": "Select Country",
+      "selectCityState": "Select City / State",
+      "selectDistrict": "Select District",
+      "fullAddressPlaceholder": "Enter your full address"
+    },
+    "actions": {
+      "saving": "Saving...",
+      "save": "Save Profile"
+    }
+  },
+  "loginPage": {
+    "alerts": {
+      "googleLoginError": "Google Sign-In Error: {error}",
+      "unknownError": "An unknown error occurred. Please check your environment variables."
+    },
+    "hero": {
+      "titleLine1": "The nerve center",
+      "titleLine2": "of your business.",
+      "subtitle": "Manage all your operations, tasks, and workflows from one place.",
+      "floatingCard": {
+        "title": "New Task",
+        "status": "Assigned"
+      },
+      "copyright": "© {year} Workigom Inc. All rights reserved."
+    },
+    "form": {
+      "loginTitle": "Sign in to your account",
+      "signupTitle": "Create an Account",
+      "loginSubtitle": "Sign in to access your workflows.",
+      "signupSubtitle": "Join the Workigom Flow world.",
+      "googleRedirecting": "Redirecting...",
+      "googleLoginButton": "Sign in with Google",
+      "googleSignupButton": "Sign up with Google",
+      "orWithEmail": "or with email",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "example@company.com",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot my password",
+      "processing": "Processing...",
+      "loginButton": "Sign In",
+      "signupButton": "Sign Up",
+      "noAccountYet": "Don't have an account yet?",
+      "alreadyHaveAccount": "Already have an account?",
+      "createFreeAccount": "Create a Free Account"
+    }
+  },
+  "analizPage": {
+    "platforms": {
+      "all": "All"
+    },
+    "timeRanges": {
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days",
+      "last90Days": "Last 90 Days",
+      "last1Year": "Last 1 Year"
+    },
+    "header": {
+      "title": "Analytics & Insights",
+      "subtitle": "Review the performance of all your social media channels in detail"
+    },
+    "tabs": {
+      "posting": "Post Analytics",
+      "inbox": "Inbox Analytics"
+    },
+    "posting": {
+      "totalPosts": "TOTAL POSTS",
+      "totalComments": "TOTAL COMMENTS",
+      "totalFollowers": "TOTAL FOLLOWERS",
+      "totalReviews": "REVIEWS",
+      "engagement": {
+        "title": "Engagement & Impressions",
+        "subtitle": "Views and likes change over the selected period",
+        "views": "Views",
+        "likes": "Likes",
+        "noData": "No chart data found."
+      },
+      "followerGrowth": {
+        "title": "Follower Growth",
+        "subtitle": "Net follower change over the selected period",
+        "followers": "Followers"
+      },
+      "demographics": {
+        "title": "Demographics Analysis"
+      }
+    },
+    "inbox": {
+      "messagesReceived": "MESSAGES RECEIVED",
+      "messagesSent": "MESSAGES SENT",
+      "readRate": "READ RATE",
+      "avgResponseLabel": "AVG. RESPONSE TIME",
+      "avgResponseValue": "1.2 min",
+      "responseTimeAnalysis": {
+        "title": "Response Time Analysis",
+        "subtitle": "How quickly you first reply to messages is critical for customer satisfaction.",
+        "greatSpeed": "GREAT SPEED"
+      }
+    }
+  },
+  "analizDetay": {
+    "title": "Analytics (Live)",
+    "tabs": {
+      "posting": "Post Analytics",
+      "inbox": "Inbox Analytics"
+    },
+    "filters": {
+      "allPlatforms": "All platforms",
+      "last30Days": "Last 30 days",
+      "export": "Export"
+    },
+    "metrics": {
+      "received": {
+        "label": "Received",
+        "caption": "Total messages"
+      },
+      "sent": {
+        "label": "Sent",
+        "caption": "Total messages"
+      },
+      "read": {
+        "label": "Read",
+        "caption": "No data"
+      },
+      "avgResponse": {
+        "label": "Avg. Response",
+        "value": "12 min",
+        "caption": "Average time"
+      }
+    },
+    "responseTimeAnalysis": {
+      "title": "Response Time Analysis",
+      "subtitle": "Time to first reply on customer messages",
+      "periodButton": "Daily",
+      "gaugeLabel": "Average Response Time",
+      "chartTitle": "Average Response Time by Day",
+      "legend": "Average Response Time (min)"
+    },
+    "platformDistribution": {
+      "title": "Platform Distribution",
+      "total": "Total",
+      "webLiveSupport": "Web Live Chat",
+      "viewDetails": "View Details"
+    },
+    "activityHeatmap": {
+      "title": "Activity by Hour",
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      },
+      "low": "Low",
+      "high": "High"
+    },
+    "recentMessages": {
+      "title": "Recent Messages",
+      "columns": {
+        "platform": "Platform",
+        "customer": "Customer",
+        "message": "Message",
+        "date": "Date",
+        "status": "Status",
+        "responseTime": "Response Time"
+      },
+      "status": {
+        "read": "Read"
+      },
+      "viewAll": "View All"
+    }
+  },
+  "gelenKutusuPage": {
+    "header": {
+      "title": "Inbox",
+      "subtitle": "Manage all your customer interactions from here.",
+      "selectedCount": "{count} Selected",
+      "selectMode": "Select"
+    },
+    "tabs": {
+      "messages": "Messages (DM)",
+      "comments": "Comments",
+      "reviews": "Reviews",
+      "notifications": "Notifications"
+    },
+    "actions": {
+      "selectAll": "Select All",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "reply": "Reply",
+      "hide": "Hide",
+      "send": "Send"
+    },
+    "messages": {
+      "empty": "No messages yet.",
+      "inputPlaceholder": "Type a message...",
+      "selectConversationPrompt": "Select a conversation to start messaging.",
+      "tapToSeeLastMessage": "Tap to see the last message",
+      "confirmDeleteSelected": "Are you sure you want to delete the selected {count} item(s)?"
+    },
+    "comments": {
+      "empty": "No comments yet.",
+      "postDetailNotFound": "Post details not found.",
+      "latestLabel": "Latest",
+      "fallbackUsername": "User",
+      "fallbackReplyAuthor": "Comment",
+      "storeLabel": "Store",
+      "youBadge": "You",
+      "replyPlaceholder": "Write a reply..."
+    },
+    "reviews": {
+      "empty": "No reviews yet."
+    },
+    "notifications": {
+      "empty": "No notifications yet."
+    },
+    "privateReply": {
+      "title": "Send Private Message (DM)",
+      "description": "Send a private message to @{name}:",
+      "placeholder": "Write your message here...",
+      "successAlert": "Message sent successfully!",
+      "errorAlertPrefix": "Error sending message: "
+    }
+  },
+  "sosyalMedyaPage": {
+    "errors": {
+      "connectError": "An error occurred during the connection",
+      "noSession": "Session not found",
+      "connectLinkError": "An error occurred while getting the account connection link",
+      "disconnectError": "An error occurred while disconnecting"
+    },
+    "confirmDisconnect": "Are you sure you want to disconnect this account?",
+    "quickLinks": {
+      "allPosts": {
+        "title": "All Posts",
+        "subtitle": "Manage your publishing flow"
+      },
+      "shareCenter": {
+        "title": "Share Center",
+        "subtitle": "Share the content you've created"
+      }
+    },
+    "connectedAccounts": {
+      "title": "Your Connected Accounts",
+      "subtitle": "Manage all your channels from one place",
+      "syncButton": "Sync"
+    },
+    "status": {
+      "connected": "Connected",
+      "activeAndSynced": "Active and synced"
+    },
+    "accountSuffix": "_account",
+    "disconnectButton": "Disconnect",
+    "noConnectedAccounts": "You don't have any connected social media accounts.",
+    "newAccount": {
+      "title": "Connect a New Account",
+      "subtitle": "Reach your audience on other platforms"
+    },
+    "notConnectedYet": "Not connected yet",
+    "connecting": "Connecting...",
+    "connectButton": "Connect Account",
+    "allPlatformsConnected": "You've connected all the popular platforms!"
+  },
+  "sosyalMedyaInbox": {
+    "tapToSeeLastMessage": "Tap to see the last message",
+    "title": "Inbox",
+    "tabs": {
+      "messages": "Messages",
+      "comments": "Comments"
+    },
+    "noMessagesInTab": "There are no messages in this tab.",
+    "noCommentsInTab": "There are no comments in this tab.",
+    "messagePlaceholder": "Type a message...",
+    "selectConversation": "Select a conversation to view it.",
+    "commentsInSidebar": "Comments are shown in the list on the left."
+  },
+  "postsPage": {
+    "filters": {
+      "all": "All",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed"
+    },
+    "bulkDeleteButton": "Delete {count} Selected",
+    "status": {
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed",
+      "unknown": "Unknown"
+    },
+    "dateNotSpecified": "Not specified",
+    "defaultProfileName": "Workigom Flow Profile",
+    "actions": {
+      "retry": "Retry",
+      "analyze": "Analytics",
+      "delete": "Delete"
+    },
+    "emptyState": "No posts found for this status.",
+    "deleteModal": {
+      "title": "Delete post",
+      "bulkDescription": "Choose how you want to delete {count} posts.",
+      "singleDescription": "Choose how you want to delete this post.",
+      "panelOnlyTitle": "Delete from Workigom Flow only",
+      "panelOnlyDescription": "It will be removed from your Workigom Flow panel. The post will remain published on Facebook and Instagram.",
+      "platformsTitle": "Delete from platforms and Workigom Flow",
+      "platformsDescription": "It will be permanently deleted from Facebook and removed from Workigom Flow.",
+      "instagramWarning": "Since Instagram doesn't support deletion via its API, you may need to delete it manually on Instagram."
+    },
+    "errors": {
+      "bulkDeleteFailed": "An error occurred while deleting the posts: {message}",
+      "deleteFailed": "An error occurred while deleting the post: {message}",
+      "genericError": "An error occurred while processing your request."
+    }
+  },
+  "sharePage": {
+    "header": {
+      "title": "Sharing Center"
+    },
+    "contentInput": {
+      "label": "What Shall We Share?",
+      "placeholder": "E.g.: An energetic post for our new summer collection..."
+    },
+    "imageContainer": {
+      "cropButton": "Crop (Instagram 4:5)",
+      "selectTitle": "Select or Generate Image & Video",
+      "selectSubtitle": "Tap to add from your gallery."
+    },
+    "captionEditor": {
+      "title": "Content Text",
+      "editPlaceholder": "AI-generated text or your own text...",
+      "emptyPreview": "AI-generated content text will appear here. Advanced language models are preparing text tailored to your audience...",
+      "aiPromptPlaceholder": "Generate text that matches the image...",
+      "addTagButton": "Add tag"
+    },
+    "accounts": {
+      "label": "Connected Accounts (Platforms)",
+      "noneConnected": "No account connected yet.",
+      "connectLink": "Connect Account"
+    },
+    "platforms": {
+      "storyWarning": "Content disappears after 24 hours. Media required.",
+      "firstCommentLabel": "First Comment (Optional)",
+      "firstCommentPlaceholder": "Enter the link or note you want to add to the first comment...",
+      "customCaptionLabel": "Custom Caption (Optional)",
+      "customCaptionPlaceholder": "Leave empty to use the main text..."
+    },
+    "instagram": {
+      "aiLabelTitle": "Mark as AI-generated",
+      "aiLabelDescription": "Adds Instagram's AI content label. Use this when the media is entirely or largely created with AI."
+    },
+    "linkedin": {
+      "firstCommentPlaceholder": "Add a first comment to boost engagement."
+    },
+    "twitter": {
+      "threadToggle": "Create a Thread",
+      "threadDescription": "The main text becomes the first tweet. You can add more tweets to the thread."
+    },
+    "tiktok": {
+      "saveToInboxTitle": "Save to TikTok drafts",
+      "saveToInboxDescription": "The video won't be published directly, it will be uploaded as a draft. You can add music via TikTok before publishing if you like."
+    },
+    "pinterest": {
+      "titleLabel": "Title (Optional)",
+      "titlePlaceholder": "Enter a custom title for your Pin...",
+      "titleHint": "Not required. If left empty, the first line of the main text is used as the title.",
+      "linkLabel": "Destination Link (Optional)",
+      "linkHint": "Sets the URL the Pin will link to when clicked."
+    },
+    "youtube": {
+      "titlePlaceholder": "Video title...",
+      "descriptionLabel": "Video Description (Optional)"
+    },
+    "publishing": {
+      "label": "publishing",
+      "scheduledTab": "Scheduled",
+      "nowTab": "Now",
+      "scheduledDateTimeLabel": "Scheduled Publish (Date & Time)",
+      "timezoneLabel": "Timezone",
+      "nowInfo": "The post will be published immediately on all selected platforms."
+    },
+    "publishButton": {
+      "loading": "Uploading... {progress}%",
+      "now": "Share Now"
+    },
+    "errors": {
+      "noText": "Please enter some text to share.",
+      "noPlatform": "Please select at least one platform.",
+      "invalidDateFormat": "Invalid date format. Please enter it as 'DAY.MONTH.YEAR HOUR:MINUTE' (e.g. 16.08.2026 16:26).",
+      "publishFailed": "An error occurred while sharing the post: {message}",
+      "captionGenerationFailed": "Error: {message}"
+    },
+    "success": {
+      "published": "Post shared successfully!"
+    }
+  },
+  "dashboardHome": {
+    "aiSummary": {
+      "eyebrow": "AI ASSISTANT · DAILY SUMMARY",
+      "messagesComments": "Today, <msg>{messages} messages</msg> and <cmt>{comments} comments</cmt> were answered automatically.",
+      "trendUp": "Your social media engagement grew by <pct>{trend}%</pct>!",
+      "trendAnalyzing": "Analyzing your social media engagement from the last 7 days.",
+      "appointmentsToday": "You have <ap>{count} appointments</ap> today.",
+      "noAppointmentsToday": "You have no appointments scheduled for today.",
+      "statusActive": "ACTIVE",
+      "statusInactive": "OFF"
+    },
+    "finance": {
+      "monthlyIncome": "Monthly Income",
+      "monthlyExpense": "Monthly Expense"
+    },
+    "invoiceScanner": {
+      "eyebrow": "INVOICE SCANNER · LATEST INVOICE",
+      "imageAlt": "Invoice document",
+      "fields": {
+        "supplier": "Supplier",
+        "date": "Date",
+        "vat": "VAT",
+        "total": "Total"
+      },
+      "newInvoiceButton": "+ Scan New Invoice"
+    },
+    "appointments": {
+      "label": "TODAY'S APPOINTMENTS",
+      "empty": "No appointments scheduled for today.",
+      "defaultTitle": "Appointment"
+    },
+    "social": {
+      "allAccounts": "All Accounts",
+      "liveAnalysis": "LIVE ANALYTICS",
+      "totalFollowers": "Total Follower Base",
+      "engagementTrend": "Engagement Trend",
+      "high": "High"
+    },
+    "recentActivities": {
+      "title": "Recent Activity",
+      "viewAll": "VIEW ALL",
+      "empty": "No recent activity."
+    },
+    "activityTypes": {
+      "message": "MESSAGE",
+      "comment": "COMMENT"
+    },
+    "defaults": {
+      "payment": "Payment",
+      "invoicePayment": "Invoice Payment",
+      "customer": "Customer",
+      "user": "User"
+    },
+    "relativeTime": {
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "commLogs": {
+      "title": "Communication Reports",
+      "columns": {
+        "channel": "Channel",
+        "dateTime": "Date/Time",
+        "status": "Status",
+        "action": "Action"
+      },
+      "status": {
+        "success": "Successful",
+        "pending": "Pending"
+      },
+      "review": "Review",
+      "empty": "No reports found."
+    }
+  },
+  "cropperModal": {
+    "title": "Crop Image (Instagram)",
+    "cancel": "Cancel",
+    "processing": "Cropping...",
+    "applyButton": "Crop & Apply",
+    "errors": {
+      "cropFailed": "Failed to crop the image."
+    }
+  },
+  "aiChatInput": {
+    "placeholder": "Type a message...",
+    "uploadFile": "Upload a file",
+    "selectDocument": "Select a document"
+  },
+  "aiDataResetPanel": {
+    "dangerZone": {
+      "title": "⚠️ Danger Zone",
+      "subtitle": "These actions cannot be undone."
+    },
+    "softReset": {
+      "title": "Reset Test Data",
+      "description": "Customers, appointments, chat history, notifications, and social media messages/comments will be deleted. Your settings (persona, services, connections) are preserved.",
+      "button": "Reset",
+      "warning": "All customer, appointment, and chat history will be permanently deleted.",
+      "doneAlert": "Data has been reset."
+    },
+    "hardReset": {
+      "title": "Reset to Factory Settings",
+      "description": "In addition to the above, your persona selection and service list will also be deleted. Your WhatsApp/social media connections are preserved and won't need to be reconnected.",
+      "button": "Factory Reset",
+      "warning": "All data AND your settings (persona, services) will be permanently deleted. Your business will need to be set up from scratch.",
+      "doneAlert": "Reset to factory settings."
+    },
+    "confirmModal": {
+      "instructionRich": "Type <b>{word}</b> to confirm:",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "confirmButton": "Yes, Reset"
+    },
+    "alerts": {
+      "errorPrefix": "Error: {error}"
+    }
   }
 }

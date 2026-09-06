@@ -3,8 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function OdemeTakvimiPage() {
+  const t = useTranslations();
+  const locale = useLocale();
   const [transactions, setTransactions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
@@ -29,7 +32,7 @@ export default function OdemeTakvimiPage() {
     fetchTransactions();
   }, []);
 
-  const formatCurrency = (amount: number) => Number(amount).toLocaleString('tr-TR');
+  const formatCurrency = (amount: number) => Number(amount).toLocaleString(locale);
 
   // Filter and split
   const incomes = transactions.filter(t => t.type === 'income' || t.type === 'sales');
@@ -44,8 +47,8 @@ export default function OdemeTakvimiPage() {
           <i className="fa-solid fa-arrow-left"></i>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-on-surface tracking-wide">Ödeme Takvimi</h1>
-          <p className="text-sm text-on-surface-variant">Gelir ve gider işlemleriniz</p>
+          <h1 className="text-2xl font-bold text-on-surface tracking-wide">{t("aiMuhasebePage.odemeTakvimi.title")}</h1>
+          <p className="text-sm text-on-surface-variant">{t("aiMuhasebePage.odemeTakvimi.subtitle")}</p>
         </div>
       </div>
 
@@ -58,7 +61,7 @@ export default function OdemeTakvimiPage() {
               <div className="w-8 h-8 rounded-full bg-[#22B573]/20 flex items-center justify-center">
                 <i className="fa-solid fa-arrow-trend-up text-[#22B573]"></i>
               </div>
-              <h2 className="text-[#22B573] font-bold text-lg tracking-wide uppercase">Gelirler</h2>
+              <h2 className="text-[#22B573] font-bold text-lg tracking-wide uppercase">{t("aiMuhasebePage.odemeTakvimi.incomes")}</h2>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -74,15 +77,15 @@ export default function OdemeTakvimiPage() {
                       {new Date(item.date || item.created_at).getDate().toString().padStart(2, '0')}
                     </span>
                     <span className="text-[#22B573]/70 text-xs font-semibold uppercase">
-                      {new Date(item.date || item.created_at).toLocaleString('tr-TR', { month: 'short' })}
+                      {new Date(item.date || item.created_at).toLocaleString(locale, { month: 'short' })}
                     </span>
                   </div>
                   <div className="flex-1 p-4 flex flex-col justify-center">
-                    <h3 className="text-on-surface font-semibold truncate mb-1">{item.title || item.name || 'Gelir İşlemi'}</h3>
+                    <h3 className="text-on-surface font-semibold truncate mb-1">{item.title || item.name || t("aiMuhasebePage.odemeTakvimi.incomeTransaction")}</h3>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-[#22B573] font-bold text-lg">+₺{formatCurrency(item.amount)}</span>
                       <span className="text-xs px-2 py-1 rounded bg-[#22B573]/10 text-[#22B573] border border-[#22B573]/20">
-                        {item.status === 'completed' ? 'Tamamlandı' : 'Beklemede'}
+                        {item.status === 'completed' ? t("aiMuhasebePage.odemeTakvimi.completed") : t("aiMuhasebePage.odemeTakvimi.pending")}
                       </span>
                     </div>
                   </div>
@@ -91,7 +94,7 @@ export default function OdemeTakvimiPage() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-on-surface-variant/50">
                 <i className="fa-solid fa-money-bill-wave text-4xl mb-3"></i>
-                <p>Gelir kaydı bulunmuyor</p>
+                <p>{t("aiMuhasebePage.odemeTakvimi.noIncomeRecords")}</p>
               </div>
             )}
           </div>
@@ -104,7 +107,7 @@ export default function OdemeTakvimiPage() {
               <div className="w-8 h-8 rounded-full bg-[#EF4444]/20 flex items-center justify-center">
                 <i className="fa-solid fa-arrow-trend-down text-[#EF4444]"></i>
               </div>
-              <h2 className="text-[#EF4444] font-bold text-lg tracking-wide uppercase">Giderler</h2>
+              <h2 className="text-[#EF4444] font-bold text-lg tracking-wide uppercase">{t("aiMuhasebePage.odemeTakvimi.expenses")}</h2>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -120,15 +123,15 @@ export default function OdemeTakvimiPage() {
                       {new Date(item.date || item.created_at).getDate().toString().padStart(2, '0')}
                     </span>
                     <span className="text-[#EF4444]/70 text-xs font-semibold uppercase">
-                      {new Date(item.date || item.created_at).toLocaleString('tr-TR', { month: 'short' })}
+                      {new Date(item.date || item.created_at).toLocaleString(locale, { month: 'short' })}
                     </span>
                   </div>
                   <div className="flex-1 p-4 flex flex-col justify-center">
-                    <h3 className="text-on-surface font-semibold truncate mb-1">{item.title || item.name || 'Gider İşlemi'}</h3>
+                    <h3 className="text-on-surface font-semibold truncate mb-1">{item.title || item.name || t("aiMuhasebePage.odemeTakvimi.expenseTransaction")}</h3>
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-[#EF4444] font-bold text-lg">-₺{formatCurrency(item.amount)}</span>
                       <span className="text-xs px-2 py-1 rounded bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/20">
-                        {item.status === 'completed' ? 'Ödendi' : 'Ödenecek'}
+                        {item.status === 'completed' ? t("aiMuhasebePage.odemeTakvimi.paid") : t("aiMuhasebePage.odemeTakvimi.payable")}
                       </span>
                     </div>
                   </div>
@@ -137,7 +140,7 @@ export default function OdemeTakvimiPage() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-on-surface-variant/50">
                 <i className="fa-solid fa-file-invoice text-4xl mb-3"></i>
-                <p>Gider kaydı bulunmuyor</p>
+                <p>{t("aiMuhasebePage.odemeTakvimi.noExpenseRecords")}</p>
               </div>
             )}
           </div>

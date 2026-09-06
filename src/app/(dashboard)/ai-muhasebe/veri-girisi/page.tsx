@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import AiChatInput from "@/components/chat/AiChatInput";
 
 interface Message {
@@ -13,6 +14,7 @@ interface Message {
 }
 
 function ChatScreen() {
+ const t = useTranslations();
  const searchParams = useSearchParams();
  const typeParam = searchParams.get("type");
  let transactionType = typeParam === "gelir" ? "gelir" : "gider";
@@ -20,9 +22,13 @@ function ChatScreen() {
  transactionType = "asistan";
  }
 
- const initialMessage = transactionType === "asistan" 
- ? "Merhaba! Finansal konularda size nasıl yardımcı olabilirim?" 
- : `Merhaba! Bir ${transactionType} belgesi yükleyerek veya yazarak işlemi kaydedebilirsiniz.`;
+ const transactionTypeLabel = transactionType === "gelir"
+ ? t("veriGirisiPage.transactionTypes.income")
+ : t("veriGirisiPage.transactionTypes.expense");
+
+ const initialMessage = transactionType === "asistan"
+ ? t("veriGirisiPage.chat.greetingAssistant")
+ : t("veriGirisiPage.chat.greetingDocument", { type: transactionTypeLabel });
 
  const [messages, setMessages] = useState<Message[]>([
  {
@@ -52,7 +58,7 @@ function ChatScreen() {
  setLoading(true);
  // Simulate AI response delay
  setTimeout(() => {
- addMessage("İşleminiz taslak olarak kaydedildi.", "ai");
+ addMessage(t("veriGirisiPage.chat.draftSaved"), "ai");
  setLoading(false);
  }, 1500);
  };
@@ -65,12 +71,12 @@ function ChatScreen() {
  if (isImage) {
  addMessage(fileUrl, "user", true);
  } else {
- addMessage(`Belge Yüklendi: ${file.name}`, "user");
+ addMessage(t("veriGirisiPage.chat.documentUploaded", { fileName: file.name }), "user");
  }
 
  // Simulate AI response delay
  setTimeout(() => {
- addMessage("Belge başarıyla analiz edildi ve kaydedildi.", "ai");
+ addMessage(t("veriGirisiPage.chat.documentAnalyzed"), "ai");
  setLoading(false);
  }, 2000);
  };
@@ -108,9 +114,9 @@ function ChatScreen() {
  <span className="material-symbols-outlined">arrow_back</span>
  </Link>
  <h1 className="text-on-surface font-semibold text-lg tracking-wide flex-1">
- AI Veri Girişi{" "}
+ {t("veriGirisiPage.header.title")}{" "}
  <span className="text-secondary/50 text-sm font-normal ml-2">
- ({transactionType})
+ ({transactionType === "asistan" ? t("veriGirisiPage.transactionTypes.assistant") : transactionTypeLabel})
  </span>
  </h1>
  </div>
@@ -134,7 +140,7 @@ function ChatScreen() {
  // eslint-disable-next-line @next/next/no-img-element
  <img
  src={msg.text}
- alt="Yüklenen görsel"
+ alt={t("veriGirisiPage.chat.uploadedImageAlt")}
  className="w-48 h-48 object-cover rounded-lg"
  />
  ) : (
@@ -171,7 +177,7 @@ function ChatScreen() {
  inputText={inputText}
  setInputText={setInputText}
  handleSend={handleSendText}
- placeholder="Gemini'ye mesaj gönderin..."
+ placeholder={t("veriGirisiPage.chat.inputPlaceholder")}
  />
  </div>
  </div>
@@ -179,11 +185,12 @@ function ChatScreen() {
 }
 
 export default function AiVeriGirisiPage() {
+ const t = useTranslations();
  return (
  <Suspense
  fallback={
  <div className="flex-1 bg-[#17151A] flex items-center justify-center">
- <div className="text-secondary">Yükleniyor...</div>
+ <div className="text-secondary">{t("veriGirisiPage.loading")}</div>
  </div>
  }
  >

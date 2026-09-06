@@ -2,10 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import styles from './page.module.css';
 import { createClient } from "@/lib/supabase/client";
 
 export default function AiMuhasebePage() {
+  const t = useTranslations();
+  const locale = useLocale();
   const [stats, setStats] = useState({ income: 0, expense: 0 });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -76,7 +79,7 @@ export default function AiMuhasebePage() {
   }, []);
 
   const formatCurrency = (amount: number) => {
-    return Number(amount).toLocaleString('tr-TR');
+    return Number(amount).toLocaleString(locale);
   };
 
   return (
@@ -87,15 +90,15 @@ export default function AiMuhasebePage() {
           <i className="fa-solid fa-wallet text-2xl text-primary"></i>
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">AI Muhasebe</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Finansal durumunuzu tek ekranda yönetin.</p>
+          <h1 className="text-2xl font-bold text-on-surface">{t("aiMuhasebePage.title")}</h1>
+          <p className="text-sm text-on-surface-variant mt-1">{t("aiMuhasebePage.subtitle")}</p>
         </div>
       </div>
 
       {/* Hero Financial Summary Card */}
       <div className={`rounded-2xl border border-primary/30 ${styles.heroBg} p-8 relative overflow-hidden flex flex-col justify-center min-h-[160px]`}>
-        <h2 className="text-3xl font-bold text-primary relative z-10 mb-2">Finansal Özet</h2>
-        <p className="text-on-surface-variant relative z-10">Bu Ayki Performans</p>
+        <h2 className="text-3xl font-bold text-primary relative z-10 mb-2">{t("aiMuhasebePage.heroTitle")}</h2>
+        <p className="text-on-surface-variant relative z-10">{t("aiMuhasebePage.heroSubtitle")}</p>
       </div>
 
       {/* Income & Expense Stats */}
@@ -106,7 +109,7 @@ export default function AiMuhasebePage() {
             <i className="fa-solid fa-arrow-trend-up text-primary text-xl"></i>
           </div>
           <div>
-            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">BU AY GELİR</p>
+            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">{t("aiMuhasebePage.incomeThisMonth")}</p>
             {isLoading ? (
               <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
             ) : (
@@ -120,7 +123,7 @@ export default function AiMuhasebePage() {
             <i className="fa-solid fa-arrow-trend-down text-[#C2478D] text-xl"></i>
           </div>
           <div>
-            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">BU AY GİDER</p>
+            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">{t("aiMuhasebePage.expenseThisMonth")}</p>
             {isLoading ? (
               <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
             ) : (
@@ -134,11 +137,11 @@ export default function AiMuhasebePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Link href="/ai-muhasebe/veri-girisi?type=gelir" className="w-full py-4 rounded-xl border border-[#1F2937] bg-surface-container/50 hover:bg-surface-container flex items-center justify-center gap-3 transition-colors group">
           <i className="fa-solid fa-circle-plus text-primary text-xl group-hover:scale-110 transition-transform"></i>
-          <span className="text-primary font-semibold tracking-wide">GELİR GİR</span>
+          <span className="text-primary font-semibold tracking-wide">{t("aiMuhasebePage.enterIncome")}</span>
         </Link>
         <Link href="/ai-muhasebe/veri-girisi?type=gider" className="w-full py-4 rounded-xl border border-[#1F2937] bg-surface-container/50 hover:bg-surface-container flex items-center justify-center gap-3 transition-colors group">
           <i className="fa-solid fa-circle-minus text-[#C2478D] text-xl group-hover:scale-110 transition-transform"></i>
-          <span className="text-[#C2478D] font-semibold tracking-wide">GİDER GİR</span>
+          <span className="text-[#C2478D] font-semibold tracking-wide">{t("aiMuhasebePage.enterExpense")}</span>
         </Link>
       </div>
 
@@ -148,8 +151,8 @@ export default function AiMuhasebePage() {
           <div className="flex items-center gap-4">
             <i className="fa-solid fa-clock-rotate-left text-primary text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-primary tracking-wide mb-1 uppercase">İŞLETMEM (GEÇMİŞ DÖNEMLER)</h3>
-              <p className="text-xs text-on-surface-variant">Geçmiş dönemlerin gelir, gider ve finansal raporlarına erişin.</p>
+              <h3 className="text-sm font-semibold text-primary tracking-wide mb-1 uppercase">{t("aiMuhasebePage.myBusiness.title")}</h3>
+              <p className="text-xs text-on-surface-variant">{t("aiMuhasebePage.myBusiness.description")}</p>
             </div>
           </div>
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-primary transition-colors"></i>
@@ -159,8 +162,8 @@ export default function AiMuhasebePage() {
           <div className="flex items-center gap-4">
             <i className="fa-solid fa-calendar-days text-[#E8A8CD] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">ÖDEME TAKVİMİ</h3>
-              <p className="text-xs text-on-surface-variant">Yaklaşan ödeme ve tahsilat planlarınızı görüntüleyin.</p>
+              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">{t("aiMuhasebePage.paymentCalendar.title")}</h3>
+              <p className="text-xs text-on-surface-variant">{t("aiMuhasebePage.paymentCalendar.description")}</p>
             </div>
           </div>
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#E8A8CD] transition-colors"></i>
@@ -170,8 +173,8 @@ export default function AiMuhasebePage() {
           <div className="flex items-center gap-4">
             <i className="fa-solid fa-wand-magic-sparkles text-[#E8A8CD] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">AI ASİSTAN</h3>
-              <p className="text-xs text-on-surface-variant">Yapay zeka asistanınızla finansal konularda destek alın.</p>
+              <h3 className="text-sm font-semibold text-[#E8A8CD] tracking-wide mb-1 uppercase">{t("aiMuhasebePage.aiAssistant.title")}</h3>
+              <p className="text-xs text-on-surface-variant">{t("aiMuhasebePage.aiAssistant.description")}</p>
             </div>
           </div>
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#E8A8CD] transition-colors"></i>
@@ -181,8 +184,8 @@ export default function AiMuhasebePage() {
           <div className="flex items-center gap-4">
             <i className="fa-solid fa-key text-[#FF7A59] text-xl w-6 text-center"></i>
             <div>
-              <h3 className="text-sm font-semibold text-[#FF7A59] tracking-wide mb-1 uppercase">MUHASEBECİ BAĞLANTISI</h3>
-              <p className="text-xs text-on-surface-variant">Mali müşavirinizle hesabınızı bağlayın ve verilerinizi güvenle paylaşın.</p>
+              <h3 className="text-sm font-semibold text-[#FF7A59] tracking-wide mb-1 uppercase">{t("aiMuhasebePage.accountantLink.title")}</h3>
+              <p className="text-xs text-on-surface-variant">{t("aiMuhasebePage.accountantLink.description")}</p>
             </div>
           </div>
           <i className="fa-solid fa-chevron-right text-on-surface-variant group-hover:text-[#FF7A59] transition-colors"></i>

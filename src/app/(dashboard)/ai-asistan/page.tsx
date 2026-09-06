@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
@@ -37,6 +38,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
 }
 
 export default function BotScreen() {
+  const t = useTranslations();
   const supabase = createClient();
   const [botConfig, setBotConfig] = useState({
     whatsapp: false,
@@ -154,14 +156,14 @@ export default function BotScreen() {
       });
 
       if (!result.success) {
-        alert(`Ayarlar kaydedilemedi: ${result.error ?? 'Bilinmeyen hata'}`);
+        alert(t("aiAsistanPage.alerts.saveFailed", { error: result.error ?? t("aiAsistanPage.alerts.unknownError") }));
         return;
       }
 
-      alert('Ayarlar başarıyla kaydedildi!');
+      alert(t("aiAsistanPage.alerts.saveSuccess"));
     } catch (error) {
       console.error(error);
-      alert('Ayarlar kaydedilirken bir hata oluştu.');
+      alert(t("aiAsistanPage.alerts.saveError"));
     } finally {
       setIsSaving(false);
     }
@@ -235,7 +237,7 @@ export default function BotScreen() {
       if (qrRes.success && qrRes.data) {
         setWahaQrCode(qrRes.data.data || qrRes.data);
       } else {
-        alert("QR alınamadı: " + (qrRes.error || ""));
+        alert(t("aiAsistanPage.alerts.qrFailed", { error: qrRes.error || "" }));
       }
       setWahaLoading(false);
     }, 2000);
@@ -243,17 +245,17 @@ export default function BotScreen() {
 
   const handleGetPairingCode = async () => {
     if (!wahaPhone.trim()) {
-      alert('Lütfen telefon numaranızı girin (Örn: 90532...)');
+      alert(t("aiAsistanPage.alerts.enterPhone"));
       return;
     }
     setWahaLoading(true);
     setWahaPairingCode(null);
-    
+
     const pairingRes = await getWahaPairingCode(wahaPhone.trim());
     if (pairingRes.success && pairingRes.data) {
       setWahaPairingCode(pairingRes.data.code);
     } else {
-      alert("Kod alınamadı: " + (pairingRes.error || ""));
+      alert(t("aiAsistanPage.alerts.codeFailed", { error: pairingRes.error || "" }));
     }
     setWahaLoading(false);
   };
@@ -293,7 +295,7 @@ export default function BotScreen() {
       // görülenle birebir aynı yanıt") tam olarak dayandığı mekanizma.
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        setMessages(prev => [...prev, { role: 'bot', content: 'Oturum bulunamadı, lütfen tekrar giriş yapın.' }]);
+        setMessages(prev => [...prev, { role: 'bot', content: t("aiAsistanPage.alerts.sessionNotFound") }]);
         return;
       }
 
@@ -313,12 +315,12 @@ export default function BotScreen() {
       });
 
       if (error || data?.error) {
-        setMessages(prev => [...prev, { role: 'bot', content: `Hata: ${error?.message || data?.error || 'Bilinmeyen Hata'}` }]);
+        setMessages(prev => [...prev, { role: 'bot', content: t("aiAsistanPage.alerts.chatError", { error: error?.message || data?.error || t("aiAsistanPage.alerts.unknownErrorChat") }) }]);
       } else {
-        setMessages(prev => [...prev, { role: 'bot', content: data?.text || "Cevap alınamadı." }]);
+        setMessages(prev => [...prev, { role: 'bot', content: data?.text || t("aiAsistanPage.alerts.noResponse") }]);
       }
     } catch (e: any) {
-      setMessages(prev => [...prev, { role: 'bot', content: 'Sistem hatası oluştu.' }]);
+      setMessages(prev => [...prev, { role: 'bot', content: t("aiAsistanPage.alerts.systemError") }]);
     } finally {
       setIsTyping(false);
     }
@@ -330,8 +332,8 @@ export default function BotScreen() {
     <div style={{ padding: "28px 32px", width: "100%", flex: 1 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Bot Karakter Yönetimi</h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Yapay zekanın kişiliğini ve sınırlarını belirleyin</p>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>{t("aiAsistanPage.header.title")}</h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{t("aiAsistanPage.header.subtitle")}</p>
       </div>
 
       {/* Top Section: Toggles, Textarea, Bağlı Servisler */}
@@ -346,7 +348,7 @@ export default function BotScreen() {
             <span style={{ fontSize: 22, filter: "grayscale(1) brightness(1.5)", opacity: 0.8 }}>⚙️</span>
           </div>
           
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Bağlı Servisler</h3>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>{t("aiAsistanPage.connectedServices.title")}</h3>
           <div className="glass" style={{ borderRadius: 20, padding: "20px", border: "1px solid rgba(255,122,89,0.3)", background: "rgba(255,122,89,0.03)", display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               {/* Google Drive */}
@@ -354,15 +356,15 @@ export default function BotScreen() {
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                   <span style={{ fontSize: 22 }}>G</span>
                   <div>
-                    <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>Google Drive (Bilgi Bankası)</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>{t("aiAsistanPage.connectedServices.googleDrive.title")}</p>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444" }} />
-                      <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>Bağlı değil</span>
+                      <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("aiAsistanPage.connectedServices.googleDrive.notConnected")}</span>
                     </div>
                   </div>
                 </div>
                 <button style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                  Bağla
+                  {t("aiAsistanPage.connectedServices.googleDrive.connect")}
                 </button>
               </div>
 
@@ -372,28 +374,28 @@ export default function BotScreen() {
                   <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <i className="fa-brands fa-whatsapp" style={{ fontSize: 24, color: "#25D366" }}></i>
                     <div>
-                      <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>WhatsApp</p>
+                      <p style={{ fontSize: 15, fontWeight: 600, color: "#fff", margin: "0 0 4px 0" }}>{t("aiAsistanPage.connectedServices.whatsapp.title")}</p>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <div style={{ width: 8, height: 8, borderRadius: "50%", background: wahaStatus === 'WORKING' ? "#22B573" : "#EF4444" }} />
                         <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>
-                          {wahaStatus === 'WORKING' ? 'Bağlı' : (wahaStatus === 'STARTING' ? 'Başlatılıyor' : 'Bağlı değil')}
+                          {wahaStatus === 'WORKING' ? t("aiAsistanPage.connectedServices.whatsapp.connected") : (wahaStatus === 'STARTING' ? t("aiAsistanPage.connectedServices.whatsapp.starting") : t("aiAsistanPage.connectedServices.whatsapp.notConnected"))}
                         </span>
                       </div>
                     </div>
                   </div>
                   {wahaStatus !== 'WORKING' ? (
-                    <button 
+                    <button
                       onClick={handleWahaConnect}
                       disabled={wahaLoading}
                       style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 99, padding: "8px 20px", color: "#fff", fontSize: 13, fontWeight: 600, cursor: wahaLoading ? "not-allowed" : "pointer", opacity: wahaLoading ? 0.7 : 1 }}>
-                      {wahaLoading ? 'İşleniyor...' : 'Bağla'}
+                      {wahaLoading ? t("aiAsistanPage.connectedServices.whatsapp.processing") : t("aiAsistanPage.connectedServices.whatsapp.connect")}
                     </button>
                   ) : (
-                    <button 
+                    <button
                       onClick={handleWahaConnect}
                       disabled={wahaLoading}
                       style={{ background: "rgba(34,181,115,0.2)", border: "1px solid rgba(34,181,115,0.4)", borderRadius: 99, padding: "6px 16px", color: "#22B573", fontSize: 12, fontWeight: 600, cursor: wahaLoading ? "not-allowed" : "pointer" }}>
-                      {wahaLoading ? 'İşleniyor...' : 'Yenile'}
+                      {wahaLoading ? t("aiAsistanPage.connectedServices.whatsapp.processing") : t("aiAsistanPage.connectedServices.whatsapp.refresh")}
                     </button>
                   )}
                 </div>
@@ -401,30 +403,30 @@ export default function BotScreen() {
                 {/* QR and Pairing section */}
                 {wahaQrCode && (
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, marginTop: 12, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12 }}>
-                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>WhatsApp'ı açın, Bağlı Cihazlar'dan QR kodu taratın</p>
+                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>{t("aiAsistanPage.connectedServices.whatsapp.qrInstruction")}</p>
                     <img src={wahaQrCode.startsWith('data:image') ? wahaQrCode : `data:image/png;base64,${wahaQrCode}`} style={{ width: 200, height: 200, borderRadius: 8 }} alt="WAHA QR" />
-                    
+
                     <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.1)", margin: "8px 0" }} />
-                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>Veya numara ile bağlanın</p>
+                    <p style={{ fontSize: 13, color: "#fff", textAlign: "center" }}>{t("aiAsistanPage.connectedServices.whatsapp.orConnectWithNumber")}</p>
                     <div style={{ display: "flex", gap: 8, width: "100%" }}>
-                      <input 
-                        type="text" 
-                        value={wahaPhone} 
-                        onChange={e => setWahaPhone(e.target.value)} 
-                        placeholder="Örn: 90532..."
+                      <input
+                        type="text"
+                        value={wahaPhone}
+                        onChange={e => setWahaPhone(e.target.value)}
+                        placeholder={t("aiAsistanPage.connectedServices.whatsapp.phonePlaceholder")}
                         style={{ flex: 1, padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", outline: "none", fontSize: 13 }}
                       />
-                      <button 
+                      <button
                         onClick={handleGetPairingCode}
                         disabled={wahaLoading}
                         style={{ padding: "8px 16px", borderRadius: 8, background: "#22B573", color: "#fff", border: "none", fontWeight: 600, fontSize: 13, cursor: wahaLoading ? "not-allowed" : "pointer" }}
                       >
-                        Kod Al
+                        {t("aiAsistanPage.connectedServices.whatsapp.getCode")}
                       </button>
                     </div>
                     {wahaPairingCode && (
                       <div style={{ marginTop: 8, padding: 12, background: "rgba(34,181,115,0.1)", border: "1px solid rgba(34,181,115,0.3)", borderRadius: 8, width: "100%", textAlign: "center" }}>
-                        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 4 }}>WhatsApp Bildirimini Onaylayıp Bu Kodu Girin:</p>
+                        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 4 }}>{t("aiAsistanPage.connectedServices.whatsapp.confirmCodeLabel")}</p>
                         <p style={{ fontSize: 24, fontWeight: 700, color: "#22B573", letterSpacing: 4 }}>{wahaPairingCode}</p>
                       </div>
                     )}
@@ -438,7 +440,7 @@ export default function BotScreen() {
               <div className="glass" style={{ width: "50%", minWidth: 300, borderRadius: 16, padding: "16px 20px", background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <i className="fa-brands fa-whatsapp" style={{ fontSize: 22, color: "#25D366" }}></i>
-                  <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>WhatsApp Asistanı</span>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: "#e5e1e4", flex: 1 }}>{t("aiAsistanPage.connectedServices.toggleLabel")}</span>
                   <Toggle on={botConfig.whatsapp} onChange={() => handleToggle('whatsapp', !botConfig.whatsapp)} />
                 </div>
               </div>
@@ -490,8 +492,8 @@ export default function BotScreen() {
             display: "flex", justifyContent: "space-between", alignItems: "center"
           }}>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Saat Dilimi (Timezone)</h3>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Randevu ve çalışma saatlerinin doğru hesaplanabilmesi için</p>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{t("aiAsistanPage.timezone.title")}</h3>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>{t("aiAsistanPage.timezone.description")}</p>
             </div>
             <select
               value={timezone}
@@ -502,27 +504,27 @@ export default function BotScreen() {
                 cursor: "pointer", minWidth: 200
               }}
             >
-              <option value="Europe/Istanbul" style={{ background: "#1a1a1a" }}>Türkiye (Europe/Istanbul)</option>
-              <option value="Europe/London" style={{ background: "#1a1a1a" }}>İngiltere (Europe/London)</option>
-              <option value="Europe/Berlin" style={{ background: "#1a1a1a" }}>Almanya (Europe/Berlin)</option>
-              <option value="America/New_York" style={{ background: "#1a1a1a" }}>ABD Doğu (America/New_York)</option>
-              <option value="America/Los_Angeles" style={{ background: "#1a1a1a" }}>ABD Batı (America/Los_Angeles)</option>
-              <option value="Asia/Dubai" style={{ background: "#1a1a1a" }}>BAE (Asia/Dubai)</option>
+              <option value="Europe/Istanbul" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.turkey")}</option>
+              <option value="Europe/London" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.uk")}</option>
+              <option value="Europe/Berlin" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.germany")}</option>
+              <option value="America/New_York" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.usEast")}</option>
+              <option value="America/Los_Angeles" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.usWest")}</option>
+              <option value="Asia/Dubai" style={{ background: "#1a1a1a" }}>{t("aiAsistanPage.timezone.options.uae")}</option>
             </select>
           </div>
 
             {/* Randevu / Rezervasyon Modülü Ayarı */}
             <div className="glass" style={{ borderRadius: 20, padding: "16px 20px", marginTop: 8, border: "1.5px solid rgba(255,122,89,0.5)", background: "rgba(255,122,89,0.03)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Randevu / Rezervasyon Özelliği</h3>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>Kapatırsanız AI randevu almaya çalışmaz, sadece işletme bilginize ve talimatlarınıza göre yanıt verir.</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{t("aiAsistanPage.appointmentModule.title")}</h3>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", margin: 0 }}>{t("aiAsistanPage.appointmentModule.description")}</p>
               </div>
               <Toggle on={appointmentModuleEnabled} onChange={handleAppointmentToggle} />
             </div>
 
           {/* Asistan Talimatı Oluştur */}
           <div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>Asistan Talimatı Oluştur</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 16, padding: "0 4px" }}>{t("aiAsistanPage.customInstruction.title")}</h3>
             <div className="glass" style={{ 
               borderRadius: 24, 
               padding: "16px", 
@@ -533,7 +535,7 @@ export default function BotScreen() {
               <textarea
                 value={customInstruction}
                 onChange={(e) => setCustomInstruction(e.target.value)}
-                placeholder="Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
+                placeholder={t("aiAsistanPage.customInstruction.placeholder")}
                 className="focus:outline-none focus:ring-0 focus:border-transparent"
                 style={{
                   width: "100%", minHeight: 110, background: "transparent", border: "none",
@@ -561,7 +563,7 @@ export default function BotScreen() {
             boxShadow: "0 0 20px rgba(194,71,141,0.25)", 
             marginTop: 8
           }}>
-            {isSaving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
+            {isSaving ? t("aiAsistanPage.saveButton.saving") : t("aiAsistanPage.saveButton.save")}
           </button>
         </div>
 
@@ -571,7 +573,7 @@ export default function BotScreen() {
             <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22B573", boxShadow: "0 0 8px #22B573" }} />
-                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Canlı Test</span>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{t("aiAsistanPage.liveTest.title")}</span>
               </div>
               <div 
                 onClick={() => setIsSimulationActive(!isSimulationActive)}
@@ -586,7 +588,7 @@ export default function BotScreen() {
             <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
               {!isSimulationActive && messages.length === 0 ? (
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Asistan ile konuşmaya başlayın...</p>
+                   <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{t("aiAsistanPage.liveTest.emptyState")}</p>
                 </div>
               ) : (
                 <>
@@ -595,7 +597,7 @@ export default function BotScreen() {
                       fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", 
                       letterSpacing: "0.1em", border: "1px solid rgba(255,255,255,0.05)",
                       padding: "4px 12px", borderRadius: 99
-                    }}>SİMÜLASYON BAŞLADI</span>
+                    }}>{t("aiAsistanPage.liveTest.simulationStarted")}</span>
                   </div>
                   
                   {messages.map((msg, idx) => (
@@ -639,7 +641,7 @@ export default function BotScreen() {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder="Asistan ile konuşun..." 
+                  placeholder={t("aiAsistanPage.liveTest.inputPlaceholder")}
                   onFocus={() => setIsSimulationActive(true)}
                   style={{ 
                     width: "100%", padding: "14px 48px 14px 20px", borderRadius: 99, 
@@ -676,7 +678,7 @@ export default function BotScreen() {
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 20, color: "#22B573" }}>📅</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#22B573" }}>Ai Randevu Yönetimi</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#22B573" }}>{t("aiAsistanPage.links.appointmentManagement")}</span>
             </div>
             <span style={{ color: "#22B573", fontSize: 24, lineHeight: 1 }}>›</span>
           </div>
@@ -691,7 +693,7 @@ export default function BotScreen() {
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span style={{ fontSize: 20, color: "#FF7A59" }}>💼</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#FF7A59" }}>Ai İşletme Hizmetleri</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#FF7A59" }}>{t("aiAsistanPage.links.businessServices")}</span>
             </div>
             <span style={{ color: "#FF7A59", fontSize: 24, lineHeight: 1 }}>›</span>
           </div>

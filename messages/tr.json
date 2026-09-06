@@ -80,5 +80,862 @@
       "huysuz": "Huysuz",
       "sinirli": "Sinirli"
     }
+  },
+  "aiAsistanPage": {
+    "header": {
+      "title": "Bot Karakter Yönetimi",
+      "subtitle": "Yapay zekanın kişiliğini ve sınırlarını belirleyin"
+    },
+    "connectedServices": {
+      "title": "Bağlı Servisler",
+      "googleDrive": {
+        "title": "Google Drive (Bilgi Bankası)",
+        "notConnected": "Bağlı değil",
+        "connect": "Bağla"
+      },
+      "whatsapp": {
+        "title": "WhatsApp",
+        "connected": "Bağlı",
+        "starting": "Başlatılıyor",
+        "notConnected": "Bağlı değil",
+        "connect": "Bağla",
+        "refresh": "Yenile",
+        "processing": "İşleniyor...",
+        "qrInstruction": "WhatsApp'ı açın, Bağlı Cihazlar'dan QR kodu taratın",
+        "orConnectWithNumber": "Veya numara ile bağlanın",
+        "phonePlaceholder": "Örn: 90532...",
+        "getCode": "Kod Al",
+        "confirmCodeLabel": "WhatsApp Bildirimini Onaylayıp Bu Kodu Girin:"
+      },
+      "toggleLabel": "WhatsApp Asistanı"
+    },
+    "timezone": {
+      "title": "Saat Dilimi (Timezone)",
+      "description": "Randevu ve çalışma saatlerinin doğru hesaplanabilmesi için",
+      "options": {
+        "turkey": "Türkiye (Europe/Istanbul)",
+        "uk": "İngiltere (Europe/London)",
+        "germany": "Almanya (Europe/Berlin)",
+        "usEast": "ABD Doğu (America/New_York)",
+        "usWest": "ABD Batı (America/Los_Angeles)",
+        "uae": "BAE (Asia/Dubai)"
+      }
+    },
+    "appointmentModule": {
+      "title": "Randevu / Rezervasyon Özelliği",
+      "description": "Kapatırsanız AI randevu almaya çalışmaz, sadece işletme bilginize ve talimatlarınıza göre yanıt verir."
+    },
+    "customInstruction": {
+      "title": "Asistan Talimatı Oluştur",
+      "placeholder": "Örn: Sen bir berber dükkanı asistanısın, fiyat bilgisi verip randevu alırsın..."
+    },
+    "saveButton": {
+      "saving": "Kaydediliyor...",
+      "save": "Değişiklikleri Kaydet"
+    },
+    "liveTest": {
+      "title": "Canlı Test",
+      "emptyState": "Asistan ile konuşmaya başlayın...",
+      "simulationStarted": "SİMÜLASYON BAŞLADI",
+      "inputPlaceholder": "Asistan ile konuşun..."
+    },
+    "links": {
+      "appointmentManagement": "Ai Randevu Yönetimi",
+      "businessServices": "Ai İşletme Hizmetleri"
+    },
+    "alerts": {
+      "saveFailed": "Ayarlar kaydedilemedi: {error}",
+      "unknownError": "Bilinmeyen hata",
+      "saveSuccess": "Ayarlar başarıyla kaydedildi!",
+      "saveError": "Ayarlar kaydedilirken bir hata oluştu.",
+      "enterPhone": "Lütfen telefon numaranızı girin (Örn: 90532...)",
+      "qrFailed": "QR alınamadı: {error}",
+      "codeFailed": "Kod alınamadı: {error}",
+      "sessionNotFound": "Oturum bulunamadı, lütfen tekrar giriş yapın.",
+      "chatError": "Hata: {error}",
+      "unknownErrorChat": "Bilinmeyen Hata",
+      "noResponse": "Cevap alınamadı.",
+      "systemError": "Sistem hatası oluştu."
+    }
+  },
+  "hizmetAyarlari": {
+    "sessionNotFound": "Oturum bulunamadı.",
+    "header": {
+      "title": "Hizmet Ayarları",
+      "subtitle": "Müşterileriniz randevu alırken hizmetleri bu listeden seçebilir."
+    },
+    "activeServices": {
+      "title": "Aktif Hizmetler ({count}/10)"
+    },
+    "addNewService": "Yeni Hizmet Ekle",
+    "form": {
+      "editTitle": "Hizmet Düzenle",
+      "newTitle": "Yeni Hizmet Ekle",
+      "description": "Hizmet bilgilerini girin ve kaydedin.",
+      "nameLabel": "Hizmet Adı",
+      "priceLabel": "Fiyat",
+      "unitOptions": {
+        "session": "seans",
+        "hour": "saat",
+        "piece": "adet"
+      },
+      "descriptionLabel": "Açıklama (İsteğe bağlı)",
+      "durationLabel": "Tahmini Süre (Dakika)",
+      "clearButton": "Temizle",
+      "saveButton": {
+        "saving": "Kaydediliyor...",
+        "save": "Kaydet"
+      }
+    },
+    "alerts": {
+      "saveError": "Hizmet kaydedilirken hata oluştu.",
+      "confirmDelete": "Bu hizmeti silmek istediğinize emin misiniz?",
+      "deleteError": "Hizmet silinirken hata oluştu."
+    }
+  },
+  "randevuPage": {
+    "header": {
+      "title": "Ai Randevu Yönetimi",
+      "subtitle": "Tüm randevularınız sevimli asistanınızın kontrolünde! ✨",
+      "addAppointmentButton": "Yeni Randevu Ekle"
+    },
+    "calendar": {
+      "days": {
+        "sun": "Pzr",
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum",
+        "sat": "Cmt"
+      },
+      "months": {
+        "jan": "Ocak",
+        "feb": "Şubat",
+        "mar": "Mart",
+        "apr": "Nisan",
+        "may": "Mayıs",
+        "jun": "Haziran",
+        "jul": "Temmuz",
+        "aug": "Ağustos",
+        "sep": "Eylül",
+        "oct": "Ekim",
+        "nov": "Kasım",
+        "dec": "Aralık"
+      }
+    },
+    "heatmap": {
+      "title": "📊 Günlük Yoğunluk Haritası",
+      "legendBusy": "DOLU",
+      "legendFree": "BOŞ",
+      "rowLabels": {
+        "morning": "SABAH",
+        "noon": "ÖĞLE",
+        "evening": "AKŞAM"
+      },
+      "tip": "Ai asistanınız, bu takvimi dikkate alarak müşterilerinizle yazışır ve boş saatlerinize otomatik randevu planlar."
+    },
+    "timeline": {
+      "title": "📅 {date} Randevuları",
+      "empty": "Bugün için henüz planlanmış bir randevu yok.",
+      "unnamedCustomer": "İsimsiz",
+      "unknownService": "Bilinmeyen Hizmet"
+    },
+    "modal": {
+      "title": "Yeni Randevu Ekle",
+      "subtitle": "Manuel olarak takvime bir kayıt girin",
+      "customerNameLabel": "Müşteri Adı",
+      "customerNamePlaceholder": "Örn: Ahmet Yılmaz",
+      "phoneLabel": "Telefon Numarası",
+      "serviceTypeLabel": "Hizmet Türü",
+      "selectPlaceholder": "Seçiniz...",
+      "timeLabel": "Saat",
+      "selectTimePlaceholder": "Saat Seçiniz...",
+      "submitButton": "Sihirli Takvime Ekle ✨",
+      "saving": "Kaydediliyor..."
+    },
+    "alerts": {
+      "missingFields": "Hizmet, saat ve telefon zorunludur.",
+      "saveFailed": "Randevu kaydedilemedi: {error}"
+    }
+  },
+  "aiAsistanComponents": {
+    "liveTestPanel": {
+      "title": "Canlı Test",
+      "emptyState": "Asistan ile konuşmaya başlayın...",
+      "simulationStarted": "SİMÜLASYON BAŞLADI",
+      "inputPlaceholder": "Asistan ile konuşun..."
+    }
+  },
+  "aiMuhasebePage": {
+    "title": "AI Muhasebe",
+    "subtitle": "Finansal durumunuzu tek ekranda yönetin.",
+    "heroTitle": "Finansal Özet",
+    "heroSubtitle": "Bu Ayki Performans",
+    "incomeThisMonth": "BU AY GELİR",
+    "expenseThisMonth": "BU AY GİDER",
+    "enterIncome": "GELİR GİR",
+    "enterExpense": "GİDER GİR",
+    "myBusiness": {
+      "title": "İŞLETMEM (GEÇMİŞ DÖNEMLER)",
+      "description": "Geçmiş dönemlerin gelir, gider ve finansal raporlarına erişin."
+    },
+    "paymentCalendar": {
+      "title": "ÖDEME TAKVİMİ",
+      "description": "Yaklaşan ödeme ve tahsilat planlarınızı görüntüleyin."
+    },
+    "aiAssistant": {
+      "title": "AI ASİSTAN",
+      "description": "Yapay zeka asistanınızla finansal konularda destek alın."
+    },
+    "accountantLink": {
+      "title": "MUHASEBECİ BAĞLANTISI",
+      "description": "Mali müşavirinizle hesabınızı bağlayın ve verilerinizi güvenle paylaşın."
+    },
+    "isletmem": {
+      "title": "İşletmem",
+      "subtitle": "İşletmenizin finansal durumunu takip edin.",
+      "todayDate": "Bugün: 03 Temmuz 2026",
+      "periodJune2026": "Haziran 2026",
+      "periodSep2022": "Eylül 2022",
+      "totalBalance": "TOPLAM BAKİYE",
+      "decreaseFromLastMonth": "Geçen aya göre %4.2 düşüş",
+      "incomes": "Gelirler",
+      "expenses": "Giderler",
+      "invoices": "Faturalar",
+      "filter": "Filtrele",
+      "searchPlaceholder": "Ara...",
+      "addNew": "Yeni Ekle",
+      "emptyState": "Bu kategori için kayıt bulunamadı.",
+      "smartAnalysis": "Akıllı Analiz",
+      "analysisUnavailable": "Analiz alınamadı.",
+      "generateAnalysis": "Analiz Oluştur"
+    },
+    "muhasebecim": {
+      "title": "Muhasebecim",
+      "subtitle": "Muhasebecinizle bağlantı kurun",
+      "connectToAdvisor": "Müşavirinize Bağlanın",
+      "connectToAdvisorDescription": "Verilerinizi güvenli bir şekilde paylaşarak finansal süreçlerinizi hızlandırın.",
+      "enterAccountantCode": "Muhasebeci Kodunu Gir",
+      "enterAccountantCodeDescription": "Muhasebecinizin size verdiği davet kodunu girerek hesabınızı bağlayın.",
+      "codePlaceholder": "Örn: ABC-12345",
+      "pleaseWait": "Bekleyin...",
+      "verify": "Doğrula",
+      "shareYourCode": "Kendi Kodunu Paylaş",
+      "shareYourCodeDescription": "Muhasebeciniz sizi platforma davet etmek isterse aşağıdaki kodu onunla paylaşın. Muhasebecim beni eklesin.",
+      "copiedAlert": "Kopyalandı: Kimlik kodunuz panoya kopyalandı.",
+      "codeVerified": "Kod doğrulandı",
+      "connectFeaturesIntro": "Bu muhasebeciye bağlanırsanız;",
+      "features": {
+        "invoicesShared": "Faturalar paylaşılır",
+        "incomeExpenseTransferred": "Gelir gider aktarılır",
+        "documentRequestsReceived": "Evrak talepleri alınır",
+        "aiAccountingWorksTogether": "AI Muhasebe birlikte çalışır"
+      },
+      "connecting": "Bağlanıyor...",
+      "connect": "Bağlan",
+      "connected": "Bağlı",
+      "accountantAvatarAlt": "Muhasebeci Avatar",
+      "phoneNumber": "Telefon Numarası",
+      "emailAddress": "E-posta Adresi",
+      "connectedSuccessMessage": "Hesabınız başarıyla bağlandı. Tüm evrak, fatura ve finansal verileriniz güvenli bir şekilde müşavirinizle senkronize edilmektedir.",
+      "backToAccountingPanel": "Muhasebe Paneline Dön",
+      "defaultFirmName": "Müşaviriniz",
+      "defaultRepresentative": "Müşavir Temsilcisi",
+      "sampleFirmName": "Örnek Mali Müşavirlik",
+      "sampleAccountantName": "Örnek Müşavir",
+      "enterValidCodeAlert": "Lütfen geçerli bir muhasebeci kodu girin."
+    },
+    "odemeTakvimi": {
+      "title": "Ödeme Takvimi",
+      "subtitle": "Gelir ve gider işlemleriniz",
+      "incomes": "Gelirler",
+      "expenses": "Giderler",
+      "incomeTransaction": "Gelir İşlemi",
+      "expenseTransaction": "Gider İşlemi",
+      "completed": "Tamamlandı",
+      "pending": "Beklemede",
+      "paid": "Ödendi",
+      "payable": "Ödenecek",
+      "noIncomeRecords": "Gelir kaydı bulunmuyor",
+      "noExpenseRecords": "Gider kaydı bulunmuyor"
+    }
+  },
+  "veriGirisiPage": {
+    "header": {
+      "title": "AI Veri Girişi"
+    },
+    "transactionTypes": {
+      "income": "gelir",
+      "expense": "gider",
+      "assistant": "asistan"
+    },
+    "chat": {
+      "greetingAssistant": "Merhaba! Finansal konularda size nasıl yardımcı olabilirim?",
+      "greetingDocument": "Merhaba! Bir {type} belgesi yükleyerek veya yazarak işlemi kaydedebilirsiniz.",
+      "draftSaved": "İşleminiz taslak olarak kaydedildi.",
+      "documentUploaded": "Belge Yüklendi: {fileName}",
+      "documentAnalyzed": "Belge başarıyla analiz edildi ve kaydedildi.",
+      "uploadedImageAlt": "Yüklenen görsel",
+      "inputPlaceholder": "Gemini'ye mesaj gönderin..."
+    },
+    "loading": "Yükleniyor..."
+  },
+  "musteriler": {
+    "title": "Müşteriler",
+    "subtitle": "Tüm müşteri portföyünüz ve geçmiş randevuları",
+    "empty": "Henüz hiç müşteri kaydı yok.",
+    "appointmentCount": "{count} Randevu",
+    "lastVisit": "Son: {date}",
+    "pastAppointments": "Geçmiş Randevular",
+    "noAppointments": "Kayıtlı randevu yok.",
+    "unknownService": "Bilinmeyen Hizmet"
+  },
+  "profilPage": {
+    "loading": "Yükleniyor...",
+    "avatarAlt": "Avatar",
+    "header": {
+      "title": "Profil Ayarları",
+      "subtitle": "İşletme ve vergi bilgilerinizi buradan yönetebilirsiniz."
+    },
+    "defaults": {
+      "otherCategory": "Diğer",
+      "fallbackBusinessName": "Esnaf"
+    },
+    "messages": {
+      "avatarUpdated": "Profil fotoğrafı güncellendi.",
+      "avatarUploadError": "Fotoğraf yükleme hatası: {error}",
+      "noSession": "Oturum bulunamadı",
+      "profileUpdated": "Profil başarıyla güncellendi!",
+      "errorPrefix": "Hata: {error}"
+    },
+    "fields": {
+      "authorizedPerson": "Yetkili Kişi Adı Soyadı",
+      "authorizedPersonPlaceholder": "Örn: Mehmet Yılmaz",
+      "businessName": "İşletme Adı",
+      "businessNamePlaceholder": "İşletmenizin adını girin",
+      "email": "E-posta",
+      "phone": "Telefon",
+      "phonePlaceholder": "Telefon numarasını girin",
+      "storeCategory": "Mağaza Kategorisi",
+      "storeCategoryPlaceholder": "Örn: Cafe & Restoran, Kuaför...",
+      "taxId": "Vergi Numarası (VKN)",
+      "taxIdPlaceholder": "VKN girin",
+      "taxOffice": "Vergi Dairesi",
+      "taxOfficePlaceholder": "Vergi dairesini girin",
+      "addressInfo": "Adres Bilgileri",
+      "selectCountry": "Ülke Seçin",
+      "selectCityState": "Şehir / Eyalet Seçin",
+      "selectDistrict": "İlçe Seçin",
+      "fullAddressPlaceholder": "Açık adresinizi girin"
+    },
+    "actions": {
+      "saving": "Kaydediliyor...",
+      "save": "Profili Kaydet"
+    }
+  },
+  "loginPage": {
+    "alerts": {
+      "googleLoginError": "Google Giriş Hatası: {error}",
+      "unknownError": "Bilinmeyen bir hata oluştu. Çevre değişkenlerini kontrol edin."
+    },
+    "hero": {
+      "titleLine1": "İşletmenizin",
+      "titleLine2": "sinir merkezi.",
+      "subtitle": "Tüm operasyonlarınızı, görevlerinizi ve iş akışlarınızı tek bir noktadan yönetin.",
+      "floatingCard": {
+        "title": "Yeni Görev",
+        "status": "Atandı"
+      },
+      "copyright": "© {year} Workigom Inc. Tüm hakları saklıdır."
+    },
+    "form": {
+      "loginTitle": "Hesabınıza giriş yapın",
+      "signupTitle": "Hesap Oluşturun",
+      "loginSubtitle": "İş akışlarınıza ulaşmak için giriş yapın.",
+      "signupSubtitle": "Workigom Flow dünyasına katılın.",
+      "googleRedirecting": "Yönlendiriliyor...",
+      "googleLoginButton": "Google ile Giriş Yap",
+      "googleSignupButton": "Google ile Kayıt Ol",
+      "orWithEmail": "veya e-posta ile",
+      "fullNameLabel": "Ad Soyad",
+      "fullNamePlaceholder": "Adınız Soyadınız",
+      "emailLabel": "E-posta Adresi",
+      "emailPlaceholder": "ornek@sirket.com",
+      "passwordLabel": "Şifre",
+      "forgotPassword": "Şifremi unuttum",
+      "processing": "İşleniyor...",
+      "loginButton": "Giriş Yap",
+      "signupButton": "Kayıt Ol",
+      "noAccountYet": "Henüz hesabınız yok mu?",
+      "alreadyHaveAccount": "Zaten hesabınız var mı?",
+      "createFreeAccount": "Ücretsiz Hesap Oluştur"
+    }
+  },
+  "analizPage": {
+    "platforms": {
+      "all": "Tümü"
+    },
+    "timeRanges": {
+      "last7Days": "Son 7 Gün",
+      "last30Days": "Son 30 Gün",
+      "last90Days": "Son 90 Gün",
+      "last1Year": "Son 1 Yıl"
+    },
+    "header": {
+      "title": "Analitik & İstatistikler",
+      "subtitle": "Tüm sosyal medya kanallarınızın performansını detaylı inceleyin"
+    },
+    "tabs": {
+      "posting": "Gönderi Analizi",
+      "inbox": "Gelen Kutusu Analizi"
+    },
+    "posting": {
+      "totalPosts": "TOPLAM GÖNDERİ",
+      "totalComments": "TOPLAM YORUM",
+      "totalFollowers": "TOPLAM TAKİPÇİ",
+      "totalReviews": "DEĞERLENDİRMELER",
+      "engagement": {
+        "title": "Etkileşim ve Gösterim",
+        "subtitle": "Seçili dönemdeki görüntülenme ve beğeni değişimi",
+        "views": "Görüntülenme",
+        "likes": "Beğeni",
+        "noData": "Grafik verisi bulunamadı."
+      },
+      "followerGrowth": {
+        "title": "Takipçi Büyümesi",
+        "subtitle": "Seçili dönemdeki net takipçi değişimi",
+        "followers": "Takipçi"
+      },
+      "demographics": {
+        "title": "Demografi Analizi"
+      }
+    },
+    "inbox": {
+      "messagesReceived": "ALINAN MESAJ",
+      "messagesSent": "GÖNDERİLEN MESAJ",
+      "readRate": "OKUNAN",
+      "avgResponseLabel": "ORT. YANIT SÜRESİ",
+      "avgResponseValue": "1.2 dk",
+      "responseTimeAnalysis": {
+        "title": "Yanıt Süresi Analizi",
+        "subtitle": "Mesajlara ilk dönüş hızı, müşteri memnuniyeti için kritiktir.",
+        "greatSpeed": "HARİKA HIZ"
+      }
+    }
+  },
+  "analizDetay": {
+    "title": "Analiz (Canlı)",
+    "tabs": {
+      "posting": "Gönderi Analizi",
+      "inbox": "Gelen Mesaj Analizi"
+    },
+    "filters": {
+      "allPlatforms": "Tüm platformlar",
+      "last30Days": "Son 30 gün",
+      "export": "Dışa Aktar"
+    },
+    "metrics": {
+      "received": {
+        "label": "Alınan",
+        "caption": "Toplam mesaj"
+      },
+      "sent": {
+        "label": "Gönderilen",
+        "caption": "Toplam mesaj"
+      },
+      "read": {
+        "label": "Okunan",
+        "caption": "Veri yok"
+      },
+      "avgResponse": {
+        "label": "Ortalama Yanıt",
+        "value": "12 dk",
+        "caption": "Ortalama süre"
+      }
+    },
+    "responseTimeAnalysis": {
+      "title": "Yanıt Süresi Analizi",
+      "subtitle": "Müşteri mesajına ilk yanıtın verilme süresi",
+      "periodButton": "Günlük",
+      "gaugeLabel": "Ortalama Yanıt Süresi",
+      "chartTitle": "Günlere Göre Ortalama Yanıt Süresi",
+      "legend": "Ortalama Yanıt Süresi (dk)"
+    },
+    "platformDistribution": {
+      "title": "Platform Dağılımı",
+      "total": "Toplam",
+      "webLiveSupport": "Web Canlı Destek",
+      "viewDetails": "Detayları Gör"
+    },
+    "activityHeatmap": {
+      "title": "Saatlere Göre Aktivite",
+      "days": {
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum",
+        "sat": "Cmt",
+        "sun": "Paz"
+      },
+      "low": "Düşük",
+      "high": "Yüksek"
+    },
+    "recentMessages": {
+      "title": "Son Mesajlar",
+      "columns": {
+        "platform": "Platform",
+        "customer": "Müşteri",
+        "message": "Mesaj",
+        "date": "Tarih",
+        "status": "Durum",
+        "responseTime": "Yanıt Süresi"
+      },
+      "status": {
+        "read": "Okundu"
+      },
+      "viewAll": "Tümünü Gör"
+    }
+  },
+  "gelenKutusuPage": {
+    "header": {
+      "title": "Gelen Kutusu",
+      "subtitle": "Tüm müşteri etkileşimlerini buradan yönetin.",
+      "selectedCount": "{count} Seçildi",
+      "selectMode": "Seç"
+    },
+    "tabs": {
+      "messages": "Mesajlar (DM)",
+      "comments": "Yorumlar",
+      "reviews": "Değerlendirmeler",
+      "notifications": "Bildirimler"
+    },
+    "actions": {
+      "selectAll": "Tümünü Seç",
+      "delete": "Sil",
+      "cancel": "İptal",
+      "reply": "Yanıtla",
+      "hide": "Gizle",
+      "send": "Gönder"
+    },
+    "messages": {
+      "empty": "Henüz mesaj bulunmuyor.",
+      "inputPlaceholder": "Mesaj yazın...",
+      "selectConversationPrompt": "Mesajlaşmaya başlamak için bir sohbet seçin.",
+      "tapToSeeLastMessage": "Son mesajı görmek için dokunun",
+      "confirmDeleteSelected": "Seçilen {count} öğeyi silmek istediğinize emin misiniz?"
+    },
+    "comments": {
+      "empty": "Henüz yorum bulunmuyor.",
+      "postDetailNotFound": "Gönderi detayı bulunamadı.",
+      "latestLabel": "Son",
+      "fallbackUsername": "Kullanıcı",
+      "fallbackReplyAuthor": "Yorum",
+      "storeLabel": "Mağaza",
+      "youBadge": "Sen",
+      "replyPlaceholder": "Yanıtlama için yazın..."
+    },
+    "reviews": {
+      "empty": "Henüz değerlendirme bulunmuyor."
+    },
+    "notifications": {
+      "empty": "Henüz bildirim bulunmuyor."
+    },
+    "privateReply": {
+      "title": "Gizli Mesaj Gönder (DM)",
+      "description": "@{name} adlı kullanıcıya özel bir mesaj gönderin:",
+      "placeholder": "Mesajınızı buraya yazın...",
+      "successAlert": "Mesaj başarıyla gönderildi!",
+      "errorAlertPrefix": "Mesaj gönderilirken hata: "
+    }
+  },
+  "sosyalMedyaPage": {
+    "errors": {
+      "connectError": "Bağlantı sırasında bir hata oluştu",
+      "noSession": "Oturum bulunamadı",
+      "connectLinkError": "Hesap bağlama linki alınırken bir hata oluştu",
+      "disconnectError": "Bağlantı kesilirken bir hata oluştu"
+    },
+    "confirmDisconnect": "Bu hesabın bağlantısını kesmek istediğinize emin misiniz?",
+    "quickLinks": {
+      "allPosts": {
+        "title": "Tüm Gönderiler",
+        "subtitle": "Yayın akışınızı yönetin"
+      },
+      "shareCenter": {
+        "title": "Paylaşım Merkezi",
+        "subtitle": "Oluşturduğunuz içeriği paylaşın"
+      }
+    },
+    "connectedAccounts": {
+      "title": "Eklediğiniz Hesaplarınız",
+      "subtitle": "Tüm kanallarınızı tek merkezden yönetin",
+      "syncButton": "Senkronize Et"
+    },
+    "status": {
+      "connected": "Bağlı",
+      "activeAndSynced": "Aktif ve eşzamanlı"
+    },
+    "accountSuffix": "_hesabi",
+    "disconnectButton": "Bağlantıyı Kes",
+    "noConnectedAccounts": "Bağlı sosyal medya hesabınız bulunmuyor.",
+    "newAccount": {
+      "title": "Yeni Hesap Bağla",
+      "subtitle": "Diğer platformlardaki kitlelerinize ulaşın"
+    },
+    "notConnectedYet": "Henüz bağlanmadı",
+    "connecting": "Bağlanıyor...",
+    "connectButton": "Hesap Bağla",
+    "allPlatformsConnected": "Tüm popüler platformları bağladınız!"
+  },
+  "sosyalMedyaInbox": {
+    "tapToSeeLastMessage": "Son mesajı görmek için dokunun",
+    "title": "Gelen Kutusu",
+    "tabs": {
+      "messages": "Mesajlar",
+      "comments": "Yorumlar"
+    },
+    "noMessagesInTab": "Bu sekmede mesaj bulunmuyor.",
+    "noCommentsInTab": "Bu sekmede yorum bulunmuyor.",
+    "messagePlaceholder": "Mesaj yazın...",
+    "selectConversation": "Görüntülemek için bir sohbet seçin.",
+    "commentsInSidebar": "Yorumlar sol listede görüntülenir."
+  },
+  "postsPage": {
+    "filters": {
+      "all": "Tümü",
+      "scheduled": "Planlanan",
+      "published": "Yayınlanan",
+      "failed": "Hatalı"
+    },
+    "bulkDeleteButton": "{count} Seçiliyi Sil",
+    "status": {
+      "scheduled": "Planlandı",
+      "published": "Yayınlandı",
+      "failed": "Hatalı",
+      "unknown": "Bilinmiyor"
+    },
+    "dateNotSpecified": "Belirtilmedi",
+    "defaultProfileName": "Workigom Flow Profil",
+    "actions": {
+      "retry": "Yeniden Dene",
+      "analyze": "Analiz",
+      "delete": "Sil"
+    },
+    "emptyState": "Bu duruma ait gönderi bulunamadı.",
+    "deleteModal": {
+      "title": "Gönderiyi sil",
+      "bulkDescription": "{count} gönderiyi nasıl silmek istediğinizi seçin.",
+      "singleDescription": "Bu gönderiyi nasıl silmek istediğinizi seçin.",
+      "panelOnlyTitle": "Sadece Workigom Flow'dan sil",
+      "panelOnlyDescription": "Workigom Flow panelinizden kaldırılır. Gönderi Facebook ve Instagram'da yayınlanmaya devam eder.",
+      "platformsTitle": "Platformlardan ve Workigom Flow'dan sil",
+      "platformsDescription": "Facebook'tan kalıcı olarak silinir ve Workigom Flow'dan kaldırılır.",
+      "instagramWarning": "Instagram API üzerinden silmeyi desteklemediğinden, Instagram'dan manuel olarak silinmesi gerekebilir."
+    },
+    "errors": {
+      "bulkDeleteFailed": "Gönderiler silinirken hata oluştu: {message}",
+      "deleteFailed": "Gönderi silinirken hata oluştu: {message}",
+      "genericError": "İşlem sırasında hata oluştu."
+    }
+  },
+  "sharePage": {
+    "header": {
+      "title": "Paylaşım Merkezi"
+    },
+    "contentInput": {
+      "label": "Ne Paylaşalım?",
+      "placeholder": "Örn: Yeni yaz koleksiyonumuz için enerjik bir post..."
+    },
+    "imageContainer": {
+      "cropButton": "Kırp (Instagram 4:5)",
+      "selectTitle": "Görsel & Video Seç ya da Üret",
+      "selectSubtitle": "Galerinizden eklemek için dokunun."
+    },
+    "captionEditor": {
+      "title": "İçerik Metni",
+      "editPlaceholder": "Yapay zeka tarafından üretilen metin veya kendi metniniz...",
+      "emptyPreview": "Yapay zeka tarafından oluşturulan içerik metni burada görünecek. Gelişmiş dil modelleri ile hedef kitlenize uygun metinler hazırlanıyor...",
+      "aiPromptPlaceholder": "Görselle uyumlu bir metin üret...",
+      "addTagButton": "Etiket ekle"
+    },
+    "accounts": {
+      "label": "Bağlantılı Hesaplar (Platformlar)",
+      "noneConnected": "Henüz bağlı bir hesap yok.",
+      "connectLink": "Hesap Bağla"
+    },
+    "platforms": {
+      "storyWarning": "İçerik 24 saat sonra kaybolur. Medya gerektirir.",
+      "firstCommentLabel": "İlk Yorum (Opsiyonel)",
+      "firstCommentPlaceholder": "İlk yoruma eklemek istediğiniz bağlantı veya notu girin...",
+      "customCaptionLabel": "Özel Açıklama (Opsiyonel)",
+      "customCaptionPlaceholder": "Ana metni kullanmak için boş bırakın..."
+    },
+    "instagram": {
+      "aiLabelTitle": "AI ile üretildi olarak işaretle",
+      "aiLabelDescription": "Instagram'ın AI içerik etiketini ekler. Medya tamamen veya büyük oranda AI ile oluşturulduğunda kullanın."
+    },
+    "linkedin": {
+      "firstCommentPlaceholder": "Add a İlk Yorum (Opsiyonel) to boost engagement."
+    },
+    "twitter": {
+      "threadToggle": "Zincir (Thread) oluştur",
+      "threadDescription": "Ana metin ilk tweet olur. Altına zincir eklenebilir."
+    },
+    "tiktok": {
+      "saveToInboxTitle": "TikTok taslaklarına kaydet",
+      "saveToInboxDescription": "Video direkt yayınlanmaz, taslak olarak yüklenir. İsterseniz TikTok üzerinden müzik ekleyip yayınlayabilirsiniz."
+    },
+    "pinterest": {
+      "titleLabel": "Başlık (Opsiyonel)",
+      "titlePlaceholder": "Pin'iniz için özel bir başlık girin...",
+      "titleHint": "Zorunlu değildir. Boş bırakılırsa ana metnin ilk satırı başlık yapılır.",
+      "linkLabel": "Hedef Bağlantı (Opsiyonel)",
+      "linkHint": "Pin'e tıklandığında gidilecek URL bağlantısını belirler."
+    },
+    "youtube": {
+      "titlePlaceholder": "Video başlığı...",
+      "descriptionLabel": "Video Açıklaması (Opsiyonel)"
+    },
+    "publishing": {
+      "label": "yayıncılık",
+      "scheduledTab": "Planlı",
+      "nowTab": "Şimdi",
+      "scheduledDateTimeLabel": "Zamanlanmış Yayın (Tarih & Saat)",
+      "timezoneLabel": "Timezone",
+      "nowInfo": "Gönderi, seçilen tüm platformlarda anında yayınlanacaktır."
+    },
+    "publishButton": {
+      "loading": "Yükleniyor... {progress}%",
+      "now": "Şimdi Paylaş"
+    },
+    "errors": {
+      "noText": "Lütfen paylaşılacak bir metin girin.",
+      "noPlatform": "Lütfen en az bir platform seçin.",
+      "invalidDateFormat": "Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.",
+      "publishFailed": "Gönderi paylaşılırken bir hata oluştu: {message}",
+      "captionGenerationFailed": "Hata: {message}"
+    },
+    "success": {
+      "published": "Gönderi başarıyla paylaşıldı!"
+    }
+  },
+  "dashboardHome": {
+    "aiSummary": {
+      "eyebrow": "AI ASISTAN · GÜNLÜK ÖZET",
+      "messagesComments": "Bugün <msg>{messages} mesaj</msg> ve <cmt>{comments} yorum</cmt> otomatik yanıtlandı.",
+      "trendUp": "Sosyal medya hesaplarınızın etkileşimi <pct>%{trend}</pct> artış gösterdi!",
+      "trendAnalyzing": "Son 7 günde sosyal medya etkileşimleriniz analiz ediliyor.",
+      "appointmentsToday": "Bugün <ap>{count} randevunuz</ap> var.",
+      "noAppointmentsToday": "Bugün için planlı randevunuz bulunmuyor.",
+      "statusActive": "AKTİF",
+      "statusInactive": "KAPALI"
+    },
+    "finance": {
+      "monthlyIncome": "Aylık Gelir",
+      "monthlyExpense": "Aylık Gider"
+    },
+    "invoiceScanner": {
+      "eyebrow": "FATURA TARAYICI · SON FATURA",
+      "imageAlt": "Fatura belgesi",
+      "fields": {
+        "supplier": "Tedarikçi",
+        "date": "Tarih",
+        "vat": "KDV",
+        "total": "Toplam"
+      },
+      "newInvoiceButton": "+ Yeni Fatura Tara"
+    },
+    "appointments": {
+      "label": "BUGÜNKÜ RANDEVULAR",
+      "empty": "Bugün için planlı randevu yok.",
+      "defaultTitle": "Randevu"
+    },
+    "social": {
+      "allAccounts": "Tüm Hesaplar",
+      "liveAnalysis": "CANLI ANALİZ",
+      "totalFollowers": "Toplam Takipçi Kitle",
+      "engagementTrend": "Etkileşim Trendi",
+      "high": "Yüksek"
+    },
+    "recentActivities": {
+      "title": "Son Aktiviteler",
+      "viewAll": "TÜMÜNÜ GÖR",
+      "empty": "Son aktivite bulunmuyor."
+    },
+    "activityTypes": {
+      "message": "MESAJ",
+      "comment": "YORUM"
+    },
+    "defaults": {
+      "payment": "Ödeme",
+      "invoicePayment": "Fatura Ödemesi",
+      "customer": "Müşteri",
+      "user": "Kullanıcı"
+    },
+    "relativeTime": {
+      "minutesAgo": "{count}dk önce",
+      "hoursAgo": "{count}sa önce",
+      "daysAgo": "{count}g önce"
+    },
+    "commLogs": {
+      "title": "İletişim Raporları",
+      "columns": {
+        "channel": "İletişim Kanalı",
+        "dateTime": "Tarih/Saat",
+        "status": "Durum",
+        "action": "İşlem"
+      },
+      "status": {
+        "success": "Başarılı",
+        "pending": "Beklemede"
+      },
+      "review": "İncele",
+      "empty": "Rapor bulunmuyor."
+    }
+  },
+  "cropperModal": {
+    "title": "Resmi Kırp (Instagram)",
+    "cancel": "İptal",
+    "processing": "Kırpılıyor...",
+    "applyButton": "Kırp ve Uygula",
+    "errors": {
+      "cropFailed": "Kırpma işlemi başarısız oldu."
+    }
+  },
+  "aiChatInput": {
+    "placeholder": "İşlemi yazın...",
+    "uploadFile": "Dosya yükleyin",
+    "selectDocument": "Belge seçin"
+  },
+  "aiDataResetPanel": {
+    "dangerZone": {
+      "title": "⚠️ Tehlikeli Bölge",
+      "subtitle": "Bu işlemler geri alınamaz."
+    },
+    "softReset": {
+      "title": "Test Verilerini Sıfırla",
+      "description": "Müşteriler, randevular, sohbet geçmişi, bildirimler, sosyal medya mesaj/yorumları silinir. Ayarlarınız (persona, hizmetler, bağlantılar) korunur.",
+      "button": "Sıfırla",
+      "warning": "Tüm müşteri, randevu ve sohbet geçmişi kalıcı olarak silinecek.",
+      "doneAlert": "Veriler sıfırlandı."
+    },
+    "hardReset": {
+      "title": "Fabrika Ayarlarına Sıfırla",
+      "description": "Yukarıdakilere ek olarak persona seçimi ve hizmet listesi de silinir. WhatsApp/sosyal medya bağlantılarınız korunur, yeniden bağlamanız gerekmez.",
+      "button": "Fabrika Ayarları",
+      "warning": "Tüm veriler VE ayarlarınız (persona, hizmetler) kalıcı olarak silinecek. İşletmeniz sıfırdan kurulum gerektirecek.",
+      "doneAlert": "Fabrika ayarlarına sıfırlandı."
+    },
+    "confirmModal": {
+      "instructionRich": "Onaylamak için <b>{word}</b> yazın:",
+      "cancel": "Vazgeç",
+      "deleting": "Siliniyor...",
+      "confirmButton": "Evet, Sıfırla"
+    },
+    "alerts": {
+      "errorPrefix": "Hata: {error}"
+    }
   }
 }

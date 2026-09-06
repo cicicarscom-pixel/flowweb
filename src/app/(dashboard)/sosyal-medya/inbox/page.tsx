@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import AiChatInput from "@/components/chat/AiChatInput";
 import { createClient } from "@/lib/supabase/client";
 
@@ -27,6 +28,8 @@ type Comment = {
 };
 
 export default function GelenKutusuPage() {
+  const t = useTranslations();
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<"mesajlar" | "yorumlar">("mesajlar");
   const [selectedConvId, setSelectedConvId] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
@@ -76,7 +79,7 @@ export default function GelenKutusuPage() {
 
     if (!error && data) {
       const enhancedData = data.map((conv: any) => {
-        let lastMessageSnippet = "Son mesajı görmek için dokunun";
+        let lastMessageSnippet = t("sosyalMedyaInbox.tapToSeeLastMessage");
         if (conv.messages && conv.messages.length > 0) {
           const sortedMessages = [...conv.messages].sort(
             (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -152,7 +155,7 @@ export default function GelenKutusuPage() {
               <Link href="/sosyal-medya" className="text-on-surface hover:text-secondary transition-colors flex items-center">
                 <span className="material-symbols-outlined text-[20px]">arrow_back</span>
               </Link>
-              <h1 className="text-on-surface font-semibold text-lg tracking-wide">Gelen Kutusu</h1>
+              <h1 className="text-on-surface font-semibold text-lg tracking-wide">{t("sosyalMedyaInbox.title")}</h1>
             </div>
             <button className="text-on-surface-variant hover:text-on-surface transition-colors">
               <span className="material-symbols-outlined text-[20px]">filter_list</span>
@@ -167,7 +170,7 @@ export default function GelenKutusuPage() {
                 activeTab === "mesajlar" ? "bg-secondary/20 text-secondary border border-secondary/30" : "text-on-surface-variant hover:bg-white/5 border border-transparent"
               }`}
             >
-              Mesajlar
+              {t("sosyalMedyaInbox.tabs.messages")}
             </button>
             <button
               onClick={() => { setActiveTab("yorumlar"); setSelectedConvId(null); }}
@@ -175,7 +178,7 @@ export default function GelenKutusuPage() {
                 activeTab === "yorumlar" ? "bg-secondary/20 text-secondary border border-secondary/30" : "text-on-surface-variant hover:bg-white/5 border border-transparent"
               }`}
             >
-              Yorumlar
+              {t("sosyalMedyaInbox.tabs.comments")}
             </button>
           </div>
 
@@ -208,7 +211,7 @@ export default function GelenKutusuPage() {
                       <div className="flex justify-between items-center mb-1">
                         <h4 className="text-on-surface text-sm font-medium truncate pr-2">{conv.participant_name}</h4>
                         <span className="text-on-surface-variant text-xs shrink-0">
-                          {new Date(conv.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(conv.updated_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       <p className={`text-xs truncate ${conv.unread_count > 0 ? "text-secondary font-medium" : "text-on-surface-variant"}`}>
@@ -225,7 +228,7 @@ export default function GelenKutusuPage() {
                 ))
               ) : (
                 <div className="p-8 text-center text-on-surface-variant text-sm">
-                  Bu sekmede mesaj bulunmuyor.
+                  {t("sosyalMedyaInbox.noMessagesInTab")}
                 </div>
               )
             ) : (
@@ -241,7 +244,7 @@ export default function GelenKutusuPage() {
                         <h4 className="text-secondary text-sm font-semibold truncate pr-2">@{comment.username}</h4>
                       </div>
                       <span className="text-on-surface-variant text-xs shrink-0">
-                        {new Date(comment.created_at).toLocaleDateString('tr-TR')}
+                        {new Date(comment.created_at).toLocaleDateString(locale)}
                       </span>
                     </div>
                     <p className="text-on-surface text-xs leading-relaxed line-clamp-2">
@@ -251,7 +254,7 @@ export default function GelenKutusuPage() {
                 ))
               ) : (
                 <div className="p-8 text-center text-on-surface-variant text-sm">
-                  Bu sekmede yorum bulunmuyor.
+                  {t("sosyalMedyaInbox.noCommentsInTab")}
                 </div>
               )
             )}
@@ -288,7 +291,7 @@ export default function GelenKutusuPage() {
                   }`}>
                     <p className="text-sm leading-relaxed">{msg.content}</p>
                     <div className={`text-[10px] mt-1 text-right ${msg.direction === "outgoing" ? "text-secondary/70" : "text-on-surface-variant"}`}>
-                      {new Date(msg.created_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(msg.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
                 </div>
@@ -302,7 +305,7 @@ export default function GelenKutusuPage() {
                   inputText={inputText}
                   setInputText={setInputText}
                   handleSend={handleSendMessage}
-                  placeholder="Mesaj yazın..."
+                  placeholder={t("sosyalMedyaInbox.messagePlaceholder")}
                 />
               </div>
             </div>
@@ -310,7 +313,7 @@ export default function GelenKutusuPage() {
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-on-surface-variant">
             <span className="material-symbols-outlined text-6xl mb-4 opacity-30">chat</span>
-            <p>{activeTab === "mesajlar" ? "Görüntülemek için bir sohbet seçin." : "Yorumlar sol listede görüntülenir."}</p>
+            <p>{activeTab === "mesajlar" ? t("sosyalMedyaInbox.selectConversation") : t("sosyalMedyaInbox.commentsInSidebar")}</p>
           </div>
         )}
       </div>

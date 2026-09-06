@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 const PLATFORMS_DATA = [
@@ -71,6 +72,7 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
 }
 
 export default function SosyalMedyaPage() {
+  const t = useTranslations();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
@@ -86,7 +88,7 @@ export default function SosyalMedyaPage() {
 
     if (errorParam || errorMessage) {
        const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
-       alert("Bağlantı sırasında bir hata oluştu: " + displayError);
+       alert(t("sosyalMedyaPage.errors.connectError") + ": " + displayError);
        window.history.replaceState({}, '', window.location.pathname);
     } else if (accountId) {
       fetchAccounts(true);
@@ -147,7 +149,7 @@ export default function SosyalMedyaPage() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      if (!userId) throw new Error("Oturum bulunamadı");
+      if (!userId) throw new Error(t("sosyalMedyaPage.errors.noSession"));
       
       const { data: orgMember } = await supabase.from('organization_members').select('organization_id, organizations(name)').eq('user_id', userId).maybeSingle();
       const organizationId = orgMember?.organization_id || userId;
@@ -165,14 +167,14 @@ export default function SosyalMedyaPage() {
       }
     } catch (err: any) {
       console.warn("Error connecting account:", err);
-      alert(`Hesap bağlama linki alınırken bir hata oluştu: ${err.message || err}`);
+      alert(`${t("sosyalMedyaPage.errors.connectLinkError")}: ${err.message || err}`);
     } finally {
       setIsConnecting(null);
     }
   };
 
   const handleDisconnect = async (accountId: string) => {
-    if (!confirm("Bu hesabın bağlantısını kesmek istediğinize emin misiniz?")) return;
+    if (!confirm(t("sosyalMedyaPage.confirmDisconnect"))) return;
     
     try {
       setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
@@ -185,7 +187,7 @@ export default function SosyalMedyaPage() {
       fetchAccounts();
     } catch (err) {
       console.warn("Error disconnecting account:", err);
-      alert("Bağlantı kesilirken bir hata oluştu.");
+      alert(t("sosyalMedyaPage.errors.disconnectError"));
     }
   };
 
@@ -210,8 +212,8 @@ export default function SosyalMedyaPage() {
             <i className="fa-solid fa-layer-group text-[#FF7A59] text-2xl"></i>
           </div>
           <div className="text-center relative z-10">
-            <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Tüm Gönderiler</h3>
-            <p className="text-xs text-dark-muted font-jetbrains">Yayın akışınızı yönetin</p>
+            <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">{t("sosyalMedyaPage.quickLinks.allPosts.title")}</h3>
+            <p className="text-xs text-dark-muted font-jetbrains">{t("sosyalMedyaPage.quickLinks.allPosts.subtitle")}</p>
           </div>
         </Link>
 
@@ -221,8 +223,8 @@ export default function SosyalMedyaPage() {
             <i className="fa-solid fa-paper-plane text-[#22B573] text-2xl"></i>
           </div>
           <div className="text-center relative z-10">
-            <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">Paylaşım Merkezi</h3>
-            <p className="text-xs text-dark-muted font-jetbrains">Oluşturduğunuz içeriği paylaşın</p>
+            <h3 className="text-lg font-bold text-on-surface mb-1 font-outfit">{t("sosyalMedyaPage.quickLinks.shareCenter.title")}</h3>
+            <p className="text-xs text-dark-muted font-jetbrains">{t("sosyalMedyaPage.quickLinks.shareCenter.subtitle")}</p>
           </div>
         </Link>
       </div>
@@ -231,15 +233,15 @@ export default function SosyalMedyaPage() {
       <div style={{ marginBottom: 40 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#F6F1EC" }}>Eklediğiniz Hesaplarınız</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Tüm kanallarınızı tek merkezden yönetin</p>
+            <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#F6F1EC" }}>{t("sosyalMedyaPage.connectedAccounts.title")}</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{t("sosyalMedyaPage.connectedAccounts.subtitle")}</p>
           </div>
-          <button 
+          <button
             onClick={() => fetchAccounts(true)}
-            className="fab flex items-center gap-2 px-4 py-2" 
+            className="fab flex items-center gap-2 px-4 py-2"
             style={{ background: "linear-gradient(135deg,rgba(255,122,89,0.15),rgba(34,181,115,0.15))", color: "#FF7A59", border: "1.5px solid rgba(255,122,89,0.3)", borderRadius: 99, fontSize: 14, fontWeight: 600 }}
           >
-            <i className={`fa-solid fa-rotate ${isLoading ? 'animate-spin' : ''}`}></i> Senkronize Et
+            <i className={`fa-solid fa-rotate ${isLoading ? 'animate-spin' : ''}`}></i> {t("sosyalMedyaPage.connectedAccounts.syncButton")}
           </button>
         </div>
 
@@ -278,7 +280,7 @@ export default function SosyalMedyaPage() {
                       border: "1px solid rgba(34,181,115,0.3)",
                       display: "flex", alignItems: "center", gap: 4,
                     }}>
-                      ✓ Bağlı
+                      ✓ {t("sosyalMedyaPage.status.connected")}
                     </div>
                   </div>
 
@@ -288,17 +290,17 @@ export default function SosyalMedyaPage() {
                   <p style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, color: p.id.includes('tiktok') ? '#69C9D0' : (p.color || "#22B573") }} className="truncate">
                     {acc.username && acc.username !== p.name && acc.username !== 'unknown'
                       ? (acc.username.startsWith('@') ? acc.username : `@${acc.username}`)
-                      : `@${p.name.toLowerCase()}_hesabi`}
+                      : `@${p.name.toLowerCase()}${t("sosyalMedyaPage.accountSuffix")}`}
                   </p>
                   <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 14 }}>
-                    Aktif ve eşzamanlı
+                    {t("sosyalMedyaPage.status.activeAndSynced")}
                   </p>
 
                   <div style={{ display: "flex", gap: 8 }}>
                     <button className="pill-btn" style={{ width: "100%", justifyContent: "center", background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", border: "1px solid rgba(255,255,255,0.08)", padding: "8px", borderRadius: 8, fontSize: 13, fontWeight: 600 }}
                       onClick={(e) => { e.stopPropagation(); handleDisconnect(acc.zernio_account_id) }}
                     >
-                      Bağlantıyı Kes
+                      {t("sosyalMedyaPage.disconnectButton")}
                     </button>
                   </div>
                 </div>
@@ -308,15 +310,15 @@ export default function SosyalMedyaPage() {
         ) : (
           <div className="glass flex flex-col items-center justify-center p-8 rounded-2xl border border-white/5 text-center">
             <i className="fa-solid fa-link-slash text-4xl text-[#A79E96] opacity-50 mb-4"></i>
-            <p className="text-[#A79E96] text-sm">Bağlı sosyal medya hesabınız bulunmuyor.</p>
+            <p className="text-[#A79E96] text-sm">{t("sosyalMedyaPage.noConnectedAccounts")}</p>
           </div>
         )}
       </div>
 
       {/* Hesabınızı Ekleyin (Boşta Olanlar) */}
       <div style={{ marginBottom: 40 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#F6F1EC" }}>Yeni Hesap Bağla</h2>
-        <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>Diğer platformlardaki kitlelerinize ulaşın</p>
+        <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4, color: "#F6F1EC" }}>{t("sosyalMedyaPage.newAccount.title")}</h2>
+        <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>{t("sosyalMedyaPage.newAccount.subtitle")}</p>
         
         {availablePlatforms.length > 0 ? (
           <ScrollableContainer>
@@ -345,21 +347,21 @@ export default function SosyalMedyaPage() {
 
                 <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#F6F1EC" }}>{p.name}</p>
                 <p style={{ color: "var(--text-muted)", fontSize: 12, marginBottom: 12 }}>
-                  Henüz bağlanmadı
+                  {t("sosyalMedyaPage.notConnectedYet")}
                 </p>
 
-                <button 
+                <button
                   onClick={() => handleConnectZernio(p.id)}
                   disabled={isConnecting === p.id}
                   style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `${p.glow.replace("0.3","0.12")}`, color: p.id.includes('tiktok') ? '#69C9D0' : p.color, border: `1px solid ${p.glow.replace("0.3","0.3")}`, fontSize: 12, padding: "8px", borderRadius: 8, fontWeight: 600, opacity: isConnecting === p.id ? 0.5 : 1, cursor: isConnecting === p.id ? 'not-allowed' : 'pointer' }}
                 >
-                  {isConnecting === p.id ? "Bağlanıyor..." : "Hesap Bağla"}
+                  {isConnecting === p.id ? t("sosyalMedyaPage.connecting") : t("sosyalMedyaPage.connectButton")}
                 </button>
               </div>
             ))}
           </ScrollableContainer>
         ) : (
-          <p className="text-sm text-[#A79E96]">Tüm popüler platformları bağladınız!</p>
+          <p className="text-sm text-[#A79E96]">{t("sosyalMedyaPage.allPlatformsConnected")}</p>
         )}
       </div>
 

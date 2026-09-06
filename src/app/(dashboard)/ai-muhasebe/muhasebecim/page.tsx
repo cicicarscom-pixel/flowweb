@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { createClient } from "@/lib/supabase/client";
 
 export default function MuhasebecimPage() {
+  const t = useTranslations();
   const [step, setStep] = useState<'initial' | 'verified' | 'connected'>('initial');
   const [accountantCode, setAccountantCode] = useState('');
   const [firm, setFirm] = useState<any>(null);
@@ -62,8 +64,8 @@ export default function MuhasebecimPage() {
             }
 
             setFirm({
-              name: firmInfo.name || 'Müşaviriniz',
-              authorized_person: accountantProfile?.authorized_person || 'Müşavir Temsilcisi',
+              name: firmInfo.name || t("aiMuhasebePage.muhasebecim.defaultFirmName"),
+              authorized_person: accountantProfile?.authorized_person || t("aiMuhasebePage.muhasebecim.defaultRepresentative"),
               avatar_url: accountantProfile?.avatar_url || null,
               phone: accountantProfile?.phone || '-',
               email: accountantProfile?.email || '-'
@@ -85,8 +87,8 @@ export default function MuhasebecimPage() {
       // Simulate API verification
       setTimeout(() => {
         setFirm({
-          name: 'Örnek Mali Müşavirlik',
-          authorized_person: 'Örnek Müşavir',
+          name: t("aiMuhasebePage.muhasebecim.sampleFirmName"),
+          authorized_person: t("aiMuhasebePage.muhasebecim.sampleAccountantName"),
           avatar_url: null,
           phone: '-',
           email: '-'
@@ -95,7 +97,7 @@ export default function MuhasebecimPage() {
         setStep('verified');
       }, 800);
     } else {
-      alert('Lütfen geçerli bir muhasebeci kodu girin.');
+      alert(t("aiMuhasebePage.muhasebecim.enterValidCodeAlert"));
     }
   };
 
@@ -119,8 +121,8 @@ export default function MuhasebecimPage() {
           <i className="fa-solid fa-key text-[#FF7A59] text-xl"></i>
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">Muhasebecim</h1>
-          <p className="text-sm text-on-surface-variant mt-1">Muhasebecinizle bağlantı kurun</p>
+          <h1 className="text-2xl font-bold text-on-surface">{t("aiMuhasebePage.muhasebecim.title")}</h1>
+          <p className="text-sm text-on-surface-variant mt-1">{t("aiMuhasebePage.muhasebecim.subtitle")}</p>
         </div>
       </div>
 
@@ -130,37 +132,37 @@ export default function MuhasebecimPage() {
         {step !== 'connected' && (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-semibold text-on-surface mb-2">Müşavirinize Bağlanın</h2>
+              <h2 className="text-2xl font-semibold text-on-surface mb-2">{t("aiMuhasebePage.muhasebecim.connectToAdvisor")}</h2>
               <p className="text-on-surface-variant text-sm">
-                Verilerinizi güvenli bir şekilde paylaşarak finansal süreçlerinizi hızlandırın.
+                {t("aiMuhasebePage.muhasebecim.connectToAdvisorDescription")}
               </p>
             </div>
 
             <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <i className="fa-solid fa-key text-[#FF7A59]"></i>
-                <h3 className="text-lg font-medium text-on-surface">Muhasebeci Kodunu Gir</h3>
+                <h3 className="text-lg font-medium text-on-surface">{t("aiMuhasebePage.muhasebecim.enterAccountantCode")}</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-6">
-                Muhasebecinizin size verdiği davet kodunu girerek hesabınızı bağlayın.
+                {t("aiMuhasebePage.muhasebecim.enterAccountantCodeDescription")}
               </p>
-              
+
               <div className="flex gap-4">
-                <input 
+                <input
                   type="text"
-                  placeholder="Örn: ABC-12345"
+                  placeholder={t("aiMuhasebePage.muhasebecim.codePlaceholder")}
                   className={`flex-1 bg-surface-container border border-white/10 rounded-lg px-4 py-3 text-on-surface outline-none focus:border-[#FF7A59] uppercase transition-colors ${step === 'verified' ? 'opacity-50 cursor-not-allowed' : ''}`}
                   value={accountantCode}
                   onChange={(e) => setAccountantCode(e.target.value.toUpperCase())}
                   disabled={step !== 'initial'}
                 />
                 {step === 'initial' && (
-                  <button 
+                  <button
                     onClick={handleVerify}
                     disabled={isLoading}
                     className="bg-[#FF7A59] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[#FF7A59]/90 transition-colors disabled:opacity-70 whitespace-nowrap"
                   >
-                    {isLoading ? 'Bekleyin...' : 'Doğrula'}
+                    {isLoading ? t("aiMuhasebePage.muhasebecim.pleaseWait") : t("aiMuhasebePage.muhasebecim.verify")}
                   </button>
                 )}
               </div>
@@ -170,18 +172,18 @@ export default function MuhasebecimPage() {
             <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <i className="fa-solid fa-share-nodes text-[#FF7A59]"></i>
-                <h3 className="text-lg font-medium text-on-surface">Kendi Kodunu Paylaş</h3>
+                <h3 className="text-lg font-medium text-on-surface">{t("aiMuhasebePage.muhasebecim.shareYourCode")}</h3>
               </div>
               <p className="text-sm text-on-surface-variant mb-6">
-                Muhasebeciniz sizi platforma davet etmek isterse aşağıdaki kodu onunla paylaşın. Muhasebecim beni eklesin.
+                {t("aiMuhasebePage.muhasebecim.shareYourCodeDescription")}
               </p>
-              
+
               <div className="flex justify-between items-center bg-[#0e0e11] border border-white/5 rounded-lg px-5 py-4">
                 <span className="text-xl font-bold tracking-widest text-[#FF7A59]">WG-73492</span>
-                <button 
+                <button
                   onClick={() => {
                     navigator.clipboard.writeText('WG-73492');
-                    alert('Kopyalandı: Kimlik kodunuz panoya kopyalandı.');
+                    alert(t("aiMuhasebePage.muhasebecim.copiedAlert"));
                   }}
                   className="text-on-surface-variant hover:text-white transition-colors"
                 >
@@ -194,15 +196,20 @@ export default function MuhasebecimPage() {
               <div className="bg-[#1a1b22] border border-[#22B573]/30 rounded-xl p-6 animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-2 text-[#22B573] mb-6">
                   <i className="fa-solid fa-circle-check"></i>
-                  <span className="font-medium">Kod doğrulandı</span>
+                  <span className="font-medium">{t("aiMuhasebePage.muhasebecim.codeVerified")}</span>
                 </div>
-                
+
                 <h3 className="text-xl font-bold text-on-surface mb-1">{firm.name}</h3>
-                
+
                 <div className="border-t border-white/10 pt-6 mb-6 mt-4">
-                  <h4 className="text-sm font-medium text-on-surface mb-4">Bu muhasebeciye bağlanırsanız;</h4>
+                  <h4 className="text-sm font-medium text-on-surface mb-4">{t("aiMuhasebePage.muhasebecim.connectFeaturesIntro")}</h4>
                   <ul className="space-y-3">
-                    {['Faturalar paylaşılır', 'Gelir gider aktarılır', 'Evrak talepleri alınır', 'AI Muhasebe birlikte çalışır'].map((feature, idx) => (
+                    {[
+                      t("aiMuhasebePage.muhasebecim.features.invoicesShared"),
+                      t("aiMuhasebePage.muhasebecim.features.incomeExpenseTransferred"),
+                      t("aiMuhasebePage.muhasebecim.features.documentRequestsReceived"),
+                      t("aiMuhasebePage.muhasebecim.features.aiAccountingWorksTogether"),
+                    ].map((feature, idx) => (
                       <li key={idx} className="flex items-center gap-3 text-sm text-on-surface-variant">
                         <i className="fa-solid fa-check text-[#22B573]"></i>
                         {feature}
@@ -210,13 +217,13 @@ export default function MuhasebecimPage() {
                     ))}
                   </ul>
                 </div>
-                
-                <button 
+
+                <button
                   onClick={handleConnectFinal}
                   disabled={isLoading}
                   className="w-full bg-[#22B573] text-black py-4 rounded-xl font-bold hover:bg-[#22B573]/90 transition-colors disabled:opacity-70"
                 >
-                  {isLoading ? 'Bağlanıyor...' : 'Bağlan'}
+                  {isLoading ? t("aiMuhasebePage.muhasebecim.connecting") : t("aiMuhasebePage.muhasebecim.connect")}
                 </button>
               </div>
             )}
@@ -233,11 +240,11 @@ export default function MuhasebecimPage() {
               
               <div className="inline-flex items-center gap-2 bg-[#22B573]/10 border border-[#22B573]/30 text-[#22B573] px-4 py-1.5 rounded-full text-sm font-medium mb-6">
                 <div className="w-2 h-2 rounded-full bg-[#22B573] animate-pulse"></div>
-                Bağlı
+                {t("aiMuhasebePage.muhasebecim.connected")}
               </div>
 
               {firm?.avatar_url ? (
-                <img src={firm.avatar_url} alt="Muhasebeci Avatar" className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-[#22B573]/50 shadow-[0_0_15px_rgba(34,181,115,0.2)]" />
+                <img src={firm.avatar_url} alt={t("aiMuhasebePage.muhasebecim.accountantAvatarAlt")} className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-2 border-[#22B573]/50 shadow-[0_0_15px_rgba(34,181,115,0.2)]" />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-surface-container border-2 border-white/10 flex items-center justify-center mx-auto mb-4">
                   <i className="fa-solid fa-user-tie text-3xl text-on-surface-variant"></i>
@@ -249,11 +256,11 @@ export default function MuhasebecimPage() {
 
               <div className="grid grid-cols-2 gap-4 text-left border-t border-white/10 pt-6 mt-2">
                 <div>
-                  <p className="text-xs text-on-surface-variant mb-1">Telefon Numarası</p>
+                  <p className="text-xs text-on-surface-variant mb-1">{t("aiMuhasebePage.muhasebecim.phoneNumber")}</p>
                   <p className="text-sm text-white font-medium">{firm?.phone}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-on-surface-variant mb-1">E-posta Adresi</p>
+                  <p className="text-xs text-on-surface-variant mb-1">{t("aiMuhasebePage.muhasebecim.emailAddress")}</p>
                   <p className="text-sm text-white font-medium">{firm?.email || '-'}</p>
                 </div>
               </div>
@@ -261,14 +268,14 @@ export default function MuhasebecimPage() {
             </div>
 
             <p className="text-sm text-on-surface-variant mt-8 text-center max-w-md mx-auto">
-              Hesabınız başarıyla bağlandı. Tüm evrak, fatura ve finansal verileriniz güvenli bir şekilde müşavirinizle senkronize edilmektedir.
+              {t("aiMuhasebePage.muhasebecim.connectedSuccessMessage")}
             </p>
 
-            <Link 
+            <Link
               href="/ai-muhasebe"
               className="mt-6 inline-flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 transition-colors px-6 py-3 rounded-xl font-medium"
             >
-              <i className="fa-solid fa-arrow-left"></i> Muhasebe Paneline Dön
+              <i className="fa-solid fa-arrow-left"></i> {t("aiMuhasebePage.muhasebecim.backToAccountingPanel")}
             </Link>
 
           </div>

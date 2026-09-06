@@ -1,10 +1,12 @@
 'use client'
 
 import { useActionState, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { authenticate } from '@/actions/auth'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
+  const t = useTranslations()
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [googleLoading, setGoogleLoading] = useState(false)
   
@@ -32,7 +34,7 @@ export default function LoginPage() {
       if (error) throw error
     } catch (error: any) {
       console.error('Google login error:', error)
-      alert('Google Giriş Hatası: ' + (error.message || 'Bilinmeyen bir hata oluştu. Çevre değişkenlerini kontrol edin.'))
+      alert(t('loginPage.alerts.googleLoginError', { error: error.message || t('loginPage.alerts.unknownError') }))
       setGoogleLoading(false)
     }
   }
@@ -53,11 +55,11 @@ export default function LoginPage() {
         <div className="relative z-10 my-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           <div className="mb-8">
             <h1 className="text-[42px] font-extrabold leading-tight mb-4 tracking-tight">
-              İşletmenizin <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A59] to-[#C2478D]">sinir merkezi.</span>
+              {t('loginPage.hero.titleLine1')} <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7A59] to-[#C2478D]">{t('loginPage.hero.titleLine2')}</span>
             </h1>
             <p className="text-[#A79E96] text-[16px] max-w-[400px] leading-relaxed">
-              Tüm operasyonlarınızı, görevlerinizi ve iş akışlarınızı tek bir noktadan yönetin.
+              {t('loginPage.hero.subtitle')}
             </p>
           </div>
 
@@ -81,15 +83,15 @@ export default function LoginPage() {
                 <span className="material-symbols-outlined text-[#C2478D] text-[20px]">bolt</span>
               </div>
               <div>
-                <div className="text-white text-[12px] font-bold">Yeni Görev</div>
-                <div className="text-[#FF7A59] text-[14px] font-black">Atandı</div>
+                <div className="text-white text-[12px] font-bold">{t('loginPage.hero.floatingCard.title')}</div>
+                <div className="text-[#FF7A59] text-[14px] font-black">{t('loginPage.hero.floatingCard.status')}</div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="text-[#A79E96] text-[12px]">
-          © {new Date().getFullYear()} Workigom Inc. Tüm hakları saklıdır.
+          {t('loginPage.hero.copyright', { year: new Date().getFullYear() })}
         </div>
       </div>
 
@@ -103,10 +105,10 @@ export default function LoginPage() {
 
           <div className="mb-8">
             <h2 className="text-[28px] font-extrabold text-white mb-2">
-              {mode === 'login' ? 'Hesabınıza giriş yapın' : 'Hesap Oluşturun'}
+              {mode === 'login' ? t('loginPage.form.loginTitle') : t('loginPage.form.signupTitle')}
             </h2>
             <p className="text-[#A79E96] text-[14px]">
-              {mode === 'login' ? 'İş akışlarınıza ulaşmak için giriş yapın.' : 'Workigom Flow dünyasına katılın.'}
+              {mode === 'login' ? t('loginPage.form.loginSubtitle') : t('loginPage.form.signupSubtitle')}
             </p>
           </div>
 
@@ -123,14 +125,14 @@ export default function LoginPage() {
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
             <span className="relative z-10">
-              {googleLoading ? 'Yönlendiriliyor...' : `Google ile ${mode === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}`}
+              {googleLoading ? t('loginPage.form.googleRedirecting') : (mode === 'login' ? t('loginPage.form.googleLoginButton') : t('loginPage.form.googleSignupButton'))}
             </span>
             {!googleLoading && <div className="absolute inset-0 bg-white/20 -translate-x-[150%] skew-x-[-20deg] group-hover:animate-[shine_1.5s_ease-in-out]"></div>}
           </button>
 
           <div className="flex items-center gap-4 mb-6">
             <div className="flex-1 h-px bg-white/10"></div>
-            <span className="text-[#A79E96] text-[12px] font-medium uppercase tracking-wider">veya e-posta ile</span>
+            <span className="text-[#A79E96] text-[12px] font-medium uppercase tracking-wider">{t('loginPage.form.orWithEmail')}</span>
             <div className="flex-1 h-px bg-white/10"></div>
           </div>
 
@@ -145,33 +147,33 @@ export default function LoginPage() {
             
             {mode === 'signup' && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-bold text-gray-300">Ad Soyad</label>
-                <input 
-                  type="text" 
+                <label className="text-[13px] font-bold text-gray-300">{t('loginPage.form.fullNameLabel')}</label>
+                <input
+                  type="text"
                   name="fullName"
                   required={mode === 'signup'}
-                  placeholder="Adınız Soyadınız" 
+                  placeholder={t('loginPage.form.fullNamePlaceholder')}
                   className="w-full bg-[#0D1017] border border-[#232B45] text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#FF7A59] focus:ring-1 focus:ring-[#FF7A59]/50 transition-all placeholder-[#A79E96]/50"
                 />
               </div>
             )}
             
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-bold text-gray-300">E-posta Adresi</label>
-              <input 
-                type="email" 
+              <label className="text-[13px] font-bold text-gray-300">{t('loginPage.form.emailLabel')}</label>
+              <input
+                type="email"
                 name="email"
                 required
-                placeholder="ornek@sirket.com" 
+                placeholder={t('loginPage.form.emailPlaceholder')}
                 className="w-full bg-[#0D1017] border border-[#232B45] text-white px-4 py-3.5 rounded-xl focus:outline-none focus:border-[#FF7A59] focus:ring-1 focus:ring-[#FF7A59]/50 transition-all placeholder-[#A79E96]/50"
               />
             </div>
             
             <div className="flex flex-col gap-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-[13px] font-bold text-gray-300">Şifre</label>
+                <label className="text-[13px] font-bold text-gray-300">{t('loginPage.form.passwordLabel')}</label>
                 {mode === 'login' && (
-                  <a href="#" className="text-[12px] text-[#FF7A59] hover:text-white transition-colors font-medium">Şifremi unuttum</a>
+                  <a href="#" className="text-[12px] text-[#FF7A59] hover:text-white transition-colors font-medium">{t('loginPage.form.forgotPassword')}</a>
                 )}
               </div>
               <input 
@@ -189,7 +191,7 @@ export default function LoginPage() {
               className={`w-full text-center bg-gradient-to-r from-[#FF7A59] to-[#C2478D] text-white font-bold py-3.5 px-4 rounded-xl mt-2 hover:shadow-[0_0_20px_rgba(255,122,89,0.4)] transition-all hover:scale-[1.02] relative overflow-hidden group ${isPending ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <span className="relative z-10">
-                {isPending ? 'İşleniyor...' : (mode === 'login' ? 'Giriş Yap' : 'Kayıt Ol')}
+                {isPending ? t('loginPage.form.processing') : (mode === 'login' ? t('loginPage.form.loginButton') : t('loginPage.form.signupButton'))}
               </span>
               {!isPending && (
                 <div 
@@ -200,14 +202,14 @@ export default function LoginPage() {
           </form>
 
           <p className="text-center text-[14px] text-[#A79E96] mt-8">
-            {mode === 'login' ? 'Henüz hesabınız yok mu?' : 'Zaten hesabınız var mı?'}
+            {mode === 'login' ? t('loginPage.form.noAccountYet') : t('loginPage.form.alreadyHaveAccount')}
             {' '}
-            <button 
+            <button
               type="button"
               onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
               className="text-white font-bold hover:text-[#FF7A59] transition-colors"
             >
-              {mode === 'login' ? 'Ücretsiz Hesap Oluştur' : 'Giriş Yap'}
+              {mode === 'login' ? t('loginPage.form.createFreeAccount') : t('loginPage.form.loginButton')}
             </button>
           </p>
         </div>

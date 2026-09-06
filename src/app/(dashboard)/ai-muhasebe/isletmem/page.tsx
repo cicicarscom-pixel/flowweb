@@ -1,14 +1,16 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import styles from './page.module.css';
 
-export default function IsletmemPage() {
+export default async function IsletmemPage() {
+ const t = await getTranslations();
  return (
  <div className="flex-1 flex flex-col h-full overflow-hidden" data-purpose="main-content">
  {/* BEGIN: Header */}
  <div className="px-8 py-6 flex items-center justify-between flex-shrink-0" data-purpose="page-header">
  <div>
- <h1 className="text-2xl font-bold text-[#F6F1EC]">İşletmem</h1>
- <p className="text-on-surface-variant text-sm mt-1">İşletmenizin finansal durumunu takip edin.</p>
+ <h1 className="text-2xl font-bold text-[#F6F1EC]">{t("aiMuhasebePage.isletmem.title")}</h1>
+ <p className="text-on-surface-variant text-sm mt-1">{t("aiMuhasebePage.isletmem.subtitle")}</p>
  </div>
  <div className="flex items-center gap-4">
  {/* Notifications */}
@@ -19,7 +21,7 @@ export default function IsletmemPage() {
  
  {/* Date Picker */}
  <div className="flex items-center gap-3 bg-[#2A2631] border border-[#3A3540] rounded-xl px-4 py-2.5 cursor-pointer hover:bg-[#23262D] transition-colors">
- <span className="text-sm text-[#F6F1EC] font-medium">Bugün: 03 Temmuz 2026</span>
+ <span className="text-sm text-[#F6F1EC] font-medium">{t("aiMuhasebePage.isletmem.todayDate")}</span>
  <i className="fa-regular fa-calendar text-on-surface-variant"></i>
  </div>
  
@@ -36,11 +38,11 @@ export default function IsletmemPage() {
  {/* Date Filters */}
  <div className="flex items-center gap-3">
  <button className="flex items-center gap-2 bg-[#22B573] text-[#0F1115] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#16A34A] transition-colors">
- Haziran 2026
+ {t("aiMuhasebePage.isletmem.periodJune2026")}
  <i className="fa-solid fa-chevron-down text-xs"></i>
  </button>
  <button className="flex items-center gap-2 bg-[#2A2631] text-on-surface-variant border border-[#3A3540] px-4 py-2 rounded-lg text-sm font-medium hover:text-[#F6F1EC] hover:bg-[#23262D] transition-colors">
- Eylül 2022
+ {t("aiMuhasebePage.isletmem.periodSep2022")}
  </button>
  </div>
 
@@ -52,11 +54,11 @@ export default function IsletmemPage() {
  <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start gap-8">
  {/* Balance Info */}
  <div className="flex-1">
- <h2 className="text-on-surface-variant text-sm font-medium tracking-wide mb-2 uppercase">TOPLAM BAKİYE</h2>
+ <h2 className="text-on-surface-variant text-sm font-medium tracking-wide mb-2 uppercase">{t("aiMuhasebePage.isletmem.totalBalance")}</h2>
  <div className="text-5xl font-bold text-[#22B573] mb-4 tracking-tight">₺-5.900,00</div>
  <div className="flex items-center gap-2 text-[#EF4444] text-sm font-medium">
  <i className="fa-solid fa-arrow-trend-down"></i>
- <span>Geçen aya göre %4.2 düşüş</span>
+ <span>{t("aiMuhasebePage.isletmem.decreaseFromLastMonth")}</span>
  </div>
  </div>
  
@@ -110,7 +112,7 @@ export default function IsletmemPage() {
  {/* Income Card */}
  <div className="bg-[#2A2631] border border-[#3A3540] rounded-2xl p-6 flex items-center justify-between" data-purpose="income-card">
  <div>
- <h3 className="text-on-surface-variant text-sm font-medium mb-1">Gelirler</h3>
+ <h3 className="text-on-surface-variant text-sm font-medium mb-1">{t("aiMuhasebePage.isletmem.incomes")}</h3>
  <div className="text-3xl font-bold text-[#22B573]">₺0,00</div>
  </div>
  <div className="w-12 h-12 rounded-full bg-[#22B573]/10 flex items-center justify-center text-[#22B573]">
@@ -121,7 +123,7 @@ export default function IsletmemPage() {
  {/* Expense Card */}
  <div className="bg-[#2A2631] border border-[#3A3540] rounded-2xl p-6 flex items-center justify-between" data-purpose="expense-card">
  <div>
- <h3 className="text-on-surface-variant text-sm font-medium mb-1">Giderler</h3>
+ <h3 className="text-on-surface-variant text-sm font-medium mb-1">{t("aiMuhasebePage.isletmem.expenses")}</h3>
  <div className="text-3xl font-bold text-[#EF4444]">₺5.900,00</div>
  </div>
  <div className="w-12 h-12 rounded-full bg-[#EF4444]/10 flex items-center justify-center text-[#EF4444]">
@@ -134,22 +136,22 @@ export default function IsletmemPage() {
  {/* BEGIN: Tabs and Filters */}
  <div className="flex items-center justify-between border-b border-[#3A3540] pt-2" data-purpose="tabs-section">
  <div className="flex items-center gap-6">
- <button className="pb-3 text-sm font-medium text-[#22B573] border-b-2 border-[#22B573]">Gelirler</button>
- <button className="pb-3 text-sm font-medium text-on-surface-variant hover:text-[#F6F1EC] transition-colors">Giderler</button>
- <button className="pb-3 text-sm font-medium text-on-surface-variant hover:text-[#F6F1EC] transition-colors">Faturalar</button>
+ <button className="pb-3 text-sm font-medium text-[#22B573] border-b-2 border-[#22B573]">{t("aiMuhasebePage.isletmem.incomes")}</button>
+ <button className="pb-3 text-sm font-medium text-on-surface-variant hover:text-[#F6F1EC] transition-colors">{t("aiMuhasebePage.isletmem.expenses")}</button>
+ <button className="pb-3 text-sm font-medium text-on-surface-variant hover:text-[#F6F1EC] transition-colors">{t("aiMuhasebePage.isletmem.invoices")}</button>
  </div>
  <div className="flex items-center gap-3 pb-2">
  <button className="flex items-center gap-2 px-4 py-2 bg-[#2A2631] border border-[#3A3540] rounded-lg text-sm text-on-surface-variant hover:text-[#F6F1EC] hover:bg-[#23262D] transition-colors">
  <i className="fa-solid fa-filter text-xs"></i>
- Filtrele
+ {t("aiMuhasebePage.isletmem.filter")}
  </button>
  <div className="relative">
- <input className="bg-[#2A2631] border border-[#3A3540] rounded-lg pl-4 pr-10 py-2 text-sm text-[#F6F1EC] placeholder-[#94A3B8] focus:outline-none focus:border-[#22B573] focus:ring-1 focus:ring-[#22B573] w-64" placeholder="Ara..." type="text"/>
+ <input className="bg-[#2A2631] border border-[#3A3540] rounded-lg pl-4 pr-10 py-2 text-sm text-[#F6F1EC] placeholder-[#94A3B8] focus:outline-none focus:border-[#22B573] focus:ring-1 focus:ring-[#22B573] w-64" placeholder={t("aiMuhasebePage.isletmem.searchPlaceholder")} type="text"/>
  <i className="fa-solid fa-magnifying-glass absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm"></i>
  </div>
  <button className="flex items-center gap-2 px-4 py-2 bg-[#22B573]/20 border border-[#22B573]/30 text-[#22B573] rounded-lg text-sm font-medium hover:bg-[#22B573]/30 transition-colors">
  <i className="fa-solid fa-plus text-xs"></i>
- Yeni Ekle
+ {t("aiMuhasebePage.isletmem.addNew")}
  </button>
  </div>
  </div>
@@ -169,7 +171,7 @@ export default function IsletmemPage() {
  <path d="M7 11V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v6"></path>
  </svg>
  </div>
- <p className="text-on-surface-variant text-sm">Bu kategori için kayıt bulunamadı.</p>
+ <p className="text-on-surface-variant text-sm">{t("aiMuhasebePage.isletmem.emptyState")}</p>
  </div>
  {/* END: Empty State */}
 
@@ -180,15 +182,15 @@ export default function IsletmemPage() {
  <i className="fa-solid fa-chart-line"></i>
  </div>
  <div>
- <h3 className="text-[#22B573] font-medium text-lg mb-2">Akıllı Analiz</h3>
+ <h3 className="text-[#22B573] font-medium text-lg mb-2">{t("aiMuhasebePage.isletmem.smartAnalysis")}</h3>
  <div className="flex items-center gap-2 text-on-surface-variant text-sm border-l-2 border-[#22B573] pl-3 py-0.5">
- <span>Analiz alınamadı.</span>
+ <span>{t("aiMuhasebePage.isletmem.analysisUnavailable")}</span>
  </div>
  </div>
  </div>
  <button className="flex items-center gap-2 px-5 py-2.5 bg-transparent border border-[#3A3540] rounded-xl text-[#22B573] text-sm font-medium hover:bg-[#23262D] hover:border-[#22B573]/50 transition-colors">
  <i className="fa-solid fa-wand-magic-sparkles"></i>
- Analiz Oluştur
+ {t("aiMuhasebePage.isletmem.generateAnalysis")}
  </button>
  </div>
  {/* END: Smart Analysis */}

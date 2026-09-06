@@ -1,15 +1,17 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { getTranslations } from 'next-intl/server'
 
 const WAHA_BASE_URL = 'http://31.97.37.208:3000';
 const WAHA_API_KEY = 'workigom_key_2026';
 
 export async function getWahaStatus() {
+  const t = await getTranslations();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: 'Oturum bulunamadı' };
-  
+  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
+
   try {
     const response = await fetch(`${WAHA_BASE_URL}/api/sessions?all=true`, {
       method: 'GET',
@@ -19,9 +21,9 @@ export async function getWahaStatus() {
       },
       cache: 'no-store'
     });
-    
+
     if (!response.ok) {
-      return { success: false, error: 'Oturum bilgisi alınamadı' };
+      return { success: false, error: t('common.serverErrors.wahaSessionInfoUnavailable') };
     }
     
     const sessions = await response.json();
@@ -34,9 +36,10 @@ export async function getWahaStatus() {
 }
 
 export async function startWahaSession() {
+  const t = await getTranslations();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: 'Oturum bulunamadı' };
+  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
   
   try {
     const requestBody = {
@@ -77,12 +80,12 @@ export async function startWahaSession() {
           body: JSON.stringify(requestBody)
         });
         
-        if (!retryResponse.ok) return { success: false, error: 'Oto-onarım başarısız' };
-        
+        if (!retryResponse.ok) return { success: false, error: t('common.serverErrors.wahaAutoHealFailed') };
+
         await new Promise(resolve => setTimeout(resolve, 4000));
         return { success: true, data: await retryResponse.json() };
       }
-      return { success: false, error: errorData.message || 'Başlatılamadı' };
+      return { success: false, error: errorData.message || t('common.serverErrors.wahaStartFailed') };
     }
     
     return { success: true, data: await response.json() };
@@ -93,10 +96,11 @@ export async function startWahaSession() {
 }
 
 export async function getWahaQrCode() {
+  const t = await getTranslations();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: 'Oturum bulunamadı' };
-  
+  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
+
   try {
     const response = await fetch(`${WAHA_BASE_URL}/api/${user.id}/auth/qr`, {
       method: 'GET',
@@ -106,8 +110,8 @@ export async function getWahaQrCode() {
       },
       cache: 'no-store'
     });
-    
-    if (!response.ok) return { success: false, error: 'QR alınamadı' };
+
+    if (!response.ok) return { success: false, error: t('common.serverErrors.wahaQrFailed') };
     return { success: true, data: await response.json() };
   } catch (error: any) {
     console.error('getWahaQrCode Error:', error);
@@ -116,10 +120,11 @@ export async function getWahaQrCode() {
 }
 
 export async function getWahaPairingCode(phoneNumber: string) {
+  const t = await getTranslations();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: 'Oturum bulunamadı' };
-  
+  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
+
   try {
     const response = await fetch(`${WAHA_BASE_URL}/api/${user.id}/auth/request-code`, {
       method: 'POST',
@@ -130,8 +135,8 @@ export async function getWahaPairingCode(phoneNumber: string) {
       },
       body: JSON.stringify({ phoneNumber }),
     });
-    
-    if (!response.ok) return { success: false, error: 'Eşleşme kodu alınamadı' };
+
+    if (!response.ok) return { success: false, error: t('common.serverErrors.wahaPairingCodeFailed') };
     return { success: true, data: await response.json() };
   } catch (error: any) {
     console.error('getWahaPairingCode Error:', error);

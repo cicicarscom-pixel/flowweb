@@ -347,6 +347,18 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 ## Son Guncellemeler
 
+### [06.09.2026] Uluslararasılaştırma (i18n) — Faz 4: Server Action Hata Mesajları
+
+**Tetikleyici:** Faz 3 raporunda `src/actions/*.ts` tamamen kapsam dışı bırakılmıştı ("server-side loglama, kullanıcıya doğrudan gösterilmiyor" varsayımıyla). Bu varsayım kısmen yanlıştı: dosyalar tekrar tarandığında, bazı server action'ların döndürdüğü `{success:false, error:'...'}` hata mesajlarının aslında ilgili client component'lerin `alert()`/toast'larına doğrudan yansıdığı (örn. `AiDataResetPanel.tsx`'in zaten çevrilmiş `"Error: {error}"` şablonunun içine ham Türkçe metin enjekte etmesi) görüldü. Kullanıcı bunu küçük, hedefli bir Faz 4 olarak tamamlamayı onayladı.
+
+**Kapsam:** 13 dosyalık `src/actions/` klasörü tek tek tarandı; gerçekten kullanıcıya gösterilen, hardcoded Türkçe hata metni taşıyan **4 dosya** bulundu: `resetAiData.ts`, `waha.ts`, `zernio.ts`, `customers.ts`. (`aiPersonaSettings.ts` dahil incelenen diğer 9 dosyadaki hata mesajları zaten İngilizce/teknik idi — "Unauthorized", "DB Error: ...", "Unhandled Exception: ..." gibi geliştirici odaklı loglama metinleri — kasıtlı olarak dokunulmadı.)
+
+**Mimari çözüm:** next-intl'in Server Component'lerde zaten kullanılan `getTranslations()` fonksiyonu (`next-intl/server`), Server Action'ların da aynı istek bağlamını (cookie'den okunan `NEXT_LOCALE`) paylaştığı için buralarda da sorunsuz çalışıyor — ayrı bir mimari yapıya gerek kalmadan aynı desen uygulandı: her exported fonksiyonun başında `const t = await getTranslations()`, hardcoded string'ler yerine `t('common.serverErrors.*')` çağrıları.
+
+**Eklenen çeviriler:** `messages/{tr,en,de}.json`'a yeni `common.serverErrors` alt-namespace'i (`sessionNotFound`, `unknownError`, `noOrganization`, `zernioProfileSlotFailed`, `wahaSessionInfoUnavailable`, `wahaAutoHealFailed`, `wahaStartFailed`, `wahaQrFailed`, `wahaPairingCodeFailed` — 9 anahtar, WAHA/Zernio entegrasyonlarındaki tüm oturum/bağlantı hatalarını kapsar) ve `musteriler.unnamedCustomer` (isimsiz müşteri kaydı için görüntü adı fallback'i, `getCustomers()`'ta `customer.name || t(...)` deseninde kullanılıyor).
+
+**Doğrulama:** 4 dosyadaki tüm `t('...')` çağrıları (10 farklı anahtar) çıkarılıp üç `messages/*.json` dosyasının da bunları içerdiği programatik olarak teyit edildi; dosyalarda kalan hiçbir hardcoded Türkçe literal olmadığı regex ile doğrulandı.
+
 ### [06.09.2026] Uluslararasılaştırma (i18n) — Faz 3: Kalan ~25 Dosyanın Tam Çevirisi ve Locale/₺ Temizliği
 
 **Tetikleyici:** Faz 2 raporunun sonunda kapsam dışı bırakılan geri kalan hardcoded Türkçe sayfalar/bileşenler ve hardcoded `tr-TR` locale çağrıları için kullanıcı doğrudan talimat verdi: **"Tek seferde tam kapsamlı devam et"** — yani ayrı ayrı dalgalar halinde değil, kalan tüm dosyaların tek seferde bitirilmesi istendi.

@@ -9,7 +9,18 @@
       "systemDefault": "Tarayıcı Diline Göre Otomatik"
     },
     "proPlan": "Pro Plan",
-    "signOut": "Çıkış Yap"
+    "signOut": "Çıkış Yap",
+    "serverErrors": {
+      "sessionNotFound": "Oturum bulunamadı.",
+      "unknownError": "Bilinmeyen hata",
+      "noOrganization": "Kullanıcı herhangi bir organizasyona bağlı değil.",
+      "zernioProfileSlotFailed": "Zernio profil slotu ayarlanamadı.",
+      "wahaSessionInfoUnavailable": "Oturum bilgisi alınamadı",
+      "wahaAutoHealFailed": "Oto-onarım başarısız",
+      "wahaStartFailed": "Başlatılamadı",
+      "wahaQrFailed": "QR alınamadı",
+      "wahaPairingCodeFailed": "Eşleşme kodu alınamadı"
+    }
   },
   "nav": {
     "home": "Anasayfa",
@@ -389,7 +400,8 @@
     "lastVisit": "Son: {date}",
     "pastAppointments": "Geçmiş Randevular",
     "noAppointments": "Kayıtlı randevu yok.",
-    "unknownService": "Bilinmeyen Hizmet"
+    "unknownService": "Bilinmeyen Hizmet",
+    "unnamedCustomer": "İsimsiz"
   },
   "profilPage": {
     "loading": "Yükleniyor...",

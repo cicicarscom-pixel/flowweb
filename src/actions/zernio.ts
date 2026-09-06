@@ -2,18 +2,20 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getTranslations } from 'next-intl/server'
 
 const ZERNIO_API_KEY = process.env.ZERNIO_API_KEY || process.env.NEXT_PUBLIC_ZERNIO_API_KEY || ''
 const ZERNIO_API_URL = 'https://api.zernio.com/v1'
 
 export async function getZernioConnectUrl(platform: string, redirectUrl: string) {
   try {
+    const t = await getTranslations()
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) throw new Error("Unauthorized")
 
     const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).single()
-    if (!orgMember?.organization_id) throw new Error("Kullanıcı herhangi bir organizasyona bağlı değil.")
+    if (!orgMember?.organization_id) throw new Error(t('common.serverErrors.noOrganization'))
 
     const orgId = orgMember.organization_id
 
@@ -25,7 +27,7 @@ export async function getZernioConnectUrl(platform: string, redirectUrl: string)
 
     if (rpcError || !resolved) {
       console.error("RPC Error:", rpcError)
-      throw new Error("Zernio profil slotu ayarlanamadı.")
+      throw new Error(t('common.serverErrors.zernioProfileSlotFailed'))
     }
 
     let finalZernioProfileId = resolved.zernio_profile_id
@@ -112,12 +114,13 @@ export async function disconnectZernioAccount(accountId: string) {
 
 export async function syncZernioAccounts() {
   try {
+    const t = await getTranslations()
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Unauthorized")
 
     const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).single()
-    if (!orgMember?.organization_id) throw new Error("Kullanıcı herhangi bir organizasyona bağlı değil.")
+    if (!orgMember?.organization_id) throw new Error(t('common.serverErrors.noOrganization'))
 
     const orgId = orgMember.organization_id
 

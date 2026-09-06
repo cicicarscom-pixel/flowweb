@@ -9,7 +9,18 @@
       "systemDefault": "Automatisch (Browsersprache)"
     },
     "proPlan": "Pro-Plan",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "serverErrors": {
+      "sessionNotFound": "Sitzung nicht gefunden.",
+      "unknownError": "Unbekannter Fehler",
+      "noOrganization": "Der Benutzer ist mit keiner Organisation verbunden.",
+      "zernioProfileSlotFailed": "Zernio-Profil-Slot konnte nicht eingerichtet werden.",
+      "wahaSessionInfoUnavailable": "Sitzungsinformationen konnten nicht abgerufen werden",
+      "wahaAutoHealFailed": "Automatische Reparatur fehlgeschlagen",
+      "wahaStartFailed": "Konnte nicht gestartet werden",
+      "wahaQrFailed": "QR-Code konnte nicht abgerufen werden",
+      "wahaPairingCodeFailed": "Kopplungscode konnte nicht abgerufen werden"
+    }
   },
   "nav": {
     "home": "Startseite",
@@ -389,7 +400,8 @@
     "lastVisit": "Zuletzt: {date}",
     "pastAppointments": "Vergangene Termine",
     "noAppointments": "Keine Termine erfasst.",
-    "unknownService": "Unbekannte Dienstleistung"
+    "unknownService": "Unbekannte Dienstleistung",
+    "unnamedCustomer": "Unbenannt"
   },
   "profilPage": {
     "loading": "Wird geladen...",

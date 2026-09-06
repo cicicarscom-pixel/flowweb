@@ -1,10 +1,12 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { getTranslations } from 'next-intl/server'
 
 export async function getCustomers() {
   try {
     const supabase = await createClient()
+    const t = await getTranslations()
 
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     if (sessionError || !session?.user) {
@@ -76,7 +78,7 @@ export async function getCustomers() {
       
       return {
         id: customer.id,
-        name: customer.name || 'İsimsiz',
+        name: customer.name || t('musteriler.unnamedCustomer'),
         phone: customer.phone,
         created_at: customer.created_at,
         total_appointments: customerAppts.length,

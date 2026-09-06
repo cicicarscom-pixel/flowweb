@@ -16,6 +16,7 @@
 // ==============================================================================
 
 import { useRef, useState, MouseEvent } from "react";
+import { useTranslations } from "next-intl";
 import PersonaCard from "./PersonaCard";
 import type { PublicPersona } from "@/actions/personas";
 
@@ -46,6 +47,7 @@ interface PersonaCarouselProps {
 }
 
 export default function PersonaCarousel({ personas, loading, selectedSlug, onSelect }: PersonaCarouselProps) {
+  const t = useTranslations();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -111,24 +113,24 @@ export default function PersonaCarousel({ personas, loading, selectedSlug, onSel
         }
       `}</style>
       <PersonaCard
-        label="Standart"
+        label={t("personas.standardCard.label")}
         icon="🤖"
-        description="Kişilik uygulanmaz, varsayılan ayarlarla konuşur."
+        description={t("personas.standardCard.description")}
         accentColor={STANDART_COLOR}
         selected={selectedSlug === null}
         onSelect={() => onSelect(null)}
-        title="Kişilik uygulanmaz — asistan mevcut varsayılan/eski ayarlarınızla konuşur"
+        title={t("personas.standardCard.title")}
       />
 
       {loading && (
         <span style={{ fontSize: 13, color: "var(--text-secondary)", padding: "0 8px", alignSelf: "center" }}>
-          Karakterler yükleniyor...
+          {t("personas.loading")}
         </span>
       )}
 
       {!loading && personas.length === 0 && (
         <span style={{ fontSize: 13, color: "var(--text-secondary)", padding: "0 8px", alignSelf: "center" }}>
-          Şu an seçilebilecek yayınlanmış bir karakter yok.
+          {t("personas.empty")}
         </span>
       )}
 

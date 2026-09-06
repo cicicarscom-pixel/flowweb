@@ -347,6 +347,24 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 
 ## Son Guncellemeler
 
+### [06.09.2026] Uluslararasılaştırma (i18n) — Faz 2: AI Kişiliği Rol/Üslup Etiketlerinin id/label Ayrımı
+
+**Tetikleyici:** Faz 1 raporunda mimari bir engel (blocker) olarak işaretlenmişti: `AICharacterPanel.tsx` içindeki `ROLES`/`TONES` sabitlerinde `id === label` (Türkçe) — yani "Kebapçı", "Standart" gibi değerler hem ekranda gösterilen metin hem de `organization_ai_settings.business_role`/`.tone` kolonlarına yazılan ham veriydi. Kullanıcı bu engelin çözümünü doğrudan iki örnekle talimatlandırdı: İngilizce'de "Standart" → **"Standard"**, "Kebapçı" → **"Turkish Kebab"** olmalı. Bu, geri kalan 13 rol ve 8 üslup için de aynı desenin uygulanmasını gerektirdi.
+
+**Mimari çözüm — id sabit, label çeviriden üretiliyor:** `AICharacterPanel.tsx`'e `ROLE_KEY_BY_ID`/`TONE_KEY_BY_ID` adında sabit bir id→i18n-anahtarı eşlemesi eklendi (ör. `"Kebapçı" → "kebapci"`). `ROLES`/`TONES` sabitlerindeki `id` değerleri **hiç değiştirilmedi** (mevcut kayıtlı `organization_ai_settings` satırları ve mobil tarafla parite bozulmasın diye). Bileşen artık render sırasında `useTranslations()` ile bu eşlemeyi kullanarak `personas.roles.*` / `personas.tones.*` çevirilerinden gösterilecek `label`'ı üretiyor; `RoleCarousel`/`ToneCarousel`/`PillGroup` gibi tüketici bileşenlerde hiçbir değişikliğe gerek kalmadı (zaten sadece `.label`'ı düz metin olarak basıyorlar).
+
+**Eklenen çeviriler (`messages/{tr,en,de}.json` → yeni `personas` namespace'i):**
+- `personas.sectionLabels.*` — "AI Kişiliği", "İŞLETME ROLÜ", "KARAKTER", "ÜSLUP", "KARAKTER AYARLARI" başlıkları.
+- `personas.sliders.*` — "Karakter Yoğunluğu", "Mizah Seviyesi", "Modern Uyarlama" kadran etiketleri.
+- `personas.roles.*` (15 rol) ve `personas.tones.*` (9 üslup) — İngilizce örnekler: Kebapçı → Turkish Kebab, Standart → Standard, Berber → Barber, Restoran → Restaurant, Diş Kliniği → Dental Clinic, Huysuz → Grumpy, vb. Almanca: Kebapçı → Kebap-Imbiss, Berber → Friseur, vb.
+- `personas.standardCard.*`, `personas.loading`, `personas.empty` — `PersonaCarousel.tsx`'teki ayrı, sabit "Standart" karakter kartının (label/description/title) ve yükleniyor/boş liste metinlerinin çevirisi (bu, ÜSLUP'taki "Standart" tondan farklı, KARAKTER bölümündeki ayrı bir "kişilik yok" kartıydı — aynı desen orada da uygulandı).
+
+**Değiştirilen dosyalar:** `src/components/ai-asistan/AICharacterPanel.tsx`, `src/components/ai-asistan/PersonaCarousel.tsx`, `messages/tr.json`, `messages/en.json`, `messages/de.json`.
+
+**Çapraz platform notu (AGENTS.md kuralı gereği):** `organization_ai_settings.business_role`/`.tone` mobil (`flow`) tarafından da okunup yazıldığı için, mobildeki `BotYonetimiScreen.js`'in aynı rol/üslup listelerini gösterdiği `flow-repo/src/modules/persona_engine/domain/config/{roles,moods}.ts` dosyalarına da birebir aynı çözüm (id sabit, `title` yerine i18n çevirisinden üretilen label) uygulandı — bkz. `flow/README.md`'deki eşleşen Faz 2 girdisi. İki repo aynı id kümesini ve aynı İngilizce/Almanca çevirileri paylaşıyor.
+
+**Bilinen kapsam dışı:** Bu tur sadece AI Kişiliği panelindeki rol/üslup etiketlerini kapsıyor. Faz 1 raporunda listelenen ~35-40 dosyadaki diğer hardcoded Türkçe metinler, 13 hardcoded `tr-TR` locale çağrısı ve 7+ hardcoded `₺` sembolü hâlâ bekliyor.
+
 ### [05.09.2026] Uluslararasılaştırma (i18n) — Faz 1: next-intl Altyapısı, Otomatik Dil Algılama, Sidebar/Header Çevirisi
 
 **Tetikleyici:** Platform uluslararası kullanıcılara açılacağı için, kullanıcının açık talebi üzerine ("otomatik dil algılaması olmalı ve tüm arayüz İngilizceye/başka dillere kolay çevrilebilmeli") `flow`, `flowweb` ve `ledger` repoları i18n hazırlığı açısından denetlendi (tam denetim raporu `flow/README.md`'de). Bu depo (`flowweb`) denetim öncesinde **sıfır** i18n altyapısına sahipti — `<html lang="en">` bile içerikle uyumsuzdu (her şey Türkçe), tarayıcı dili algılama yoktu, ~500-650 hardcoded Türkçe string ~35-40 dosyaya yayılmıştı.

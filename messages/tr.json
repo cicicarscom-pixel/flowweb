@@ -30,5 +30,55 @@
       "analytics": "Analiz",
       "inbox": "Gelen Kutusu"
     }
+  },
+  "personas": {
+    "sectionLabels": {
+      "aiPersonality": "AI Kişiliği",
+      "businessRole": "İŞLETME ROLÜ",
+      "character": "KARAKTER",
+      "tone": "ÜSLUP",
+      "characterSettings": "KARAKTER AYARLARI"
+    },
+    "sliders": {
+      "characterIntensity": "Karakter Yoğunluğu",
+      "humorLevel": "Mizah Seviyesi",
+      "modernAdaptation": "Modern Uyarlama"
+    },
+    "otherRole": "Diğer",
+    "loading": "Karakterler yükleniyor...",
+    "empty": "Şu an seçilebilecek yayınlanmış bir karakter yok.",
+    "standardCard": {
+      "label": "Standart",
+      "description": "Kişilik uygulanmaz, varsayılan ayarlarla konuşur.",
+      "title": "Kişilik uygulanmaz — asistan mevcut varsayılan/eski ayarlarınızla konuşur"
+    },
+    "roles": {
+      "kebapci": "Kebapçı",
+      "berber": "Berber",
+      "otoTamir": "Oto Tamir",
+      "market": "Market",
+      "bayanGiyim": "Bayan Giyim",
+      "cicekci": "Çiçekçi",
+      "disKlinigi": "Diş Kliniği",
+      "giyimMagazasi": "Giyim Mağazası",
+      "kurumsalSirket": "Kurumsal Şirket",
+      "muayenehane": "Muayenehane",
+      "petShop": "Pet Shop",
+      "restoran": "Restoran",
+      "telefonTamiri": "Telefon Tamiri",
+      "unluMamuller": "Unlu Mamüller",
+      "veteriner": "Veteriner"
+    },
+    "tones": {
+      "standart": "Standart",
+      "komik": "Komik",
+      "resmi": "Resmi",
+      "samimi": "Samimi",
+      "neseli": "Neşeli",
+      "sakin": "Sakin",
+      "dedikoducu": "Dedikoducu",
+      "huysuz": "Huysuz",
+      "sinirli": "Sinirli"
+    }
   }
 }

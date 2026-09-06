@@ -30,5 +30,55 @@
       "analytics": "Analyse",
       "inbox": "Posteingang"
     }
+  },
+  "personas": {
+    "sectionLabels": {
+      "aiPersonality": "KI-Persönlichkeit",
+      "businessRole": "GESCHÄFTSROLLE",
+      "character": "CHARAKTER",
+      "tone": "TONFALL",
+      "characterSettings": "CHARAKTEREINSTELLUNGEN"
+    },
+    "sliders": {
+      "characterIntensity": "Charakterintensität",
+      "humorLevel": "Humorlevel",
+      "modernAdaptation": "Moderne Anpassung"
+    },
+    "otherRole": "Sonstiges",
+    "loading": "Charaktere werden geladen...",
+    "empty": "Derzeit ist kein veröffentlichter Charakter auswählbar.",
+    "standardCard": {
+      "label": "Standard",
+      "description": "Keine Persönlichkeit angewendet — spricht mit den Standardeinstellungen.",
+      "title": "Keine Persönlichkeit angewendet — der Assistent spricht mit Ihren aktuellen Standard-/Alteinstellungen"
+    },
+    "roles": {
+      "kebapci": "Kebap-Imbiss",
+      "berber": "Friseur",
+      "otoTamir": "Autowerkstatt",
+      "market": "Lebensmittelgeschäft",
+      "bayanGiyim": "Damenbekleidung",
+      "cicekci": "Blumenladen",
+      "disKlinigi": "Zahnklinik",
+      "giyimMagazasi": "Bekleidungsgeschäft",
+      "kurumsalSirket": "Firmenunternehmen",
+      "muayenehane": "Arztpraxis",
+      "petShop": "Tierhandlung",
+      "restoran": "Restaurant",
+      "telefonTamiri": "Handyreparatur",
+      "unluMamuller": "Bäckerei",
+      "veteriner": "Tierarzt"
+    },
+    "tones": {
+      "standart": "Standard",
+      "komik": "Lustig",
+      "resmi": "Förmlich",
+      "samimi": "Herzlich",
+      "neseli": "Fröhlich",
+      "sakin": "Ruhig",
+      "dedikoducu": "Tratschsüchtig",
+      "huysuz": "Mürrisch",
+      "sinirli": "Reizbar"
+    }
   }
 }

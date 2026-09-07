@@ -176,10 +176,14 @@ export default function AnalyticsScreen() {
       }
 
       const invokeZernio = async (action: string, payload: any) => {
-        return supabase.functions.invoke('zernio-client', {
+        const { data, error } = await supabase.functions.invoke('zernio-client', {
           body: { action, payload },
           headers: { Authorization: `Bearer ${session.access_token}` }
         });
+        if (error) {
+          throw error;
+        }
+        return { data };
       };
 
       const targetAccounts = selectedPlatform.id === 'all' 

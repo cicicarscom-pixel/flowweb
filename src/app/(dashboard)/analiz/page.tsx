@@ -98,6 +98,7 @@ export default function AnalyticsScreen() {
     contentDecay: [] as any[],
     postingFrequency: [] as any[],
     postTimeline: null as any,
+    postAnalytics: [] as any[],
     totalFollowers: 0,
     totalPosts: 0,
     totalComments: 0,
@@ -171,11 +172,22 @@ export default function AnalyticsScreen() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        setIsLoading(false);
+        if (currentRequestId === requestRef.current) setIsLoading(false);
         return;
       }
 
-      const invokeZernio = async (action: string, payload: any) => {
+      // Merkezi çağrı sarmalayıcı. Zernio zarfını ({success, data}) ve
+      // zernio-client'ın "sometimes sdk wraps it in { data: ... }" davranışını
+      // (bkz. fetchAnalyticsWithCache) tek noktadan açar.
+      // - Taşıma/altyapı hatasında (network, fonksiyon çağrısı patlarsa) fırlatır
+      //   ve tüm fetchZernioAnalytics'i durdurur — bu doğru, çünkü session/ağ
+      //   temelden bozuksa geri kalan çağrılar da anlamsız olur.
+      // - Zernio/edge function'ın kendi döndürdüğü "yumuşak" hatada
+      //   ({success:false, error, code} — ki bugünkü tasarımda HTTP 200 ile
+      //   geliyor) FIRLATMAZ: sadece o tek action'ı uyarı olarak loglar ve boş
+      //   veri döner. Böylece örn. content-decay başarısız olsa bile, zaten
+      //   başarıyla gelmiş best-times/daily-metrics verisi çöpe atılmaz.
+      const invokeZernio = async (action: string, payload: any): Promise<any> => {
         const { data, error } = await supabase.functions.invoke('zernio-client', {
           body: { action, payload },
           headers: { Authorization: `Bearer ${session.access_token}` }
@@ -183,21 +195,25 @@ export default function AnalyticsScreen() {
         if (error) {
           throw error;
         }
-        return { data };
+        if (data?.success === false) {
+          console.warn(`[Zernio] "${action}" başarısız:`, data.error, `(${data.code})`);
+          return {};
+        }
+        return data?.data?.data || data?.data || {};
       };
 
-      const targetAccounts = selectedPlatform.id === 'all' 
-        ? socialAccounts 
+      const targetAccounts = selectedPlatform.id === 'all'
+        ? socialAccounts
         : socialAccounts.filter(a => a.platform.toLowerCase() === selectedPlatform.id || (selectedPlatform.id === 'googlebusiness' && a.platform.toLowerCase() === 'google'));
 
       const _toDate = new Date().toISOString().split('T')[0];
       const _fromDate = new Date(Date.now() - (selectedTimeRange.days || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      
+
       const queryArgs: any = { fromDate: _fromDate, toDate: _toDate };
       if (selectedPlatform.id !== 'all') {
          queryArgs.platform = selectedPlatform.id === 'googlebusiness' ? 'google' : selectedPlatform.id;
       }
-      
+
       const payloadBase = { query: queryArgs };
       const singleAccountId = targetAccounts && targetAccounts.length > 0 ? targetAccounts[0].zernio_account_id : undefined;
       const accountPayload = { query: { accountId: singleAccountId, fromDate: _fromDate, toDate: _toDate } };
@@ -213,6 +229,7 @@ export default function AnalyticsScreen() {
         contentDecay: [] as any[],
         postingFrequency: [] as any[],
         postTimeline: null as any,
+        postAnalytics: [] as any[],
         totalFollowers: 0,
         totalPosts: 0,
         totalComments: 0,
@@ -221,10 +238,71 @@ export default function AnalyticsScreen() {
         formatBreakdown: { video: 0, image: 0 }
       };
 
-      // Daily Metrics
-      const { data: dailyRes } = await invokeZernio('get-daily-metrics', payloadBase);
-      const actualData = dailyRes?.data?.data?.data || dailyRes?.data?.data || {};
-      
+      // Seçili platforma göre gereken tek platforma-özel çağrı grubu. Hiçbiri
+      // daily-metrics/best-times/vb. sonuçlarına bağımlı değil, o yüzden
+      // aşağıdaki ana Promise.all'a aynen katılabiliyor.
+      type PlatformResult =
+        | { kind: 'all'; follow: any }
+        | { kind: 'instagram'; demo: any; follow: any }
+        | { kind: 'youtube'; yt: any }
+        | { kind: 'tiktok'; tk: any }
+        | { kind: 'none' };
+
+      const platformCall: Promise<PlatformResult> = (() => {
+        if (selectedPlatform.id === 'all') {
+          return invokeZernio('get-follower-stats', payloadBase).then(follow => ({ kind: 'all' as const, follow }));
+        }
+        if (selectedPlatform.id === 'instagram' && singleAccountId) {
+          return Promise.all([
+            invokeZernio('get-instagram-demographics', accountPayload),
+            invokeZernio('get-instagram-follower-history', accountPayload)
+          ]).then(([demo, follow]) => ({ kind: 'instagram' as const, demo, follow }));
+        }
+        if (selectedPlatform.id === 'youtube' && singleAccountId) {
+          return invokeZernio('get-youtube-daily-views', accountPayload).then(yt => ({ kind: 'youtube' as const, yt }));
+        }
+        if (selectedPlatform.id === 'tiktok' && singleAccountId) {
+          return invokeZernio('get-tiktok-insights', accountPayload).then(tk => ({ kind: 'tiktok' as const, tk }));
+        }
+        return Promise.resolve({ kind: 'none' as const });
+      })();
+
+      // Birbirinden tamamen bağımsız tüm keşif çağrılarını PARALEL yürüt.
+      // Öncesinde bunlar 7-9 ayrı network round-trip'i olarak sırayla
+      // "await" ediliyordu (sayfa yüklemesini gereksiz yavaşlatıyor, ve
+      // aradaki her bekleme auth/oturum zamanlama sorunlarına daha açık hale
+      // getiriyordu). Hiçbiri bir diğerinin sonucuna ihtiyaç duymadığından
+      // hepsini aynı anda ateşlemek güvenli.
+      const [
+        actualData,
+        actualMsgs,
+        actualBestTimes,
+        actualFreq,
+        actualDecay,
+        actualPostAnalytics,
+        recentPosts,
+        platformResult
+      ] = await Promise.all([
+        invokeZernio('get-daily-metrics', payloadBase),
+        invokeZernio('sync-messages', {}),
+        invokeZernio('get-best-times', payloadBase),
+        invokeZernio('get-posting-frequency', payloadBase),
+        invokeZernio('get-content-decay', payloadBase),
+        invokeZernio('get-post-analytics', payloadBase),
+        supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1).then(r => r.data),
+        platformCall
+      ]);
+
+      // get-post-timeline, keşif için gerçek bir postId'ye ihtiyaç duyuyor;
+      // bu yüzden recentPosts sorgusunun (yukarıdaki paralel grupta zaten
+      // koştu) sonucunu bekleyip ayrıca çağırıyoruz.
+      const recentPostId = recentPosts?.[0]?.zernio_post_id;
+      const timelinePayload = recentPostId
+        ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId }
+        : payloadBase;
+      const actualTimeline = await invokeZernio('get-post-timeline', timelinePayload);
+
+      // --- Sonuçları state şekline dök (tamamen senkron, saf eşleme) ---
       if (actualData.dailyData) {
          const mappedTimeline = actualData.dailyData.map((d: any) => ({
            views: d.metrics?.impressions || 0,
@@ -236,11 +314,11 @@ export default function AnalyticsScreen() {
            comments: d.metrics?.comments || 0,
            date: d.date ? d.date.substring(5,10) : ''
          }));
-         
+
          if (mappedTimeline.length === 1) {
            mappedTimeline.unshift({ views: 0, likes: 0, reach: 0, clicks: 0, shares: 0, saves: 0, comments: 0, date: '' });
          }
-         
+
          newZernioData.timelineData = mappedTimeline;
       }
 
@@ -251,101 +329,71 @@ export default function AnalyticsScreen() {
          newZernioData.totalReach = actualData.platformBreakdown.reduce((sum: number, p: any) => sum + (p.reach || 0), 0);
       }
 
-      // Sync Messages
-      const { data: msgsRes } = await invokeZernio('sync-messages', {});
-      if (msgsRes?.data?.conversations) {
-         newZernioData.messagesReceived = msgsRes.data.conversations.length;
+      if (actualMsgs.conversations) {
+         newZernioData.messagesReceived = actualMsgs.conversations.length;
       }
 
-      // Phase 1 Discovery Calls (to cache data in db)
-      const { data: bestTimesRes } = await invokeZernio('get-best-times', payloadBase);
-      const { data: freqRes } = await invokeZernio('get-posting-frequency', payloadBase);
-      const { data: decayRes } = await invokeZernio('get-content-decay', payloadBase);
-      
-      // Fetch a real postId for the timeline discovery
-      const { data: recentPosts } = await supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1);
-      const recentPostId = recentPosts?.[0]?.zernio_post_id;
-      const timelinePayload = recentPostId 
-        ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId } 
-        : payloadBase;
-        
-      const { data: timelineRes } = await invokeZernio('get-post-timeline', timelinePayload);
-      
-      // Store Phase 1 API responses in state
-      const actualBestTimes = bestTimesRes?.data?.data?.data || bestTimesRes?.data?.data || {};
       if (actualBestTimes.slots) {
          newZernioData.bestTimes = actualBestTimes.slots;
       }
-      
-      const actualFreq = freqRes?.data?.data?.data || freqRes?.data?.data || {};
+
       if (actualFreq.frequency) {
          newZernioData.postingFrequency = actualFreq.frequency;
       }
-      
-      const actualDecay = decayRes?.data?.data?.data || decayRes?.data?.data || {};
+
       if (actualDecay.buckets) {
          newZernioData.contentDecay = actualDecay.buckets;
       }
-      
-      const actualTimeline = timelineRes?.data?.data?.data || timelineRes?.data?.data || {};
+
       if (actualTimeline.timeline) {
          newZernioData.postTimeline = actualTimeline;
       }
+      
+      if (actualPostAnalytics.posts) {
+         newZernioData.postAnalytics = actualPostAnalytics.posts;
+      } else if (actualPostAnalytics.data) {
+         newZernioData.postAnalytics = actualPostAnalytics.data;
+      } else if (Array.isArray(actualPostAnalytics)) {
+         newZernioData.postAnalytics = actualPostAnalytics;
+      }
 
-      if (selectedPlatform.id === 'all') {
-        const { data: followRes } = await invokeZernio('get-follower-stats', payloadBase);
-        const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
-        if (actualFollow.accounts) {
-           newZernioData.totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || 0), 0);
+      if (platformResult.kind === 'all') {
+        if (platformResult.follow.accounts) {
+           newZernioData.totalFollowers = platformResult.follow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || 0), 0);
         }
-      } else if (selectedPlatform.id === 'instagram') {
-        if (singleAccountId) {
-          const { data: demoRes } = await invokeZernio('get-instagram-demographics', accountPayload);
-          
-          const actualDemo = demoRes?.data?.data?.data || demoRes?.data?.data || {};
-          if (actualDemo.data?.[0]?.values?.[0]?.value) {
-            const genderAge = actualDemo.data[0].values[0].value;
-            const mapped = Object.keys(genderAge).map((key, index) => ({
-              value: genderAge[key],
-              color: ['#FF7A59', '#C2478D', '#E8A8CD', '#0077b5'][index % 4],
-              name: key
-            }));
-            newZernioData.demographics = mapped;
-          }
+      } else if (platformResult.kind === 'instagram') {
+        if (platformResult.demo.data?.[0]?.values?.[0]?.value) {
+          const genderAge = platformResult.demo.data[0].values[0].value;
+          const mapped = Object.keys(genderAge).map((key, index) => ({
+            value: genderAge[key],
+            color: ['#FF7A59', '#C2478D', '#E8A8CD', '#0077b5'][index % 4],
+            name: key
+          }));
+          newZernioData.demographics = mapped;
+        }
 
-          const { data: followRes } = await invokeZernio('get-instagram-follower-history', accountPayload);
-          const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
-          if (Array.isArray(actualFollow.data?.[0]?.values)) {
-            newZernioData.followerStats = actualFollow.data[0].values.map((v: any) => ({
-              followers: v.value,
-              date: v.end_time ? v.end_time.substring(5,10) : ''
-            }));
-            newZernioData.totalFollowers = newZernioData.followerStats[newZernioData.followerStats.length-1]?.followers || 0;
-          }
+        if (Array.isArray(platformResult.follow.data?.[0]?.values)) {
+          newZernioData.followerStats = platformResult.follow.data[0].values.map((v: any) => ({
+            followers: v.value,
+            date: v.end_time ? v.end_time.substring(5,10) : ''
+          }));
+          newZernioData.totalFollowers = newZernioData.followerStats[newZernioData.followerStats.length-1]?.followers || 0;
         }
-      } else if (selectedPlatform.id === 'youtube') {
-        if (singleAccountId) {
-          const { data: ytRes } = await invokeZernio('get-youtube-daily-views', accountPayload);
-          const actualYt = ytRes?.data?.data?.data || ytRes?.data?.data || {};
-          if (actualYt.rows) {
-             newZernioData.timelineData = actualYt.rows.map((r: any) => ({
-               views: parseInt(r[1]),
-               likes: 0,
-               date: r[0]
-             }));
-          }
+      } else if (platformResult.kind === 'youtube') {
+        if (platformResult.yt.rows) {
+           newZernioData.timelineData = platformResult.yt.rows.map((r: any) => ({
+             views: parseInt(r[1]),
+             likes: 0,
+             date: r[0]
+           }));
         }
-      } else if (selectedPlatform.id === 'tiktok') {
-        if (singleAccountId) {
-          const { data: tkRes } = await invokeZernio('get-tiktok-insights', accountPayload);
-          const actualTk = tkRes?.data?.data?.data || tkRes?.data?.data || {};
-          if (actualTk.data?.stats) {
-             newZernioData.platformInsights = actualTk.data.stats;
-             newZernioData.totalFollowers = actualTk.data.stats.follower_count;
-          }
+      } else if (platformResult.kind === 'tiktok') {
+        if (platformResult.tk.data?.stats) {
+           newZernioData.platformInsights = platformResult.tk.data.stats;
+           newZernioData.totalFollowers = platformResult.tk.data.stats.follower_count;
         }
       }
-      
+
       if (currentRequestId === requestRef.current) {
         setZernioData(prev => ({ ...newZernioData, formatBreakdown: prev.formatBreakdown }));
       }
@@ -784,6 +832,58 @@ export default function AnalyticsScreen() {
                  );
                })()}
              </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* Top Performing Posts Table */}
+      {zernioData.postAnalytics && zernioData.postAnalytics.length > 0 && (
+        <div className="glass" style={{ borderRadius: 16, padding: "24px", border: "1px solid rgba(255,255,255,0.06)", marginTop: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 600, color: "#F6F1EC", marginBottom: 20 }}>Top Performing Posts</h3>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}>
+                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>Gönderi</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Erişim</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Yorum</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>ER%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {zernioData.postAnalytics.slice(0, 10).map((post: any, idx: number) => {
+                  const metrics = post.metrics || post || {};
+                  const views = metrics.impressions || metrics.views || 0;
+                  const reach = metrics.reach || 0;
+                  const likes = metrics.likes || 0;
+                  const comments = metrics.comments || 0;
+                  const shares = metrics.shares || 0;
+                  const saves = metrics.saves || 0;
+                  const clicks = metrics.clicks || 0;
+                  const er = metrics.engagementRate || metrics.er || (views > 0 ? (((likes + comments + shares + saves) / views) * 100).toFixed(2) : '0.00');
+                  const postName = post.content ? (post.content.substring(0, 40) + (post.content.length > 40 ? '...' : '')) : (post.title || post.id || `Post #${idx + 1}`);
+                  
+                  return (
+                    <tr key={post.id || idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC" }}>{postName}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#E8A8CD", textAlign: "right" }}>{comments.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{shares.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{saves.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{clicks.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#22B573", textAlign: "right" }}>{er}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

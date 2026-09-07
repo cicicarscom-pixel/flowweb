@@ -638,13 +638,14 @@ export default function AnalyticsScreen() {
                 ))}
               </div>
               <div style={{ display: "grid", gridTemplateRows: "repeat(7, 28px)", gap: 2 }}>
-                {Array.from({length: 7}).map((_, dayIdx) => (
-                  <div key={dayIdx} style={{ display: "flex", gap: 2 }}>
-                    {Array.from({length: 24}).map((_, hourIdx) => {
-                      const slot = zernioData.bestTimes.find((s: any) => s.day_of_week === dayIdx && s.hour === hourIdx);
-                      const maxEngagement = Math.max(...zernioData.bestTimes.map((s: any) => s.avg_engagement || 0), 1);
-                      const intensity = slot ? Math.max(0.1, (slot.avg_engagement || 0) / maxEngagement) : 0;
-                      return (
+                {(() => {
+                  const maxEngagement = Math.max(...zernioData.bestTimes.map((s: any) => s.avg_engagement || 0), 1);
+                  return Array.from({length: 7}).map((_, dayIdx) => (
+                    <div key={dayIdx} style={{ display: "flex", gap: 2 }}>
+                      {Array.from({length: 24}).map((_, hourIdx) => {
+                        const slot = zernioData.bestTimes.find((s: any) => s.day_of_week === dayIdx && s.hour === hourIdx);
+                        const intensity = slot ? Math.max(0.1, (slot.avg_engagement || 0) / maxEngagement) : 0;
+                        return (
                         <div 
                           key={hourIdx} 
                           title={slot ? `Saat: ${hourIdx}:00\nEtkileşim: ${slot.avg_engagement}\nGönderi: ${slot.post_count}` : ''}
@@ -660,7 +661,8 @@ export default function AnalyticsScreen() {
                       )
                     })}
                   </div>
-                ))}
+                ));
+                })()}
               </div>
             </div>
           </div>
@@ -707,7 +709,8 @@ export default function AnalyticsScreen() {
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
                 <Legend iconType="circle" />
                 {Array.from(new Set(zernioData.postingFrequency.map((f: any) => f.platform))).map((platform: string) => {
-                  const platDef = PLATFORMS.find(p => p.id === platform.toLowerCase());
+                  const platId = platform.toLowerCase() === 'google' ? 'googlebusiness' : platform.toLowerCase();
+                  const platDef = PLATFORMS.find(p => p.id === platId);
                   const color = platDef ? platDef.color : "#FF7A59";
                   const data = zernioData.postingFrequency.filter((f: any) => f.platform === platform);
                   return (
@@ -749,13 +752,28 @@ export default function AnalyticsScreen() {
 
           <div style={{ height: 300, width: "100%" }}>
              <ResponsiveContainer width="100%" height="100%">
-               <LineChart data={zernioData.postTimeline.timeline}>
-                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
-                 <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
-                 <Tooltip content={<CustomTooltip />} />
-                 <Line type="monotone" dataKey={postTimelineMetric} name={postTimelineMetric.toUpperCase()} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
-               </LineChart>
+               {(() => {
+                 const aggTimeline = Object.values(zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
+                   if (!acc[curr.date]) {
+                     acc[curr.date] = { ...curr };
+                   } else {
+                     ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions', 'follows'].forEach(m => {
+                       acc[curr.date][m] = (acc[curr.date][m] || 0) + (curr[m] || 0);
+                     });
+                   }
+                   return acc;
+                 }, {})).sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
+                 
+                 return (
+                   <LineChart data={aggTimeline}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} />
+                     <Line type="monotone" dataKey={postTimelineMetric} name={postTimelineMetric.toUpperCase()} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                   </LineChart>
+                 );
+               })()}
              </ResponsiveContainer>
           </div>
         </div>

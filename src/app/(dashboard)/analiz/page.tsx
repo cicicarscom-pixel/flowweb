@@ -658,22 +658,47 @@ export default function AnalyticsScreen() {
         )}
       </div>
 
-      {/* Platform Performance Bar Chart */}
+      {/* Platform Performance Bar Charts */}
       {zernioData.platformBreakdown.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Bazlı Etkileşim</h3>
-           <div style={{ height: 300, width: "100%" }}>
-             <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={zernioData.platformBreakdown}>
-                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                   <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
-                   <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                   <Tooltip content={<CustomTooltip />} />
-                   <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />
-                   <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} />
-                   <Bar dataKey="reach" name="Erişim" fill="#22B573" radius={[4,4,0,0]} />
-                </BarChart>
-             </ResponsiveContainer>
+           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px", height: 300, width: "100%" }}>
+             <div style={{ height: "100%" }}>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Gönderi Sayısı</h4>
+               <ResponsiveContainer width="100%" height="90%">
+                  <BarChart data={zernioData.platformBreakdown}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} />
+                     <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />
+                  </BarChart>
+               </ResponsiveContainer>
+             </div>
+             <div style={{ height: "100%" }}>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Beğeni Sayısı</h4>
+               <ResponsiveContainer width="100%" height="90%">
+                  <BarChart data={zernioData.platformBreakdown}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} />
+                     <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} />
+                  </BarChart>
+               </ResponsiveContainer>
+             </div>
+             <div style={{ height: "100%" }}>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Erişim</h4>
+               <ResponsiveContainer width="100%" height="90%">
+                  <BarChart data={zernioData.platformBreakdown}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} />
+                     <Bar dataKey="reach" name="Erişim" fill="#22B573" radius={[4,4,0,0]} />
+                  </BarChart>
+               </ResponsiveContainer>
+             </div>
            </div>
         </div>
       )}

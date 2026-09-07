@@ -32,5 +32,10 @@
     "postcss": "^8.5.23",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "overrides": {
+    "next-intl": {
+      "next": "$next"
+    }
   }
 }

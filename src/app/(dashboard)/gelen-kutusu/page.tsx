@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from "next-intl";
@@ -82,7 +82,9 @@ export default function GelenKutusuPage() {
     comments.filter(c => !c.hidden).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       const postGroup = postMap.get(pId);
-      const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.username === 'Mağaza (Ben)' || comm.is_outbound;
+      
+      const isReply = comm.content?.includes('↳ @Yorum:') || comm.content?.startsWith('↳ @Yorum:');
+      const isBusiness = comm.author_name === 'Mağaza (Ben)' || comm.username === 'Mağaza (Ben)' || comm.is_outbound || isReply;
       comm.isBusiness = isBusiness;
       
       if (!isBusiness) {
@@ -99,15 +101,19 @@ export default function GelenKutusuPage() {
          for (const parent of postGroup.parentComments) {
             const uName = parent.author_name || parent.username;
             if (uName && comm.content && comm.content.includes(`@${uName}`)) {
+               comm.displayContent = comm.content.replace('↳ @Yorum: ', '').replace('↳ @Yorum:', '').trim();
                parent.replies.push(comm);
                foundParent = true;
                break;
             }
          }
          if (!foundParent) {
+            comm.displayContent = comm.content?.replace('↳ @Yorum: ', '').replace('↳ @Yorum:', '').trim();
             comm.replies = [];
             postGroup.parentComments.push(comm);
          }
+      } else {
+         comm.displayContent = comm.content;
       }
     });
     
@@ -294,7 +300,7 @@ export default function GelenKutusuPage() {
           return { 
               ...conv, 
               lastMessageSnippet,
-              participant_picture: conv.participant_picture || cachedPics[conv.zernio_conversation_id] || null
+              participant_picture: conv.participant_picture || cachedPics[conv.zernio_conversation_id] || cachedPics[conv.id] || null
           };
         });
         setConversations(enhancedData);
@@ -349,7 +355,7 @@ export default function GelenKutusuPage() {
             .map(c => ({
               ...c,
               post_picture: (c.zernio_post_id && cachedPics['post_' + c.zernio_post_id]) || c.posts?.media_urls?.[0] || null,
-              author_picture: cachedPics[c.zernio_comment_id] || null
+              author_picture: cachedPics[c.zernio_comment_id] || cachedPics[c.id] || null
           }));
           setComments(enhancedData);
           
@@ -371,12 +377,12 @@ export default function GelenKutusuPage() {
              setComments(prev => prev.map(c => ({
                 ...c,
                 post_picture: c.post_picture || (c.zernio_post_id && newPics['post_' + c.zernio_post_id]) || null,
-                author_picture: c.author_picture || newPics[c.comment_id] || null
+                author_picture: c.author_picture || newPics[c.zernio_comment_id] || newPics[c.id] || null
              })));
              
              setConversations(prev => prev.map(conv => ({
                 ...conv,
-                participant_picture: conv.participant_picture || newPics[conv.zernio_conversation_id] || null
+                participant_picture: conv.participant_picture || newPics[conv.zernio_conversation_id] || newPics[conv.id] || null
              })));
            }
            // Faz 2'yi tetikle
@@ -836,7 +842,30 @@ export default function GelenKutusuPage() {
             </div>
 
             {/* Right Pane - Thread & Reply */}
-            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative">
+            <div className="w-full lg:w-2/3 flex flex-col glass rounded-xl border border-dark-border h-full overflow-hidden relative bg-[#17151A]">
+              
+              {/* Post Header */}
+              {selectedPostId && (
+                <div className="p-4 border-b border-dark-border flex items-center gap-3 bg-white/5">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+                    {postsWithComments.find(p => p.postId === selectedPostId)?.postPicture ? (
+                      <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" />
+                    ) : (
+                      <i className="fa-regular fa-image text-dark-muted"></i>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-on-surface truncate">
+                      {postsWithComments.find(p => p.postId === selectedPostId)?.postContentSnippet}
+                    </p>
+                    <p className="text-xs text-dark-muted flex items-center gap-1 mt-0.5">
+                      {getPlatformIcon(postsWithComments.find(p => p.postId === selectedPostId)?.platform)}
+                      <span className="capitalize">{postsWithComments.find(p => p.postId === selectedPostId)?.platform || "Bilinmeyen"} Gönderisi</span>
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Thread */}
               <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
                 {postsWithComments.find(p => p.postId === selectedPostId)?.parentComments
@@ -846,7 +875,7 @@ export default function GelenKutusuPage() {
                     const parentId = parent.zernio_comment_id || parent.id;
                     const uName = parent.author_name || parent.username || t("gelenKutusuPage.comments.fallbackUsername");
                     return (
-                      <div key={parent.id} className="glass rounded-xl border border-dark-border p-4 flex flex-col gap-3">
+                      <div key={parent.id} className="glass rounded-xl border border-dark-border p-4 mb-2 flex flex-col gap-3">
                         {/* Parent Header */}
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3">
@@ -875,7 +904,7 @@ export default function GelenKutusuPage() {
 
                         {/* Content */}
                         <div className="text-sm text-[#F6F1EC]">
-                          {parent.content}
+                          {parent.displayContent}
                         </div>
 
                         {/* Actions */}
@@ -933,7 +962,7 @@ export default function GelenKutusuPage() {
                                   </div>
                                   
                                   <div className="text-sm text-[#F6F1EC]">
-                                    {reply.content}
+                                    {reply.displayContent}
                                   </div>
                                   
                                   {!isSelectionMode && (

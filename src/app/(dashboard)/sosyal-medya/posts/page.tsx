@@ -281,11 +281,14 @@ export default function TumGonderilerPage() {
                   {/* Content */}
                   <div style={{ width: 250 }} className="flex items-center pr-4">
                     {item.media_urls && item.media_urls.length > 0 ? (
-                      <div className="w-10 h-10 rounded-md overflow-hidden mr-3 shrink-0">
-                        {item.media_urls[0].match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
-                          <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                            <i className="fa-solid fa-play text-gray-400 text-xs"></i>
-                          </div>
+                      <div className="w-10 h-10 rounded-md overflow-hidden mr-3 shrink-0 relative">
+                        {item.media_urls[0].match(/\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i) || item.media_urls[0].includes('blob') ? (
+                          <>
+                            <video src={item.media_urls[0]} className="w-full h-full object-cover" muted playsInline />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                              <i className="fa-solid fa-play text-white/70 text-[10px]"></i>
+                            </div>
+                          </>
                         ) : (
                           <img src={item.media_urls[0]} alt="media" className="w-full h-full object-cover" onError={(e) => {
                             e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A79E96'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";

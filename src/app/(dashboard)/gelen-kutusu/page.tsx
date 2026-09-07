@@ -826,10 +826,13 @@ export default function GelenKutusuPage() {
                   >
                     <div className="relative">
                       {postGroup.postPicture ? (
-                        postGroup.postPicture.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
-                          <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
-                            <i className="fa-solid fa-play text-gray-400"></i>
-                          </div>
+                        postGroup.postPicture.match(/\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i) || postGroup.postPicture.includes('blob') ? (
+                          <>
+                            <video src={postGroup.postPicture} className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" muted playsInline />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
+                              <i className="fa-solid fa-play text-white/70 text-[10px]"></i>
+                            </div>
+                          </>
                         ) : (
                           <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" onError={(e) => {
                             e.currentTarget.style.display = 'none';
@@ -865,10 +868,15 @@ export default function GelenKutusuPage() {
               {/* Post Header */}
               {selectedPostId && (
                 <div className="p-4 border-b border-dark-border flex items-center gap-3 bg-white/5">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0 relative">
                     {postsWithComments.find(p => p.postId === selectedPostId)?.postPicture ? (
-                      postsWithComments.find(p => p.postId === selectedPostId)!.postPicture!.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
-                        <i className="fa-solid fa-play text-gray-400"></i>
+                      postsWithComments.find(p => p.postId === selectedPostId)!.postPicture!.match(/\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i) || postsWithComments.find(p => p.postId === selectedPostId)!.postPicture!.includes('blob') ? (
+                        <>
+                          <video src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" muted playsInline />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <i className="fa-solid fa-play text-white/70 text-[10px]"></i>
+                          </div>
+                        </>
                       ) : (
                         <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
                           e.currentTarget.style.display = 'none';

@@ -492,3 +492,25 @@ Deploy komutları ASLA toplu (supabase functions deploy argümansız) çalışt�
 5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni lex-direction: column ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
 6. **Flow Web - Takvim Scroll UX İyileştirmeleri:** Takvim ve Yoğunluk Haritası container'larına yatay kaydırma çubuklarını gizleyen CSS sınıfları eklendi. overscroll-behavior-x: contain eklenerek sağa-sola swipe yaparken tüm ekranın kayması (swipe to go back veya page scroll) engellendi, native mobil hissi yaratıldı.
 7. **Flow Web - Ülke Listesi Dropdown Renk Düzeltmesi:** Profil ekranındaki ülke, şehir, ilçe <select> etiketlerindeki <option>'ların varsayılan beyaz/açık renk arka planları #17151A olacak şekilde güncellenerek, üzerine gelen beyaz metinlerin okunamaması sorunu (koyu tema uyumsuzluğu) çözüldü.
+
+---
+## [07.09.2026] Zernio Görüntü ve Medya Senkronizasyon Debug Logu
+- **Sorun:** Zernio webhook'ları üzerinden gelen mesaj ve yorumlarda (Gelen Kutusu) profil resimlerinin olmaması ve Sosyal Medya sayfasında gönderi görsellerinin "kırık resim" ikonu şeklinde çıkması.
+- **Bulgular:**
+  1. comment.received webhook'unda post resim linki (post.imageUrl) bulunmasına rağmen bu bilgi zernio-webhook tarafından okunup posts tablosuna aktarılmıyordu.
+  2. Yorum yapan kişinin avatarı Zernio tarafından bu event'te zaten sağlanmıyor (düzeltilemez dış kısıt).
+  3. message.received/sent eventlerinde mesaj gönderen profil resmi participantPicture veya sender.picture olarak geliyordu ancak veritabanındaki conversations tablosunda bunu tutacak bir participant_picture kolonu bile yoktu!
+  4. zernio-client içindeki sync-posts fonksiyonu sadece **yeni** gönderileri insert yapıyor, var olan gönderilerin medya güncellemelerini es geçiyordu. Ayrıca medya linki olarak Zernio .blob linkleri (ki bunlar video olabiliyor) veya süresi dolan CDN linkleri geliyordu.
+  5. sync-posts'u upsert'e çevirirken posts tablosundaki zernio_post_id kolonunda UNIQUE constraint (kısıtlaması) olmadığı için Postgres onConflict işlemini reddediyordu.
+  6. .blob linkleri .mp4 gibi bir uzantı barındırmadığından lowweb tarafındaki <img src=...> etiketlerinde kırık ikon olarak görünüyordu.
+- **Çözümler (Ledger reposu üzerinden):**
+  1. 20260907000002_add_participant_picture_to_conversations.sql ve 20260907000003_add_unique_constraint_to_zernio_post_id.sql migration'ları eklenip canlı db'ye (
+px supabase db push) basıldı.
+  2. zernio-webhook güncellenerek payload.post.imageUrl okuması yapılıp posts tablosundaki media_urls alanına update atanması sağlandı. Ayrıca participant_picture okuması da eklenip conversations insert/update mantığına dâhil edildi.
+  3. zernio-client/sync-posts fonksiyonu yeni gelen mappedPosts listesini tamamen upsert yapacak (varolanı ezecek) şekilde refaktör edildi. CDN bağlantıları blob'lara karşı önceliklendirildi.
+  4. Yeni edge function'lar canlı ortama (
+px supabase functions deploy) deploy edildi.
+- **Çözümler (Flowweb reposu üzerinden):**
+  1. Frontend'de sosyal-medya/posts ve gelen-kutusu sayfalarındaki resim <img> render kısımlarına bir regex eklendi: /\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i || includes('blob'). 
+  2. Video ve Zernio blob linkleri artık kırık ikonlu <img> yerine native HTML5 <video src=... muted playsInline> etiketiyle render ediliyor (otomatik ilk kareyi thumbnail olarak kullanıyor) ve üzerine play ikonu yerleştiriliyor.
+- **Teknik Borç (Sonraki Adımlar İçin Uyarı):** Frontend'deki regex / uzantı kontrolü Zernio'nun jenerik .blob uzantısından ötürü uzun vadede (blob bir resim postu gelirse) risklidir. En doğru yöntem posts tablosuna media_type kolonu ekleyip frontend'de buna göre render kontrolü yapmaktır (README.md'ye kaydedilmiştir).

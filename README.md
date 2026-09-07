@@ -505,3 +505,15 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 1. **Kritik Bulgu:** Mobildeki "İleri Seviye Ayarlar" panelinin gösterdiği prompt önizlemesinin (kültürel/dil adaptasyon kuralı dahil) gerçek müşteri botuna hiç ulaşmadığı, web'deki `AdvancedPersonaSettings.tsx` panelinin ise zaten Phase 5'ten beri `bot_settings.system_prompt`'a bir daha hiç yazılmayan, dondurulmuş/legacy bir metni salt-okunur gösterdiği doğrulandı.
 2. **Kültürel/Dil Adaptasyonu Sunucuya (Ledger) Taşındı:** Platform uluslararası müşterilere hizmet verdiği için, kültürel/dil adaptasyonu artık configüre edilebilir bir ayar değil — ledger reposundaki `shared/ai/PromptBuilder.ts` dosyasının `SYSTEM_POLICY`'sine her zaman geçerli, kapatılamaz yeni bir kural (madde 1: "DİL VE KÜLTÜREL ADAPTASYON") eklendi: müşteri hangi dilde yazarsa bot o dilde, o kültürün günlük ifade/espri anlayışına uygun şekilde cevap veriyor — persona/karakter/rol seçiminden bağımsız.
 3. **"İleri Seviye Ayarlar" Paneli Kaldırıldı (Web):** Artık gerçek bir işlevi kalmayan `AdvancedPersonaSettings.tsx` bileşeni ve `ai-asistan/page.tsx`'teki `systemPrompt`/`isAdvancedOpen` state'i, ilgili render bloğu ve `bot_settings.system_prompt` okuması tamamen kaldırıldı. Aynı temizlik mobil (flow) tarafında da yapıldı — "Tek Yapı": tek gerçek akış artık UI seçimleri → `organization_ai_settings` → sunucuda `PersonaService` + `PersonaPromptBuilder` → gerçek prompt.
+### [07.09.2026] Zernio Medya İçerikleri İçin Teknik Borç ve Mimari Planlama ( media_type Refaktörü )
+
+**Durum ve Bulgu:**
+Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), lowweb tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
+
+**Orta Vadeli Doğru Çözüm (Technical Debt):**
+Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğrudan veritabanında tutmak ve frontend'de buna göre render işlemi yapmak şarttır.
+
+**Planlanan Değişiklikler:**
+1. **Veritabanı (ledger reposu):** posts tablosuna media_type adında yeni bir kolon (text veya text[]) eklenecek.
+2. **Senkronizasyon (zernio-client):** Zernio'nun listPosts yanıtında bulunan mediaItems içerisindeki orijinal 	ype bilgisi (örn. "video" veya "image") çıkarılacak ve bu yeni media_type kolonuna yazılacak.
+3. **Arayüz (lowweb reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.

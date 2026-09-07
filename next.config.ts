@@ -5,7 +5,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 // gerektiren dashboard, herkese açık/SEO'ya duyarlı sayfalar değil (tek istisna
 // /login, o da tek dilde kalabilir). Dil, next-intl'in "without i18n routing"
 // modunda bir çerez (NEXT_LOCALE) üzerinden yönetiliyor — bkz. src/i18n/request.ts.
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   /* config options here */

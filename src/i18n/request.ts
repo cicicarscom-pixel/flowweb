@@ -40,15 +40,25 @@ function detectFromAcceptLanguage(acceptLanguage: string | null): AppLocale | nu
 // istemci tarafındaki dil değiştirme server action'ında (../actions/locale.ts)
 // aynı mantığın tekrarlanmaması için tek yerden yönetiliyor.
 export async function resolveLocale(): Promise<AppLocale> {
-  const cookieStore = await cookies();
-  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
-  if (isSupportedLocale(cookieLocale)) {
-    return cookieLocale;
+  try {
+    const cookieStore = await cookies();
+    const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
+    if (isSupportedLocale(cookieLocale)) {
+      return cookieLocale;
+    }
+  } catch (e) {
+    // Next.js prerendering will throw on cookies(), ignore and fallback
   }
 
-  const headerStore = await headers();
-  const detected = detectFromAcceptLanguage(headerStore.get("accept-language"));
-  return detected ?? DEFAULT_LOCALE;
+  try {
+    const headerStore = await headers();
+    const detected = detectFromAcceptLanguage(headerStore.get("accept-language"));
+    if (detected) return detected;
+  } catch (e) {
+    // Ignore and fallback
+  }
+  
+  return DEFAULT_LOCALE;
 }
 
 export default getRequestConfig(async () => {

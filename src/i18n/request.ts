@@ -62,6 +62,7 @@ export async function resolveLocale(): Promise<AppLocale> {
 }
 
 export default getRequestConfig(async () => {
+  console.log("--> getRequestConfig is running!");
   const locale = await resolveLocale();
   const messages = (await import(`../../messages/${locale}.json`)).default;
 

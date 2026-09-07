@@ -2,6 +2,8 @@ import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   metadataBase: new URL("https://flow.workigom.com"),
   title: "Workigom Flow",

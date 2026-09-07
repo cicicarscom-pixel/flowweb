@@ -233,6 +233,13 @@ export default function AnalyticsScreen() {
          newZernioData.messagesReceived = msgsRes.data.conversations.length;
       }
 
+      // Phase 1 Discovery Calls (to cache data in db)
+      const { data: bestTimesRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-best-times', payload: payloadBase } });
+      const { data: freqRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-posting-frequency', payload: payloadBase } });
+      const { data: decayRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-content-decay', payload: payloadBase } });
+      const { data: timelineRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-post-timeline', payload: payloadBase } });
+      console.log('Phase 1 Discovery Results:', { bestTimesRes, freqRes, decayRes, timelineRes });
+
       if (selectedPlatform.id === 'all') {
         const { data: followRes } = await supabase.functions.invoke('zernio-client', {
           body: { action: 'get-follower-stats', payload: payloadBase }

@@ -310,24 +310,22 @@ export default function GelenKutusuPage() {
     }
   };
 
-  const CACHE_TTL_MS = 6 * 24 * 60 * 60 * 1000; // 6 gün
-  
   const getCachedPictures = () => {
     try {
-       const cached = localStorage.getItem('zernio_pic_cache');
-       if (!cached) return {};
-       const parsed = JSON.parse(cached);
-       if (Date.now() - parsed.timestamp > CACHE_TTL_MS) {
-          localStorage.removeItem('zernio_pic_cache');
-          return {};
-       }
-       return parsed.data || {};
-    } catch { return {}; }
+      const cached = localStorage.getItem('zernio_pic_cache_v2');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.timestamp && Date.now() - parsed.timestamp < 3600000) {
+          return parsed.data;
+        }
+      }
+    } catch {}
+    return {};
   };
 
   const setCachedPictures = (data: any) => {
     try {
-      localStorage.setItem('zernio_pic_cache', JSON.stringify({
+      localStorage.setItem('zernio_pic_cache_v2', JSON.stringify({
         timestamp: Date.now(),
         data
       }));
@@ -364,13 +362,17 @@ export default function GelenKutusuPage() {
         }
       } else if (phase === 1.5) {
         // Faz 1.5: Eksik resimleri Edge Function'dan çek ve önbellekle
-        if (organizationId) {
-           const { data: picData } = await supabase.functions.invoke('zernio-client', {
-              body: { action: 'get-inbox-pictures', payload: { organizationId } }
+        const { data: sessionData } = await supabase.auth.getSession();
+        const userId = sessionData?.session?.user?.id;
+        
+        if (organizationId || userId) {
+           const { data: picData, error: picError } = await supabase.functions.invoke('zernio-client', {
+              body: { action: 'get-inbox-pictures', payload: { organizationId, userId } }
            });
            
-           if (picData?.data?.pictures && Object.keys(picData.data.pictures).length > 0) {
-             const newPics = picData.data.pictures;
+           const extractedPics = picData?.data?.pictures || picData?.pictures;
+           if (extractedPics && Object.keys(extractedPics).length > 0) {
+             const newPics = extractedPics;
              const currentCache = getCachedPictures();
              setCachedPictures({ ...currentCache, ...newPics });
              
@@ -687,7 +689,9 @@ export default function GelenKutusuPage() {
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <div className="w-full h-full bg-white/5 rounded-full flex items-center justify-center overflow-hidden">
                         {conv.participant_picture ? (
-                          <img src={conv.participant_picture} className="w-full h-full object-cover" />
+                          <img src={conv.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                            e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`;
+                          }} />
                         ) : (
                           <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                         )}
@@ -733,7 +737,9 @@ export default function GelenKutusuPage() {
                    <div className="p-4 border-b border-dark-border flex items-center gap-3">
                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
                         {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
-                           <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
+                           <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`;
+                           }} />
                         ) : (
                            <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                         )}
@@ -754,7 +760,9 @@ export default function GelenKutusuPage() {
                            {!isOutbound && (
                              <div className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0 overflow-hidden flex items-center justify-center mb-1 border border-white/10">
                                 {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
-                                  <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" />
+                                  <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`;
+                           }} />
                                 ) : (
                                   <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                                 )}
@@ -818,7 +826,11 @@ export default function GelenKutusuPage() {
                   >
                     <div className="relative">
                       {postGroup.postPicture ? (
-                        <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" />
+                        <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
+                          e.currentTarget.parentElement!.className = "w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0";
+                        }} />
                       ) : (
                         <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
                           <i className="fa-regular fa-image text-dark-muted"></i>
@@ -849,7 +861,10 @@ export default function GelenKutusuPage() {
                 <div className="p-4 border-b border-dark-border flex items-center gap-3 bg-white/5">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
                     {postsWithComments.find(p => p.postId === selectedPostId)?.postPicture ? (
-                      <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" />
+                      <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
+                        }} />
                     ) : (
                       <i className="fa-regular fa-image text-dark-muted"></i>
                     )}
@@ -890,7 +905,9 @@ export default function GelenKutusuPage() {
                             )}
                             <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0">
                               {parent.author_picture ? (
-                                <img src={parent.author_picture} alt={uName} className="w-full h-full object-cover" />
+                                <img src={parent.author_picture} alt={uName} className="w-full h-full object-cover" onError={(e) => {
+                                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(uName)}&background=random`;
+                                }} />
                               ) : (
                                 <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(uName)}&background=random`} alt={uName} className="w-full h-full object-cover" />
                               )}
@@ -948,7 +965,10 @@ export default function GelenKutusuPage() {
                                       )}
                                       <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
                                         {reply.author_picture ? (
-                                          <img src={reply.author_picture} alt={t("gelenKutusuPage.comments.storeLabel")} className="w-full h-full object-cover" />
+                                          <img src={reply.author_picture} alt={t("gelenKutusuPage.comments.storeLabel")} className="w-full h-full object-cover" onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                            e.currentTarget.parentElement!.innerHTML = '<i class="fa-solid fa-store text-[10px] text-dark-muted"></i>';
+                                          }} />
                                         ) : (
                                           <i className="fa-solid fa-store text-[10px] text-dark-muted"></i>
                                         )}

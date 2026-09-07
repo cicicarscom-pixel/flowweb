@@ -826,11 +826,17 @@ export default function GelenKutusuPage() {
                   >
                     <div className="relative">
                       {postGroup.postPicture ? (
-                        <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
-                          e.currentTarget.parentElement!.className = "w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0";
-                        }} />
+                        postGroup.postPicture.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
+                          <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
+                            <i className="fa-solid fa-play text-gray-400"></i>
+                          </div>
+                        ) : (
+                          <img src={postGroup.postPicture} alt="Post" className="w-12 h-12 object-cover rounded-lg border border-white/5 flex-shrink-0" onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
+                            e.currentTarget.parentElement!.className = "w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0";
+                          }} />
+                        )
                       ) : (
                         <div className="w-12 h-12 bg-white/5 rounded-lg border border-white/5 flex items-center justify-center flex-shrink-0">
                           <i className="fa-regular fa-image text-dark-muted"></i>
@@ -861,10 +867,14 @@ export default function GelenKutusuPage() {
                 <div className="p-4 border-b border-dark-border flex items-center gap-3 bg-white/5">
                   <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 shrink-0">
                     {postsWithComments.find(p => p.postId === selectedPostId)?.postPicture ? (
-                      <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
+                      postsWithComments.find(p => p.postId === selectedPostId)!.postPicture!.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
+                        <i className="fa-solid fa-play text-gray-400"></i>
+                      ) : (
+                        <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
                           e.currentTarget.style.display = 'none';
                           e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
                         }} />
+                      )
                     ) : (
                       <i className="fa-regular fa-image text-dark-muted"></i>
                     )}

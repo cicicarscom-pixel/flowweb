@@ -282,11 +282,17 @@ export default function TumGonderilerPage() {
                   <div style={{ width: 250 }} className="flex items-center pr-4">
                     {item.media_urls && item.media_urls.length > 0 ? (
                       <div className="w-10 h-10 rounded-md overflow-hidden mr-3 shrink-0">
-                        <img src={item.media_urls[0]} alt="media" className="w-full h-full object-cover" onError={(e) => {
-                          e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A79E96'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
-                          e.currentTarget.className = "w-6 h-6 m-2 opacity-50";
-                          e.currentTarget.parentElement!.className = "w-10 h-10 rounded-md mr-3 shrink-0 flex items-center justify-center bg-white/5";
-                        }} />
+                        {item.media_urls[0].match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ? (
+                          <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                            <i className="fa-solid fa-play text-gray-400 text-xs"></i>
+                          </div>
+                        ) : (
+                          <img src={item.media_urls[0]} alt="media" className="w-full h-full object-cover" onError={(e) => {
+                            e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A79E96'%3E%3Cpath d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/%3E%3C/svg%3E";
+                            e.currentTarget.className = "w-6 h-6 m-2 opacity-50";
+                            e.currentTarget.parentElement!.className = "w-10 h-10 rounded-md mr-3 shrink-0 flex items-center justify-center bg-white/5";
+                          }} />
+                        )}
                       </div>
                     ) : (
                       <div className="w-10 h-10 rounded-md mr-3 shrink-0 flex items-center justify-center bg-white/5">

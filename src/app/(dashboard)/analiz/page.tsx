@@ -237,8 +237,16 @@ export default function AnalyticsScreen() {
       const { data: bestTimesRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-best-times', payload: payloadBase } });
       const { data: freqRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-posting-frequency', payload: payloadBase } });
       const { data: decayRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-content-decay', payload: payloadBase } });
-      const { data: timelineRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-post-timeline', payload: payloadBase } });
-      console.log('Phase 1 Discovery Results:', { bestTimesRes, freqRes, decayRes, timelineRes });
+      
+      // Fetch a real postId for the timeline discovery
+      const { data: recentPosts } = await supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1);
+      const recentPostId = recentPosts?.[0]?.zernio_post_id;
+      const timelinePayload = recentPostId 
+        ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId } 
+        : payloadBase;
+        
+      const { data: timelineRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-post-timeline', payload: timelinePayload } });
+      console.log('Phase 1 Discovery Results:', { bestTimesRes, freqRes, decayRes, timelineRes, testedPostId: recentPostId });
 
       if (selectedPlatform.id === 'all') {
         const { data: followRes } = await supabase.functions.invoke('zernio-client', {

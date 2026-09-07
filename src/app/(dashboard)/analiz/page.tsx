@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import {
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar
 } from "recharts";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -92,11 +93,16 @@ export default function AnalyticsScreen() {
     demographics: [] as any[],
     followerStats: [] as any[],
     platformInsights: null as any,
+    platformBreakdown: [] as any[],
     totalFollowers: 0,
     totalPosts: 0,
     totalComments: 0,
-    messagesReceived: 0
+    totalReach: 0,
+    messagesReceived: 0,
+    formatBreakdown: { video: 0, image: 0 }
   });
+
+  const [chartMetric, setChartMetric] = useState('views');
 
   const fetchInternalStats = async () => {
     try {
@@ -108,10 +114,8 @@ export default function AnalyticsScreen() {
       const orgId = orgMember?.organization_id;
       if (!orgId) return;
 
-      // Notice we are treating profile_id as the tenant ID for now, 
-      // which aligns with Phase 9 requirements until a full column rename happens.
-      const [{ count: postsCount }, { count: commentsCount }, { count: reviewsCount }, { count: msgsInCount }, { count: msgsOutCount }, { data: accountsData }] = await Promise.all([
-        supabase.from('posts').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
+      const [{ data: postsData }, { count: commentsCount }, { count: reviewsCount }, { count: msgsInCount }, { count: msgsOutCount }, { data: accountsData }] = await Promise.all([
+        supabase.from('posts').select('media_urls').eq('profile_id', orgId),
         supabase.from('comments').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
         supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'incoming'),
@@ -119,14 +123,33 @@ export default function AnalyticsScreen() {
         supabase.schema('integration').from('social_accounts').select('zernio_account_id, platform').eq('organization_id', orgId)
       ]);
 
+      let videoCount = 0;
+      let imageCount = 0;
+      if (postsData) {
+        postsData.forEach((post: any) => {
+          if (post.media_urls && post.media_urls.length > 0) {
+            const ext = post.media_urls[0].split('.').pop()?.toLowerCase();
+            if (['mp4', 'webm', 'ogg', 'mov', 'blob'].includes(ext)) {
+              videoCount++;
+            } else {
+              imageCount++;
+            }
+          } else {
+             imageCount++; // Fallback
+          }
+        });
+      }
+
       setStats({
-        totalPosts: postsCount || 0,
+        totalPosts: postsData?.length || 0,
         totalComments: commentsCount || 0,
         totalReviews: reviewsCount || 0,
         messagesReceived: msgsInCount || 0,
         messagesSent: msgsOutCount || 0
       });
       
+      setZernioData(prev => ({ ...prev, formatBreakdown: { video: videoCount, image: imageCount } }));
+
       if (accountsData) {
         setSocialAccounts(accountsData);
       }
@@ -161,10 +184,13 @@ export default function AnalyticsScreen() {
         demographics: [] as any[],
         followerStats: [] as any[],
         platformInsights: null,
+        platformBreakdown: [] as any[],
         totalFollowers: 0,
         totalPosts: 0,
         totalComments: 0,
-        messagesReceived: 0
+        totalReach: 0,
+        messagesReceived: 0,
+        formatBreakdown: { video: 0, image: 0 }
       };
 
       // Daily Metrics
@@ -177,19 +203,26 @@ export default function AnalyticsScreen() {
          const mappedTimeline = actualData.dailyData.map((d: any) => ({
            views: d.metrics?.impressions || 0,
            likes: d.metrics?.likes || 0,
+           reach: d.metrics?.reach || 0,
+           clicks: d.metrics?.clicks || 0,
+           shares: d.metrics?.shares || 0,
+           saves: d.metrics?.saves || 0,
+           comments: d.metrics?.comments || 0,
            date: d.date ? d.date.substring(5,10) : ''
          }));
          
          if (mappedTimeline.length === 1) {
-           mappedTimeline.unshift({ views: 0, likes: 0, date: '' });
+           mappedTimeline.unshift({ views: 0, likes: 0, reach: 0, clicks: 0, shares: 0, saves: 0, comments: 0, date: '' });
          }
          
          newZernioData.timelineData = mappedTimeline;
       }
 
       if (actualData.platformBreakdown) {
+         newZernioData.platformBreakdown = actualData.platformBreakdown;
          newZernioData.totalPosts = actualData.platformBreakdown.reduce((sum: number, p: any) => sum + (p.postCount || 0), 0);
          newZernioData.totalComments = actualData.platformBreakdown.reduce((sum: number, p: any) => sum + (p.comments || 0), 0);
+         newZernioData.totalReach = actualData.platformBreakdown.reduce((sum: number, p: any) => sum + (p.reach || 0), 0);
       }
 
       // Sync Messages
@@ -264,7 +297,7 @@ export default function AnalyticsScreen() {
         }
       }
       
-      setZernioData(newZernioData);
+      setZernioData(prev => ({ ...newZernioData, formatBreakdown: prev.formatBreakdown }));
     } catch (error) {
       console.warn('Error fetching Zernio analytics', error);
     } finally {
@@ -304,7 +337,7 @@ export default function AnalyticsScreen() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <span style={{ fontSize: 16, opacity: 0.6 }}>👥</span>
@@ -320,24 +353,39 @@ export default function AnalyticsScreen() {
           </div>
           <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{stats.totalReviews}</p>
         </div>
+
+        <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <span style={{ fontSize: 16, opacity: 0.6 }}>📡</span>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam Erişim</p>
+          </div>
+          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
+        </div>
       </div>
 
       {/* Line Chart: Engagement / Impressions */}
       <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
           <div>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.posting.engagement.title")}</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.posting.engagement.subtitle")}</p>
           </div>
-          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF7A59" }} />
-              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("analizPage.posting.engagement.views")}</span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#C2478D" }} />
-              <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("analizPage.posting.engagement.likes")}</span>
-            </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+             {['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach'].map(metric => (
+                <button
+                   key={metric}
+                   onClick={() => setChartMetric(metric)}
+                   style={{
+                     padding: "6px 10px", borderRadius: 8, fontSize: 11, cursor: "pointer", fontWeight: 600,
+                     background: chartMetric === metric ? "rgba(255,122,89,0.15)" : "transparent",
+                     border: chartMetric === metric ? "1px solid #FF7A59" : "1px solid rgba(255,255,255,0.1)",
+                     color: chartMetric === metric ? "#FF7A59" : "var(--text-secondary)",
+                     transition: "all 0.2s"
+                   }}
+                >
+                  {metric.toUpperCase()}
+                </button>
+             ))}
           </div>
         </div>
 
@@ -353,8 +401,7 @@ export default function AnalyticsScreen() {
                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Line type="monotone" dataKey="views" name={t("analizPage.posting.engagement.views")} stroke="#FF7A59" strokeWidth={3} dot={{ r: 4, fill: "#FF7A59", strokeWidth: 0 }} activeDot={{ r: 6 }} />
-                <Line type="monotone" dataKey="likes" name={t("analizPage.posting.engagement.likes")} stroke="#C2478D" strokeWidth={3} dot={{ r: 4, fill: "#C2478D", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey={chartMetric} name={chartMetric.toUpperCase()} stroke="#FF7A59" strokeWidth={3} dot={{ r: 4, fill: "#FF7A59", strokeWidth: 0 }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
@@ -433,6 +480,103 @@ export default function AnalyticsScreen() {
           </div>
         </div>
       )}
+
+      {/* Format Breakdown & Platform Breakdown */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        {/* Content Format Breakdown */}
+        {(zernioData.formatBreakdown.video > 0 || zernioData.formatBreakdown.image > 0) && (
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>İçerik Formatı Dağılımı</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "center" }}>
+              <div style={{ height: 200 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Video', value: zernioData.formatBreakdown.video, color: '#FF7A59' },
+                        { name: 'Görsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
+                      ].filter(d => d.value > 0)}
+                      innerRadius={50} outerRadius={80} paddingAngle={5} dataKey="value"
+                    >
+                      {[
+                        { name: 'Video', value: zernioData.formatBreakdown.video, color: '#FF7A59' },
+                        { name: 'Görsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
+                      ].filter(d => d.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#FF7A59' }} />
+                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Video</span>
+                   </div>
+                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.video}</span>
+                 </div>
+                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#C2478D' }} />
+                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel</span>
+                   </div>
+                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
+                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Platform Breakdown Table */}
+        {zernioData.platformBreakdown.length > 0 && (
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", overflowX: "auto" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Kırılımı</h3>
+             <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                   <tr>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Platform</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Gönderi</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Erişim</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Beğeni</th>
+                   </tr>
+                </thead>
+                <tbody>
+                   {zernioData.platformBreakdown.map((p: any, i: number) => (
+                      <tr key={i}>
+                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textTransform: "capitalize" }}>{p.platform}</td>
+                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.postCount || 0}</td>
+                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.reach || 0}</td>
+                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.likes || 0}</td>
+                      </tr>
+                   ))}
+                </tbody>
+             </table>
+          </div>
+        )}
+      </div>
+
+      {/* Platform Performance Bar Chart */}
+      {zernioData.platformBreakdown.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Bazlı Etkileşim</h3>
+           <div style={{ height: 300, width: "100%" }}>
+             <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={zernioData.platformBreakdown}>
+                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                   <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, textTransform: 'capitalize' }} axisLine={false} tickLine={false} />
+                   <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                   <Tooltip content={<CustomTooltip />} />
+                   <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />
+                   <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} />
+                   <Bar dataKey="reach" name="Erişim" fill="#22B573" radius={[4,4,0,0]} />
+                </BarChart>
+             </ResponsiveContainer>
+           </div>
+        </div>
+      )}
+
     </div>
   );
 

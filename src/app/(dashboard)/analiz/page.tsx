@@ -169,6 +169,19 @@ export default function AnalyticsScreen() {
     setIsLoading(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        setIsLoading(false);
+        return;
+      }
+
+      const invokeZernio = async (action: string, payload: any) => {
+        return supabase.functions.invoke('zernio-client', {
+          body: { action, payload },
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+      };
+
       const targetAccounts = selectedPlatform.id === 'all' 
         ? socialAccounts 
         : socialAccounts.filter(a => a.platform.toLowerCase() === selectedPlatform.id || (selectedPlatform.id === 'googlebusiness' && a.platform.toLowerCase() === 'google'));
@@ -205,9 +218,7 @@ export default function AnalyticsScreen() {
       };
 
       // Daily Metrics
-      const { data: dailyRes } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'get-daily-metrics', payload: payloadBase }
-      });
+      const { data: dailyRes } = await invokeZernio('get-daily-metrics', payloadBase);
       const actualData = dailyRes?.data?.data?.data || dailyRes?.data?.data || {};
       
       if (actualData.dailyData) {
@@ -237,17 +248,15 @@ export default function AnalyticsScreen() {
       }
 
       // Sync Messages
-      const { data: msgsRes } = await supabase.functions.invoke('zernio-client', {
-        body: { action: 'sync-messages', payload: {} }
-      });
+      const { data: msgsRes } = await invokeZernio('sync-messages', {});
       if (msgsRes?.data?.conversations) {
          newZernioData.messagesReceived = msgsRes.data.conversations.length;
       }
 
       // Phase 1 Discovery Calls (to cache data in db)
-      const { data: bestTimesRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-best-times', payload: payloadBase } });
-      const { data: freqRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-posting-frequency', payload: payloadBase } });
-      const { data: decayRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-content-decay', payload: payloadBase } });
+      const { data: bestTimesRes } = await invokeZernio('get-best-times', payloadBase);
+      const { data: freqRes } = await invokeZernio('get-posting-frequency', payloadBase);
+      const { data: decayRes } = await invokeZernio('get-content-decay', payloadBase);
       
       // Fetch a real postId for the timeline discovery
       const { data: recentPosts } = await supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1);
@@ -256,7 +265,7 @@ export default function AnalyticsScreen() {
         ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId } 
         : payloadBase;
         
-      const { data: timelineRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-post-timeline', payload: timelinePayload } });
+      const { data: timelineRes } = await invokeZernio('get-post-timeline', timelinePayload);
       
       // Store Phase 1 API responses in state
       const actualBestTimes = bestTimesRes?.data?.data?.data || bestTimesRes?.data?.data || {};
@@ -280,18 +289,14 @@ export default function AnalyticsScreen() {
       }
 
       if (selectedPlatform.id === 'all') {
-        const { data: followRes } = await supabase.functions.invoke('zernio-client', {
-          body: { action: 'get-follower-stats', payload: payloadBase }
-        });
+        const { data: followRes } = await invokeZernio('get-follower-stats', payloadBase);
         const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
         if (actualFollow.accounts) {
            newZernioData.totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || 0), 0);
         }
       } else if (selectedPlatform.id === 'instagram') {
         if (singleAccountId) {
-          const { data: demoRes } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'get-instagram-demographics', payload: accountPayload }
-          });
+          const { data: demoRes } = await invokeZernio('get-instagram-demographics', accountPayload);
           
           const actualDemo = demoRes?.data?.data?.data || demoRes?.data?.data || {};
           if (actualDemo.data?.[0]?.values?.[0]?.value) {
@@ -304,9 +309,7 @@ export default function AnalyticsScreen() {
             newZernioData.demographics = mapped;
           }
 
-          const { data: followRes } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'get-instagram-follower-history', payload: accountPayload }
-          });
+          const { data: followRes } = await invokeZernio('get-instagram-follower-history', accountPayload);
           const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
           if (Array.isArray(actualFollow.data?.[0]?.values)) {
             newZernioData.followerStats = actualFollow.data[0].values.map((v: any) => ({
@@ -318,9 +321,7 @@ export default function AnalyticsScreen() {
         }
       } else if (selectedPlatform.id === 'youtube') {
         if (singleAccountId) {
-          const { data: ytRes } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'get-youtube-daily-views', payload: accountPayload }
-          });
+          const { data: ytRes } = await invokeZernio('get-youtube-daily-views', accountPayload);
           const actualYt = ytRes?.data?.data?.data || ytRes?.data?.data || {};
           if (actualYt.rows) {
              newZernioData.timelineData = actualYt.rows.map((r: any) => ({
@@ -332,9 +333,7 @@ export default function AnalyticsScreen() {
         }
       } else if (selectedPlatform.id === 'tiktok') {
         if (singleAccountId) {
-          const { data: tkRes } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'get-tiktok-insights', payload: accountPayload }
-          });
+          const { data: tkRes } = await invokeZernio('get-tiktok-insights', accountPayload);
           const actualTk = tkRes?.data?.data?.data || tkRes?.data?.data || {};
           if (actualTk.data?.stats) {
              newZernioData.platformInsights = actualTk.data.stats;

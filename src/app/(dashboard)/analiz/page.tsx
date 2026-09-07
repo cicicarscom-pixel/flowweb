@@ -856,8 +856,14 @@ export default function AnalyticsScreen() {
                 </tr>
               </thead>
               <tbody>
-                {zernioData.postAnalytics.slice(0, 10).map((post: any, idx: number) => {
-                  const metrics = post.metrics || post || {};
+                {[...zernioData.postAnalytics].sort((a: any, b: any) => {
+                    const mA = a.analytics || a.metrics || a || {};
+                    const mB = b.analytics || b.metrics || b || {};
+                    const totalA = (mA.likes || 0) + (mA.comments || 0) + (mA.shares || 0) + (mA.impressions || mA.views || 0);
+                    const totalB = (mB.likes || 0) + (mB.comments || 0) + (mB.shares || 0) + (mB.impressions || mB.views || 0);
+                    return totalB - totalA;
+                }).slice(0, 10).map((post: any, idx: number) => {
+                  const metrics = post.analytics || post.metrics || post || {};
                   const views = metrics.impressions || metrics.views || 0;
                   const reach = metrics.reach || 0;
                   const likes = metrics.likes || 0;

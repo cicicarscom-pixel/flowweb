@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -108,6 +108,7 @@ export default function AnalyticsScreen() {
 
   const [chartMetric, setChartMetric] = useState('views');
   const [postTimelineMetric, setPostTimelineMetric] = useState('views');
+  const requestRef = useRef(0);
 
   const fetchInternalStats = async () => {
     try {
@@ -164,6 +165,7 @@ export default function AnalyticsScreen() {
   };
 
   const fetchZernioAnalytics = async () => {
+    const currentRequestId = ++requestRef.current;
     setIsLoading(true);
 
     try {
@@ -292,7 +294,7 @@ export default function AnalyticsScreen() {
           });
           
           const actualDemo = demoRes?.data?.data?.data || demoRes?.data?.data || {};
-          if (actualDemo.data?.[0]?.values) {
+          if (actualDemo.data?.[0]?.values?.[0]?.value) {
             const genderAge = actualDemo.data[0].values[0].value;
             const mapped = Object.keys(genderAge).map((key, index) => ({
               value: genderAge[key],
@@ -306,7 +308,7 @@ export default function AnalyticsScreen() {
             body: { action: 'get-instagram-follower-history', payload: accountPayload }
           });
           const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
-          if (actualFollow.data?.[0]?.values) {
+          if (Array.isArray(actualFollow.data?.[0]?.values)) {
             newZernioData.followerStats = actualFollow.data[0].values.map((v: any) => ({
               followers: v.value,
               date: v.end_time ? v.end_time.substring(5,10) : ''
@@ -341,11 +343,17 @@ export default function AnalyticsScreen() {
         }
       }
       
-      setZernioData(prev => ({ ...newZernioData, formatBreakdown: prev.formatBreakdown }));
+      if (currentRequestId === requestRef.current) {
+        setZernioData(prev => ({ ...newZernioData, formatBreakdown: prev.formatBreakdown }));
+      }
     } catch (error) {
-      console.warn('Error fetching Zernio analytics', error);
+      if (currentRequestId === requestRef.current) {
+        console.warn('Error fetching Zernio analytics', error);
+      }
     } finally {
-      setIsLoading(false);
+      if (currentRequestId === requestRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -355,8 +363,6 @@ export default function AnalyticsScreen() {
 
   useEffect(() => {
     if (socialAccounts.length > 0) {
-      fetchZernioAnalytics();
-    } else if (selectedPlatform.id === 'all') { // first load fallback
       fetchZernioAnalytics();
     }
   }, [selectedPlatform, selectedTimeRange, socialAccounts]);

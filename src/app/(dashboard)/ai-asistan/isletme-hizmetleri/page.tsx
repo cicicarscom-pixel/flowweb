@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { getBusinessServices } from '@/actions/businessServices';
 import HizmetAyarlariClient from './HizmetAyarlariClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function IsletmeHizmetleriPage() {
   const t = await getTranslations();
   const supabase = await createClient();

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar
+  BarChart, Bar, ScatterChart, Scatter, ZAxis, Legend
 } from "recharts";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -48,10 +48,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         {payload.map((p: any, i: number) => (
           <div key={i} style={{ display: "flex", gap: 12, justifyContent: "space-between", marginBottom: 4, alignItems: "center" }}>
             <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: p.color || p.payload?.color }} />
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: p.color || p.payload?.color || p.fill }} />
               <span style={{ fontSize: 13, color: "#fff" }}>{p.name}</span>
             </div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: p.color || p.payload?.color, fontFamily: "JetBrains Mono, monospace" }}>{p.value}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: p.color || p.payload?.color || p.fill, fontFamily: "JetBrains Mono, monospace" }}>{p.value}</span>
           </div>
         ))}
       </div>
@@ -94,6 +94,10 @@ export default function AnalyticsScreen() {
     followerStats: [] as any[],
     platformInsights: null as any,
     platformBreakdown: [] as any[],
+    bestTimes: [] as any[],
+    contentDecay: [] as any[],
+    postingFrequency: [] as any[],
+    postTimeline: null as any,
     totalFollowers: 0,
     totalPosts: 0,
     totalComments: 0,
@@ -103,6 +107,7 @@ export default function AnalyticsScreen() {
   });
 
   const [chartMetric, setChartMetric] = useState('views');
+  const [postTimelineMetric, setPostTimelineMetric] = useState('views');
 
   const fetchInternalStats = async () => {
     try {
@@ -183,8 +188,12 @@ export default function AnalyticsScreen() {
         timelineDataLikes: [] as any[],
         demographics: [] as any[],
         followerStats: [] as any[],
-        platformInsights: null,
+        platformInsights: null as any,
         platformBreakdown: [] as any[],
+        bestTimes: [] as any[],
+        contentDecay: [] as any[],
+        postingFrequency: [] as any[],
+        postTimeline: null as any,
         totalFollowers: 0,
         totalPosts: 0,
         totalComments: 0,
@@ -246,7 +255,27 @@ export default function AnalyticsScreen() {
         : payloadBase;
         
       const { data: timelineRes } = await supabase.functions.invoke('zernio-client', { body: { action: 'get-post-timeline', payload: timelinePayload } });
-      console.log('Phase 1 Discovery Results:', { bestTimesRes, freqRes, decayRes, timelineRes, testedPostId: recentPostId });
+      
+      // Store Phase 1 API responses in state
+      const actualBestTimes = bestTimesRes?.data?.data?.data || bestTimesRes?.data?.data || {};
+      if (actualBestTimes.slots) {
+         newZernioData.bestTimes = actualBestTimes.slots;
+      }
+      
+      const actualFreq = freqRes?.data?.data?.data || freqRes?.data?.data || {};
+      if (actualFreq.frequency) {
+         newZernioData.postingFrequency = actualFreq.frequency;
+      }
+      
+      const actualDecay = decayRes?.data?.data?.data || decayRes?.data?.data || {};
+      if (actualDecay.buckets) {
+         newZernioData.contentDecay = actualDecay.buckets;
+      }
+      
+      const actualTimeline = timelineRes?.data?.data?.data || timelineRes?.data?.data || {};
+      if (actualTimeline.timeline) {
+         newZernioData.postTimeline = actualTimeline;
+      }
 
       if (selectedPlatform.id === 'all') {
         const { data: followRes } = await supabase.functions.invoke('zernio-client', {
@@ -589,6 +618,146 @@ export default function AnalyticsScreen() {
                 </BarChart>
              </ResponsiveContainer>
            </div>
+        </div>
+      )}
+      {/* 1. Best Times Heatmap */}
+      {zernioData.bestTimes.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>En İyi Paylaşım Zamanları</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftanın günleri ve saatlere göre ortalama etkileşim yoğunluğu</p>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 8, marginTop: 20 }}>
+              {["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map(day => (
+                <div key={day} style={{ height: 28, display: "flex", alignItems: "center", color: "var(--text-secondary)", fontSize: 12 }}>{day}</div>
+              ))}
+            </div>
+            <div style={{ flex: 1, overflowX: "auto" }}>
+              <div style={{ display: "flex", marginBottom: 4 }}>
+                {Array.from({length: 24}).map((_, i) => (
+                  <div key={i} style={{ flex: 1, textAlign: "center", color: "var(--text-secondary)", fontSize: 10, minWidth: 20 }}>{i}</div>
+                ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateRows: "repeat(7, 28px)", gap: 2 }}>
+                {Array.from({length: 7}).map((_, dayIdx) => (
+                  <div key={dayIdx} style={{ display: "flex", gap: 2 }}>
+                    {Array.from({length: 24}).map((_, hourIdx) => {
+                      const slot = zernioData.bestTimes.find((s: any) => s.day_of_week === dayIdx && s.hour === hourIdx);
+                      const maxEngagement = Math.max(...zernioData.bestTimes.map((s: any) => s.avg_engagement || 0), 1);
+                      const intensity = slot ? Math.max(0.1, (slot.avg_engagement || 0) / maxEngagement) : 0;
+                      return (
+                        <div 
+                          key={hourIdx} 
+                          title={slot ? `Saat: ${hourIdx}:00\nEtkileşim: ${slot.avg_engagement}\nGönderi: ${slot.post_count}` : ''}
+                          style={{
+                            flex: 1,
+                            minWidth: 20,
+                            borderRadius: 4,
+                            backgroundColor: slot ? `rgba(255, 122, 89, ${intensity})` : "rgba(255,255,255,0.02)",
+                            border: "1px solid rgba(255,255,255,0.02)",
+                            cursor: slot ? "pointer" : "default"
+                          }} 
+                        />
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Content Decay Area Chart */}
+      {zernioData.contentDecay.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>İçerik Ömrü (Content Decay)</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman içinde toplam etkileşimin yüzde kaçına ulaşıldığı</p>
+          <div style={{ height: 250, width: "100%" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={[...zernioData.contentDecay].sort((a: any, b: any) => a.bucket_order - b.bucket_order)}>
+                <defs>
+                  <linearGradient id="colorDecay" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#C2478D" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#C2478D" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <XAxis dataKey="bucket_label" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `%${val}`} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="avg_pct_of_final" name="Etkileşim Yüzdesi" stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Posting Frequency Scatter */}
+      {zernioData.postingFrequency.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Paylaşım Sıklığı vs Etkileşim Oranı</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftalık gönderi sayısının ortalama etkileşim oranına etkisi</p>
+          <div style={{ height: 300, width: "100%" }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                <XAxis type="number" dataKey="posts_per_week" name="Haftalık Gönderi" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                <YAxis type="number" dataKey="avg_engagement_rate" name="Etkileşim Oranı (%)" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name="Hafta Sayısı" />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
+                <Legend iconType="circle" />
+                {Array.from(new Set(zernioData.postingFrequency.map((f: any) => f.platform))).map((platform: string) => {
+                  const platDef = PLATFORMS.find(p => p.id === platform.toLowerCase());
+                  const color = platDef ? platDef.color : "#FF7A59";
+                  const data = zernioData.postingFrequency.filter((f: any) => f.platform === platform);
+                  return (
+                    <Scatter key={platform} name={platDef ? platDef.name : platform} data={data} fill={color} />
+                  );
+                })}
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Post Timeline (Single Post Performance) */}
+      {zernioData.postTimeline && zernioData.postTimeline.timeline && zernioData.postTimeline.timeline.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Son Gönderi Etkileşim Eğrisi</h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Seçili gönderinin zaman içindeki performansı</p>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+               {['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions'].map(metric => (
+                  <button
+                     key={metric}
+                     onClick={() => setPostTimelineMetric(metric)}
+                     style={{
+                       padding: "6px 10px", borderRadius: 8, fontSize: 11, cursor: "pointer", fontWeight: 600,
+                       background: postTimelineMetric === metric ? "rgba(34,181,115,0.15)" : "transparent",
+                       border: postTimelineMetric === metric ? "1px solid #22B573" : "1px solid rgba(255,255,255,0.1)",
+                       color: postTimelineMetric === metric ? "#22B573" : "var(--text-secondary)",
+                       transition: "all 0.2s"
+                     }}
+                  >
+                    {metric.toUpperCase()}
+                  </button>
+               ))}
+            </div>
+          </div>
+
+          <div style={{ height: 300, width: "100%" }}>
+             <ResponsiveContainer width="100%" height="100%">
+               <LineChart data={zernioData.postTimeline.timeline}>
+                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                 <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                 <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                 <Tooltip content={<CustomTooltip />} />
+                 <Line type="monotone" dataKey={postTimelineMetric} name={postTimelineMetric.toUpperCase()} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+               </LineChart>
+             </ResponsiveContainer>
+          </div>
         </div>
       )}
 

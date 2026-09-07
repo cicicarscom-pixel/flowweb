@@ -763,7 +763,9 @@
     "imageContainer": {
       "cropButton": "Zuschneiden (Instagram 4:5)",
       "selectTitle": "Bild & Video auswählen oder generieren",
-      "selectSubtitle": "Tippen Sie, um aus Ihrer Galerie hinzuzufügen."
+      "selectSubtitle": "Tippen Sie, um aus Ihrer Galerie hinzuzufügen.",
+      "cropWarning": "Sie müssen dieses Bild für Instagram zuschneiden.",
+      "cropNow": "Jetzt zuschneiden"
     },
     "captionEditor": {
       "title": "Inhaltstext",

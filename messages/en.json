@@ -763,7 +763,9 @@
     "imageContainer": {
       "cropButton": "Crop (Instagram 4:5)",
       "selectTitle": "Select or Generate Image & Video",
-      "selectSubtitle": "Tap to add from your gallery."
+      "selectSubtitle": "Tap to add from your gallery.",
+      "cropWarning": "You need to crop this image for Instagram.",
+      "cropNow": "Crop Now"
     },
     "captionEditor": {
       "title": "Content Text",

@@ -85,6 +85,9 @@ export default function SharePage() {
   const [isSharing, setIsSharing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [isImageCropped, setIsImageCropped] = useState(false);
+  
+  const needsInstagramCrop = !!(localImage && !localImage.startsWith('data:video') && selectedPlatforms['instagram'] && !isImageCropped);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -152,6 +155,7 @@ export default function SharePage() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsImageCropped(false);
       const reader = new FileReader();
       reader.onloadend = () => {
         setLocalImage(reader.result as string);
@@ -170,6 +174,9 @@ export default function SharePage() {
 
 
   const handleShare = async () => {
+    if (needsInstagramCrop) {
+      return alert(t("sharePage.imageContainer.cropWarning"));
+    }
     if (!localText.trim() && !prompt.trim()) {
       return alert(t("sharePage.errors.noText"));
     }
@@ -325,7 +332,7 @@ export default function SharePage() {
           </div>
 
           {/* Central Feature: Image Container */}
-          <div className="flex justify-center w-full relative">
+          <div className="flex flex-col items-center w-full relative gap-2">
             <div className="w-full aspect-square max-w-[350px] p-[3px] rounded-[24px] relative group overflow-hidden bg-white/5">
               {/* Fake Animated Border */}
               <div className="absolute inset-[-100%] animate-[spin_4s_linear_infinite]" style={{
@@ -374,6 +381,21 @@ export default function SharePage() {
                 )}
               </div>
             </div>
+
+            {needsInstagramCrop && (
+              <div className="mt-2 flex items-center gap-2 bg-[#E1306C]/10 border border-[#E1306C]/30 rounded-lg px-3 py-2 max-w-[350px] w-full">
+                <i className="fa-solid fa-triangle-exclamation text-[#E1306C] shrink-0"></i>
+                <span className="text-[#E1306C] text-xs font-medium flex-1">
+                  {t("sharePage.imageContainer.cropWarning")}
+                </span>
+                <button
+                  onClick={() => setIsCropperOpen(true)}
+                  className="bg-[#E1306C] text-white text-xs font-semibold px-3 py-1.5 rounded-md hover:bg-[#c72a5f] transition-colors shrink-0"
+                >
+                  {t("sharePage.imageContainer.cropNow")}
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Caption Editor */}
@@ -767,13 +789,13 @@ export default function SharePage() {
           <div className="fixed bottom-0 left-0 lg:left-64 right-0 p-5 bg-gradient-to-t from-[#17151A] to-transparent pointer-events-none flex justify-center z-50">
             <button 
               onClick={handleShare}
-              disabled={isSharing}
-              className={`relative overflow-hidden w-full max-w-sm py-3.5 rounded-full ${isSharing ? 'bg-[#2A2631]' : 'bg-gradient-to-r from-[#22B573] to-[#FF7A59] hover:opacity-90'} text-[#17151A] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,181,115,0.3)] transition-opacity pointer-events-auto`}
+              disabled={isSharing || needsInstagramCrop}
+              className={`relative overflow-hidden w-full max-w-sm py-3.5 rounded-full ${isSharing || needsInstagramCrop ? 'bg-[#2A2631] opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-[#22B573] to-[#FF7A59] hover:opacity-90'} text-[#17151A] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,181,115,0.3)] transition-opacity pointer-events-auto`}
             >
-              {isSharing && (
+              {(isSharing || needsInstagramCrop) && (
                 <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#22B573] to-[#FF7A59] opacity-40 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
               )}
-              <div className={`relative flex items-center gap-2 z-10 ${isSharing ? 'text-white' : 'text-[#17151A]'}`}>
+              <div className={`relative flex items-center gap-2 z-10 ${(isSharing || needsInstagramCrop) ? 'text-white' : 'text-[#17151A]'}`}>
                 {isSharing ? (
                   <>
                     <i className="fa-solid fa-spinner fa-spin"></i>
@@ -799,6 +821,7 @@ export default function SharePage() {
           onCancel={() => setIsCropperOpen(false)}
           onCropComplete={(croppedImage) => {
              setLocalImage(croppedImage);
+             setIsImageCropped(true);
              setIsCropperOpen(false);
           }}
         />

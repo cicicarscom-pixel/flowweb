@@ -763,7 +763,9 @@
     "imageContainer": {
       "cropButton": "Kırp (Instagram 4:5)",
       "selectTitle": "Görsel & Video Seç ya da Üret",
-      "selectSubtitle": "Galerinizden eklemek için dokunun."
+      "selectSubtitle": "Galerinizden eklemek için dokunun.",
+      "cropWarning": "Instagram için bu görseli kırpmanız gerekiyor.",
+      "cropNow": "Şimdi Kırp"
     },
     "captionEditor": {
       "title": "İçerik Metni",

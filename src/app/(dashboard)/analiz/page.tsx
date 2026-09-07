@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -9,12 +9,12 @@ import {
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
-// PLATFORMS: 'name' alanı marka adları için literal İngilizce kalır (TikTok,
-// Instagram, Facebook, YouTube, LinkedIn, Google Business — bunlar özel isim,
-// dilden dile çevrilmez). Sadece 'all' (Tümü) seçeneği i18n'e bağlıdır, bkz.
+// PLATFORMS: 'name' alanÄ± marka adlarÄ± iÃ§in literal Ä°ngilizce kalÄ±r (TikTok,
+// Instagram, Facebook, YouTube, LinkedIn, Google Business â€” bunlar Ã¶zel isim,
+// dilden dile Ã§evrilmez). Sadece 'all' (TÃ¼mÃ¼) seÃ§eneÄŸi i18n'e baÄŸlÄ±dÄ±r, bkz.
 // getPlatformLabel().
 const PLATFORMS = [
-  { id: 'all', name: 'Tümü', icon: 'apps', color: '#A79E96' },
+  { id: 'all', name: 'TÃ¼mÃ¼', icon: 'apps', color: '#A79E96' },
   { id: 'tiktok', name: 'TikTok', icon: 'music', color: '#EF4444' },
   { id: 'instagram', name: 'Instagram', icon: 'instagram', color: '#E8A8CD' },
   { id: 'facebook', name: 'Facebook', icon: 'facebook', color: '#FF7A59' },
@@ -23,9 +23,9 @@ const PLATFORMS = [
   { id: 'googlebusiness', name: 'Google Business', icon: 'store', color: '#34a853' }
 ];
 
-// id/label ayrımı (bkz. AICharacterPanel.tsx'teki ROLE_KEY_BY_ID notu):
-// TIME_RANGES.id değerleri değişmez (state/filtre mantığı bunlara dayanır),
-// yalnızca görüntülenen ad bu eşlemeyle analizPage.timeRanges.* çevirisinden üretilir.
+// id/label ayrÄ±mÄ± (bkz. AICharacterPanel.tsx'teki ROLE_KEY_BY_ID notu):
+// TIME_RANGES.id deÄŸerleri deÄŸiÅŸmez (state/filtre mantÄ±ÄŸÄ± bunlara dayanÄ±r),
+// yalnÄ±zca gÃ¶rÃ¼ntÃ¼lenen ad bu eÅŸlemeyle analizPage.timeRanges.* Ã§evirisinden Ã¼retilir.
 const TIME_RANGE_KEY_BY_ID: Record<string, string> = {
   '7d': 'last7Days',
   '30d': 'last30Days',
@@ -34,10 +34,10 @@ const TIME_RANGE_KEY_BY_ID: Record<string, string> = {
 };
 
 const TIME_RANGES = [
-  { id: '7d', name: 'Son 7 Gün', days: 7 },
-  { id: '30d', name: 'Son 30 Gün', days: 30 },
-  { id: '90d', name: 'Son 90 Gün', days: 90 },
-  { id: '1y', name: 'Son 1 Yıl', days: 365 }
+  { id: '7d', name: 'Son 7 GÃ¼n', days: 7 },
+  { id: '30d', name: 'Son 30 GÃ¼n', days: 30 },
+  { id: '90d', name: 'Son 90 GÃ¼n', days: 90 },
+  { id: '1y', name: 'Son 1 YÄ±l', days: 365 }
 ];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -176,17 +176,17 @@ export default function AnalyticsScreen() {
         return;
       }
 
-      // Merkezi çağrı sarmalayıcı. Zernio zarfını ({success, data}) ve
-      // zernio-client'ın "sometimes sdk wraps it in { data: ... }" davranışını
-      // (bkz. fetchAnalyticsWithCache) tek noktadan açar.
-      // - Taşıma/altyapı hatasında (network, fonksiyon çağrısı patlarsa) fırlatır
-      //   ve tüm fetchZernioAnalytics'i durdurur — bu doğru, çünkü session/ağ
-      //   temelden bozuksa geri kalan çağrılar da anlamsız olur.
-      // - Zernio/edge function'ın kendi döndürdüğü "yumuşak" hatada
-      //   ({success:false, error, code} — ki bugünkü tasarımda HTTP 200 ile
-      //   geliyor) FIRLATMAZ: sadece o tek action'ı uyarı olarak loglar ve boş
-      //   veri döner. Böylece örn. content-decay başarısız olsa bile, zaten
-      //   başarıyla gelmiş best-times/daily-metrics verisi çöpe atılmaz.
+      // Merkezi Ã§aÄŸrÄ± sarmalayÄ±cÄ±. Zernio zarfÄ±nÄ± ({success, data}) ve
+      // zernio-client'Ä±n "sometimes sdk wraps it in { data: ... }" davranÄ±ÅŸÄ±nÄ±
+      // (bkz. fetchAnalyticsWithCache) tek noktadan aÃ§ar.
+      // - TaÅŸÄ±ma/altyapÄ± hatasÄ±nda (network, fonksiyon Ã§aÄŸrÄ±sÄ± patlarsa) fÄ±rlatÄ±r
+      //   ve tÃ¼m fetchZernioAnalytics'i durdurur â€” bu doÄŸru, Ã§Ã¼nkÃ¼ session/aÄŸ
+      //   temelden bozuksa geri kalan Ã§aÄŸrÄ±lar da anlamsÄ±z olur.
+      // - Zernio/edge function'Ä±n kendi dÃ¶ndÃ¼rdÃ¼ÄŸÃ¼ "yumuÅŸak" hatada
+      //   ({success:false, error, code} â€” ki bugÃ¼nkÃ¼ tasarÄ±mda HTTP 200 ile
+      //   geliyor) FIRLATMAZ: sadece o tek action'Ä± uyarÄ± olarak loglar ve boÅŸ
+      //   veri dÃ¶ner. BÃ¶ylece Ã¶rn. content-decay baÅŸarÄ±sÄ±z olsa bile, zaten
+      //   baÅŸarÄ±yla gelmiÅŸ best-times/daily-metrics verisi Ã§Ã¶pe atÄ±lmaz.
       const invokeZernio = async (action: string, payload: any): Promise<any> => {
         const { data, error } = await supabase.functions.invoke('zernio-client', {
           body: { action, payload },
@@ -196,7 +196,7 @@ export default function AnalyticsScreen() {
           throw error;
         }
         if (data?.success === false) {
-          console.warn(`[Zernio] "${action}" başarısız:`, data.error, `(${data.code})`);
+          console.warn(`[Zernio] "${action}" baÅŸarÄ±sÄ±z:`, data.error, `(${data.code})`);
           return {};
         }
         return data?.data?.data || data?.data || {};
@@ -238,9 +238,9 @@ export default function AnalyticsScreen() {
         formatBreakdown: { video: 0, image: 0 }
       };
 
-      // Seçili platforma göre gereken tek platforma-özel çağrı grubu. Hiçbiri
-      // daily-metrics/best-times/vb. sonuçlarına bağımlı değil, o yüzden
-      // aşağıdaki ana Promise.all'a aynen katılabiliyor.
+      // SeÃ§ili platforma gÃ¶re gereken tek platforma-Ã¶zel Ã§aÄŸrÄ± grubu. HiÃ§biri
+      // daily-metrics/best-times/vb. sonuÃ§larÄ±na baÄŸÄ±mlÄ± deÄŸil, o yÃ¼zden
+      // aÅŸaÄŸÄ±daki ana Promise.all'a aynen katÄ±labiliyor.
       type PlatformResult =
         | { kind: 'all'; follow: any }
         | { kind: 'instagram'; demo: any; follow: any }
@@ -267,12 +267,12 @@ export default function AnalyticsScreen() {
         return Promise.resolve({ kind: 'none' as const });
       })();
 
-      // Birbirinden tamamen bağımsız tüm keşif çağrılarını PARALEL yürüt.
-      // Öncesinde bunlar 7-9 ayrı network round-trip'i olarak sırayla
-      // "await" ediliyordu (sayfa yüklemesini gereksiz yavaşlatıyor, ve
-      // aradaki her bekleme auth/oturum zamanlama sorunlarına daha açık hale
-      // getiriyordu). Hiçbiri bir diğerinin sonucuna ihtiyaç duymadığından
-      // hepsini aynı anda ateşlemek güvenli.
+      // Birbirinden tamamen baÄŸÄ±msÄ±z tÃ¼m keÅŸif Ã§aÄŸrÄ±larÄ±nÄ± PARALEL yÃ¼rÃ¼t.
+      // Ã–ncesinde bunlar 7-9 ayrÄ± network round-trip'i olarak sÄ±rayla
+      // "await" ediliyordu (sayfa yÃ¼klemesini gereksiz yavaÅŸlatÄ±yor, ve
+      // aradaki her bekleme auth/oturum zamanlama sorunlarÄ±na daha aÃ§Ä±k hale
+      // getiriyordu). HiÃ§biri bir diÄŸerinin sonucuna ihtiyaÃ§ duymadÄ±ÄŸÄ±ndan
+      // hepsini aynÄ± anda ateÅŸlemek gÃ¼venli.
       const [
         actualData,
         actualMsgs,
@@ -293,16 +293,16 @@ export default function AnalyticsScreen() {
         platformCall
       ]);
 
-      // get-post-timeline, keşif için gerçek bir postId'ye ihtiyaç duyuyor;
-      // bu yüzden recentPosts sorgusunun (yukarıdaki paralel grupta zaten
-      // koştu) sonucunu bekleyip ayrıca çağırıyoruz.
+      // get-post-timeline, keÅŸif iÃ§in gerÃ§ek bir postId'ye ihtiyaÃ§ duyuyor;
+      // bu yÃ¼zden recentPosts sorgusunun (yukarÄ±daki paralel grupta zaten
+      // koÅŸtu) sonucunu bekleyip ayrÄ±ca Ã§aÄŸÄ±rÄ±yoruz.
       const recentPostId = recentPosts?.[0]?.zernio_post_id;
       const timelinePayload = recentPostId
         ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId }
         : payloadBase;
       const actualTimeline = await invokeZernio('get-post-timeline', timelinePayload);
 
-      // --- Sonuçları state şekline dök (tamamen senkron, saf eşleme) ---
+      // --- SonuÃ§larÄ± state ÅŸekline dÃ¶k (tamamen senkron, saf eÅŸleme) ---
       if (actualData.dailyData) {
          const mappedTimeline = actualData.dailyData.map((d: any) => ({
            views: d.metrics?.impressions || 0,
@@ -469,7 +469,7 @@ export default function AnalyticsScreen() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>👥</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ‘¥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.posting.totalFollowers")}</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalFollowers}</p>
@@ -477,7 +477,7 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>⭐</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>â­</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.posting.totalReviews")}</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{stats.totalReviews}</p>
@@ -485,15 +485,15 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>📢</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam Erişim</p>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ“¢</span>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam EriÅŸim</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
           </div>
           
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>🔥</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ”¥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Engagement Rate</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{avgEngagementRate}%</p>
@@ -501,8 +501,8 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>👑</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>En İyi Gönderi</p>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ‘‘</span>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>En Ä°yi GÃ¶nderi</p>
             </div>
             {bestPost ? (
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -523,7 +523,7 @@ export default function AnalyticsScreen() {
                   <p style={{ fontSize: 13, color: "#F6F1EC", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {bestPost.content || bestPost.title || "Post"}
                   </p>
-                  <a href={bestPost.platform_url || bestPost.url || "#"} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: "#FF7A59", textDecoration: "none" }}>Görüntüle ↗</a>
+                  <a href={bestPost.platform_url || bestPost.url || "#"} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: "#FF7A59", textDecoration: "none" }}>GÃ¶rÃ¼ntÃ¼le â†—</a>
                 </div>
               </div>
             ) : (
@@ -585,10 +585,10 @@ export default function AnalyticsScreen() {
       {zernioData.postTimeline && zernioData.postTimeline.timeline && zernioData.postTimeline.timeline.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)", marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-            <span style={{ color: "#22B573", fontSize: 20 }}>📈</span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Platform Bazında Takipçi Artışı</h3>
+            <span style={{ color: "#22B573", fontSize: 20 }}>ğŸ“ˆ</span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Platform BazÄ±nda TakipÃ§i ArtÄ±ÅŸÄ±</h3>
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman içinde kazanılan takipçi (Follows) sayıları</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman iÃ§inde kazanÄ±lan takipÃ§i (Follows) sayÄ±larÄ±</p>
 
           <div style={{ height: 250, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -672,7 +672,7 @@ export default function AnalyticsScreen() {
         {/* Content Format Breakdown */}
         {(zernioData.formatBreakdown.video > 0 || zernioData.formatBreakdown.image > 0) && (
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>İçerik Formatı Dağılımı</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Ä°Ã§erik FormatÄ± DaÄŸÄ±lÄ±mÄ±</h3>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "center" }}>
               <div style={{ height: 200 }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -680,13 +680,13 @@ export default function AnalyticsScreen() {
                     <Pie
                       data={[
                         { name: 'Video', value: zernioData.formatBreakdown.video, color: '#FF7A59' },
-                        { name: 'Görsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
+                        { name: 'GÃ¶rsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
                       ].filter(d => d.value > 0)}
                       innerRadius={50} outerRadius={80} paddingAngle={5} dataKey="value"
                     >
                       {[
                         { name: 'Video', value: zernioData.formatBreakdown.video, color: '#FF7A59' },
-                        { name: 'Görsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
+                        { name: 'GÃ¶rsel', value: zernioData.formatBreakdown.image, color: '#C2478D' }
                       ].filter(d => d.value > 0).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
@@ -696,21 +696,41 @@ export default function AnalyticsScreen() {
                 </ResponsiveContainer>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#FF7A59' }} />
-                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Video</span>
-                   </div>
-                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.video}</span>
-                 </div>
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#C2478D' }} />
-                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel</span>
-                   </div>
-                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
-                 </div>
-              </div>
+                   {(() => {
+                     let videoEr = "0.0";
+                     let imageEr = "0.0";
+                     if (zernioData.postAnalytics) {
+                       let vEng=0, vVws=0, iEng=0, iVws=0;
+                       zernioData.postAnalytics.forEach((p:any) => {
+                         const m = p.analytics || p.metrics || p || {};
+                         const eng = (m.likes||0) + (m.comments||0) + (m.shares||0) + (m.saves||0);
+                         const vws = (m.impressions||m.views||0);
+                         const isVid = (p.media_urls && p.media_urls.some((u:string) => u.match(/\.(mp4|webm|mov|blob)(\?.*)?$/i) || u.includes("blob")));
+                         if(isVid) { vEng+=eng; vVws+=vws; } else { iEng+=eng; iVws+=vws; }
+                       });
+                       if (vVws>0) videoEr = ((vEng/vVws)*100).toFixed(1);
+                       if (iVws>0) imageEr = ((iEng/iVws)*100).toFixed(1);
+                     }
+                     return (
+                       <>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#FF7A59" }} />
+                             <span style={{ color: "#F6F1EC", fontSize: 14 }}>Video <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>({videoEr}% ER)</span></span>
+                           </div>
+                           <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.video}</span>
+                         </div>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                             <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#C2478D" }} />
+                             <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>({imageEr}% ER)</span></span>
+                           </div>
+                           <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
+                         </div>
+                       </>
+                     );
+                   })()}
+                </div>
             </div>
           </div>
         )}
@@ -718,14 +738,14 @@ export default function AnalyticsScreen() {
         {/* Platform Breakdown Table */}
         {zernioData.platformBreakdown.length > 0 && (
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", overflowX: "auto" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Kırılımı</h3>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform KÄ±rÄ±lÄ±mÄ±</h3>
              <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                    <tr>
                      <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Platform</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Gönderi</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Erişim</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Beğeni</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>GÃ¶nderi</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>EriÅŸim</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>BeÄŸeni</th>
                    </tr>
                 </thead>
                 <tbody>
@@ -746,41 +766,41 @@ export default function AnalyticsScreen() {
       {/* Platform Performance Bar Charts */}
       {zernioData.platformBreakdown.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Bazlı Etkileşim</h3>
+           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform BazlÄ± EtkileÅŸim</h3>
            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px", height: 300, width: "100%" }}>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Gönderi Sayısı</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>GÃ¶nderi SayÄ±sÄ±</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />
+                     <Bar dataKey="postCount" name="GÃ¶nderi SayÄ±sÄ±" fill="#FF7A59" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Beğeni Sayısı</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>BeÄŸeni SayÄ±sÄ±</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} />
+                     <Bar dataKey="likes" name="BeÄŸeni SayÄ±sÄ±" fill="#C2478D" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Erişim</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>EriÅŸim</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="reach" name="Erişim" fill="#22B573" radius={[4,4,0,0]} />
+                     <Bar dataKey="reach" name="EriÅŸim" fill="#22B573" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
@@ -790,11 +810,11 @@ export default function AnalyticsScreen() {
       {/* 1. Best Times Heatmap */}
       {zernioData.bestTimes.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>En İyi Paylaşım Zamanları</h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftanın günleri ve saatlere göre ortalama etkileşim yoğunluğu</p>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>En Ä°yi PaylaÅŸÄ±m ZamanlarÄ±</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>HaftanÄ±n gÃ¼nleri ve saatlere gÃ¶re ortalama etkileÅŸim yoÄŸunluÄŸu</p>
           <div style={{ display: "flex" }}>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 8, marginTop: 20 }}>
-              {["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map(day => (
+              {["Pzt", "Sal", "Ã‡ar", "Per", "Cum", "Cmt", "Paz"].map(day => (
                 <div key={day} style={{ height: 28, display: "flex", alignItems: "center", color: "var(--text-secondary)", fontSize: 12 }}>{day}</div>
               ))}
             </div>
@@ -815,7 +835,7 @@ export default function AnalyticsScreen() {
                         return (
                         <div 
                           key={hourIdx} 
-                          title={slot ? `Saat: ${hourIdx}:00\nEtkileşim: ${slot.avg_engagement}\nGönderi: ${slot.post_count}` : ''}
+                          title={slot ? `Saat: ${hourIdx}:00\nEtkileÅŸim: ${slot.avg_engagement}\nGÃ¶nderi: ${slot.post_count}` : ''}
                           style={{
                             flex: 1,
                             minWidth: 20,
@@ -833,14 +853,32 @@ export default function AnalyticsScreen() {
               </div>
             </div>
           </div>
+
+          {(() => {
+              const sorted = [...zernioData.bestTimes].sort((a: any, b: any) => (b.avg_engagement || 0) - (a.avg_engagement || 0));
+              const topSlots = sorted.slice(0, 3);
+              const dayNames = ["Pzt", "Sal", "Ã‡ar", "Per", "Cum", "Cmt", "Paz"];
+              if (topSlots.length > 0) {
+                return (
+                  <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: 16 }}>â­</span>
+                    <p style={{ color: "#F6F1EC", fontSize: 13, fontWeight: 500 }}>
+                      <span style={{ color: "var(--text-secondary)", marginRight: 8 }}>En iyi zamanlar:</span>
+                      {topSlots.map((s: any) => `${dayNames[s.day_of_week]} ${s.hour.toString().padStart(2, '0')}:00`).join(', ')}
+                    </p>
+                  </div>
+                );
+              }
+              return null;
+            })()}
         </div>
       )}
 
       {/* 2. Content Decay Area Chart */}
       {zernioData.contentDecay.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>İçerik Ömrü (Content Decay)</h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman içinde toplam etkileşimin yüzde kaçına ulaşıldığı</p>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Ä°Ã§erik Ã–mrÃ¼ (Content Decay)</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman iÃ§inde toplam etkileÅŸimin yÃ¼zde kaÃ§Ä±na ulaÅŸÄ±ldÄ±ÄŸÄ±</p>
           <div style={{ height: 250, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={[...zernioData.contentDecay].sort((a: any, b: any) => a.bucket_order - b.bucket_order)}>
@@ -854,7 +892,7 @@ export default function AnalyticsScreen() {
                 <XAxis dataKey="bucket_label" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                 <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `%${val}`} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="avg_pct_of_final" name="Etkileşim Yüzdesi" stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
+                <Area type="monotone" dataKey="avg_pct_of_final" name="EtkileÅŸim YÃ¼zdesi" stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -864,15 +902,15 @@ export default function AnalyticsScreen() {
       {/* 3. Posting Frequency Scatter */}
       {zernioData.postingFrequency.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Paylaşım Sıklığı vs Etkileşim Oranı</h3>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftalık gönderi sayısının ortalama etkileşim oranına etkisi</p>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>PaylaÅŸÄ±m SÄ±klÄ±ÄŸÄ± vs EtkileÅŸim OranÄ±</h3>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>HaftalÄ±k gÃ¶nderi sayÄ±sÄ±nÄ±n ortalama etkileÅŸim oranÄ±na etkisi</p>
           <div style={{ height: 300, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis type="number" dataKey="posts_per_week" name="Haftalık Gönderi" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
-                <YAxis type="number" dataKey="avg_engagement_rate" name="Etkileşim Oranı (%)" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
-                <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name="Hafta Sayısı" />
+                <XAxis type="number" dataKey="posts_per_week" name="HaftalÄ±k GÃ¶nderi" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                <YAxis type="number" dataKey="avg_engagement_rate" name="EtkileÅŸim OranÄ± (%)" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name="Hafta SayÄ±sÄ±" />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
                 <Legend iconType="circle" />
                 {Array.from(new Set(zernioData.postingFrequency.map((f: any) => f.platform))).map((platform: string) => {
@@ -895,8 +933,8 @@ export default function AnalyticsScreen() {
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Son Gönderi Etkileşim Eğrisi</h3>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Seçili gönderinin zaman içindeki performansı</p>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Son GÃ¶nderi EtkileÅŸim EÄŸrisi</h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>SeÃ§ili gÃ¶nderinin zaman iÃ§indeki performansÄ±</p>
             </div>
             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                {['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions'].map(metric => (
@@ -954,14 +992,14 @@ export default function AnalyticsScreen() {
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}>
-                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>Gönderi</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Erişim</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>GÃ¶nderi</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>GÃ¶rÃ¼ntÃ¼lenme</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>EriÅŸim</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>BeÄŸeni</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Yorum</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>PaylaÅŸÄ±m</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>TÄ±klama</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>ER%</th>
                 </tr>
               </thead>
@@ -1015,7 +1053,7 @@ export default function AnalyticsScreen() {
         <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(194,71,141,0.1), rgba(194,71,141,0.5))" }}>
           <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📥</span>
+              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>ğŸ“¥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesReceived")}</p>
             </div>
             <p style={{ fontSize: 32, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.messagesReceived || stats.messagesReceived || 0}</p>
@@ -1025,7 +1063,7 @@ export default function AnalyticsScreen() {
         <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(255,122,89,0.1), rgba(255,122,89,0.5))" }}>
           <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📤</span>
+              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>ğŸ“¤</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesSent")}</p>
             </div>
             <p style={{ fontSize: 32, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{stats.messagesSent || 0}</p>
@@ -1036,7 +1074,7 @@ export default function AnalyticsScreen() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>👁️</span>
+            <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ‘ï¸</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.readRate")}</p>
           </div>
           <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>%84</p>
@@ -1044,7 +1082,7 @@ export default function AnalyticsScreen() {
 
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>⏱️</span>
+            <span style={{ fontSize: 16, opacity: 0.6 }}>â±ï¸</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.avgResponseLabel")}</p>
           </div>
           <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{t("analizPage.inbox.avgResponseValue")}</p>
@@ -1057,7 +1095,7 @@ export default function AnalyticsScreen() {
         <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 32 }}>{t("analizPage.inbox.responseTimeAnalysis.subtitle")}</p>
 
         <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>🚀</span>
+          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>ğŸš€</span>
           <p style={{ color: "#FF7A59", fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}>{t("analizPage.inbox.responseTimeAnalysis.greatSpeed")}</p>
         </div>
       </div>
@@ -1113,9 +1151,9 @@ export default function AnalyticsScreen() {
               border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", minWidth: 200
             }}
           >
-            <span style={{ fontSize: 16, color: selectedPlatform.color }}>★</span>
+            <span style={{ fontSize: 16, color: selectedPlatform.color }}>â˜…</span>
             <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{getPlatformLabel(selectedPlatform)}</span>
-            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
+            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>â–¼</span>
           </button>
 
           {isPlatformMenuOpen && (
@@ -1134,7 +1172,7 @@ export default function AnalyticsScreen() {
                     background: selectedPlatform.id === p.id ? "rgba(255,122,89,0.1)" : "transparent"
                   }}
                 >
-                  <span style={{ fontSize: 16, color: p.color }}>★</span>
+                  <span style={{ fontSize: 16, color: p.color }}>â˜…</span>
                   <span style={{ color: selectedPlatform.id === p.id ? "#FF7A59" : "#F6F1EC", fontSize: 13, fontWeight: selectedPlatform.id === p.id ? 700 : 500 }}>{getPlatformLabel(p)}</span>
                 </div>
               ))}
@@ -1152,9 +1190,9 @@ export default function AnalyticsScreen() {
               border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", minWidth: 160
             }}
           >
-            <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>⏱️</span>
+            <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>â±ï¸</span>
             <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{getTimeRangeLabel(selectedTimeRange)}</span>
-            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
+            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>â–¼</span>
           </button>
 
           {isTimeMenuOpen && (
@@ -1190,3 +1228,4 @@ export default function AnalyticsScreen() {
     </div>
   );
 }
+

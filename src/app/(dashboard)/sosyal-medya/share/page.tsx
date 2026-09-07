@@ -801,6 +801,11 @@ export default function SharePage() {
                     <i className="fa-solid fa-spinner fa-spin"></i>
                     <span>{t("sharePage.publishButton.loading", { progress: uploadProgress })}</span>
                   </>
+                ) : needsInstagramCrop ? (
+                  <>
+                    <i className="fa-solid fa-triangle-exclamation"></i>
+                    <span>{t("sharePage.publishButton.cropRequiredPublishButton")}</span>
+                  </>
                 ) : (
                   <>
                     <i className="fa-solid fa-paper-plane"></i>

@@ -822,7 +822,8 @@
     },
     "publishButton": {
       "loading": "Wird hochgeladen... {progress}%",
-      "now": "Jetzt teilen"
+      "now": "Jetzt teilen",
+      "cropRequiredPublishButton": "Zuerst Bild zuschneiden"
     },
     "errors": {
       "noText": "Bitte geben Sie einen Text zum Teilen ein.",

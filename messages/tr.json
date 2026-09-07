@@ -822,7 +822,8 @@
     },
     "publishButton": {
       "loading": "Yükleniyor... {progress}%",
-      "now": "Şimdi Paylaş"
+      "now": "Şimdi Paylaş",
+      "cropRequiredPublishButton": "Önce Görseli Kırpın"
     },
     "errors": {
       "noText": "Lütfen paylaşılacak bir metin girin.",

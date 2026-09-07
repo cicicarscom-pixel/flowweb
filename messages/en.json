@@ -822,7 +822,8 @@
     },
     "publishButton": {
       "loading": "Uploading... {progress}%",
-      "now": "Share Now"
+      "now": "Share Now",
+      "cropRequiredPublishButton": "Crop Image First"
     },
     "errors": {
       "noText": "Please enter some text to share.",

@@ -565,7 +565,7 @@ export default function AnalyticsScreen() {
              <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={zernioData.platformBreakdown}>
                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                   <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, textTransform: 'capitalize' }} axisLine={false} tickLine={false} />
+                   <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                    <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                    <Tooltip content={<CustomTooltip />} />
                    <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />

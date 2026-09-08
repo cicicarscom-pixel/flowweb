@@ -1282,12 +1282,34 @@ export default function AnalyticsScreen() {
                <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                      <tr>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Account</th>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-solid fa-inbox" style={{color: "#22B573", marginRight: 4}}/>Received</th>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-paper-plane" style={{color: "#3B82F6", marginRight: 4}}/>Sent</th>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-comments" style={{color: "#F59E0B", marginRight: 4}}/>Conversations</th>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-clock" style={{color: "#C2478D", marginRight: 4}}/>Response</th>
-                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}># Total</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Account <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} /></div>
+                       </th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
+                           <i className="fa-solid fa-inbox" style={{color: "#22B573", fontSize: 12}}/> Received <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                         </div>
+                       </th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
+                           <i className="fa-solid fa-paper-plane" style={{color: "#3B82F6", fontSize: 12}}/> Sent <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                         </div>
+                       </th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
+                           <i className="fa-solid fa-comments" style={{color: "#F59E0B", fontSize: 12}}/> Conversations <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                         </div>
+                       </th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
+                           <i className="fa-solid fa-clock" style={{color: "#F472B6", fontSize: 12}}/> Response <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                         </div>
+                       </th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
+                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
+                           # Total <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                         </div>
+                       </th>
                      </tr>
                   </thead>
                   <tbody>

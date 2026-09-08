@@ -235,7 +235,9 @@ export default function AnalyticsScreen() {
         totalComments: 0,
         totalReach: 0,
         messagesReceived: 0,
-        formatBreakdown: { video: 0, image: 0 }
+        formatBreakdown: { video: 0, image: 0 },
+        inboxVolume: null as any,
+        inboxPerformance: null as any
       };
 
       // Seçili platforma göre gereken tek platforma-özel çağrı grubu. Hiçbiri
@@ -280,6 +282,8 @@ export default function AnalyticsScreen() {
         actualFreq,
         actualDecay,
         actualPostAnalytics,
+        actualInboxVolume,
+        actualInboxPerformance,
         recentPosts,
         platformResult
       ] = await Promise.all([
@@ -289,6 +293,8 @@ export default function AnalyticsScreen() {
         invokeZernio('get-posting-frequency', payloadBase),
         invokeZernio('get-content-decay', payloadBase),
         invokeZernio('get-post-analytics', payloadBase),
+        invokeZernio('get-inbox-volume', payloadBase),
+        invokeZernio('get-inbox-performance', payloadBase),
         supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1).then(r => r.data),
         platformCall
       ]);
@@ -394,6 +400,9 @@ export default function AnalyticsScreen() {
            newZernioData.totalFollowers = platformResult.tk.data.stats.follower_count;
         }
       }
+
+      newZernioData.inboxVolume = actualInboxVolume;
+      newZernioData.inboxPerformance = actualInboxPerformance;
 
       if (currentRequestId === requestRef.current) {
         setZernioData(prev => ({ ...newZernioData, formatBreakdown: prev.formatBreakdown }));
@@ -1091,62 +1100,270 @@ export default function AnalyticsScreen() {
     </div>
   );
 
-  const renderInboxAnalytics = () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingBottom: 60 }}>
-      {/* Key Metrics Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-        
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(194,71,141,0.1), rgba(194,71,141,0.5))" }}>
-          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📥</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesReceived")}</p>
-            </div>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.messagesReceived || stats.messagesReceived || 0}</p>
+  const renderInboxAnalytics = () => {
+    const vol = zernioData.inboxVolume || {};
+    const sumVol = vol.summary || {
+      received: stats.messagesReceived || 0,
+      sent: stats.messagesSent || 0,
+      read: 0,
+      failed: 0,
+      uniqueConversations: 0
+    };
+    
+    const perf = zernioData.inboxPerformance || {};
+    const medianResp = perf.medianResponseSeconds || 0;
+    const formatTime = (secs: number) => {
+       if (!secs) return "-";
+       if (secs < 60) return `${secs}s`;
+       const m = Math.floor(secs / 60);
+       const s = secs % 60;
+       if (m < 60) return `${m}m ${s}s`;
+       const h = Math.floor(m / 60);
+       const rm = m % 60;
+       return `${h}h ${rm}m`;
+    };
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingBottom: 60 }}>
+        {/* Top KPIs */}
+        <div className="glass" style={{ borderRadius: 8, padding: "16px 24px", border: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Received</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-solid fa-inbox" style={{ color: "#22B573" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.received || 0}</span>
+              </div>
+           </div>
+           <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Sent</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-regular fa-paper-plane" style={{ color: "#3B82F6" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.sent || 0}</span>
+              </div>
+           </div>
+           <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Read</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-regular fa-eye" style={{ color: "#8B5CF6" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.read || 0}</span>
+              </div>
+           </div>
+           <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Failed</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-solid fa-triangle-exclamation" style={{ color: "#F59E0B" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.failed || 0}</span>
+              </div>
+           </div>
+           <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Conversations</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-regular fa-comments" style={{ color: "#C2478D" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.uniqueConversations || 0}</span>
+              </div>
+           </div>
+           <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+           <div style={{ flex: 1, minWidth: 100 }}>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Median response</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <i className="fa-regular fa-clock" style={{ color: "#F59E0B" }} />
+                <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{formatTime(medianResp)}</span>
+              </div>
+           </div>
+        </div>
+
+        {/* Row 1: Messages over time & Messages per platform */}
+        <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 24 }}>
+          <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Messages over time</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Received vs sent vs read per day</p>
+             <div style={{ height: 300, width: "100%" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                   <LineChart data={vol.timeseries || []}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => val ? val.substring(5,10) : ''} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} />
+                     <Line type="monotone" dataKey="received" name="Received" stroke="#22B573" strokeWidth={2} dot={false} />
+                     <Line type="monotone" dataKey="sent" name="Sent" stroke="#3B82F6" strokeWidth={2} dot={false} />
+                     <Line type="monotone" dataKey="read" name="Read" stroke="#8B5CF6" strokeWidth={2} dot={false} />
+                   </LineChart>
+                </ResponsiveContainer>
+             </div>
+          </div>
+
+          <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Messages per platform</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Received + sent volume by platform in this window</p>
+             <div style={{ height: 300, width: "100%" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart data={vol.byPlatform || []}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                     <Bar dataKey="received" name="Received" stackId="a" fill="#22B573" barSize={30} />
+                     <Bar dataKey="sent" name="Sent" stackId="a" fill="#3B82F6" barSize={30} radius={[4,4,0,0]} />
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
           </div>
         </div>
 
-        <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(255,122,89,0.1), rgba(255,122,89,0.5))" }}>
-          <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📤</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesSent")}</p>
-            </div>
-            <p style={{ fontSize: 32, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{stats.messagesSent || 0}</p>
+        {/* Row 2: Response time & Top accounts */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+          <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+               <div>
+                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Response time</h3>
+                 <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>How long it takes to send the first reply after a customer message - {perf.repliedCount || 0} replied · {perf.waitingCount || 0} still waiting</p>
+               </div>
+               <div style={{ textAlign: "right" }}>
+                 <div style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>{formatTime(medianResp)}</div>
+                 <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>median</div>
+               </div>
+             </div>
+             
+             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 24 }}>
+                <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 5 min <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder5m || 0}%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 50%</div>
+                </div>
+                <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 15 min <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder15m || 0}%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 80%</div>
+                </div>
+                <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 1 hour <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder1h || 0}%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 95%</div>
+                </div>
+             </div>
+
+             <div style={{ height: 200, width: "100%" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart data={perf.distribution || [
+                     { name: '0-1m', value: 0, fill: '#22B573' },
+                     { name: '1-5m', value: 0, fill: '#10B981' },
+                     { name: '5-15m', value: 0, fill: '#F59E0B' },
+                     { name: '15-60m', value: 0, fill: '#F59E0B' },
+                     { name: '1-4h', value: 0, fill: '#F97316' },
+                     { name: '4-24h', value: 0, fill: '#F43F5E' },
+                     { name: '1d+', value: 0, fill: '#9CA3AF' }
+                   ]}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                     <Bar dataKey="value" radius={[4,4,0,0]} barSize={30}>
+                        {
+                          (perf.distribution || [{fill: '#22B573'}]).map((entry: any, index: number) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill || '#22B573'} />
+                          ))
+                        }
+                     </Bar>
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
           </div>
+
+          <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Top accounts by volume</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Connected accounts ranked by total messages in this window</p>
+             <div style={{ overflowX: "auto" }}>
+               <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                     <tr>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Account</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-solid fa-inbox" style={{color: "#22B573", marginRight: 4}}/>Received</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-paper-plane" style={{color: "#3B82F6", marginRight: 4}}/>Sent</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-comments" style={{color: "#F59E0B", marginRight: 4}}/>Conversations</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}><i className="fa-regular fa-clock" style={{color: "#C2478D", marginRight: 4}}/>Response</th>
+                       <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}># Total</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {(vol.byAccount || []).map((acc: any, i: number) => {
+                       const getIcon = (p: string) => {
+                         if(p==='instagram') return 'fa-brands fa-instagram';
+                         if(p==='facebook') return 'fa-brands fa-facebook';
+                         if(p==='whatsapp') return 'fa-brands fa-whatsapp';
+                         return 'fa-solid fa-hashtag';
+                       };
+                       return (
+                         <tr key={i}>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <i className={getIcon(acc.platform)} style={{ color: "var(--text-secondary)", fontSize: 14 }} />
+                                <span>{acc.name || acc.platform}</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{acc.received || 0}</td>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{acc.sent || 0}</td>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{acc.conversations || 0}</td>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{formatTime(acc.medianResponseSeconds)}</td>
+                            <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{(acc.received || 0) + (acc.sent || 0)}</td>
+                         </tr>
+                       );
+                     })}
+                  </tbody>
+               </table>
+             </div>
+          </div>
+        </div>
+
+        {/* Row 3: Outbound by source & When messages land */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Outbound by source</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Which integration sent each outbound message - hover for platform breakdown</p>
+             <div style={{ height: 250, width: "100%" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                   <BarChart data={vol.outboundBySource || [
+                     { name: 'Native app', value: 0, fill: '#6B7280' },
+                     { name: 'API', value: 0, fill: '#22B573' }
+                   ]}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                     <Bar dataKey="value" radius={[4,4,0,0]} barSize={40}>
+                        {
+                          (vol.outboundBySource || [{fill: '#6B7280'}, {fill: '#22B573'}]).map((entry: any, index: number) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill || '#22B573'} />
+                          ))
+                        }
+                     </Bar>
+                   </BarChart>
+                </ResponsiveContainer>
+             </div>
+           </div>
+
+           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>When messages land</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Volume by day of week × hour of day (your local browser time)</p>
+             <div style={{ height: 250, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+                    <XAxis type="category" dataKey="hour" name="Hour" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis type="category" dataKey="day" name="Day" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <ZAxis type="number" dataKey="value" range={[20, 400]} />
+                    <Tooltip cursor={{strokeDasharray: '3 3'}} content={<CustomTooltip />} />
+                    <Scatter data={vol.heatmap || []} fill="#8B5CF6" shape="square" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+             </div>
+           </div>
         </div>
       </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-        <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>👁️</span>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.readRate")}</p>
-          </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>%84</p>
-        </div>
-
-        <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>⏱️</span>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.avgResponseLabel")}</p>
-          </div>
-          <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{t("analizPage.inbox.avgResponseValue")}</p>
-        </div>
-      </div>
-
-      {/* Response Time Analysis Card */}
-      <div className="glass" style={{ borderRadius: 20, padding: "32px 24px", border: "1px solid rgba(255,122,89,0.3)", textAlign: "center" }}>
-        <h3 style={{ fontSize: 18, fontWeight: 700, color: "#F6F1EC", marginBottom: 8 }}>{t("analizPage.inbox.responseTimeAnalysis.title")}</h3>
-        <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 32 }}>{t("analizPage.inbox.responseTimeAnalysis.subtitle")}</p>
-
-        <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>🚀</span>
-          <p style={{ color: "#FF7A59", fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}>{t("analizPage.inbox.responseTimeAnalysis.greatSpeed")}</p>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div style={{ padding: "28px 32px", maxWidth: 1200, margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column" }}>

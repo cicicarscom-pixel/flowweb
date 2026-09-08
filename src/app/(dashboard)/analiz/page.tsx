@@ -469,7 +469,7 @@ export default function AnalyticsScreen() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>👥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.posting.totalFollowers")}</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalFollowers}</p>
@@ -477,7 +477,7 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>?</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>⭐</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.posting.totalReviews")}</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{stats.totalReviews}</p>
@@ -485,7 +485,7 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>📈</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam Erişim</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
@@ -493,7 +493,7 @@ export default function AnalyticsScreen() {
           
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>🔥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Engagement Rate</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{avgEngagementRate}%</p>
@@ -501,7 +501,7 @@ export default function AnalyticsScreen() {
 
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
+              <span style={{ fontSize: 16, opacity: 0.6 }}>👑</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>En İyi Gönderi</p>
             </div>
             {bestPost ? (

@@ -991,13 +991,25 @@ export default function AnalyticsScreen() {
                   const platColor = platDef ? platDef.color : (post.platform ? "#888" : null);
                   const platName = platDef ? platDef.name : post.platform;
                   
+                  const getPlatformIcon = (id: string) => {
+                    switch (id) {
+                      case 'instagram': return 'fa-brands fa-instagram';
+                      case 'facebook': return 'fa-brands fa-facebook';
+                      case 'youtube': return 'fa-brands fa-youtube';
+                      case 'tiktok': return 'fa-brands fa-tiktok';
+                      case 'linkedin': return 'fa-brands fa-linkedin';
+                      case 'googlebusiness': return 'fa-brands fa-google';
+                      default: return 'fa-solid fa-hashtag';
+                    }
+                  };
+                  
                   return (
                     <tr key={post.id || idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC" }}>
                         <div style={{ lineHeight: 1.4 }}>{postName}</div>
                         {(platColor || formattedDate) && (
                           <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, fontSize: 11, color: "var(--text-secondary)" }}>
-                            {platColor && <div style={{ width: 6, height: 6, borderRadius: "50%", background: platColor }} title={platName} />}
+                            {platColor && <i className={getPlatformIcon(platId)} style={{ color: platColor }} title={platName} />}
                             {formattedDate && <span>{formattedDate}</span>}
                           </div>
                         )}

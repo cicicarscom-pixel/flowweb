@@ -400,69 +400,78 @@ export default function TumGonderilerPage() {
       </div>
 
       {/* Delete Modal */}
+      {/* Delete Modal */}
       {deleteModal.isOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transition-all transform duration-200 ease-out">
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <h3 className="text-gray-900 font-semibold flex items-center gap-2">
-                <i className="fa-regular fa-trash-can text-[#EF4444]"></i> {t("postsPage.deleteModal.title")}
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-[500px] overflow-hidden">
+            <div className="flex items-center justify-between p-6 pb-2">
+              <h3 className="text-[#EC4899] font-medium text-[17px] flex items-center gap-2">
+                <i className="fa-regular fa-trash-can"></i> {t("postsPage.deleteModal.title")}
               </h3>
               <button 
                 onClick={() => !isDeleting && setDeleteModal({ isOpen: false, postId: null, isBulk: false })}
-                className="text-gray-400 hover:text-gray-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                className="text-gray-400 hover:text-gray-600 transition-colors w-6 h-6 flex items-center justify-center rounded-full"
                 disabled={isDeleting}
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
             
-            <div className="p-5">
-              <p className="text-gray-600 text-sm mb-5">
+            <div className="px-6 pb-6 pt-2">
+              <p className="text-gray-600 text-[13px] mb-4">
                 {deleteModal.isBulk
                   ? t("postsPage.deleteModal.bulkDescription", { count: selectedPostIds.length })
                   : t("postsPage.deleteModal.singleDescription")}
               </p>
               
               <div className="flex flex-col gap-3">
-                {/* Delete from Workigom Flow Only */}
+                {/* Delete from Zernio only */}
                 <button 
                   onClick={() => executeDelete(false)}
                   disabled={isDeleting}
-                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EF4444] hover:bg-[#EF4444]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EC4899] transition-all flex items-start gap-4 disabled:opacity-50"
                 >
-                  <div className="bg-[#EF4444]/10 p-2.5 rounded-lg text-[#EF4444] shrink-0 mt-0.5">
-                    <i className="fa-regular fa-trash-can text-lg"></i>
+                  <div className="bg-[#FDF2F8] p-2 rounded-md text-[#EC4899] shrink-0">
+                    <i className="fa-regular fa-trash-can text-[15px]"></i>
                   </div>
                   <div>
-                    <h4 className="text-gray-900 font-medium mb-1">{t("postsPage.deleteModal.panelOnlyTitle")}</h4>
-                    <p className="text-gray-500 text-xs leading-relaxed">
+                    <h4 className="text-gray-800 font-medium text-[14px] mb-1">{t("postsPage.deleteModal.panelOnlyTitle")}</h4>
+                    <p className="text-gray-500 text-[12px] leading-relaxed">
                       {t("postsPage.deleteModal.panelOnlyDescription")}
                     </p>
                   </div>
                 </button>
 
-                {/* Delete from Platforms and Zernio */}
+                {/* Delete from platforms and Zernio */}
                 <button 
                   onClick={() => executeDelete(true)}
                   disabled={isDeleting}
-                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EF4444] hover:bg-[#EF4444]/5 transition-all group flex items-start gap-4 disabled:opacity-50"
+                  className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-[#EC4899] transition-all flex items-start gap-4 disabled:opacity-50"
                 >
-                  <div className="bg-pink-100 p-2.5 rounded-lg text-pink-500 shrink-0 mt-0.5">
-                    <i className="fa-solid fa-globe text-lg"></i>
+                  <div className="bg-[#FDF2F8] p-2 rounded-md text-[#EC4899] shrink-0">
+                    <i className="fa-solid fa-globe text-[15px]"></i>
                   </div>
                   <div>
-                    <h4 className="text-gray-900 font-medium mb-1">{t("postsPage.deleteModal.platformsTitle")}</h4>
-                    <p className="text-gray-500 text-xs leading-relaxed mb-3">
+                    <h4 className="text-gray-800 font-medium text-[14px] mb-1">{t("postsPage.deleteModal.platformsTitle")}</h4>
+                    <p className="text-gray-500 text-[12px] leading-relaxed mb-2">
                       {t("postsPage.deleteModal.platformsDescription")}
                     </p>
-                    <div className="flex items-start gap-2 bg-yellow-50 p-2.5 rounded-lg border border-yellow-100">
-                      <i className="fa-solid fa-triangle-exclamation text-yellow-600 text-xs mt-0.5 shrink-0"></i>
-                      <p className="text-yellow-700 text-[11px] leading-relaxed">
+                    <div className="flex items-start gap-2 pt-2">
+                      <i className="fa-solid fa-triangle-exclamation text-[#F59E0B] text-[12px] mt-0.5 shrink-0"></i>
+                      <p className="text-[#F59E0B] text-[12px] leading-relaxed">
                         {t("postsPage.deleteModal.instagramWarning")}
                       </p>
                     </div>
                   </div>
                 </button>
+              </div>
+
+              {/* Social icons at the bottom left */}
+              <div className="flex items-center gap-3 mt-5 ml-1 text-gray-700 text-sm">
+                <i className="fa-brands fa-facebook-f"></i>
+                <i className="fa-brands fa-instagram"></i>
+                <i className="fa-brands fa-tiktok"></i>
+                <i className="fa-brands fa-youtube"></i>
               </div>
             </div>
           </div>

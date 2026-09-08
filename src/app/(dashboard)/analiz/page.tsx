@@ -1030,7 +1030,7 @@ export default function AnalyticsScreen() {
         <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(194,71,141,0.1), rgba(194,71,141,0.5))" }}>
           <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>ğŸ“¥</span>
+              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📥</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesReceived")}</p>
             </div>
             <p style={{ fontSize: 32, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.messagesReceived || stats.messagesReceived || 0}</p>
@@ -1040,7 +1040,7 @@ export default function AnalyticsScreen() {
         <div style={{ position: "relative", padding: 2, borderRadius: 18, background: "linear-gradient(135deg, rgba(255,122,89,0.1), rgba(255,122,89,0.5))" }}>
           <div style={{ background: "#17151A", borderRadius: 16, padding: "20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>ğŸ“¤</span>
+              <span style={{ color: "var(--text-secondary)", fontSize: 14 }}>📤</span>
               <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.messagesSent")}</p>
             </div>
             <p style={{ fontSize: 32, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{stats.messagesSent || 0}</p>
@@ -1051,7 +1051,7 @@ export default function AnalyticsScreen() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>ğŸ‘ï¸</span>
+            <span style={{ fontSize: 16, opacity: 0.6 }}>👁️</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.readRate")}</p>
           </div>
           <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>%84</p>
@@ -1059,7 +1059,7 @@ export default function AnalyticsScreen() {
 
         <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 16, opacity: 0.6 }}>â±ï¸</span>
+            <span style={{ fontSize: 16, opacity: 0.6 }}>⏱️</span>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.inbox.avgResponseLabel")}</p>
           </div>
           <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{t("analizPage.inbox.avgResponseValue")}</p>
@@ -1072,7 +1072,7 @@ export default function AnalyticsScreen() {
         <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 32 }}>{t("analizPage.inbox.responseTimeAnalysis.subtitle")}</p>
 
         <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>ğŸš€</span>
+          <span style={{ fontSize: 48, filter: "drop-shadow(0 0 20px rgba(255,122,89,0.4))", marginBottom: 16 }}>🚀</span>
           <p style={{ color: "#FF7A59", fontSize: 16, fontWeight: 700, letterSpacing: "0.05em" }}>{t("analizPage.inbox.responseTimeAnalysis.greatSpeed")}</p>
         </div>
       </div>
@@ -1128,9 +1128,9 @@ export default function AnalyticsScreen() {
               border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", minWidth: 200
             }}
           >
-            <span style={{ fontSize: 16, color: selectedPlatform.color }}>â˜…</span>
+            <span style={{ fontSize: 16, color: selectedPlatform.color }}>★</span>
             <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{getPlatformLabel(selectedPlatform)}</span>
-            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>â–¼</span>
+            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
           </button>
 
           {isPlatformMenuOpen && (
@@ -1149,7 +1149,7 @@ export default function AnalyticsScreen() {
                     background: selectedPlatform.id === p.id ? "rgba(255,122,89,0.1)" : "transparent"
                   }}
                 >
-                  <span style={{ fontSize: 16, color: p.color }}>â˜…</span>
+                  <span style={{ fontSize: 16, color: p.color }}>★</span>
                   <span style={{ color: selectedPlatform.id === p.id ? "#FF7A59" : "#F6F1EC", fontSize: 13, fontWeight: selectedPlatform.id === p.id ? 700 : 500 }}>{getPlatformLabel(p)}</span>
                 </div>
               ))}
@@ -1167,9 +1167,9 @@ export default function AnalyticsScreen() {
               border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer", minWidth: 160
             }}
           >
-            <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>â±ï¸</span>
+            <span style={{ fontSize: 16, color: "var(--text-secondary)" }}>⏱️</span>
             <span style={{ color: "#F6F1EC", fontSize: 14, flex: 1, textAlign: "left", fontWeight: 600 }}>{getTimeRangeLabel(selectedTimeRange)}</span>
-            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>â–¼</span>
+            <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>▼</span>
           </button>
 
           {isTimeMenuOpen && (

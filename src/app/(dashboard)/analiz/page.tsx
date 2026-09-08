@@ -984,9 +984,24 @@ export default function AnalyticsScreen() {
                   const er = metrics.engagementRate || metrics.er || (views > 0 ? (((likes + comments + shares + saves) / views) * 100).toFixed(2) : '0.00');
                   const postName = post.content ? (post.content.substring(0, 40) + (post.content.length > 40 ? '...' : '')) : (post.title || post.id || `Post #${idx + 1}`);
                   
+                  const dateStr = post.publishedAt || post.date || post.created_at;
+                  const formattedDate = dateStr ? new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                  const platId = post.platform ? (post.platform.toLowerCase() === 'google' ? 'googlebusiness' : post.platform.toLowerCase()) : '';
+                  const platDef = PLATFORMS.find(p => p.id === platId);
+                  const platColor = platDef ? platDef.color : (post.platform ? "#888" : null);
+                  const platName = platDef ? platDef.name : post.platform;
+                  
                   return (
                     <tr key={post.id || idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                      <td style={{ padding: "12px 8px", color: "#F6F1EC" }}>{postName}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC" }}>
+                        <div style={{ lineHeight: 1.4 }}>{postName}</div>
+                        {(platColor || formattedDate) && (
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, fontSize: 11, color: "var(--text-secondary)" }}>
+                            {platColor && <div style={{ width: 6, height: 6, borderRadius: "50%", background: platColor }} title={platName} />}
+                            {formattedDate && <span>{formattedDate}</span>}
+                          </div>
+                        )}
+                      </td>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>

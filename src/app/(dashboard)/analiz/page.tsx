@@ -719,22 +719,74 @@ export default function AnalyticsScreen() {
              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Kırılımı</h3>
              <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                   <tr>
+                    <tr>
                      <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Platform</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Gönderi</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Erişim</th>
-                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Beğeni</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Gönderi</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Yorum</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Impr.</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Erişim</th>
+                     <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>ER%</th>
                    </tr>
                 </thead>
                 <tbody>
-                   {zernioData.platformBreakdown.map((p: any, i: number) => (
-                      <tr key={i}>
-                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textTransform: "capitalize" }}>{p.platform}</td>
-                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.postCount || 0}</td>
-                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.reach || 0}</td>
-                         <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>{p.likes || 0}</td>
-                      </tr>
-                   ))}
+                   {zernioData.platformBreakdown.map((p: any, i: number) => {
+                     const platId = p.platform ? (p.platform.toLowerCase() === 'google' ? 'googlebusiness' : p.platform.toLowerCase()) : '';
+                     const platDef = PLATFORMS.find(pl => pl.id === platId);
+                     const platColor = platDef ? platDef.color : "#888";
+                     const platName = platDef ? platDef.name : p.platform;
+                     const getPlatformIcon = (id: string) => {
+                       switch (id) {
+                         case 'instagram': return 'fa-brands fa-instagram';
+                         case 'facebook': return 'fa-brands fa-facebook';
+                         case 'youtube': return 'fa-brands fa-youtube';
+                         case 'tiktok': return 'fa-brands fa-tiktok';
+                         case 'linkedin': return 'fa-brands fa-linkedin';
+                         case 'googlebusiness': return 'fa-brands fa-google';
+                         default: return 'fa-solid fa-hashtag';
+                       }
+                     };
+                     
+                     const posts = p.postCount || p.posts || 0;
+                     const likes = p.likes || 0;
+                     const comments = p.comments || 0;
+                     const shares = p.shares || 0;
+                     const saves = p.saves || 0;
+                     const clicks = p.clicks || 0;
+                     const views = p.views || 0;
+                     const impressions = p.impressions || 0;
+                     const reach = p.reach || 0;
+                     const totalEng = likes + comments + shares + saves + clicks;
+                     const divBy = impressions > 0 ? impressions : views;
+                     const er = p.engagementRate || p.er || (divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00');
+
+                     return (
+                       <tr key={i}>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                              <i className={getPlatformIcon(platId)} style={{ color: platColor, fontSize: 14 }} />
+                              <span>{platName}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{posts}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#E8A8CD", textAlign: "right" }}>{comments.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{shares.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{saves.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{clicks.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{impressions.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
+                          <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", textAlign: "right" }}>
+                            <span style={{ background: "rgba(34,181,115,0.15)", color: "#22B573", borderRadius: "999px", padding: "4px 10px", fontSize: 12, fontWeight: 600 }}>{er}%</span>
+                          </td>
+                       </tr>
+                     );
+                   })}
                 </tbody>
              </table>
           </div>
@@ -955,13 +1007,15 @@ export default function AnalyticsScreen() {
               <thead>
                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}>
                   <th style={{ padding: "12px 8px", fontWeight: 600 }}>Gönderi</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Erişim</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Yorum</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Takipçi</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Impr.</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Erişim</th>
                   <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>ER%</th>
                 </tr>
               </thead>
@@ -974,14 +1028,18 @@ export default function AnalyticsScreen() {
                   return engB - engA;
                 }).slice(0, 10).map((post: any, idx: number) => {
                   const metrics = post.analytics || post.metrics || post || {};
-                  const views = metrics.impressions || metrics.views || 0;
+                  const views = metrics.views || 0;
+                  const impressions = metrics.impressions || 0;
+                  const follows = metrics.follows || 0;
                   const reach = metrics.reach || 0;
                   const likes = metrics.likes || 0;
                   const comments = metrics.comments || 0;
                   const shares = metrics.shares || 0;
                   const saves = metrics.saves || 0;
                   const clicks = metrics.clicks || 0;
-                  const er = metrics.engagementRate || metrics.er || (views > 0 ? (((likes + comments + shares + saves) / views) * 100).toFixed(2) : '0.00');
+                  const totalEng = likes + comments + shares + saves + clicks;
+                  const divBy = impressions > 0 ? impressions : views;
+                  const er = metrics.engagementRate || metrics.er || (divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00');
                   const postName = post.content ? (post.content.substring(0, 40) + (post.content.length > 40 ? '...' : '')) : (post.title || post.id || `Post #${idx + 1}`);
                   
                   const dateStr = post.publishedAt || post.date || post.created_at;
@@ -1014,14 +1072,18 @@ export default function AnalyticsScreen() {
                           </div>
                         )}
                       </td>
-                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
-                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#E8A8CD", textAlign: "right" }}>{comments.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{shares.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{saves.toLocaleString()}</td>
                       <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{clicks.toLocaleString()}</td>
-                      <td style={{ padding: "12px 8px", color: "#22B573", textAlign: "right" }}>{er}%</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#E8A8CD", textAlign: "right" }}>{follows.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{impressions.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                        <span style={{ background: "rgba(34,181,115,0.15)", color: "#22B573", borderRadius: "999px", padding: "4px 10px", fontSize: 12, fontWeight: 600 }}>{er}%</span>
+                      </td>
                     </tr>
                   );
                 })}

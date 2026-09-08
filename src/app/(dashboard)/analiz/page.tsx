@@ -104,7 +104,9 @@ export default function AnalyticsScreen() {
     totalComments: 0,
     totalReach: 0,
     messagesReceived: 0,
-    formatBreakdown: { video: 0, image: 0 }
+    formatBreakdown: { video: 0, image: 0 },
+    inboxVolume: null as any,
+    inboxPerformance: null as any
   });
 
   const [chartMetric, setChartMetric] = useState('views');

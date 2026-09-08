@@ -486,7 +486,7 @@ export default function AnalyticsScreen() {
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam Eriï¿½im</p>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>Toplam Erişim</p>
             </div>
             <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
           </div>
@@ -502,7 +502,7 @@ export default function AnalyticsScreen() {
           <div className="glass" style={{ borderRadius: 16, padding: "20px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <span style={{ fontSize: 16, opacity: 0.6 }}>??</span>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>En ï¿½yi Gï¿½nderi</p>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em" }}>En İyi Gönderi</p>
             </div>
             {bestPost ? (
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -523,7 +523,7 @@ export default function AnalyticsScreen() {
                   <p style={{ fontSize: 13, color: "#F6F1EC", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {bestPost.content || bestPost.title || "Post"}
                   </p>
-                  <a href={bestPost.platform_url || bestPost.url || "#"} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: "#FF7A59", textDecoration: "none" }}>Gï¿½rï¿½ntï¿½le ?</a>
+                  <a href={bestPost.platform_url || bestPost.url || "#"} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11, color: "#FF7A59", textDecoration: "none" }}>Görüntüle ↗</a>
                 </div>
               </div>
             ) : (
@@ -586,9 +586,9 @@ export default function AnalyticsScreen() {
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)", marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
             <span style={{ color: "#22B573", fontSize: 20 }}>??</span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Platform Bazï¿½nda Takipï¿½i Artï¿½ï¿½ï¿½</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Platform Bazında Takipçi Artışı</h3>
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman iï¿½inde kazanï¿½lan takipï¿½i (Follows) sayï¿½larï¿½</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman içinde kazanılan takipçi (Follows) sayıları</p>
 
           <div style={{ height: 250, width: "100%" }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -723,7 +723,7 @@ export default function AnalyticsScreen() {
                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                              <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#C2478D' }} />
-                             <span style={{ color: "#F6F1EC", fontSize: 14 }}>Gï¿½rsel <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>({imageEr}% ER)</span></span>
+                             <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>({imageEr}% ER)</span></span>
                            </div>
                            <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
                          </div>
@@ -769,38 +769,38 @@ export default function AnalyticsScreen() {
            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Bazlı Etkileşim</h3>
            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "24px", height: 300, width: "100%" }}>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Gï¿½nderi Sayï¿½sï¿½</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Gönderi Sayısı</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val: any) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="postCount" name="Gï¿½nderi Sayï¿½sï¿½" fill="#FF7A59" radius={[4,4,0,0]} />
+                     <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Beï¿½eni Sayï¿½sï¿½</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Beğeni Sayısı</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val: any) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="likes" name="Beï¿½eni Sayï¿½sï¿½" fill="#C2478D" radius={[4,4,0,0]} />
+                     <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
              <div style={{ height: "100%" }}>
-               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Eriï¿½im</h4>
+               <h4 style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 12, textAlign: "center" }}>Erişim</h4>
                <ResponsiveContainer width="100%" height="90%">
                   <BarChart data={zernioData.platformBreakdown}>
                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val: any) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Bar dataKey="reach" name="Eriï¿½im" fill="#22B573" radius={[4,4,0,0]} />
+                     <Bar dataKey="reach" name="Erişim" fill="#22B573" radius={[4,4,0,0]} />
                   </BarChart>
                </ResponsiveContainer>
              </div>

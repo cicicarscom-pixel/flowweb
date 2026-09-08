@@ -474,9 +474,30 @@ export default function AnalyticsScreen() {
             <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
               <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>Best Post</p>
               {topPost ? (
-                <a href={topPost.permalink || topPost.url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 6, background: "#2a2a2a", backgroundImage: `url(${topPost.thumbnail_url || topPost.image_url || topPost.media_url || ''})`, backgroundSize: "cover", backgroundPosition: "center", flexShrink: 0 }} />
-                  <span style={{ color: "#F6F1EC", fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{topPost.content ? topPost.content.substring(0, 15) + "..." : "Görüntüle"}</span>
+                <a href={topPost.permalink || topPost.url || topPost.platform_url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+                  {(() => {
+                    const mediaUrls = topPost.media_urls || [topPost.thumbnail_url, topPost.image_url, topPost.media_url].filter(Boolean);
+                    if (mediaUrls && mediaUrls.length > 0) {
+                      const firstMedia = mediaUrls[0];
+                      const isVideo = firstMedia.match(/\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i) || firstMedia.includes('blob');
+                      if (isVideo) {
+                        return (
+                          <div style={{ width: 32, height: 32, borderRadius: 6, overflow: "hidden", flexShrink: 0, background: "#2a2a2a" }}>
+                            <video src={firstMedia} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted playsInline />
+                          </div>
+                        );
+                      }
+                      return (
+                        <div style={{ width: 32, height: 32, borderRadius: 6, flexShrink: 0, background: "#2a2a2a", backgroundImage: `url(${firstMedia})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                      );
+                    }
+                    return (
+                      <div style={{ width: 32, height: 32, borderRadius: 6, background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <i className="fa-solid fa-image text-[10px] text-gray-500"></i>
+                      </div>
+                    );
+                  })()}
+                  <span style={{ color: "#F6F1EC", fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{topPost.content || topPost.title ? (topPost.content || topPost.title).substring(0, 15) + "..." : "Görüntüle ↗"}</span>
                 </a>
               ) : (
                 <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>Veri yok</span>
@@ -653,20 +674,40 @@ export default function AnalyticsScreen() {
                 </ResponsiveContainer>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#FF7A59' }} />
-                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Video</span>
-                   </div>
-                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.video}</span>
-                 </div>
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                     <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#C2478D' }} />
-                     <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel</span>
-                   </div>
-                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
-                 </div>
+                 {(() => {
+                   let videoEr = "0.0";
+                   let imageEr = "0.0";
+                   if (zernioData.postAnalytics) {
+                     let vEng = 0, vVws = 0, iEng = 0, iVws = 0;
+                     zernioData.postAnalytics.forEach((p: any) => {
+                       const m = p.analytics || p.metrics || p || {};
+                       const eng = (m.likes || 0) + (m.comments || 0) + (m.shares || 0) + (m.saves || 0) + (m.clicks || 0);
+                       const vws = (m.impressions || m.views || 0);
+                       const isVid = (p.media_urls && p.media_urls.some((u: any) => u.match(/\.(mp4|webm|mov|blob)(\?.*)?$/i) || u.includes('blob')));
+                       if (isVid) { vEng += eng; vVws += vws; } else { iEng += eng; iVws += vws; }
+                     });
+                     if (vVws > 0) videoEr = ((vEng / vVws) * 100).toFixed(1);
+                     if (iVws > 0) imageEr = ((iEng / iVws) * 100).toFixed(1);
+                   }
+                   return (
+                     <>
+                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                           <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#FF7A59' }} />
+                           <span style={{ color: "#F6F1EC", fontSize: 14 }}>Video <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>{videoEr}% ER</span></span>
+                         </div>
+                         <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.video}</span>
+                       </div>
+                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                           <div style={{ width: 12, height: 12, borderRadius: "50%", background: '#C2478D' }} />
+                           <span style={{ color: "#F6F1EC", fontSize: 14 }}>Görsel <span style={{ color: "var(--text-secondary)", fontSize: 11, marginLeft: 4 }}>{imageEr}% ER</span></span>
+                         </div>
+                         <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{zernioData.formatBreakdown.image}</span>
+                       </div>
+                     </>
+                   );
+                 })()}
               </div>
             </div>
           </div>

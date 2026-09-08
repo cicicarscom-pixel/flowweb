@@ -585,7 +585,7 @@ export default function AnalyticsScreen() {
       {zernioData.postTimeline && zernioData.postTimeline.timeline && zernioData.postTimeline.timeline.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)", marginTop: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-            <span style={{ color: "#22B573", fontSize: 20 }}>??</span>
+            <span style={{ color: "#22B573", fontSize: 20 }}>📈</span>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Platform Bazında Takipçi Artışı</h3>
           </div>
           <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Zaman içinde kazanılan takipçi (Follows) sayıları</p>

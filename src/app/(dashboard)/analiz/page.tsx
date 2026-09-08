@@ -295,8 +295,8 @@ export default function AnalyticsScreen() {
         invokeZernio('get-posting-frequency', payloadBase),
         invokeZernio('get-content-decay', payloadBase),
         invokeZernio('get-post-analytics', payloadBase),
-        invokeZernio('get-inbox-volume', payloadBase),
-        invokeZernio('get-inbox-performance', payloadBase),
+        invokeZernio('get-inbox-volume', payloadBase).catch(() => ({})),
+        invokeZernio('get-inbox-performance', payloadBase).catch(() => ({})),
         supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1).then(r => r.data),
         platformCall
       ]);

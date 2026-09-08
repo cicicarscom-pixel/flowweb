@@ -108,7 +108,7 @@ export default function AnalyticsScreen() {
   });
 
   const [chartMetric, setChartMetric] = useState('views');
-  const [postTimelineMetric, setPostTimelineMetric] = useState('views');
+  const [postTimelineMetrics, setPostTimelineMetrics] = useState<string[]>(['views', 'likes', 'comments']);
   const requestRef = useRef(0);
 
   const fetchInternalStats = async () => {
@@ -727,55 +727,121 @@ export default function AnalyticsScreen() {
       {/* 4. Post Timeline (Single Post Performance) - MOVED HERE */}
       {zernioData.postTimeline && zernioData.postTimeline.timeline && zernioData.postTimeline.timeline.length > 0 ? (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Son Gönderi Etkileşim Eğrisi</h3>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Seçili gönderinin zaman içindeki performansı</p>
-            </div>
-            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-               {['views', 'likes', 'comments', 'shares'].map(metric => (
-                  <button
-                     key={metric}
-                     onClick={() => setPostTimelineMetric(metric)}
-                     style={{
-                       padding: "6px 10px", borderRadius: 8, fontSize: 11, cursor: "pointer", fontWeight: 600,
-                       background: postTimelineMetric === metric ? "rgba(34,181,115,0.15)" : "transparent",
-                       border: postTimelineMetric === metric ? "1px solid #22B573" : "1px solid rgba(255,255,255,0.1)",
-                       color: postTimelineMetric === metric ? "#22B573" : "var(--text-secondary)",
-                       transition: "all 0.2s"
-                     }}
-                  >
-                    {metric.toUpperCase()}
-                  </button>
-               ))}
-            </div>
+          <div style={{ marginBottom: 24 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Engagement over time</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Per week - last 30 days</p>
           </div>
 
-          <div style={{ height: 300, width: "100%" }}>
-             <ResponsiveContainer width="100%" height="100%">
-               {(() => {
-                 const aggTimeline = Object.values(zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
-                   if (!acc[curr.date]) {
-                     acc[curr.date] = { ...curr };
-                   } else {
-                     ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions', 'follows'].forEach(m => {
-                       acc[curr.date][m] = (acc[curr.date][m] || 0) + (curr[m] || 0);
-                     });
-                   }
-                   return acc;
-                 }, {})).sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
-                 
-                 return (
-                   <LineChart data={aggTimeline}>
-                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-                     <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
-                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
-                     <Tooltip content={<CustomTooltip />} />
-                     <Line type="monotone" dataKey={postTimelineMetric} name={postTimelineMetric.toUpperCase()} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
-                   </LineChart>
-                 );
-               })()}
-             </ResponsiveContainer>
+          <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
+             <div style={{ flex: "1 1 500px", height: 350 }}>
+               <ResponsiveContainer width="100%" height="100%">
+                 {(() => {
+                   const aggTimeline = Object.values(zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
+                     if (!acc[curr.date]) {
+                       acc[curr.date] = { ...curr };
+                     } else {
+                       ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions', 'follows'].forEach(m => {
+                         acc[curr.date][m] = (acc[curr.date][m] || 0) + (curr[m] || 0);
+                       });
+                     }
+                     return acc;
+                   }, {})).sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
+                   
+                   return (
+                     <LineChart data={aggTimeline}>
+                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                       <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                       <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                       <Tooltip content={<CustomTooltip />} />
+                       {postTimelineMetrics.includes('likes') && <Line type="monotone" dataKey="likes" name="Likes" stroke="#F472B6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('comments') && <Line type="monotone" dataKey="comments" name="Comments" stroke="#3B82F6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('shares') && <Line type="monotone" dataKey="shares" name="Shares" stroke="#10B981" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('saves') && <Line type="monotone" dataKey="saves" name="Saves" stroke="#D946EF" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('views') && <Line type="monotone" dataKey="views" name="Views" stroke="#8B5CF6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('impressions') && <Line type="monotone" dataKey="impressions" name="Impressions" stroke="#0F766E" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('reach') && <Line type="monotone" dataKey="reach" name="Reach" stroke="#F59E0B" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('clicks') && <Line type="monotone" dataKey="clicks" name="Clicks" stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                     </LineChart>
+                   );
+                 })()}
+               </ResponsiveContainer>
+             </div>
+
+             {/* Legend Grid */}
+             <div style={{ width: "350px", minWidth: "300px" }}>
+                {(() => {
+                   const totalMetrics = zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
+                       ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions'].forEach(m => {
+                         acc[m] = (acc[m] || 0) + (curr[m] || 0);
+                       });
+                       return acc;
+                   }, {});
+
+                   const toggleMetric = (m: string) => {
+                     setPostTimelineMetrics(prev => 
+                       prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]
+                     );
+                   };
+
+                   const MetricItem = ({ id, label, icon, value, color }: any) => {
+                     const isChecked = postTimelineMetrics.includes(id);
+                     return (
+                       <div 
+                         onClick={() => toggleMetric(id)}
+                         style={{ 
+                           display: "flex", flexDirection: "column", gap: 8, cursor: "pointer", 
+                           padding: "8px 4px", borderRadius: 6,
+                           transition: "background 0.2s"
+                         }}
+                         className="hover:bg-white/5"
+                       >
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--text-secondary)" }}>
+                               <div style={{ 
+                                 width: 14, height: 14, borderRadius: 3, 
+                                 border: `1px solid ${isChecked ? color : "rgba(255,255,255,0.2)"}`,
+                                 background: isChecked ? color : "transparent",
+                                 display: "flex", alignItems: "center", justifyContent: "center"
+                               }}>
+                                 {isChecked && <i className="fa-solid fa-check" style={{ color: "#fff", fontSize: 9 }} />}
+                               </div>
+                               {label}
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 600, color: "#F6F1EC", paddingLeft: 2 }}>
+                               <i className={icon} style={{ color, fontSize: 13, width: 16, textAlign: "center" }} />
+                               {value.toLocaleString()}
+                            </div>
+                       </div>
+                     );
+                   };
+
+                   const totalEng = (totalMetrics.likes||0) + (totalMetrics.comments||0) + (totalMetrics.shares||0) + (totalMetrics.saves||0) + (totalMetrics.clicks||0);
+                   const divBy = totalMetrics.impressions > 0 ? totalMetrics.impressions : totalMetrics.views;
+                   const er = divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00';
+
+                   return (
+                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px 8px" }}>
+                       <MetricItem id="likes" label="Likes" icon="fa-regular fa-heart" color="#F472B6" value={totalMetrics.likes || 0} />
+                       <MetricItem id="comments" label="Comments" icon="fa-regular fa-comment" color="#3B82F6" value={totalMetrics.comments || 0} />
+                       <MetricItem id="shares" label="Shares" icon="fa-solid fa-share-nodes" color="#10B981" value={totalMetrics.shares || 0} />
+                       
+                       <MetricItem id="saves" label="Saves" icon="fa-regular fa-bookmark" color="#D946EF" value={totalMetrics.saves || 0} />
+                       <MetricItem id="views" label="Views" icon="fa-regular fa-eye" color="#8B5CF6" value={totalMetrics.views || 0} />
+                       <MetricItem id="impressions" label="Impress." icon="fa-solid fa-arrow-trend-up" color="#0F766E" value={totalMetrics.impressions || 0} />
+                       
+                       <MetricItem id="reach" label="Reach" icon="fa-solid fa-users" color="#F59E0B" value={totalMetrics.reach || 0} />
+                       <MetricItem id="clicks" label="Clicks" icon="fa-solid fa-arrow-pointer" color="#60A5FA" value={totalMetrics.clicks || 0} />
+                       
+                       <div style={{ padding: "8px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
+                          <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Eng. Rate</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "#22B573", paddingLeft: 2 }}>
+                            <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: 13, width: 16, textAlign: "center" }} />
+                            {er}%
+                          </div>
+                       </div>
+                     </div>
+                   );
+                })()}
+             </div>
           </div>
         </div>
       ) : null}

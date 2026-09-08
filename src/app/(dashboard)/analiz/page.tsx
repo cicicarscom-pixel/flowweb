@@ -123,10 +123,21 @@ export default function AnalyticsScreen() {
       const orgId = orgMember?.organization_id;
       if (!orgId) return;
 
+      let qPosts = supabase.from('posts').select('media_urls').eq('profile_id', orgId);
+      let qComments = supabase.from('comments').select('*', { count: 'exact', head: true }).eq('profile_id', orgId);
+      let qReviews = supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('profile_id', orgId);
+      
+      if (selectedPlatform.id !== 'all') {
+         const pName = selectedPlatform.id === 'googlebusiness' ? 'google' : selectedPlatform.id;
+         qPosts = qPosts.eq('platform', pName);
+         qComments = qComments.eq('platform', pName);
+         qReviews = qReviews.eq('platform', pName);
+      }
+
       const [{ data: postsData }, { count: commentsCount }, { count: reviewsCount }, { count: msgsInCount }, { count: msgsOutCount }, { data: accountsData }] = await Promise.all([
-        supabase.from('posts').select('media_urls').eq('profile_id', orgId),
-        supabase.from('comments').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
-        supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('profile_id', orgId),
+        qPosts,
+        qComments,
+        qReviews,
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'incoming'),
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'outgoing'),
         supabase.schema('integration').from('social_accounts').select('zernio_account_id, platform').eq('organization_id', orgId)
@@ -153,8 +164,8 @@ export default function AnalyticsScreen() {
         totalPosts: postsData?.length || 0,
         totalComments: commentsCount || 0,
         totalReviews: reviewsCount || 0,
-        messagesReceived: msgsInCount || 0,
-        messagesSent: msgsOutCount || 0
+        messagesReceived: selectedPlatform.id === 'all' ? (msgsInCount || 0) : 0, // Fallback if no specific platform data for messages
+        messagesSent: selectedPlatform.id === 'all' ? (msgsOutCount || 0) : 0
       });
       
       setZernioData(prev => ({ ...prev, formatBreakdown: { video: videoCount, image: imageCount } }));
@@ -422,7 +433,7 @@ export default function AnalyticsScreen() {
 
   useEffect(() => {
     fetchInternalStats();
-  }, []);
+  }, [selectedPlatform]);
 
   useEffect(() => {
     if (socialAccounts.length > 0) {

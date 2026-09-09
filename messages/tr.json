@@ -659,7 +659,8 @@
       "description": "@{name} adlı kullanıcıya özel bir mesaj gönderin:",
       "placeholder": "Mesajınızı buraya yazın...",
       "successAlert": "Mesaj başarıyla gönderildi!",
-      "errorAlertPrefix": "Mesaj gönderilirken hata: "
+      "errorAlertPrefix": "Mesaj gönderilirken hata: ",
+      "alreadyRepliedError": "Bu yoruma zaten bir DM gönderilmiş. Sosyal medya platformları bir yoruma sadece 1 kez DM atılmasına izin verir."
     }
   },
   "sosyalMedyaPage": {

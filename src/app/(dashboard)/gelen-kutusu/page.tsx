@@ -209,7 +209,18 @@ export default function GelenKutusuPage() {
       alert(t("gelenKutusuPage.privateReply.successAlert"));
     } catch (e: any) {
       console.error(e);
-      alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + e.message);
+      let errorMsg = e.message;
+      try {
+        if (typeof errorMsg === 'string' && (errorMsg.includes('already been sent') || errorMsg.includes('Activity already replied to'))) {
+          errorMsg = t("gelenKutusuPage.privateReply.alreadyRepliedError");
+        } else {
+           const parsed = JSON.parse(errorMsg);
+           if (parsed.error && typeof parsed.error === 'string' && (parsed.error.includes('already been sent') || parsed.error.includes('Activity already replied to'))) {
+               errorMsg = t("gelenKutusuPage.privateReply.alreadyRepliedError");
+           }
+        }
+      } catch (err) {}
+      alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + errorMsg);
     } finally {
       setIsSendingPrivateReply(false);
     }
@@ -954,9 +965,11 @@ export default function GelenKutusuPage() {
                             >
                               <i className="fa-solid fa-reply"></i> {t("gelenKutusuPage.actions.reply")}
                             </button>
-                            <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
-                              <i className="fa-solid fa-paper-plane"></i> DM
-                            </button>
+                            {['facebook', 'instagram'].includes(String(parent.platform || postsWithComments.find(p => p.postId === selectedPostId)?.platform).toLowerCase()) && (
+                              <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleDMClick(parent)}>
+                                <i className="fa-solid fa-paper-plane"></i> DM
+                              </button>
+                            )}
                             <button className="text-dark-muted hover:text-white transition-colors flex items-center gap-1.5" onClick={() => handleHideComment(parent)}>
                               <i className="fa-solid fa-eye-slash"></i> {t("gelenKutusuPage.actions.hide")}
                             </button>

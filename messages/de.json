@@ -659,7 +659,8 @@
       "description": "Senden Sie eine private Nachricht an @{name}:",
       "placeholder": "Schreiben Sie hier Ihre Nachricht...",
       "successAlert": "Nachricht erfolgreich gesendet!",
-      "errorAlertPrefix": "Fehler beim Senden der Nachricht: "
+      "errorAlertPrefix": "Fehler beim Senden der Nachricht: ",
+      "alreadyRepliedError": "An diesen Kommentar wurde bereits eine DM gesendet. Social-Media-Plattformen erlauben nur eine DM pro Kommentar."
     }
   },
   "sosyalMedyaPage": {

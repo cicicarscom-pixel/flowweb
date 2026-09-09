@@ -659,7 +659,8 @@
       "description": "Send a private message to @{name}:",
       "placeholder": "Write your message here...",
       "successAlert": "Message sent successfully!",
-      "errorAlertPrefix": "Error sending message: "
+      "errorAlertPrefix": "Error sending message: ",
+      "alreadyRepliedError": "A DM has already been sent to this comment. Social media platforms only allow sending 1 DM per comment."
     }
   },
   "sosyalMedyaPage": {

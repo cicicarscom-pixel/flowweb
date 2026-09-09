@@ -322,7 +322,7 @@ export default function TumGonderilerPage() {
                   </div>
 
                   {/* Status */}
-                  <div style={{ width: 120 }} className="flex justify-center items-center">
+                  <div style={{ width: 120 }} className="flex flex-col justify-center items-center gap-1">
                     <div 
                       className="flex items-center px-2 py-1 rounded border"
                       style={{ 
@@ -341,6 +341,11 @@ export default function TumGonderilerPage() {
                         {getStatusLabel(item.status)}
                       </span>
                     </div>
+                    {item.media_storage_source === 'supabase' && (
+                      <div className="px-1.5 py-0.5 rounded bg-[#F2994A]/20 border border-[#F2994A]/40">
+                         <span className="text-[#F2994A] text-[9px] font-bold">Geçici Depoda</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Profile */}

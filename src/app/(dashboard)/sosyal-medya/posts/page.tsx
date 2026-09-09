@@ -240,7 +240,7 @@ export default function TumGonderilerPage() {
 
       {/* List (Table Layout) */}
       <div className="flex-1 overflow-x-auto overflow-y-auto custom-scrollbar">
-        <div style={{ width: 1410, minHeight: '100%' }} className="flex flex-col pb-20">
+        <div style={{ width: 1260, minHeight: '100%' }} className="flex flex-col pb-20">
           
           {/* Table Header */}
           <div className="flex items-center border-b border-white/10 pb-3 pt-4 mb-2 px-5 sticky top-0 bg-[#17151A]/95 z-10 backdrop-blur-sm">
@@ -253,7 +253,6 @@ export default function TumGonderilerPage() {
             <div style={{ width: 100 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Platforms</div>
             <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Date</div>
             <div style={{ width: 120 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Status</div>
-            <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold">Profile</div>
             <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Likes</div>
             <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Cmts</div>
             <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Shrs</div>
@@ -353,12 +352,6 @@ export default function TumGonderilerPage() {
                          <span className="text-[#F2994A] text-[9px] font-bold">Geçici Depoda</span>
                       </div>
                     )}
-                  </div>
-
-                  {/* Profile */}
-                  <div style={{ width: 150 }} className="flex items-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] mr-2 shrink-0"></div>
-                    <span className="text-[#F6F1EC] text-[12px] truncate">{t("postsPage.defaultProfileName")}</span>
                   </div>
 
                   {/* Metrics */}

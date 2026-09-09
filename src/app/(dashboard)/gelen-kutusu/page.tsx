@@ -572,14 +572,40 @@ export default function GelenKutusuPage() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden p-6 lg:p-8">
-      {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-on-surface mb-2">{t("gelenKutusuPage.header.title")}</h1>
-          <p className="text-dark-muted text-sm">{t("gelenKutusuPage.header.subtitle")}</p>
+      {/* Tabs & Action Buttons */}
+      <div className="flex items-center justify-between mb-6 border-b border-dark-border pb-1">
+        {/* Tabs */}
+        <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+          {[
+            { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.length },
+            { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: comments.length },
+            { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.length },
+            { id: 'bildirimler', label: t("gelenKutusuPage.tabs.notifications"), count: notifications.filter(n => !n.is_read).length },
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
+                className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
+                  isActive 
+                    ? 'bg-[#C2478D]/10 text-white border-[#C2478D]' 
+                    : 'border-transparent text-dark-muted hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {tab.label}
+                {tab.count > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-[#C2478D] text-white flex items-center justify-center text-[11px] font-bold">
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
+
         {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pr-2">
           {isSelectionMode ? (
             <>
               <span className="text-sm font-medium text-dark-muted">{t("gelenKutusuPage.header.selectedCount", { count: selectedItems.length })}</span>
@@ -616,36 +642,6 @@ export default function GelenKutusuPage() {
             </button>
           )}
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex items-center gap-2 mb-6 border-b border-dark-border pb-1 overflow-x-auto hide-scrollbar">
-        {[
-          { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.length },
-          { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: comments.length },
-          { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.length },
-          { id: 'bildirimler', label: t("gelenKutusuPage.tabs.notifications"), count: notifications.filter(n => !n.is_read).length },
-        ].map(tab => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
-              className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
-                isActive 
-                  ? 'bg-[#C2478D]/10 text-white border-[#C2478D]' 
-                  : 'border-transparent text-dark-muted hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {tab.label}
-              {tab.count > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[#C2478D] text-white flex items-center justify-center text-[11px] font-bold">
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
       </div>
 
       {/* Tab Content */}

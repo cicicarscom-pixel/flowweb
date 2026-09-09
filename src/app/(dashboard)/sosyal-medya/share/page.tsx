@@ -266,12 +266,34 @@ export default function SharePage() {
     }, 500);
 
     try {
+      let finalMediaItems: any[] = [];
+      if (localImage) {
+        if (localImage.startsWith('data:')) {
+          const res = await fetch(localImage);
+          const blob = await res.blob();
+          const ext = blob.type.split('/')[1] || 'mp4';
+          const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+          
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, blob, {
+            cacheControl: '3600',
+            upsert: false
+          });
+          
+          if (uploadError) throw new Error("Storage Upload Error: " + uploadError.message);
+          
+          const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
+          finalMediaItems = [{ url: publicUrlData.publicUrl }];
+        } else {
+          finalMediaItems = [{ url: localImage }];
+        }
+      }
+
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
           action: 'create-post',
           payload: {
             content: localText || prompt,
-            mediaItems: localImage ? [{ url: localImage }] : [],
+            mediaItems: finalMediaItems,
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
             scheduledFor: finalScheduledFor,

@@ -121,9 +121,14 @@ export default function SosyalMedyaPage() {
       const organizationId = orgMember?.organization_id || userId;
 
       if (syncWithZernio) {
-        await supabase.functions.invoke('zernio-client', {
+        const { data: syncResult } = await supabase.functions.invoke('zernio-client', {
           body: { action: 'sync-accounts', payload: { userId, organizationId } }
         });
+        const conflicts = syncResult?.data?.conflicts;
+        if (conflicts && conflicts.length > 0) {
+          const list = conflicts.map((c: any) => `${c.platform}: ${c.username}`).join('\n');
+          alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list);
+        }
       }
 
       const { data } = await supabase

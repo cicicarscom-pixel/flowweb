@@ -667,7 +667,8 @@
       "connectError": "An error occurred during the connection",
       "noSession": "Session not found",
       "connectLinkError": "An error occurred while getting the account connection link",
-      "disconnectError": "An error occurred while disconnecting"
+      "disconnectError": "An error occurred while disconnecting",
+      "accountAlreadyLinkedElsewhere": "This page/account is already connected to a different organization. The same page can't be connected to two accounts at once — please disconnect it from the other one first"
     },
     "confirmDisconnect": "Are you sure you want to disconnect this account?",
     "quickLinks": {

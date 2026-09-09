@@ -667,7 +667,8 @@
       "connectError": "Bei der Verbindung ist ein Fehler aufgetreten",
       "noSession": "Sitzung nicht gefunden",
       "connectLinkError": "Beim Abrufen des Verbindungslinks ist ein Fehler aufgetreten",
-      "disconnectError": "Beim Trennen der Verbindung ist ein Fehler aufgetreten"
+      "disconnectError": "Beim Trennen der Verbindung ist ein Fehler aufgetreten",
+      "accountAlreadyLinkedElsewhere": "Diese Seite/dieses Konto ist bereits mit einer anderen Organisation verbunden. Dieselbe Seite kann nicht gleichzeitig mit zwei Konten verbunden werden — bitte trennen Sie zuerst die andere Verbindung"
     },
     "confirmDisconnect": "Möchten Sie die Verbindung zu diesem Konto wirklich trennen?",
     "quickLinks": {

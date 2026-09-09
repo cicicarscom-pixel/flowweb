@@ -667,7 +667,8 @@
       "connectError": "Bağlantı sırasında bir hata oluştu",
       "noSession": "Oturum bulunamadı",
       "connectLinkError": "Hesap bağlama linki alınırken bir hata oluştu",
-      "disconnectError": "Bağlantı kesilirken bir hata oluştu"
+      "disconnectError": "Bağlantı kesilirken bir hata oluştu",
+      "accountAlreadyLinkedElsewhere": "Bu sayfa/hesap zaten başka bir organizasyonda bağlı. Aynı sayfa iki hesaba birden bağlanamaz — devam etmeden önce diğer bağlantıyı kesin"
     },
     "confirmDisconnect": "Bu hesabın bağlantısını kesmek istediğinize emin misiniz?",
     "quickLinks": {

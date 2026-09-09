@@ -20,18 +20,8 @@ export default function TumGonderilerPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchLocalPosts = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const userId = session?.user?.id;
-        
-        if (userId) {
-          // Sync posts from Zernio first to make sure we have the latest scheduled/published posts
-          await supabase.functions.invoke('zernio-client', {
-            body: { action: 'sync-posts', payload: { userId } }
-          });
-        }
-
         const { data } = await supabase
           .from('posts')
           .select('*')
@@ -47,13 +37,30 @@ export default function TumGonderilerPage() {
       }
     };
 
-    fetchPosts();
+    const syncAndFetchPosts = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const userId = session?.user?.id;
+        if (userId) {
+          // sync-posts writes to the posts table. It must ONLY be called on mount.
+          await supabase.functions.invoke('zernio-client', {
+            body: { action: 'sync-posts', payload: { userId } }
+          });
+        }
+      } catch (err) {
+        console.warn("Posts sync error:", err);
+      } finally {
+        await fetchLocalPosts();
+      }
+    };
+
+    syncAndFetchPosts();
 
     // Subscribe to realtime changes
     const channel = supabase
       .channel('realtime_posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-        fetchPosts();
+        fetchLocalPosts(); // Only read from the database, do not trigger sync
       })
       .subscribe();
 

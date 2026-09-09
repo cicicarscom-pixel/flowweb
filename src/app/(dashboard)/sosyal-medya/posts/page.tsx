@@ -240,7 +240,7 @@ export default function TumGonderilerPage() {
 
       {/* List (Table Layout) */}
       <div className="flex-1 overflow-x-auto overflow-y-auto custom-scrollbar">
-        <div style={{ width: 1260, minHeight: '100%' }} className="flex flex-col pb-20">
+        <div style={{ width: 1090, minHeight: '100%' }} className="flex flex-col pb-20">
           
           {/* Table Header */}
           <div className="flex items-center border-b border-white/10 pb-3 pt-4 mb-2 px-5 sticky top-0 bg-[#17151A]/95 z-10 backdrop-blur-sm">
@@ -253,15 +253,15 @@ export default function TumGonderilerPage() {
             <div style={{ width: 100 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Platforms</div>
             <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Date</div>
             <div style={{ width: 120 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Status</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Likes</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Cmts</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Shrs</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Saves</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Clicks</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Views</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Impr.</div>
-            <div style={{ width: 60 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Reach</div>
-            <div style={{ width: 80 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Actions</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Likes</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Cmts</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Shrs</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Saves</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Clicks</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Views</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Impr.</div>
+            <div style={{ width: 40 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Reach</div>
+            <div style={{ width: 70 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Actions</div>
           </div>
 
           {/* Table Rows */}
@@ -365,13 +365,13 @@ export default function TumGonderilerPage() {
                     item.metrics?.impressions ?? item.impressions,
                     item.metrics?.reach ?? item.reach
                   ].map((val, idx) => (
-                    <div key={idx} style={{ width: 60 }} className="flex justify-center items-center">
+                    <div key={idx} style={{ width: 40 }} className="flex justify-center items-center">
                       <span className="text-[#A79E96] text-[12px]">{val != null ? val : '-'}</span>
                     </div>
                   ))}
 
                   {/* Actions */}
-                  <div style={{ width: 80 }} className="flex justify-center items-center gap-1">
+                  <div style={{ width: 70 }} className="flex justify-center items-center gap-1">
                     {(item.status || '').toLowerCase() === 'failed' && (
                       <button className="w-7 h-7 rounded bg-[#EF4444]/20 border border-[#EF4444]/40 flex items-center justify-center text-[#EF4444] hover:bg-[#EF4444]/30 transition-colors" title={t("postsPage.actions.retry")}>
                         <i className="fa-solid fa-rotate-right text-[12px]"></i>

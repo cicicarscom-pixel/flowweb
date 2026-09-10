@@ -76,6 +76,7 @@ export default function SosyalMedyaPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
   const isSyncingRef = useRef(false);
+  const shownConflictsRef = useRef<Set<string>>(new Set());
   const supabase = createClient();
 
   useEffect(() => {
@@ -136,8 +137,19 @@ export default function SosyalMedyaPage() {
         });
         const conflicts = syncResult?.data?.conflicts;
         if (conflicts && conflicts.length > 0) {
-          const list = conflicts.map((c: any) => `${c.platform}: ${c.username}`).join('\n');
-          setTimeout(() => alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list), 50);
+          // Aynı çakışma (örn. hesap zaten başka bir organizasyona bağlı) her
+          // sekme odak değişiminde tekrar tekrar alert() ile gösterilmesin —
+          // bu oturumda daha önce gösterilmemiş YENİ çakışmaları bildir.
+          const newConflicts = conflicts.filter((c: any) => {
+            const key = `${c.platform}:${c.username}`;
+            if (shownConflictsRef.current.has(key)) return false;
+            shownConflictsRef.current.add(key);
+            return true;
+          });
+          if (newConflicts.length > 0) {
+            const list = newConflicts.map((c: any) => `${c.platform}: ${c.username}`).join('\n');
+            setTimeout(() => alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list), 50);
+          }
         }
       }
 

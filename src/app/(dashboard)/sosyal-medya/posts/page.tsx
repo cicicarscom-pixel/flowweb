@@ -20,14 +20,19 @@ export default function TumGonderilerPage() {
   const supabase = createClient();
 
   useEffect(() => {
+    let requestSeq = 0;
+
     const fetchLocalPosts = async () => {
+      const seq = ++requestSeq;
       try {
         const { data } = await supabase
           .from('posts')
           .select('*')
           .order('created_at', { ascending: false });
-        
-        if (data) {
+
+        // Eski (stale) bir yanıtın state'i ezmesini önle — sadece en son
+        // başlatılan isteğin sonucu uygulanır.
+        if (data && seq === requestSeq) {
           setPosts(data);
         }
       } catch (err) {
@@ -42,7 +47,6 @@ export default function TumGonderilerPage() {
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
         if (userId) {
-          // sync-posts writes to the posts table. It must ONLY be called on mount.
           await supabase.functions.invoke('zernio-client', {
             body: { action: 'sync-posts', payload: { userId } }
           });
@@ -56,15 +60,19 @@ export default function TumGonderilerPage() {
 
     syncAndFetchPosts();
 
-    // Subscribe to realtime changes
+    // Toplu silme gibi işlemler N satırı güncelleyip N ayrı postgres_changes
+    // olayı üretebiliyor — bunları tek bir refetch'e birleştir.
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     const channel = supabase
       .channel('realtime_posts')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-        fetchLocalPosts(); // Only read from the database, do not trigger sync
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => { fetchLocalPosts(); }, 300);
       })
       .subscribe();
 
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(channel);
     };
   }, []);

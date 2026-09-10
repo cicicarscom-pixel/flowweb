@@ -7,6 +7,14 @@ import { createClient } from "@/lib/supabase/client";
 
 const FILTER_IDS = ['all', 'scheduled', 'published', 'failed'] as const;
 
+// Zernio'nun /unpublish uç noktası SADECE bu platformlarda çalışıyor —
+// Instagram, TikTok ve Snapchat'te yayınlanmış postları API ile kaldırmak
+// mümkün değil (Zernio API kısıtı); bu platformlar için kullanıcıya elle
+// kaldırma uyarısı gösteriyoruz.
+const UNPUBLISH_SUPPORTED_PLATFORMS = new Set([
+  'threads', 'facebook', 'twitter', 'linkedin', 'youtube',
+  'pinterest', 'reddit', 'bluesky', 'googlebusiness', 'telegram'
+]);
 export default function TumGonderilerPage() {
   const t = useTranslations();
   const FILTERS = FILTER_IDS.map((id) => ({ id, label: t(`postsPage.filters.${id}`) }));
@@ -86,6 +94,51 @@ export default function TumGonderilerPage() {
     setDeleteModal({ isOpen: true, postId: null, isBulk: true });
   };
 
+  // Bir gönderiyi Zernio tarafında gerçekten kaldırmaya çalışır. Taslak/
+  // zamanlanmış postlarda Zernio'nun DELETE uç noktası doğrudan çalışır.
+  // Yayınlanmış postlarda DELETE her zaman reddeder (bkz. Zernio API
+  // dokümantasyonu) — bu yüzden platform başına ayrı Unpublish çağrılır.
+  // Instagram/TikTok/Snapchat desteklenmediği için bu platformlar elle
+  // kaldırma uyarısıyla işaretlenir ama panelden silmeyi engellemez.
+  const attemptZernioRemoval = async (post: any): Promise<{ removed: boolean; warning?: string }> => {
+    if (!post.zernio_post_id) {
+      return { removed: true };
+    }
+
+    if (post.status !== 'published') {
+      const { data, error: invokeError } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'delete-post', payload: { postId: post.zernio_post_id } }
+      });
+      if (invokeError || data?.success === false) {
+        return { removed: false, warning: data?.error || invokeError?.message || 'Unknown error' };
+      }
+      return { removed: true };
+    }
+
+    const platforms: string[] = Array.isArray(post.platforms) ? post.platforms : [];
+    const manual: string[] = [];
+    const failed: string[] = [];
+
+    for (const platform of platforms) {
+      if (!UNPUBLISH_SUPPORTED_PLATFORMS.has(platform)) {
+        manual.push(platform);
+        continue;
+      }
+      const { data, error: invokeError } = await supabase.functions.invoke('zernio-client', {
+        body: { action: 'unpublish-post', payload: { postId: post.zernio_post_id, platform } }
+      });
+      if (invokeError || data?.success === false) {
+        failed.push(platform);
+      }
+    }
+
+    const warnings: string[] = [];
+    if (manual.length > 0) warnings.push(t("postsPage.errors.manualPlatformRemoval", { platforms: manual.join(', ') }));
+    if (failed.length > 0) warnings.push(t("postsPage.errors.platformRemovalFailed", { platforms: failed.join(', ') }));
+
+    return { removed: true, warning: warnings.length > 0 ? warnings.join(' ') : undefined };
+  };
+
   const executeDelete = async (deleteFromPlatforms: boolean) => {
     if (isDeleting) return;
     setIsDeleting(true);
@@ -94,23 +147,22 @@ export default function TumGonderilerPage() {
       if (deleteModal.isBulk) {
         const failedIds = new Set<string>();
         const failedMessages: string[] = [];
+        const warnings: string[] = [];
 
         if (deleteFromPlatforms) {
           const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
           for (const post of postsToDelete) {
-            const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
-              body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
-            });
-            if (invokeError || deleteData?.success === false) {
-              const message = deleteData?.error || invokeError?.message || 'Unknown error';
-              console.error("Zernio bulk delete error for post", post.zernio_post_id, ":", message);
+            const result = await attemptZernioRemoval(post);
+            if (!result.removed) {
+              console.error("Zernio bulk delete error for post", post.zernio_post_id, ":", result.warning);
               failedIds.add(post.id);
-              failedMessages.push(message);
+              failedMessages.push(result.warning || 'Unknown error');
+            } else if (result.warning) {
+              warnings.push(result.warning);
             }
           }
         }
 
-        // Zernio tarafında silinemeyen gönderileri yerelde de 'deleted' işaretlemiyoruz.
         const idsToMarkDeleted = selectedPostIds.filter(id => !failedIds.has(id));
 
         if (idsToMarkDeleted.length > 0) {
@@ -131,25 +183,22 @@ export default function TumGonderilerPage() {
 
         if (failedIds.size > 0) {
           alert(t("postsPage.errors.bulkDeleteFailed", { message: failedMessages.join('\n') }));
+        } else if (warnings.length > 0) {
+          alert(warnings.join('\n'));
         }
       } else if (deleteModal.postId) {
         const post = posts.find(p => p.id === deleteModal.postId);
-        let zernioFailed = false;
-        let zernioErrorMessage = '';
+        let zernioResult: { removed: boolean; warning?: string } = { removed: true };
 
-        if (deleteFromPlatforms && post?.zernio_post_id) {
-          const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
-          });
-          if (invokeError || deleteData?.success === false) {
-            zernioFailed = true;
-            zernioErrorMessage = deleteData?.error || invokeError?.message || 'Unknown error';
-            console.error("Zernio delete error:", zernioErrorMessage);
+        if (deleteFromPlatforms && post) {
+          zernioResult = await attemptZernioRemoval(post);
+          if (!zernioResult.removed) {
+            console.error("Zernio delete error:", zernioResult.warning);
           }
         }
 
-        if (zernioFailed) {
-          alert(t("postsPage.errors.deleteFailed", { message: zernioErrorMessage }));
+        if (!zernioResult.removed) {
+          alert(t("postsPage.errors.deleteFailed", { message: zernioResult.warning || 'Unknown error' }));
         } else {
           const { error } = await supabase
             .from('posts')
@@ -162,6 +211,9 @@ export default function TumGonderilerPage() {
           } else {
             setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
             setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
+            if (zernioResult.warning) {
+              alert(zernioResult.warning);
+            }
           }
         }
       }

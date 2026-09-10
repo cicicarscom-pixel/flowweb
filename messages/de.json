@@ -751,7 +751,9 @@
     "errors": {
       "bulkDeleteFailed": "Beim Löschen der Beiträge ist ein Fehler aufgetreten: {message}",
       "deleteFailed": "Beim Löschen des Beitrags ist ein Fehler aufgetreten: {message}",
-      "genericError": "Bei der Verarbeitung ist ein Fehler aufgetreten."
+      "genericError": "Bei der Verarbeitung ist ein Fehler aufgetreten.",
+      "manualPlatformRemoval": "Auf diesen Plattformen wird die automatische Entfernung über die Zernio-API nicht unterstützt — Sie müssen den Inhalt manuell löschen: {platforms}",
+      "platformRemovalFailed": "Die Entfernung ist auf folgenden Plattformen fehlgeschlagen: {platforms}"
     }
   },
   "sharePage": {

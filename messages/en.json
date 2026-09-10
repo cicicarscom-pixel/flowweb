@@ -751,7 +751,9 @@
     "errors": {
       "bulkDeleteFailed": "An error occurred while deleting the posts: {message}",
       "deleteFailed": "An error occurred while deleting the post: {message}",
-      "genericError": "An error occurred while processing your request."
+      "genericError": "An error occurred while processing your request.",
+      "manualPlatformRemoval": "Automatic removal isn't supported on these platforms via the Zernio API — you'll need to delete the content manually: {platforms}",
+      "platformRemovalFailed": "Removal failed on these platforms: {platforms}"
     }
   },
   "sharePage": {

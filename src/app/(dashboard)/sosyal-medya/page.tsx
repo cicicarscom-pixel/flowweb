@@ -75,6 +75,7 @@ export default function SosyalMedyaPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
+  const isSyncingRef = useRef(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -111,11 +112,20 @@ export default function SosyalMedyaPage() {
   }, []);
 
   const fetchAccounts = async (syncWithZernio = false) => {
+    if (syncWithZernio) {
+      if (isSyncingRef.current) return;
+      isSyncingRef.current = true;
+    }
+
     setIsLoading(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
-      if (!userId) { setIsLoading(false); return; }
+      if (!userId) { 
+        if (syncWithZernio) isSyncingRef.current = false;
+        setIsLoading(false); 
+        return; 
+      }
 
       const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
       const organizationId = orgMember?.organization_id || userId;
@@ -127,7 +137,7 @@ export default function SosyalMedyaPage() {
         const conflicts = syncResult?.data?.conflicts;
         if (conflicts && conflicts.length > 0) {
           const list = conflicts.map((c: any) => `${c.platform}: ${c.username}`).join('\n');
-          alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list);
+          setTimeout(() => alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list), 50);
         }
       }
 
@@ -144,6 +154,7 @@ export default function SosyalMedyaPage() {
     } catch (err) {
       console.warn("Error fetching accounts:", err);
     } finally {
+      if (syncWithZernio) isSyncingRef.current = false;
       setIsLoading(false);
     }
   };

@@ -95,9 +95,12 @@ export default function TumGonderilerPage() {
         const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
         
         for (const post of postsToDelete) {
-          await supabase.functions.invoke('zernio-client', {
-            body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+          const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
+            body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
           });
+          if (invokeError || deleteData?.success === false) {
+             console.error("Zernio bulk delete error for post", post.zernio_post_id, ":", invokeError || deleteData?.error);
+          }
         }
 
         const { error } = await supabase
@@ -115,11 +118,11 @@ export default function TumGonderilerPage() {
       } else if (deleteModal.postId) {
         const post = posts.find(p => p.id === deleteModal.postId);
         if (post?.zernio_post_id) {
-          const { error: invokeError } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'delete-post', postId: post.zernio_post_id, deleteFromPlatforms }
+          const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
+            body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
           });
-          if (invokeError) {
-             console.error("Zernio delete error:", invokeError);
+          if (invokeError || deleteData?.success === false) {
+             console.error("Zernio delete error:", invokeError || deleteData?.error);
           }
         }
 

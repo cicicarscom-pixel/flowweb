@@ -752,7 +752,7 @@
       "bulkDeleteFailed": "Gönderiler silinirken hata oluştu: {message}",
       "deleteFailed": "Gönderi silinirken hata oluştu: {message}",
       "genericError": "İşlem sırasında hata oluştu.",
-      "manualPlatformRemoval": "Bu platformlarda Zernio API'si üzerinden otomatik kaldırma desteklenmiyor, içeriği elle silmeniz gerekiyor: {platforms}",
+      "manualPlatformRemoval": "Şu platformlar API üzerinden silmeyi desteklemiyor, içeriği ilgili hesabınız üzerinden manuel olarak silmeniz gerekmektedir: {platforms}",
       "platformRemovalFailed": "Şu platformlardan kaldırma işlemi başarısız oldu: {platforms}"
     }
   },

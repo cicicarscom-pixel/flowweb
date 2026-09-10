@@ -92,51 +92,77 @@ export default function TumGonderilerPage() {
 
     try {
       if (deleteModal.isBulk) {
-        const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
-        
-        for (const post of postsToDelete) {
-          const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
-            body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
-          });
-          if (invokeError || deleteData?.success === false) {
-             console.error("Zernio bulk delete error for post", post.zernio_post_id, ":", invokeError || deleteData?.error);
+        const failedIds = new Set<string>();
+        const failedMessages: string[] = [];
+
+        if (deleteFromPlatforms) {
+          const postsToDelete = posts.filter(p => selectedPostIds.includes(p.id) && p.zernio_post_id);
+          for (const post of postsToDelete) {
+            const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
+              body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
+            });
+            if (invokeError || deleteData?.success === false) {
+              const message = deleteData?.error || invokeError?.message || 'Unknown error';
+              console.error("Zernio bulk delete error for post", post.zernio_post_id, ":", message);
+              failedIds.add(post.id);
+              failedMessages.push(message);
+            }
           }
         }
 
-        const { error } = await supabase
-          .from('posts')
-          .update({ status: 'deleted' })
-          .in('id', selectedPostIds);
+        // Zernio tarafında silinemeyen gönderileri yerelde de 'deleted' işaretlemiyoruz.
+        const idsToMarkDeleted = selectedPostIds.filter(id => !failedIds.has(id));
 
-        if (error) {
-          console.error("Bulk delete error:", error);
-          alert(t("postsPage.errors.bulkDeleteFailed", { message: error.message }));
-        } else {
-          setPosts(prev => prev.map(p => selectedPostIds.includes(p.id) ? { ...p, status: 'deleted' } : p));
-          setSelectedPostIds([]);
+        if (idsToMarkDeleted.length > 0) {
+          const { error } = await supabase
+            .from('posts')
+            .update({ status: 'deleted' })
+            .in('id', idsToMarkDeleted);
+
+          if (error) {
+            console.error("Bulk delete error:", error);
+            alert(t("postsPage.errors.bulkDeleteFailed", { message: error.message }));
+          } else {
+            setPosts(prev => prev.map(p => idsToMarkDeleted.includes(p.id) ? { ...p, status: 'deleted' } : p));
+          }
+        }
+
+        setSelectedPostIds(prev => prev.filter(id => failedIds.has(id)));
+
+        if (failedIds.size > 0) {
+          alert(t("postsPage.errors.bulkDeleteFailed", { message: failedMessages.join('\n') }));
         }
       } else if (deleteModal.postId) {
         const post = posts.find(p => p.id === deleteModal.postId);
-        if (post?.zernio_post_id) {
+        let zernioFailed = false;
+        let zernioErrorMessage = '';
+
+        if (deleteFromPlatforms && post?.zernio_post_id) {
           const { data: deleteData, error: invokeError } = await supabase.functions.invoke('zernio-client', {
             body: { action: 'delete-post', payload: { postId: post.zernio_post_id, deleteFromPlatforms } }
           });
           if (invokeError || deleteData?.success === false) {
-             console.error("Zernio delete error:", invokeError || deleteData?.error);
+            zernioFailed = true;
+            zernioErrorMessage = deleteData?.error || invokeError?.message || 'Unknown error';
+            console.error("Zernio delete error:", zernioErrorMessage);
           }
         }
 
-        const { error } = await supabase
-          .from('posts')
-          .update({ status: 'deleted' })
-          .eq('id', deleteModal.postId);
-
-        if (error) {
-          console.error("Delete error:", error);
-          alert(t("postsPage.errors.deleteFailed", { message: error.message }));
+        if (zernioFailed) {
+          alert(t("postsPage.errors.deleteFailed", { message: zernioErrorMessage }));
         } else {
-          setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
-          setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
+          const { error } = await supabase
+            .from('posts')
+            .update({ status: 'deleted' })
+            .eq('id', deleteModal.postId);
+
+          if (error) {
+            console.error("Delete error:", error);
+            alert(t("postsPage.errors.deleteFailed", { message: error.message }));
+          } else {
+            setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
+            setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
+          }
         }
       }
     } catch (err) {

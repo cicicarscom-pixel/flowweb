@@ -203,14 +203,23 @@ export default function SosyalMedyaPage() {
   const handleDisconnect = async (accountId: string) => {
     if (!confirm(t("sosyalMedyaPage.confirmDisconnect"))) return;
     
+    // Zernio tarafındaki bağlantı gerçekten kesilene kadar hesabı iyimser
+    // (optimistic) şekilde listeden kaldırmıyoruz — aksi halde Zernio'da hâlâ
+    // bağlı kalan bir hesap panelde yanlışlıkla "bağlantısı kesildi" görünür.
     try {
-      setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
-      
-      await supabase.functions.invoke('zernio-client', {
+      const { data, error: invokeError } = await supabase.functions.invoke('zernio-client', {
         body: { action: 'disconnect-account', payload: { accountId } }
       });
+
+      if (invokeError || data?.success === false) {
+        const message = data?.error || invokeError?.message || 'Unknown error';
+        console.error("Zernio disconnect error:", message);
+        alert(t("sosyalMedyaPage.errors.disconnectError") + (message ? `: ${message}` : ''));
+        return;
+      }
+
       await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
-      
+      setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
       fetchAccounts();
     } catch (err) {
       console.warn("Error disconnecting account:", err);

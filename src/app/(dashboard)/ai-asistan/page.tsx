@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
@@ -270,7 +270,14 @@ export default function BotScreen() {
 
   const [messages, setMessages] = useState<{role: string, content: string}[]>([]);
   const [inputValue, setInputValue] = useState("");
+
   const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -590,7 +597,7 @@ export default function BotScreen() {
                 </div>
               ) : (
                 <>
-                  <div style={{ textAlign: "center", marginBottom: 8 }}>
+                  <div style={{ textAlign: "center", marginBottom: 8, marginTop: "auto" }}>
                     <span style={{ 
                       fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", 
                       letterSpacing: "0.1em", border: "1px solid rgba(255,255,255,0.05)",
@@ -621,6 +628,7 @@ export default function BotScreen() {
                     )
                   ))}
 
+                  
                   {isTyping && (
                     <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
@@ -628,7 +636,8 @@ export default function BotScreen() {
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
                     </div>
                   )}
-                </>
+                  <div ref={chatEndRef} />
+</>
               )}
             </div>
 

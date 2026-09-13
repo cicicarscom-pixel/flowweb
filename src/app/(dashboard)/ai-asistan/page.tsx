@@ -272,10 +272,15 @@ export default function BotScreen() {
   const [inputValue, setInputValue] = useState("");
 
   const [isTyping, setIsTyping] = useState(false);
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
   }, [messages, isTyping]);
 
 
@@ -590,7 +595,7 @@ export default function BotScreen() {
               </div>
             </div>
             
-            <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
+            <div ref={chatContainerRef} style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
               {!isSimulationActive && messages.length === 0 ? (
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
                    <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{t("aiAsistanPage.liveTest.emptyState")}</p>
@@ -636,7 +641,7 @@ export default function BotScreen() {
                       <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
                     </div>
                   )}
-                  <div ref={chatEndRef} />
+                  
 </>
               )}
             </div>

@@ -205,7 +205,7 @@ export default async function LandingPage() {
           <div style="font-size:13px; font-weight:700; color:#0f1b16; margin-bottom:4px;">Merhaba! 👋</div>
           <div style="font-size:12px; color:#6b7c74; line-height:1.5;">İşletmenizin dijital asistanı yanınızda. Size nasıl yardımcı olabilirim?</div>
         </div>
-        <img src="robot-mascot.png" width="72" height="72" style="border-radius:999px; display:block; flex-shrink:0;">
+        <img src="/robot-mascot.png" width="72" height="72" style="border-radius:999px; display:block; flex-shrink:0;">
       </div>
     </div>
 

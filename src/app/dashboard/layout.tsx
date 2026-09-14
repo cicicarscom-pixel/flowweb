@@ -1,13 +1,22 @@
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
  children,
 }: {
  children: React.ReactNode;
 }) {
+ const supabase = await createClient();
+ const { data: { session } } = await supabase.auth.getSession();
+ 
+ if (!session) {
+   redirect("/login");
+ }
+
  return (
  <div className=" text-[#e2e8f0] min-h-screen w-full flex overflow-hidden font-sans">
  <Sidebar />

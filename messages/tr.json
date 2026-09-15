@@ -690,9 +690,9 @@
     "status": {
       "connected": "Bağlı",
       "activeAndSynced": "Aktif ve eşzamanlı",
-      "needsReconnectionTitle": "Yeniden Ba�lant� Gerekli",
-      "needsReconnection": "Ba�lant� Koptu",
-      "connectionLost": "Zernio ile ba�lant� koptu veya hesab�n s�resi doldu. L�tfen tekrar ba�lan�n."
+      "needsReconnectionTitle": "Yeniden Bağlantı Gerekli",
+      "needsReconnection": "Bağlantı Koptu",
+      "connectionLost": "Zernio ile bağlantı koptu veya hesabın süresi doldu. Lütfen tekrar bağlanın."
     },
     "accountSuffix": "_hesabi",
     "disconnectButton": "Bağlantıyı Kes",
@@ -705,7 +705,7 @@
     "connecting": "Bağlanıyor...",
     "connectButton": "Hesap Bağla",
     "allPlatformsConnected": "Tüm popüler platformları bağladınız!",
-    "reconnectButton": "Yeniden Ba�lan"
+    "reconnectButton": "Yeniden Bağlan"
   },
   "sosyalMedyaInbox": {
     "tapToSeeLastMessage": "Son mesajı görmek için dokunun",

@@ -396,7 +396,7 @@ export default function SosyalMedyaPage() {
                             border: "1px solid rgba(34,181,115,0.3)",
                             display: "flex", alignItems: "center", gap: 4,
                           }}>
-                            ? {t("sosyalMedyaPage.status.connected")}
+                            ✓ {t("sosyalMedyaPage.status.connected")}
                           </div>
                         </div>
                         <p style={{ fontWeight: 700, fontSize: 15, marginBottom: 2, color: "#F6F1EC" }}>

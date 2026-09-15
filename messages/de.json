@@ -689,7 +689,10 @@
     },
     "status": {
       "connected": "Verbunden",
-      "activeAndSynced": "Aktiv und synchronisiert"
+      "activeAndSynced": "Aktiv und synchronisiert",
+      "needsReconnectionTitle": "Wiederverbindung erforderlich",
+      "needsReconnection": "Verbindung unterbrochen",
+      "connectionLost": "Die Verbindung zu Zernio wurde unterbrochen oder das Konto ist abgelaufen. Bitte stellen Sie eine neue Verbindung her."
     },
     "accountSuffix": "_konto",
     "disconnectButton": "Verbindung trennen",
@@ -701,7 +704,8 @@
     "notConnectedYet": "Noch nicht verbunden",
     "connecting": "Verbindung wird hergestellt...",
     "connectButton": "Konto verbinden",
-    "allPlatformsConnected": "Sie haben alle beliebten Plattformen verbunden!"
+    "allPlatformsConnected": "Sie haben alle beliebten Plattformen verbunden!",
+    "reconnectButton": "Neu verbinden"
   },
   "sosyalMedyaInbox": {
     "tapToSeeLastMessage": "Tippen, um die letzte Nachricht zu sehen",

@@ -689,7 +689,10 @@
     },
     "status": {
       "connected": "Bağlı",
-      "activeAndSynced": "Aktif ve eşzamanlı"
+      "activeAndSynced": "Aktif ve eşzamanlı",
+      "needsReconnectionTitle": "Yeniden Ba�lant� Gerekli",
+      "needsReconnection": "Ba�lant� Koptu",
+      "connectionLost": "Zernio ile ba�lant� koptu veya hesab�n s�resi doldu. L�tfen tekrar ba�lan�n."
     },
     "accountSuffix": "_hesabi",
     "disconnectButton": "Bağlantıyı Kes",
@@ -701,7 +704,8 @@
     "notConnectedYet": "Henüz bağlanmadı",
     "connecting": "Bağlanıyor...",
     "connectButton": "Hesap Bağla",
-    "allPlatformsConnected": "Tüm popüler platformları bağladınız!"
+    "allPlatformsConnected": "Tüm popüler platformları bağladınız!",
+    "reconnectButton": "Yeniden Ba�lan"
   },
   "sosyalMedyaInbox": {
     "tapToSeeLastMessage": "Son mesajı görmek için dokunun",

@@ -689,7 +689,10 @@
     },
     "status": {
       "connected": "Connected",
-      "activeAndSynced": "Active and synced"
+      "activeAndSynced": "Active and synced",
+      "needsReconnectionTitle": "Reconnection Required",
+      "needsReconnection": "Connection Lost",
+      "connectionLost": "Connection to Zernio is lost or account expired. Please reconnect."
     },
     "accountSuffix": "_account",
     "disconnectButton": "Disconnect",
@@ -701,7 +704,8 @@
     "notConnectedYet": "Not connected yet",
     "connecting": "Connecting...",
     "connectButton": "Connect Account",
-    "allPlatformsConnected": "You've connected all the popular platforms!"
+    "allPlatformsConnected": "You've connected all the popular platforms!",
+    "reconnectButton": "Reconnect"
   },
   "sosyalMedyaInbox": {
     "tapToSeeLastMessage": "Tap to see the last message",

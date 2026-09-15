@@ -566,6 +566,7 @@ export default function GelenKutusuPage() {
       case 'whatsapp': return <i className="fa-brands fa-whatsapp text-[#25D366]"></i>;
       case 'youtube': return <i className="fa-brands fa-youtube text-[#ff0000]"></i>;
       case 'linkedin': return <i className="fa-brands fa-linkedin text-[#0077b5]"></i>;
+      case 'tiktok': return <i className="fa-brands fa-tiktok text-[#69C9D0]"></i>;
       default: return <i className="fa-solid fa-message text-gray-400"></i>;
     }
   };

@@ -147,6 +147,7 @@ export async function syncZernioAccounts() {
           allAccounts = allAccounts.concat(accounts)
 
           if (accounts.length > 0) {
+            console.log("ZERNIO_ACC_RAW", JSON.stringify(accounts));
             const mappedAccounts = accounts.map((acc: any) => ({
               organization_id: orgId,
               zernio_profile_mapping_id: profile.id,

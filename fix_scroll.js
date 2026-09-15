@@ -1,41 +1,41 @@
 const fs = require('fs');
-const file_path = 'src/app/(dashboard)/ai-asistan/randevu/RandevuClient.tsx';
-let content = fs.readFileSync(file_path, 'utf-8');
+let content = fs.readFileSync('src/app/(dashboard)/ai-asistan/page.tsx', 'utf8');
 
-const newScrollable = `<div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
-      <style dangerouslySetInnerHTML={{__html: \`
-        .hide-scroll::-webkit-scrollbar { display: none; }
-        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-      \`}} />
-      <div 
-        ref={containerRef}
-        className="hide-scroll"
-        onMouseDown={handleMouseDown}
-        onMouseLeave={handleMouseLeave}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        style={{ 
-          display: "flex", overflowX: "auto", gap: 12, paddingBottom: 8, paddingLeft: 10, paddingRight: 10, 
-          cursor: isDown ? "grabbing" : "grab",
-          overscrollBehaviorX: "contain",
-          WebkitOverflowScrolling: "touch",
-          userSelect: "none"
-        }}
-      >
-        {children}
-      </div>
-    </div>`;
-
-content = content.replace(/<div \s*ref=\{containerRef\}[\s\S]*?<style dangerouslySetInnerHTML=\{.*?\/>\s*\{children\}\s*<\/div>/g, newScrollable);
-
+// 1. Add useRef to imports
 content = content.replace(
-  '{/* Heatmap Grid */}\n              <div style={{ flex: 1, overflowX: "auto", paddingBottom: 6 }}>',
-  '{/* Heatmap Grid */}\n              <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}>'
-);
-content = content.replace(
-  '{/* Heatmap Grid */}\r\n              <div style={{ flex: 1, overflowX: "auto", paddingBottom: 6 }}>',
-  '{/* Heatmap Grid */}\r\n              <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}>'
+  'import React, { useState, useEffect } from "react";',
+  'import React, { useState, useEffect, useRef } from "react";'
 );
 
-fs.writeFileSync(file_path, content, 'utf-8');
-console.log('Success');
+// 2. Add chatEndRef inside BotScreen
+const hookInsert = `
+  const [isTyping, setIsTyping] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+`;
+content = content.replace(
+  '  const [isTyping, setIsTyping] = useState(false);',
+  hookInsert
+);
+
+// 3. Add <div ref={chatEndRef} /> at the end of the chat messages
+const chatEndInsert = `
+                  {isTyping && (
+                    <div style={{ alignSelf: "flex-start", display: "flex", gap: 4, padding: "8px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 99 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.6)" }} />
+                      <div style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.4)" }} />
+                    </div>
+                  )}
+                  <div ref={chatEndRef} />
+`;
+content = content.replace(
+  /\{\s*isTyping && \(\s*<div style=\{\{ alignSelf: "flex-start"[\s\S]*?<\/div>\s*\)\}\s*/m,
+  chatEndInsert
+);
+
+fs.writeFileSync('src/app/(dashboard)/ai-asistan/page.tsx', content);
+console.log("Done");

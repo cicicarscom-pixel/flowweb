@@ -147,7 +147,7 @@ export async function syncZernioAccounts() {
           allAccounts = allAccounts.concat(accounts)
 
           if (accounts.length > 0) {
-            console.log("ZERNIO_ACC_RAW", JSON.stringify(accounts));
+            
             const mappedAccounts = accounts.map((acc: any) => ({
               organization_id: orgId,
               zernio_profile_mapping_id: profile.id,
@@ -156,7 +156,7 @@ export async function syncZernioAccounts() {
               platform: acc.platform || 'unknown',
               username: acc.username || acc.displayName || acc.name || acc.platform,
               is_active: true,
-              needs_reconnection: false,
+              needs_reconnection: acc.needsReconnection === true,
               last_seen_at: new Date().toISOString()
             }))
             

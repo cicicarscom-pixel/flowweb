@@ -299,7 +299,11 @@ export default function GelenKutusuPage() {
       setReplyText("");
     } catch (err: any) {
       console.error(err);
-      // alert("Yanıt gönderilemedi: " + err.message);
+      if (err.message?.includes('Missing accountId for reply-comment')) {
+        alert(`Bu yoruma yanıt gönderilemedi: Organizasyonunuzun '${comment.platform}' hesabı bağlı değil veya Zernio panelinde yetkilendirilmemiş.`);
+      } else {
+        alert("Yanıt gönderilemedi: " + err.message);
+      }
     } finally {
       setIsSendingReply(false);
     }

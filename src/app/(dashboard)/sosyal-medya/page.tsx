@@ -87,6 +87,16 @@ export default function SosyalMedyaPage() {
     const errorParam = searchParams.get('error') || hashParams.get('error');
     const errorMessage = searchParams.get('error_message') || hashParams.get('error_message') || searchParams.get('error_description') || hashParams.get('error_description');
 
+    // Önce Zernio'ya hiç gitmeden, yerelde zaten bilinen hesapları anında göster —
+    // aksi halde sayfaya her girişte hesaplar bir anlığına boşalıp Zernio
+    // senkronizasyonu bitene kadar "dönüp duruyor" gibi görünüyordu (16.09.2026,
+    // kullanıcı bildirdi). fetchAccounts(false) senkron olmayan hızlı bir yerel DB
+    // okuması, Zernio'ya istek atmıyor. Ardından aşağıdaki gerçek Zernio
+    // senkronizasyonu (fetchAccounts(true)) arka planda tetiklenmeye devam ediyor;
+    // liste zaten doluyken bu ikinci çağrı sadece "Senkronize Et" butonundaki
+    // ikonu döndürür, kartları boşaltmaz.
+    fetchAccounts(false);
+
     if (errorParam || errorMessage) {
        const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
        alert(t("sosyalMedyaPage.errors.connectError") + ": " + displayError);

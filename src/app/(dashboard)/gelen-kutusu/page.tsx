@@ -98,17 +98,32 @@ export default function GelenKutusuPage() {
          const pId = comm.zernio_post_id || comm.post_id || 'unknown';
          const postGroup = postMap.get(pId);
          let foundParent = false;
-         for (const parent of postGroup.parentComments) {
-            const uName = parent.author_name || parent.username;
-            if (uName && comm.content && comm.content.includes(`@${uName}`)) {
-               comm.displayContent = comm.content.replace('↳ @Yorum: ', '').replace('↳ @Yorum:', '').trim();
-               parent.replies.push(comm);
+         
+         // 1. Önce doğrudan ID ile eşleştir (en güvenilir yol)
+         if (comm.parent_comment_id) {
+            const exactParent = postGroup.parentComments.find((p: any) => p.zernio_comment_id === comm.parent_comment_id);
+            if (exactParent) {
+               // İsme duyarlı prefix'i de temizle (örn: ↳ @İsim:\n )
+               comm.displayContent = comm.content.replace(/^↳\s*@[^:]+:\s*\n?/, '').trim();
+               exactParent.replies.push(comm);
                foundParent = true;
-               break;
+            }
+         }
+
+         // 2. Eğer ID eşleşmesi bulunamazsa (eski kayıtlar), metin aramasına geri dön
+         if (!foundParent) {
+            for (const parent of postGroup.parentComments) {
+               const uName = parent.author_name || parent.username;
+               if (uName && comm.content && comm.content.includes(`@${uName}`)) {
+                  comm.displayContent = comm.content.replace(/^↳\s*@[^:]+:\s*\n?/, '').trim();
+                  parent.replies.push(comm);
+                  foundParent = true;
+                  break;
+               }
             }
          }
          if (!foundParent) {
-            comm.displayContent = comm.content?.replace('↳ @Yorum: ', '').replace('↳ @Yorum:', '').trim();
+            comm.displayContent = comm.content?.replace(/^↳\s*@[^:]+:\s*\n?/, '').trim();
             comm.replies = [];
             postGroup.parentComments.push(comm);
          }

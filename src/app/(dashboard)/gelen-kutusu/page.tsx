@@ -37,6 +37,23 @@ export default function GelenKutusuPage() {
      initOrg();
   }, []);
 
+  const [connectedPlatforms, setConnectedPlatforms] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+     if (!organizationId) return;
+     const fetchConnectedPlatforms = async () => {
+        const { data } = await supabase
+           .schema('integration')
+           .from('social_accounts')
+           .select('platform')
+           .eq('organization_id', organizationId)
+           .eq('is_active', true)
+           .eq('needs_reconnection', false);
+        setConnectedPlatforms(new Set((data || []).map((r: any) => r.platform?.toLowerCase())));
+     };
+     fetchConnectedPlatforms();
+  }, [organizationId]);
+
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [isSendingReply, setIsSendingReply] = useState(false);
@@ -50,7 +67,9 @@ export default function GelenKutusuPage() {
     
     const postMap = new Map<string, any>();
     
-    comments.filter(c => !c.hidden).forEach(comm => {
+    comments
+      .filter(c => !c.hidden)
+      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       if (!postMap.has(pId)) {
         let snippet = comm.posts?.content || t("gelenKutusuPage.comments.postDetailNotFound");
@@ -79,7 +98,9 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments.filter(c => !c.hidden).forEach(comm => {
+    comments
+      .filter(c => !c.hidden)
+      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       const postGroup = postMap.get(pId);
       
@@ -93,7 +114,9 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments.filter(c => !c.hidden).forEach(comm => {
+    comments
+      .filter(c => !c.hidden)
+      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
       if (comm.isBusiness) {
          const pId = comm.zernio_post_id || comm.post_id || 'unknown';
          const postGroup = postMap.get(pId);
@@ -133,7 +156,7 @@ export default function GelenKutusuPage() {
     });
     
     return Array.from(postMap.values()).sort((a, b) => new Date(b.latestCommentAt).getTime() - new Date(a.latestCommentAt).getTime());
-  }, [comments]);
+  }, [comments, connectedPlatforms]);
 
   useEffect(() => {
     if (activeTab === 'yorumlar' && postsWithComments.length > 0 && !selectedPostId) {
@@ -958,7 +981,10 @@ export default function GelenKutusuPage() {
                               )}
                             </div>
                             <div className="flex flex-col">
-                              <span className="font-semibold text-on-surface text-sm">@{uName}</span>
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-semibold text-on-surface text-sm">@{uName}</span>
+                                <span className="text-xs" title={parent.platform}>{getPlatformIcon(parent.platform)}</span>
+                              </div>
                               <span className="text-[10px] text-dark-muted">{new Date(parent.created_at).toLocaleString(locale)}</span>
                             </div>
                           </div>
@@ -1021,7 +1047,10 @@ export default function GelenKutusuPage() {
                                         )}
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-on-surface text-sm">{t("gelenKutusuPage.comments.storeLabel")}</span>
+                                        <div className="flex items-center gap-1.5">
+                                          <span className="font-semibold text-on-surface text-sm">{t("gelenKutusuPage.comments.storeLabel")}</span>
+                                          <span className="text-xs" title={reply.platform}>{getPlatformIcon(reply.platform)}</span>
+                                        </div>
                                         <span className="text-[9px] font-bold bg-[#f59e0b]/20 text-[#f59e0b] px-1.5 py-0.5 rounded">{t("gelenKutusuPage.comments.youBadge")}</span>
                                       </div>
                                       <span className="text-[10px] text-dark-muted">{new Date(reply.created_at).toLocaleString(locale)}</span>

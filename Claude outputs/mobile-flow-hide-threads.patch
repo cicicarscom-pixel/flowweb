@@ -1,0 +1,59 @@
+From 54f0c9c00b29569aea2b76683454df98606caebf Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 17:15:00 +0000
+Subject: [PATCH] fix(sosyal-medya): temporarily hide Threads card pending
+ Zernio Meta App fix
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Threads OAuth connect never completes on Meta's side (client_id 1410550293434390
+lands users on threads.net's generic signup screen instead of an app consent
+dialog). Root cause is on Zernio's Meta App configuration, not our code —
+reported to Zernio support. Hiding the Threads card to avoid a confusing silent
+failure for users until Zernio confirms a fix.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                                 | 8 ++++++++
+ .../presentation/screens/SosyalMedyaScreen.js             | 7 ++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index 9554370..3101e96 100644
+--- a/README.md
++++ b/README.md
+@@ -1144,3 +1144,11 @@ Mobil (`flow`) tarafında "Canlı Fetch" mimarisi (bkz. Adım 5, Sosyal Medya Ba
+ 5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni lex-direction: column ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
+ 6. **Flow Web - Takvim Scroll UX İyileştirmeleri:** Takvim ve Yoğunluk Haritası container'larına yatay kaydırma çubuklarını gizleyen CSS sınıfları eklendi. overscroll-behavior-x: contain eklenerek sağa-sola swipe yaparken tüm ekranın kayması (swipe to go back veya page scroll) engellendi, native mobil hissi yaratıldı.
+ 7. **Flow Web - Ülke Listesi Dropdown Renk Düzeltmesi:** Profil ekranındaki ülke, şehir, ilçe <select> etiketlerindeki <option>'ların varsayılan beyaz/açık renk arka planları #17151A olacak şekilde güncellenerek, üzerine gelen beyaz metinlerin okunamaması sorunu (koyu tema uyumsuzluğu) çözüldü.
++
++### [17.09.2026] Threads Hesap Bağlama — Geçici Olarak Devre Dışı (Zernio Meta App Sorunu)
++
++**Sorun:** Kullanıcı "Sosyal Medya" ekranından Threads'e bağlanmaya çalıştığında, Instagram/Meta girişini tamamladıktan sonra hiçbir hata mesajı görmeden threads.net'in kendi ana sayfasında kalıyor, uygulamaya geri dönmüyordu.
++
++**Kök neden (bizim kodumuzda değil):** `zernio-client`'ın `get-connect-url` çağrısı doğru çalışıyor ve geçerli bir `authUrl` üretiyor (`https://threads.net/oauth/authorize?client_id=1410550293434390&redirect_uri=https://zernio.com/api/v1/connect/threads/callback&scope=...`). Ancak bu URL'e gidildiğinde Meta, bir uygulama yetkilendirme (consent) ekranı göstermek yerine kullanıcıyı threads.net'in genel "hesap oluştur" (login/signup) akışına yönlendiriyor — yani `client_id=1410550293434390`'ye ait Meta App'te Threads API/"Login with Threads" ürünü düzgün yapılandırılmamış görünüyor. Bu, Zernio'nun App Dashboard'unda düzeltmesi gereken bir konfigürasyon sorunu; konu Zernio destek/mühendislik ekibine (captured `authUrl` + zaman damgaları ile) iletildi, yanıt bekleniyor.
++
++**Geçici önlem:** Kullanıcı, sorun çözülene kadar kafa karıştırıcı bir "sessiz hata" ile karşılaşmasın diye, `SosyalMedyaScreen.js`'deki `PLATFORMS_DATA` dizisinden Threads kartı geçici olarak yorum satırına alındı (silinmedi). Zernio taraf sorunu düzelttiğini onayladığında bu satırın yorumdan çıkarılması yeterli.
+diff --git a/src/modules/sosyal_medya/presentation/screens/SosyalMedyaScreen.js b/src/modules/sosyal_medya/presentation/screens/SosyalMedyaScreen.js
+index 62c60d0..f6f2c8b 100644
+--- a/src/modules/sosyal_medya/presentation/screens/SosyalMedyaScreen.js
++++ b/src/modules/sosyal_medya/presentation/screens/SosyalMedyaScreen.js
+@@ -69,7 +69,12 @@ const PLATFORMS_DATA = [
+   { id: "reddit", name: "Reddit", color: "#FF4500", glow: "rgba(255,69,0,0.3)", icon: "🤖" },
+   { id: "telegram", name: "Telegram", color: "#2AABEE", glow: "rgba(42,171,238,0.3)", icon: "✈️" },
+   { id: "bluesky", name: "Bluesky", color: "#0085ff", glow: "rgba(0,133,255,0.3)", icon: "☁️" },
+-  { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
++  // Threads geçici olarak listeden kaldırıldı (17.09.2026): Zernio'nun Threads için kullandığı
++  // Meta App (client_id 1410550293434390) OAuth authorize adımında kullanıcıyı consent ekranı
++  // yerine threads.net'in genel hesap oluşturma/login akışına düşürüyor — bağlantı hiçbir zaman
++  // tamamlanmıyor. Kök neden Zernio'nun Meta App yapılandırmasında (Threads API ürünü/App Review
++  // durumu), bizim kodumuzda değil. Zernio bunu doğruladığında bu satırı geri ekle.
++  // { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
+   { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
+   { id: "discord", name: "Discord", color: "#5865F2", glow: "rgba(88,101,242,0.3)", icon: "👾" },
+ ];
+-- 
+2.43.0
+

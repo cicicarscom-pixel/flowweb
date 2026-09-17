@@ -524,3 +524,11 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 3. **Yayınlanmış (Published) Gönderiler İçin Unpublish Mekanizması:** Zernio'nun yayınlanmış postlarda standart DELETE metodunu koşulsuz reddettiği bulgusu üzerine tam bir unpublish akışı uygulandı.
    - Backend (`ledger`): `PostApi.ts` içerisine SDK üzerinden `unpublishPost` metodu entegre edildi ve Edge Function'da (unpublish-post eylemi) erişime açıldı.
    - Frontend (`flowweb`): Platformlardan da kalıcı olarak silme işleminde `attemptZernioRemoval` asenkron yardımcısı kullanıldı. Instagram/TikTok gibi Zernio'nun unpublish API desteği vermediği platformlar için çoklu dilde (TR/EN/DE) uyarılar gösterilerek manuel silmeye yönlendirildi ve bu esnada panel üzerinden silme kurgusu (deleteFromPlatforms: false) stabil çalışacak şekilde korundu.
+
+### [17.09.2026] Threads Hesap Bağlama — Geçici Olarak Devre Dışı (Zernio Meta App Sorunu)
+
+**Sorun:** Kullanıcı "Sosyal Medya" sayfasından Threads'e bağlanmaya çalıştığında, Instagram/Meta girişini tamamladıktan sonra hiçbir hata mesajı görmeden threads.net'in kendi ana sayfasında kalıyor, `/sosyal-medya`'ya geri dönmüyordu.
+
+**Kök neden (bizim kodumuzda değil):** `zernio-client`'ın `get-connect-url` çağrısı doğru çalışıyor ve geçerli bir `authUrl` üretiyor (`https://threads.net/oauth/authorize?client_id=1410550293434390&redirect_uri=https://zernio.com/api/v1/connect/threads/callback&scope=...`). Ancak bu URL'e gidildiğinde Meta, bir uygulama yetkilendirme (consent) ekranı göstermek yerine kullanıcıyı threads.net'in genel "hesap oluştur" (login/signup) akışına yönlendiriyor — yani `client_id=1410550293434390`'ye ait Meta App'te Threads API/"Login with Threads" ürünü düzgün yapılandırılmamış görünüyor. Bu, Zernio'nun App Dashboard'unda düzeltmesi gereken bir konfigürasyon sorunu; konu Zernio destek/mühendislik ekibine (captured `authUrl` + zaman damgaları ile) iletildi, yanıt bekleniyor.
+
+**Geçici önlem:** Kullanıcı, sorun çözülene kadar kafa karıştırıcı bir "sessiz hata" ile karşılaşmasın diye, `sosyal-medya/page.tsx`'teki `PLATFORMS_DATA` dizisinden Threads kartı geçici olarak yorum satırına alındı (silinmedi). Zernio taraf sorunu düzelttiğini onayladığında bu satırın yorumdan çıkarılması yeterli.

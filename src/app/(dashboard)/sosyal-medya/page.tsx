@@ -17,15 +17,14 @@ const PLATFORMS_DATA = [
   { id: "reddit", name: "Reddit", color: "#FF4500", glow: "rgba(255,69,0,0.3)", icon: "🤖" },
   { id: "telegram", name: "Telegram", color: "#2AABEE", glow: "rgba(42,171,238,0.3)", icon: "✈️" },
   { id: "bluesky", name: "Bluesky", color: "#0085ff", glow: "rgba(0,133,255,0.3)", icon: "☁️" },
-  { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
+  // Threads geçici olarak listeden kaldırıldı (17.09.2026): Zernio'nun Threads için kullandığı
+  // Meta App (client_id 1410550293434390) OAuth authorize adımında kullanıcıyı consent ekranı
+  // yerine threads.net'in genel hesap oluşturma/login akışına düşürüyor — bağlantı hiçbir zaman
+  // tamamlanmıyor. Kök neden Zernio'nun Meta App yapılandırmasında (Threads API ürünü/App Review
+  // durumu), bizim kodumuzda değil. Zernio bunu doğruladığında bu satırı geri ekle.
+  // { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
   { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
   { id: "discord", name: "Discord", color: "#5865F2", glow: "rgba(88,101,242,0.3)", icon: "👾" },
-  { id: "meta_ads", name: "Meta Ads", color: "#0668E1", glow: "rgba(6,104,225,0.3)", icon: "📈", isAd: true },
-  { id: "google_ads", name: "Google Ads", color: "#EA4335", glow: "rgba(234,67,53,0.3)", icon: "📊", isAd: true },
-  { id: "linkedin_ads", name: "LinkedIn Ads", color: "#0A66C2", glow: "rgba(10,102,194,0.3)", icon: "💼", isAd: true },
-  { id: "tiktok_ads", name: "TikTok Ads", color: "#010101", glow: "rgba(255,255,255,0.3)", icon: "📱", isAd: true },
-  { id: "pinterest_ads", name: "Pinterest Ads", color: "#E60023", glow: "rgba(230,0,35,0.3)", icon: "📌", isAd: true },
-  { id: "x_ads", name: "X Ads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "✖️", isAd: true },
 ];
 
 function ScrollableContainer({ children }: { children: React.ReactNode }) {

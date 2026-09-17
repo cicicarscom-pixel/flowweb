@@ -805,6 +805,10 @@
       "threadToggle": "Thread erstellen",
       "threadDescription": "Der Haupttext wird der erste Tweet. Darunter können weitere Tweets zum Thread hinzugefügt werden."
     },
+    "bluesky": {
+      "threadToggle": "Thread erstellen",
+      "threadDescription": "Der Haupttext wird der erste Beitrag. Darunter können weitere Beiträge zum Thread hinzugefügt werden."
+    },
     "tiktok": {
       "saveToInboxTitle": "In TikTok-Entwürfen speichern",
       "saveToInboxDescription": "Das Video wird nicht direkt veröffentlicht, sondern als Entwurf hochgeladen. Auf Wunsch können Sie über TikTok vor der Veröffentlichung Musik hinzufügen."

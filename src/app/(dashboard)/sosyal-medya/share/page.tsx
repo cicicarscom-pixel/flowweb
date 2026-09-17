@@ -14,6 +14,9 @@ const PLATFORMS_DATA = [
   { id: "youtube", name: "YouTube", color: "#FF0000", icon: "fa-youtube" },
   { id: "tiktok", name: "TikTok", color: "#FF7A59", icon: "fa-tiktok" },
   { id: "pinterest", name: "Pinterest", color: "#E60023", icon: "fa-pinterest" },
+  // 17.09.2026: Bluesky eklendi — /sosyal-medya sayfasındaki "Yeni Hesap Bağla"
+  // listesiyle aynı renk/ikon (bkz. app/(dashboard)/sosyal-medya/page.tsx).
+  { id: "bluesky", name: "Bluesky", color: "#0085ff", icon: "☁️" },
 ];
 
 export default function SharePage() {
@@ -79,6 +82,20 @@ export default function SharePage() {
   const [ytTitle, setYtTitle] = useState('');
   const [ytPrivacy, setYtPrivacy] = useState('public');
   const [ytCustomCaption, setYtCustomCaption] = useState('');
+
+  // Bluesky
+  // 17.09.2026: Zernio'nun kendi "Create Post" panelinde Bluesky için "thread"
+  // ve "custom caption" (300 karakter) alanları görüldü, fakat flowweb'de bu
+  // platform hiç işlenmiyordu. Alan adları (isThread/caption) Zernio API'de
+  // resmi olarak doğrulanmadı; codebase'deki Twitter/X entegrasyonuyla aynı
+  // adlandırma (isThread, caption) kullanıldı çünkü Zernio panelindeki UI
+  // birebir aynı (thread toggle + custom caption). zernio-client zaten
+  // platformSpecificData'yı platform bağımsız, olduğu gibi SDK'ya geçiriyor
+  // (bkz. ledger-repo/supabase/functions/zernio-client/index.ts, ~satır 874),
+  // bu yüzden burada yalnızca frontend eksikti. Zernio'from hata dönerse bu
+  // alan adları önce kontrol edilmeli.
+  const [bskyIsThread, setBskyIsThread] = useState(false);
+  const [bskyCustomCaption, setBskyCustomCaption] = useState('');
 
   // UI State
   const [selectedPlatforms, setSelectedPlatforms] = useState<Record<string, boolean>>({});
@@ -226,6 +243,11 @@ export default function SharePage() {
           title: ytTitle || undefined,
           privacyStatus: ytPrivacy,
           caption: ytCustomCaption || undefined
+        };
+      } else if (p === 'bluesky') {
+        platformOptions = {
+          isThread: bskyIsThread,
+          caption: bskyCustomCaption || undefined
         };
       }
 
@@ -764,6 +786,29 @@ export default function SharePage() {
 
                   <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.descriptionLabel")}</label>
                   <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
+                </div>
+              </div>
+            )}
+
+            {/* Bluesky */}
+            {selectedPlatforms['bluesky'] && (
+              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#0085ff]/20 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0085ff] to-transparent opacity-50"></div>
+                <div className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-lg leading-none">☁️</span>
+                    <span className="text-[#F6F1EC] font-semibold text-sm">Bluesky</span>
+                  </div>
+                  <button onClick={() => setBskyIsThread(!bskyIsThread)} className="flex items-center gap-2 mb-4 group">
+                    <div className={w-4 h-4 rounded-sm border flex items-center justify-center transition-colors }>
+                      {bskyIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
+                    </div>
+                    <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.bluesky.threadToggle")}</span>
+                  </button>
+                  {bskyIsThread && <p className="text-[#A79E96]/70 text-[10px] mb-4">{t("sharePage.bluesky.threadDescription")}</p>}
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
+                  <textarea value={bskyCustomCaption} onChange={e => setBskyCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0085ff]/50"></textarea>
+                  <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{bskyCustomCaption.length}/300</p>
                 </div>
               </div>
             )}

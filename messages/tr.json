@@ -805,6 +805,10 @@
       "threadToggle": "Zincir (Thread) oluştur",
       "threadDescription": "Ana metin ilk tweet olur. Altına zincir eklenebilir."
     },
+    "bluesky": {
+      "threadToggle": "Zincir (Thread) oluştur",
+      "threadDescription": "Ana metin ilk gönderi olur. Altına zincir eklenebilir."
+    },
     "tiktok": {
       "saveToInboxTitle": "TikTok taslaklarına kaydet",
       "saveToInboxDescription": "Video direkt yayınlanmaz, taslak olarak yüklenir. İsterseniz TikTok üzerinden müzik ekleyip yayınlayabilirsiniz."

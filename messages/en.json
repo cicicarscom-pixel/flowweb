@@ -805,6 +805,10 @@
       "threadToggle": "Create a Thread",
       "threadDescription": "The main text becomes the first tweet. You can add more tweets to the thread."
     },
+    "bluesky": {
+      "threadToggle": "Create a Thread",
+      "threadDescription": "The main text becomes the first post. You can add more posts to the thread."
+    },
     "tiktok": {
       "saveToInboxTitle": "Save to TikTok drafts",
       "saveToInboxDescription": "The video won't be published directly, it will be uploaded as a draft. You can add music via TikTok before publishing if you like."

@@ -298,7 +298,7 @@ Ağustos 2026 itibarıyla kullanıcı kararıyla AI Core altyapısı frontend (F
 
 ## 2. Klasör Yapısı (ledger/supabase/functions/shared/)
 
-````text
+```text
 application/
 ├── usecases/
 │   └── HandleIncomingMessageUseCase.ts (Omnichannel Router & DI Consumer)
@@ -508,7 +508,7 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
 ### [07.09.2026] Zernio Medya İçerikleri İçin Teknik Borç ve Mimari Planlama ( media_type Refaktörü )
 
 **Durum ve Bulgu:**
-Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), `flow`web tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
+Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), `flowweb` tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
 
 **Orta Vadeli Doğru Çözüm (Technical Debt):**
 Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğrudan veritabanında tutmak ve frontend'de buna göre render işlemi yapmak şarttır.
@@ -516,7 +516,7 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 **Planlanan Değişiklikler:**
 1. **Veritabanı (ledger reposu):** posts tablosuna media_type adında yeni bir kolon (text veya text[]) eklenecek.
 2. **Senkronizasyon (zernio-client):** Zernio'nun listPosts yanıtında bulunan mediaItems içerisindeki orijinal `type` bilgisi (örn. "video" veya "image") çıkarılacak ve bu yeni media_type kolonuna yazılacak.
-3. **Arayüz (`flow`web reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
+3. **Arayüz (`flowweb` reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
 
 ### [11.09.2026] Zernio Sosyal Medya Modülü: Yarış Durumu (Race Condition) ve Unpublish Kurgusu Çözümü
 1. **Realtime Fetch ve Alert Spam Çözümü:** `posts/page.tsx`'te Supabase Realtime olaylarının sebep olduğu ardışık ve redundant veri çekme (fetch) işlemleri `debounceTimer` ile tekilleştirildi ve `requestSeq` (Sequence / stale state koruması) eklenerek yarış durumları kökten çözüldü. Ayrıca `sosyal-medya/page.tsx`'te sekme odaklanmalarında sürekli tekrar eden cross-tenant conflict (çakışma) uyarıları `shownConflictsRef` kullanılarak oturum bazında tekilleştirildi.

@@ -329,17 +329,17 @@ export default function DashboardHomePage() {
       {/* Financial Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {[
-          { label: t('dashboardHome.finance.monthlyIncome'), value: `₺${formatCurrency(financeStats.income)}`, change: "+12.4%", up: true, color: "#22B573" },
-          { label: t('dashboardHome.finance.monthlyExpense'), value: `₺${formatCurrency(financeStats.expense)}`, change: "-3.1%", up: false, color: "#EF4444" },
+          // NOT: "change"/"up" (ör. "+12.4%") alanları kaldırıldı (17.09.2026) — bunlar
+          // gerçek income/expense verisine hiç bağlı olmayan sabit (hardcoded) rozetlerdi,
+          // bu yüzden reset (soft/hard) sonrasında tutarlar sıfırlansa bile hiç değişmiyorlardı.
+          // Kullanıcı fark etti. Gerçek ay-üstü-ay trend hesaplaması ayrı bir özellik olarak
+          // ele alınana kadar rozet tamamen kaldırıldı.
+          { label: t('dashboardHome.finance.monthlyIncome'), value: `₺${formatCurrency(financeStats.income)}`, color: "#22B573" },
+          { label: t('dashboardHome.finance.monthlyExpense'), value: `₺${formatCurrency(financeStats.expense)}`, color: "#EF4444" },
         ].map(m => (
           <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>
-            <p style={{ color: m.color, fontSize: 28, fontWeight: 700, fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", marginBottom: 6 }}>{m.value}</p>
-            <span style={{
-              fontSize: 12, fontWeight: 600, color: m.up ? "#22B573" : "#EF4444",
-              background: m.up ? "rgba(34,181,115,0.12)" : "rgba(239,68,68,0.12)",
-              padding: "3px 8px", borderRadius: 99, fontFamily: "JetBrains Mono, monospace"
-            }}>{m.change}</span>
+            <p style={{ color: m.color, fontSize: 28, fontWeight: 700, fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em" }}>{m.value}</p>
           </div>
         ))}
       </div>

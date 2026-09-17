@@ -92,7 +92,7 @@ export default function SharePage() {
   // birebir aynı (thread toggle + custom caption). zernio-client zaten
   // platformSpecificData'yı platform bağımsız, olduğu gibi SDK'ya geçiriyor
   // (bkz. ledger-repo/supabase/functions/zernio-client/index.ts, ~satır 874),
-  // bu yüzden burada yalnızca frontend eksikti. Zernio'from hata dönerse bu
+  // bu yüzden burada yalnızca frontend eksikti. Zernio'dan hata dönerse bu
   // alan adları önce kontrol edilmeli.
   const [bskyIsThread, setBskyIsThread] = useState(false);
   const [bskyCustomCaption, setBskyCustomCaption] = useState('');
@@ -800,7 +800,7 @@ export default function SharePage() {
                     <span className="text-[#F6F1EC] font-semibold text-sm">Bluesky</span>
                   </div>
                   <button onClick={() => setBskyIsThread(!bskyIsThread)} className="flex items-center gap-2 mb-4 group">
-                    <div className={w-4 h-4 rounded-sm border flex items-center justify-center transition-colors }>
+                    <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${bskyIsThread ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
                       {bskyIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
                     </div>
                     <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.bluesky.threadToggle")}</span>

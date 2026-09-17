@@ -62,14 +62,21 @@ export default function GelenKutusuPage() {
   const [privateReplyText, setPrivateReplyText] = useState("");
   const [isSendingPrivateReply, setIsSendingPrivateReply] = useState(false);
 
+  const visibleComments = React.useMemo(() => {
+    return comments.filter(c => {
+       if (c.hidden) return false;
+       if (c.posts?.status === 'deleted') return false;
+       if (connectedPlatforms.size > 0 && !connectedPlatforms.has(c.platform?.toLowerCase())) return false;
+       return true;
+    });
+  }, [comments, connectedPlatforms]);
+
   const postsWithComments = React.useMemo(() => {
-    if (!comments || comments.length === 0) return [];
+    if (!visibleComments || visibleComments.length === 0) return [];
     
     const postMap = new Map<string, any>();
     
-    comments
-      .filter(c => !c.hidden)
-      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
+    visibleComments.forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       if (!postMap.has(pId)) {
         let snippet = comm.posts?.content || t("gelenKutusuPage.comments.postDetailNotFound");
@@ -98,9 +105,7 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments
-      .filter(c => !c.hidden)
-      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
+    visibleComments.forEach(comm => {
       const pId = comm.zernio_post_id || comm.post_id || 'unknown';
       const postGroup = postMap.get(pId);
       
@@ -114,9 +119,7 @@ export default function GelenKutusuPage() {
       }
     });
 
-    comments
-      .filter(c => !c.hidden)
-      .filter(c => connectedPlatforms.size === 0 || connectedPlatforms.has(c.platform?.toLowerCase())).forEach(comm => {
+    visibleComments.forEach(comm => {
       if (comm.isBusiness) {
          const pId = comm.zernio_post_id || comm.post_id || 'unknown';
          const postGroup = postMap.get(pId);
@@ -622,7 +625,7 @@ export default function GelenKutusuPage() {
         <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
           {[
             { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.length },
-            { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: comments.length },
+            { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: visibleComments.length },
             { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.length },
             { id: 'bildirimler', label: t("gelenKutusuPage.tabs.notifications"), count: notifications.filter(n => !n.is_read).length },
           ].map(tab => {
@@ -700,7 +703,7 @@ export default function GelenKutusuPage() {
             <i className="fa-regular fa-comments text-4xl mb-4 text-[#A79E96]"></i>
             <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.messages.empty")}</p>
           </div>
-        ) : activeTab === 'yorumlar' && comments.length === 0 ? (
+        ) : activeTab === 'yorumlar' && visibleComments.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-comment text-4xl mb-4 text-[#A79E96]"></i>
             <p className="text-[#A79E96] text-sm">{t("gelenKutusuPage.comments.empty")}</p>

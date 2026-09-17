@@ -282,18 +282,22 @@ export default function TumGonderilerPage() {
     return text;
   };
 
-  const getPlatformIcon = (platform: string) => {
+  const renderPlatformIcon = (platform: string, idx: number) => {
     const p = platform.toLowerCase();
-    switch (p) {
-      case 'instagram': return "fa-instagram";
-      case 'facebook': return "fa-facebook";
-      case 'whatsapp': return "fa-whatsapp";
-      case 'linkedin': return "fa-linkedin";
-      case 'twitter': return "fa-x-twitter";
-      case 'youtube': return "fa-youtube";
-      case 'tiktok': return "fa-tiktok";
-      default: return "fa-circle-dot";
+    if (p === 'bluesky') {
+      return <span key={idx} className="text-[14px]" style={{ color: '#0085ff' }}>☁️</span>;
     }
+    let iconClass = "fa-circle-dot";
+    switch (p) {
+      case 'instagram': iconClass = "fa-instagram"; break;
+      case 'facebook': iconClass = "fa-facebook"; break;
+      case 'whatsapp': iconClass = "fa-whatsapp"; break;
+      case 'linkedin': iconClass = "fa-linkedin"; break;
+      case 'twitter': iconClass = "fa-x-twitter"; break;
+      case 'youtube': iconClass = "fa-youtube"; break;
+      case 'tiktok': iconClass = "fa-tiktok"; break;
+    }
+    return <i key={idx} className={`fa-brands ${iconClass} text-[14px] text-[#F6F1EC]`}></i>;
   };
 
   return (
@@ -407,7 +411,7 @@ export default function TumGonderilerPage() {
                     {platformsArray.map((platObj: any, idx: number) => {
                       const platName = typeof platObj === 'string' ? platObj : platObj.platform;
                       if (!platName) return null;
-                      return <i key={idx} className={`fa-brands ${getPlatformIcon(platName)} text-[14px] text-[#F6F1EC]`}></i>;
+                      return renderPlatformIcon(platName, idx);
                     })}
                   </div>
 

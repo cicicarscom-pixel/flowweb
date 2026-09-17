@@ -546,3 +546,11 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 4. `messages/{tr,en,de}.json`'a `sharePage.bluesky.threadToggle` / `threadDescription` anahtarları eklendi (özel açıklama alanı zaten paylaşılan `sharePage.platforms.customCaptionLabel/customCaptionPlaceholder` anahtarlarını kullanıyor).
 
 **⚠️ Doğrulanmamış varsayım:** Bluesky için Zernio API'nin beklediği `platformSpecificData` alan adları (`isThread`, `caption`) resmi olarak teyit edilmedi — Zernio'nun ekran görüntüsündeki UI (thread anahtarı + custom caption) bu codebase'in Twitter/X entegrasyonuyla birebir aynı olduğu için aynı adlandırma varsayıldı. Zernio'dan bir alan adı hatası dönerse önce bu isimlendirme kontrol edilmeli.
+
+### [17.09.2026] "Tüm Gönderiler" Ekranında (Web) Bluesky İkonu Düzeltildi
+
+**Sorun:** Web tarafında (`sosyal-medya/posts/page.tsx`) yer alan "Tüm Gönderiler" ekranında, Bluesky platformuna ait gönderilerin ikonları eksikti ve yerinde boş/kırık bir ikon render oluyordu.
+
+**Kök neden:** `getPlatformIcon()` fonksiyonunda `bluesky` için bir karşılık (`case`) yoktu ve varsayılan (`default`) değer olan `fa-circle-dot`'a düşüyordu. Bu varsayılan değer `fa-brands` önekiyle birleştirildiğinde geçersiz bir sınıf kombinasyonu oluşturuyor ve FontAwesome (ikon kütüphanesi) geçersiz ikon üretiyordu.
+
+**Çözüm:** Yeni bir `renderPlatformIcon(platform, idx)` fonksiyonu tanımlandı. Bluesky için doğrudan projenin konvansiyonuna uyan marka rengiyle (`#0085ff`) emojili (`☁️`) `span` elementi render edilmesi sağlandı; diğer tüm platformlar için eski `fa-brands` mantığı aynen korundu.

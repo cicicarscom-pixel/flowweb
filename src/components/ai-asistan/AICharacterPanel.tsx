@@ -82,13 +82,16 @@ const ROLES: (PillItem & { avatarUrl: string })[] = [
 
 // Üslup: mevcut 4 tanesi aynen korundu (organization_ai_settings.tone
 // kayıtlarıyla uyum için id'ler değişmedi), üzerine 5 yeni mizaç eklendi.
-// Görseli olmayanlar (Standart/Komik/Resmi/Samimi) emoji ile kalıyor —
-// "Standart" için robot emojisi, tıpkı KARAKTER'deki Standart kartı gibi.
+// 17.09.2026: Kullanıcı Komik/Resmi/Samimi için de birer görsel sağladı
+// (public/ai-asistan/tones/{komik,resmi,samimi}.png, diğer 5 mizaçla aynı
+// isimlendirme/konvansiyon) — artık sadece "Standart" emoji ile kalıyor
+// (kullanıcının web tarafında özellikle istediği robot teması, bkz.
+// dosya başı not ve mobil tarafın aynı gerekçeyi taşıyan moods.ts'i).
 const TONES: (PillItem & { avatarUrl?: string })[] = [
   { id: "Standart", label: "Standart", icon: "🤖" },
-  { id: "Komik", label: "Komik", icon: "😆" },
-  { id: "Resmi", label: "Resmi", icon: "👔" },
-  { id: "Samimi", label: "Samimi", icon: "🤗" },
+  { id: "Komik", label: "Komik", icon: "😆", avatarUrl: "/ai-asistan/tones/komik.png" },
+  { id: "Resmi", label: "Resmi", icon: "👔", avatarUrl: "/ai-asistan/tones/resmi.png" },
+  { id: "Samimi", label: "Samimi", icon: "🤗", avatarUrl: "/ai-asistan/tones/samimi.png" },
   { id: "Neşeli", label: "Neşeli", icon: "😄", avatarUrl: "/ai-asistan/tones/neseli.png" },
   { id: "Sakin", label: "Sakin", icon: "😌", avatarUrl: "/ai-asistan/tones/sakin.png" },
   { id: "Dedikoducu", label: "Dedikoducu", icon: "🗣️", avatarUrl: "/ai-asistan/tones/dedikoducu.png" },

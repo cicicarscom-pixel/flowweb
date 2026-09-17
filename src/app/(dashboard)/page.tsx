@@ -17,6 +17,7 @@ export default function DashboardHomePage() {
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
   const [appointments, setAppointments] = useState<any[]>([]);
   const [commLogs, setCommLogs] = useState<any[]>([]);
+  const [platformStats, setPlatformStats] = useState<{ platform: string; count: number }[]>([]);
 
   const supabase = createClient();
 
@@ -173,6 +174,33 @@ export default function DashboardHomePage() {
         if (logs) {
           setCommLogs(logs);
         }
+
+        // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
+        const statsMap: Record<string, number> = {};
+        if (orgId) {
+          const { data: commentPlatforms } = await supabase.from('comments').select('platform').eq('profile_id', orgId);
+          (commentPlatforms || []).forEach((c: any) => {
+             const p = (c.platform || 'diğer').toLowerCase();
+             statsMap[p] = (statsMap[p] || 0) + 1;
+          });
+          
+          const { data: messagePlatforms } = await supabase.from('messages').select('conversation_id, conversations(platform)').eq('profile_id', orgId);
+          (messagePlatforms || []).forEach((m: any) => {
+             const p = (m.conversations?.platform || 'diğer').toLowerCase();
+             statsMap[p] = (statsMap[p] || 0) + 1;
+          });
+        }
+        
+        if (merchantId) {
+          const { count: waCount } = await supabase.from('ai_communication_logs').select('*', { count: 'exact', head: true }).eq('merchant_id', merchantId);
+          if (waCount) statsMap['whatsapp'] = (statsMap['whatsapp'] || 0) + waCount;
+        }
+        
+        setPlatformStats(
+          Object.entries(statsMap)
+            .map(([platform, count]) => ({ platform, count }))
+            .sort((a, b) => b.count - a.count)
+        );
 
       } catch (error) {
         console.warn('Dashboard fetch error:', error);
@@ -441,6 +469,28 @@ export default function DashboardHomePage() {
       {/* İletişim Raporları */}
       <div>
         <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>{t('dashboardHome.commLogs.title')}</p>
+        
+        {platformStats.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 14 }}>
+            {platformStats.map((s) => (
+              <div key={s.platform} className="glass" style={{
+                display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12,
+              }}>
+                <PlatformIcon platform={s.platform} size={20} />
+                <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{s.count}</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 12, textTransform: "capitalize" }}>{s.platform}</span>
+              </div>
+            ))}
+            <div className="glass" style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12, background: "rgba(255,122,89,0.08)",
+            }}>
+              <span style={{ color: "#FF7A59", fontSize: 13, fontWeight: 700 }}>
+                Toplam: {platformStats.reduce((sum, s) => sum + s.count, 0)}
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="glass" style={{ borderRadius: 16, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>

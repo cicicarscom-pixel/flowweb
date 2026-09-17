@@ -950,8 +950,12 @@ export default function AnalyticsScreen() {
             </div>
             <div style={{ marginTop: 16, color: "var(--text-secondary)", fontSize: 12, fontWeight: 500 }}>
                {(() => {
+                  // 17.09.2026: Gün kısaltmaları üstteki grid'le tutarlı olması
+                  // için Türkçeye çevrildi (bkz. README — eskiden İngilizce
+                  // Mon/Tue/... kullanılıyordu; mobil tarafta da (flow-repo,
+                  // AnalyticsScreen.js) aynı düzeltme eşzamanlı olarak yapıldı).
                   const sorted = [...zernioData.bestTimes].sort((a,b) => (b.avg_engagement || 0) - (a.avg_engagement || 0)).slice(0, 2);
-                  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                  const days = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
                   const texts = sorted.map(s => `${days[s.day_of_week]} ${s.hour}${s.hour < 12 ? 'am' : 'pm'} · ${s.avg_engagement}`);
                   return texts.length > 0 ? `Best times: ${texts.join(' · ')}` : '';
                })()}

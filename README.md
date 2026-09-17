@@ -554,3 +554,9 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 **Kök neden:** `getPlatformIcon()` fonksiyonunda `bluesky` için bir karşılık (`case`) yoktu ve varsayılan (`default`) değer olan `fa-circle-dot`'a düşüyordu. Bu varsayılan değer `fa-brands` önekiyle birleştirildiğinde geçersiz bir sınıf kombinasyonu oluşturuyor ve FontAwesome (ikon kütüphanesi) geçersiz ikon üretiyordu.
 
 **Çözüm:** Yeni bir `renderPlatformIcon(platform, idx)` fonksiyonu tanımlandı. Bluesky için doğrudan projenin konvansiyonuna uyan marka rengiyle (`#0085ff`) emojili (`☁️`) `span` elementi render edilmesi sağlandı; diğer tüm platformlar için eski `fa-brands` mantığı aynen korundu.
+
+### [17.09.2026] Analiz Ekranı: Best Times Özet Satırındaki Dil Tutarsızlığı Düzeltildi (Mon/Tue → Pzt/Sal)
+
+**İstek:** Mobil-web parite çalışması sırasında (bkz. `flow-repo/README.md`) fark edilen bir detay — Best Times ısı haritasının (`analiz/page.tsx`) üst grid'i Türkçe gün kısaltmaları (Pzt/Sal/Çar...) kullanırken, altındaki "en iyi 2 zaman" özet satırı İngilizce (Mon/Tue/Wed...) kısaltmalar kullanıyordu. Kullanıcı bu tutarsızlığın düzeltilmesini istedi.
+
+**Çözüm:** Özet satırının `days` dizisi, üstteki grid ile aynı Türkçe kısaltmalara (`["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]`) çevrildi. Mobil taraftaki (`flow-repo`, `AnalyticsScreen.js`) aynı satır da eşzamanlı olarak güncellendi, böylece iki platform hem kendi içlerinde hem birbirleriyle tutarlı. "Best times:" öneki ve saat gösterimindeki am/pm ifadesi kapsam dışı bırakıldı (işaret edilen tutarsızlık yalnızca gün kısaltmalarıyla ilgiliydi).

@@ -302,6 +302,7 @@ export default function GelenKutusuPage() {
         post_id: comment.post_id,
         zernio_comment_id: returnedCommentId,
         zernio_post_id: comment.zernio_post_id,
+        parent_comment_id: comment.zernio_comment_id,
         content: finalContent,
         username: 'Mağaza (Ben)',
         author_name: 'Mağaza (Ben)',

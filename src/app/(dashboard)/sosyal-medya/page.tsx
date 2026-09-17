@@ -227,7 +227,15 @@ export default function SosyalMedyaPage() {
         return;
       }
 
-      await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
+      // NOT: Burada önceden ayrıca bir client-side .update({is_active:false}) çağrısı
+      // vardı. zernio-client edge function'ı artık kaydı service-role ile doğrudan
+      // SİLDİĞİ için (yukarıdaki invoke başarılıysa satır zaten yok), bu ikinci çağrı
+      // hem gereksizdi hem de authenticated rolünün bu tabloda UPDATE yetkisi olmadığı
+      // için her seferinde "permission denied for table social_accounts" (42501)
+      // hatası atıp konsolu kirletiyordu. Silme işleminin kendisini engellemiyordu
+      // ama yanıltıcıydı; kaldırıldı (16.09.2026, kullanıcının DevTools ekran
+      // görüntüsüyle tespit edildi). 17.09.2026: Threads-gizleme yamasının manuel
+      // entegrasyonu sırasında bu satır yanlışlıkla geri gelmişti — tekrar kaldırıldı.
       setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
       fetchAccounts();
     } catch (err) {

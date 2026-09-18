@@ -97,7 +97,7 @@ export default function AnalyticsScreen() {
     bestTimes: [] as any[],
     contentDecay: [] as any[],
     postingFrequency: [] as any[],
-    postTimeline: null as any,
+    engagementOverTime: [] as any[],
     postAnalytics: [] as any[],
     totalFollowers: 0,
     totalPosts: 0,
@@ -241,7 +241,7 @@ export default function AnalyticsScreen() {
         bestTimes: [] as any[],
         contentDecay: [] as any[],
         postingFrequency: [] as any[],
-        postTimeline: null as any,
+        engagementOverTime: [] as any[],
         postAnalytics: [] as any[],
         totalFollowers: 0,
         totalPosts: 0,
@@ -297,7 +297,7 @@ export default function AnalyticsScreen() {
         actualPostAnalytics,
         actualInboxVolume,
         actualInboxPerformance,
-        recentPosts,
+        actualEngagementOverTime,
         platformResult
       ] = await Promise.all([
         invokeZernio('get-daily-metrics', payloadBase),
@@ -308,18 +308,20 @@ export default function AnalyticsScreen() {
         invokeZernio('get-post-analytics', payloadBase),
         invokeZernio('get-inbox-volume', payloadBase).catch(() => ({})),
         invokeZernio('get-inbox-performance', payloadBase).catch(() => ({})),
-        supabase.from('posts').select('zernio_post_id').not('zernio_post_id', 'is', null).order('created_at', { ascending: false }).limit(1).then(r => r.data),
+        // 18.09.2026: "Engagement over time" kartı eskiden get-post-timeline
+        // ile SADECE en son atılan tek gönderinin günlük etkileşim geçmişini
+        // çekiyordu — Zernio'nun kendi panelindeki aynı isimli grafik ise
+        // hesabın TAMAMININ 30 günlük etkileşim trendini gösteriyor. Kullanıcı
+        // bu ikisini karşılaştırıp bizim tarafta "veri yok" sandı (bkz. README).
+        // Zernio SDK tip tanımına göre attribution:'received', "buckets the
+        // per-day increase in engagement by the day it actually arrived
+        // (engagement-over-time)" — yani Zernio'nun kendi grafiğinin ürettiği
+        // veriyle birebir aynı hesaplama. Artık bu kart da get-daily-metrics'i
+        // attribution:'received' ile çağırıyor; tek gönderiye değil hesabın
+        // tamamına bakıyor.
+        invokeZernio('get-daily-metrics', { query: { ...queryArgs, attribution: 'received' } }),
         platformCall
       ]);
-
-      // get-post-timeline, keşif için gerçek bir postId'ye ihtiyaç duyuyor;
-      // bu yüzden recentPosts sorgusunun (yukarıdaki paralel grupta zaten
-      // koştu) sonucunu bekleyip ayrıca çağırıyoruz.
-      const recentPostId = recentPosts?.[0]?.zernio_post_id;
-      const timelinePayload = recentPostId
-        ? { query: { ...queryArgs, postId: recentPostId }, postId: recentPostId }
-        : payloadBase;
-      const actualTimeline = await invokeZernio('get-post-timeline', timelinePayload);
 
       // --- Sonuçları state şekline dök (tamamen senkron, saf eşleme) ---
       if (actualData.dailyData) {
@@ -365,8 +367,18 @@ export default function AnalyticsScreen() {
          newZernioData.contentDecay = actualDecay.buckets;
       }
 
-      if (actualTimeline.timeline) {
-         newZernioData.postTimeline = actualTimeline;
+      if (actualEngagementOverTime.dailyData) {
+         newZernioData.engagementOverTime = actualEngagementOverTime.dailyData.map((d: any) => ({
+           date: d.date ? d.date.substring(5, 10) : '',
+           views: d.metrics?.views || d.metrics?.impressions || 0,
+           likes: d.metrics?.likes || 0,
+           comments: d.metrics?.comments || 0,
+           shares: d.metrics?.shares || 0,
+           saves: d.metrics?.saves || 0,
+           clicks: d.metrics?.clicks || 0,
+           reach: d.metrics?.reach || 0,
+           impressions: d.metrics?.impressions || 0,
+         }));
       }
       
       if (actualPostAnalytics.posts) {
@@ -746,8 +758,8 @@ export default function AnalyticsScreen() {
         </div>
       )}
       
-      {/* 4. Post Timeline (Single Post Performance) - MOVED HERE */}
-      {zernioData.postTimeline && zernioData.postTimeline.timeline && zernioData.postTimeline.timeline.length > 0 ? (
+      {/* 4. Engagement over time (Hesap Geneli, Zernio ile aynı attribution:'received' mantığı — bkz. 18.09.2026 README notu) */}
+      {zernioData.engagementOverTime && zernioData.engagementOverTime.length > 0 ? (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
           <div style={{ marginBottom: 24 }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Engagement over time</h3>
@@ -758,17 +770,8 @@ export default function AnalyticsScreen() {
              <div style={{ flex: "1 1 500px", height: 350 }}>
                <ResponsiveContainer width="100%" height="100%">
                  {(() => {
-                   const aggTimeline = Object.values(zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
-                     if (!acc[curr.date]) {
-                       acc[curr.date] = { ...curr };
-                     } else {
-                       ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions', 'follows'].forEach(m => {
-                         acc[curr.date][m] = (acc[curr.date][m] || 0) + (curr[m] || 0);
-                       });
-                     }
-                     return acc;
-                   }, {})).sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
-                   
+                   const aggTimeline = [...zernioData.engagementOverTime].sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
+
                    return (
                      <LineChart data={aggTimeline}>
                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -792,7 +795,7 @@ export default function AnalyticsScreen() {
              {/* Legend Grid */}
              <div style={{ width: "350px", minWidth: "300px" }}>
                 {(() => {
-                   const totalMetrics = zernioData.postTimeline.timeline.reduce((acc: any, curr: any) => {
+                   const totalMetrics = zernioData.engagementOverTime.reduce((acc: any, curr: any) => {
                        ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions'].forEach(m => {
                          acc[m] = (acc[m] || 0) + (curr[m] || 0);
                        });

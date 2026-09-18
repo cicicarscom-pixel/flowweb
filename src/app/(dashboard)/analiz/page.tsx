@@ -762,8 +762,8 @@ export default function AnalyticsScreen() {
       {zernioData.engagementOverTime && zernioData.engagementOverTime.length > 0 ? (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
           <div style={{ marginBottom: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Engagement over time</h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Per week - last 30 days</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Zaman İçinde Katılım</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Haftalık - son 30 gün</p>
           </div>
 
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>

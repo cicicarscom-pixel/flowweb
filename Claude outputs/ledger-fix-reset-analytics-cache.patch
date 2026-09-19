@@ -1,0 +1,92 @@
+From 153b578f013448db8e6c4cbea195932c302deb6a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 20:36:03 +0000
+Subject: [PATCH] =?UTF-8?q?fix(flow-reset-ai-data):=20Tehlikeli=20B=C3=B6l?=
+ =?UTF-8?q?ge=20s=C4=B1f=C4=B1rlamas=C4=B1=20analytics=5Fcache'i=20temizle?=
+ =?UTF-8?q?miyordu?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fabrika ayarlarına sıfırlama sonrası Web ve Mobil Analiz sayfasındaki
+eski istatistiklerin (beğeni, yorum, erişim vb.) kaybolmaması hatası
+düzeltildi. analytics_cache tablosunda organizasyon/müşteri kolonu
+olmadığından, önce scopeId'ye bağlı Zernio hesapları
+integration.social_accounts üzerinden bulunup, ardından bu hesaplara
+ait önbellek satırları siliniyor. Hem soft hem hard reset modunda
+çalışır.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                     | 24 +++++++++++++------
+ .../functions/flow-reset-ai-data/index.ts     | 20 ++++++++++++++++
+ 2 files changed, 37 insertions(+), 7 deletions(-)
+
+diff --git a/README.md b/README.md
+index e1522c7..d3baba8 100644
+--- a/README.md
++++ b/README.md
+@@ -272,11 +272,21 @@ Built inside apps/ledger/src/ai-core/ using strict Typescript.
+ 5. **Admin Panel Edge Function Entegrasyonu:**
+    Kullanıcıları yasaklamak (Ban) veya silmek (Delete) için kullanılan butonlar, arka planda güvenli işlem yapması için `admin-manager` Edge fonksiyonunu çağırıyordu ancak Payload (isim) uyuşmazlığı nedeniyle çalışmıyordu. Frontend komutları `update-status` ve `targetUserId` olacak şekilde Supabase Edge Function API'sinin tam anladığı dile dönüştürüldü.
+ 
+-### [31.08.2026] AI Asistan Randevu ve K�lt�rel Hitap Mod�lleri (TAM PAKET)
+-1. **M��teri Tan�ma:** AI'nin tekrar eden m��terileri tan�mas� ve isimlerini `customers` tablosuna kaydetmesi sa�land�.
+-2. **K�lt�rel Hitap Entegrasyonu:** `SYSTEM_POLICY` �zerinden dil/cinsiyet bazl� hitap yetene�i kazand�r�ld�.
+-3. **Randevu Mod�l� Ayar�:** Randevu �zelli�ini API baz�nda kapatabilme mekanizmas� eklendi.
+-4. **Randevu G�ncelleme:** Mevcut randevunun g�ncellenmesi i�in `UpdateAppointmentTool` eklendi.
+-5. **��letme Bildirimleri:** Randevu i�lemlerinde `notifications` tablosuna bildirim d��mesi sa�land�.
+-6. **Hata D�zeltmeleri:** `whatsapp-webhook` ve Vercel/NextJS hatalar� giderildi.
++### [31.08.2026] AI Asistan Randevu ve K�lt�rel Hitap Mod�lleri (TAM PAKET)
++1. **M��teri Tan�ma:** AI'nin tekrar eden m��terileri tan�mas� ve isimlerini `customers` tablosuna kaydetmesi sa�land�.
++2. **K�lt�rel Hitap Entegrasyonu:** `SYSTEM_POLICY` �zerinden dil/cinsiyet bazl� hitap yetene�i kazand�r�ld�.
++3. **Randevu Mod�l� Ayar�:** Randevu �zelli�ini API baz�nda kapatabilme mekanizmas� eklendi.
++4. **Randevu G�ncelleme:** Mevcut randevunun g�ncellenmesi i�in `UpdateAppointmentTool` eklendi.
++5. **��letme Bildirimleri:** Randevu i�lemlerinde `notifications` tablosuna bildirim d��mesi sa�land�.
++6. **Hata D�zeltmeleri:** `whatsapp-webhook` ve Vercel/NextJS hatalar� giderildi.
++
++### [17.09.2026] "Tehlikeli Bölge" Sıfırlaması Analiz (Analytics) Önbelleğini Temizlemiyordu
++
++**Sorun:** Kullanıcı, "Tehlikeli Bölge" (fabrika ayarlarına sıfırlama) özelliğini kullandıktan sonra hem Flow Web hem Flow Mobil'deki Analiz sayfasındaki eski istatistiklerin (beğeni, yorum, erişim vb.) kaybolmadığını bildirdi.
++
++**Kök neden:** `flow-reset-ai-data` Edge Function'ı `notifications`, `appointments`, `customers`, `messages`, `conversations`, `comments`, `ai_communication_logs` ve (hard modda) `organization_ai_settings`/`business_services`/`finance_documents` tablolarını temizliyor, ancak `public.analytics_cache` tablosuna (bkz. `20260705000000_analytics_cache.sql`) hiç dokunmuyordu. Web ve Mobil'in Analiz sayfaları `zernio-client`'ın `fetchAnalyticsWithCache()` yardımcı fonksiyonu üzerinden bu tabloyu (1 saatlik TTL ile) okuyor; fonksiyon bu tabloyu sıfırlamadığı için eski veriler sıfırlama sonrası ekranda kalmaya devam ediyordu. `flow-reset-ai-data` iki platform için de ortak tek bir backend fonksiyonu olduğundan bu düzeltme hem web hem mobili aynı anda kapsıyor.
++
++**Çözüm:** `analytics_cache.account_id` kolonu organizasyon/müşteri bilgisi taşımadığından (sadece Zernio'nun `account_id`'si var), önce çözülen `scopeId`'ye (`organization_id`) ait Zernio hesapları `integration.social_accounts` tablosundan (`zernio_account_id` kolonu) bulunuyor, ardından bu hesaplara ait `analytics_cache` satırları `account_id IN (...)` filtresiyle siliniyor. Bu adım hem `soft` hem `hard` reset modunda çalışıyor — analiz verisi bir "test verisi" kadar geçicidir, kasıtlı olarak korunan `bot_settings`/`social_accounts` bağlantı verilerinin aksine.
++
++**Deploy notu:** Bu değişiklik yalnızca `flow-reset-ai-data` fonksiyonunu etkiler; deploy sırasında (kurala uygun olarak) sadece bu fonksiyon adıyla tek başına deploy edilmelidir: `npx supabase functions deploy flow-reset-ai-data`.
+ 
+diff --git a/supabase/functions/flow-reset-ai-data/index.ts b/supabase/functions/flow-reset-ai-data/index.ts
+index e776593..0ff3102 100644
+--- a/supabase/functions/flow-reset-ai-data/index.ts
++++ b/supabase/functions/flow-reset-ai-data/index.ts
+@@ -49,6 +49,26 @@ serve(async (req) => {
+     // merchant_id tabanlı (SADECE ham kullanıcı ID'si, organizasyon fallback'i YOK — RLS de auth.uid()=merchant_id) → merchantId
+     await supabaseAdmin.from('ai_communication_logs').delete().eq('merchant_id', merchantId);
+ 
++    // 17.09.2026: Analiz sayfası (Web & Mobil) verilerinin sıfırlama sonrası
++    // kaybolmaması hatası (bkz. README) — analytics_cache tablosunun kendisinde
++    // organization_id/merchant_id kolonu YOK, sadece Zernio'nun account_id'si var.
++    // Bu yüzden önce bu scopeId'ye bağlı Zernio hesaplarının account_id'leri
++    // integration.social_accounts üzerinden bulunup, ardından bu hesaplara ait
++    // önbellek satırları siliniyor. Analiz verisi bir "test verisi" kadar
++    // geçicidir (bot_settings/social_accounts bağlantılarının aksine), bu
++    // yüzden hem soft hem hard reset'te temizleniyor.
++    const { data: scopedAccounts } = await supabaseAdmin
++      .schema('integration')
++      .from('social_accounts')
++      .select('zernio_account_id')
++      .eq('organization_id', scopeId);
++    const scopedAccountIds = (scopedAccounts || [])
++      .map((a: { zernio_account_id: string }) => a.zernio_account_id)
++      .filter(Boolean);
++    if (scopedAccountIds.length > 0) {
++      await supabaseAdmin.from('analytics_cache').delete().in('account_id', scopedAccountIds);
++    }
++
+     if (mode === 'hard') {
+       await supabaseAdmin.from('organization_ai_settings').delete().eq('merchant_id', merchantId);
+       await supabaseAdmin.from('business_services').delete().eq('merchant_id', merchantId);
+-- 
+2.43.0
+

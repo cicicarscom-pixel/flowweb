@@ -1,0 +1,71 @@
+From 314929798c3072af406ee4b6dab88f67997d1696 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 18 Sep 2026 18:08:21 +0000
+Subject: [PATCH] =?UTF-8?q?feat(sosyal-medya):=20Threads=20platformu=20tes?=
+ =?UTF-8?q?t=20i=C3=A7in=20yeniden=20g=C3=B6r=C3=BCn=C3=BCr=20yap=C4=B1ld?=
+ =?UTF-8?q?=C4=B1?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+17.09.2026'da Zernio Meta App OAuth sorunu nedeniyle gizlenen Threads
+girdisi, kullanıcının isteğiyle tekrar test edilmek üzere PLATFORMS_DATA
+dizisinde yeniden aktif edildi. Bu bir düzeltme değil, altta yatan
+Zernio/Meta App OAuth sorunu bağımsız doğrulanmadan yapılan bir tekrar
+denemedir — mobil tarafla (flow-repo) eşzamanlı.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                 | 10 ++++++++++
+ src/app/(dashboard)/sosyal-medya/page.tsx | 16 ++++++++++------
+ 2 files changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/README.md b/README.md
+index 4a5fe4b..2654f3f 100644
+--- a/README.md
++++ b/README.md
+@@ -570,3 +570,13 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
+ **Çözüm:** `AICharacterPanel.tsx`'teki `TONES` dizisinde `Komik`/`Resmi`/`Samimi` girdilerine, mevcut 5 mizaçla (Neşeli/Sakin/Dedikoducu/Huysuz/Sinirli) aynı desende `avatarUrl: "/ai-asistan/tones/{komik,resmi,samimi}.png"` eklendi. `PersonaCard` zaten `avatarUrl` varsa görseli, yoksa emojiyi gösteriyor (bkz. `ToneCarousel.tsx`'teki mevcut yorum), bu yüzden başka bir render değişikliği gerekmedi. Mobil tarafta (`flow-repo/moods.ts`) da aynı üçlüye, dosyanın zaten kullandığı `TONE_AVATAR_BASE` (`https://flow.workigom.com/ai-asistan/tones`) sabitiyle eşzamanlı olarak `avatarUrl` eklendi — mobil zaten bu reponun barındırdığı statik PNG'lere uzaktan URL ile bağlanıyor. "Standart" kasıtlı olarak dokunulmadı (kullanıcının özellikle istediği robot 🤖 teması, hem web hem mobilde emoji ile kalmaya devam ediyor).
+ 
+ **Bilinen risk:** Uzantı `.png` olarak varsayıldı (kullanıcı onayıyla). Farklıysa `avatarUrl` yolları 404 verir ve kartlar otomatik olarak emojiye geri döner (build kırılmaz, sadece eski görünüm sessizce devam eder). Antigravity, `public/ai-asistan/tones/` altındaki 3 yeni PNG dosyasını bu patch'in kod değişikliğiyle birlikte `git add` etmeli — patch sadece kod diff'ini içerir, ikili görsel dosyaları içermez (dosyalar zaten kullanıcının bilgisayarında doğru klasörde duruyor).
++
++**Sonuç (18.09.2026):** Uygulandı ve canlıda bağımsız olarak doğrulandı — dosyalar gerçekten `.png` çıktı. İlk push turunda sadece görsel dosyaları eklenmiş, koddaki `avatarUrl` satırları ve bu README kaydı `git commit -a` unutulduğu için unstaged kalıp push'lanmamıştı; bunu `git diff HEAD origin/main`'de fark edip ikinci bir düzeltme patch'i (kod+README, görsellere dokunmadan) gönderdim, o da uygulanıp push'landı. Şu an her iki platform da tam senkron.
++
++### [18.09.2026] Threads Yeniden Görünür Yapıldı (Test İçin)
++
++**İstek:** Kullanıcı, 17.09.2026'da Zernio/Meta App OAuth sorunu nedeniyle geçici olarak listeden kaldırılan Threads'i, tekrar test etmek amacıyla hem web hem mobilde yeniden görünür yapmamızı istedi.
++
++**Çözüm:** `sosyal-medya/page.tsx`'teki `PLATFORMS_DATA` dizisinde yorum satırına alınmış `{ id: "threads", ... }` girdisi tekrar aktif edildi (mobil taraftaki `flow-repo/SosyalMedyaScreen.js` ile eşzamanlı). Kod yorumu, eski kök-neden açıklamasını koruyarak bu ikinci deneme notunu da ekleyecek şekilde güncellendi.
++
++**Önemli — bu bir "düzeltme" DEĞİL, bir "tekrar deneme":** Zernio'nun Meta App yapılandırmasındaki (Threads API ürünü/App Review durumu) altta yatan sorunun çözüldüğü doğrulanmadı; kullanıcı sadece canlıda tekrar test etmek istedi. Bağlantı denemesi yine aynı şekilde (consent ekranı yerine threads.net'in genel login akışına düşme) başarısız olursa, bu satır tekrar yorum satırına alınmalı.
+diff --git a/src/app/(dashboard)/sosyal-medya/page.tsx b/src/app/(dashboard)/sosyal-medya/page.tsx
+index af7dc38..1a9c148 100644
+--- a/src/app/(dashboard)/sosyal-medya/page.tsx
++++ b/src/app/(dashboard)/sosyal-medya/page.tsx
+@@ -17,12 +17,16 @@ const PLATFORMS_DATA = [
+   { id: "reddit", name: "Reddit", color: "#FF4500", glow: "rgba(255,69,0,0.3)", icon: "🤖" },
+   { id: "telegram", name: "Telegram", color: "#2AABEE", glow: "rgba(42,171,238,0.3)", icon: "✈️" },
+   { id: "bluesky", name: "Bluesky", color: "#0085ff", glow: "rgba(0,133,255,0.3)", icon: "☁️" },
+-  // Threads geçici olarak listeden kaldırıldı (17.09.2026): Zernio'nun Threads için kullandığı
+-  // Meta App (client_id 1410550293434390) OAuth authorize adımında kullanıcıyı consent ekranı
+-  // yerine threads.net'in genel hesap oluşturma/login akışına düşürüyor — bağlantı hiçbir zaman
+-  // tamamlanmıyor. Kök neden Zernio'nun Meta App yapılandırmasında (Threads API ürünü/App Review
+-  // durumu), bizim kodumuzda değil. Zernio bunu doğruladığında bu satırı geri ekle.
+-  // { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
++  // 17.09.2026: Threads, Zernio'nun Meta App (client_id 1410550293434390) OAuth authorize
++  // adımının kullanıcıyı consent ekranı yerine threads.net'in genel hesap oluşturma/login
++  // akışına düşürmesi (bağlantı hiçbir zaman tamamlanmıyor) nedeniyle geçici olarak
++  // listeden kaldırılmıştı. Kök neden Zernio'nun Meta App yapılandırmasında (Threads API
++  // ürünü/App Review durumu), bizim kodumuzda değildi.
++  // 18.09.2026: Kullanıcı isteğiyle test amacıyla tekrar görünür yapıldı — altta yatan
++  // Zernio/Meta App sorununun düzeldiği DOĞRULANMADI, sadece kullanıcı canlıda tekrar
++  // deneyip görmek istedi. Bağlantı denemesi yine aynı şekilde başarısız olursa, bu satır
++  // tekrar yorum satırına alınmalı.
++  { id: "threads", name: "Threads", color: "#ffffff", glow: "rgba(255,255,255,0.3)", icon: "🧵" },
+   { id: "whatsapp", name: "WhatsApp", color: "#25D366", glow: "rgba(37,211,102,0.3)", icon: "💬" },
+   { id: "discord", name: "Discord", color: "#5865F2", glow: "rgba(88,101,242,0.3)", icon: "👾" },
+ ];
+-- 
+2.43.0
+

@@ -1,0 +1,168 @@
+From fe4cceb83b2fdfe8c61797695dd851be418cb62b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 18:59:19 +0000
+Subject: [PATCH] =?UTF-8?q?G=C3=B6nderi=20ekran=C4=B1na=20(AiUretimScreen)?=
+ =?UTF-8?q?=20Bluesky=20i=C3=A7in=20platforma=20=C3=B6zel=20se=C3=A7enekle?=
+ =?UTF-8?q?r=20eklendi?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Web tarafında (flowweb) bulunan aynı eksiklik mobilde de vardı: Zernio'nun
+kendi Create Post panelinde Bluesky için "thread" ve "custom caption"
+(300 karakter) alanları varken, AiUretimScreen.js'de Bluesky hiç
+işlenmiyordu — state yok, platforma özel ayar bloğu yok, publishPost()
+içindeki platformsPayload eşlemesinde dal yok. Hesap ızgarasındaki renk
+mantığı da Bluesky'yi tanımıyordu.
+
+- Twitter/X ile aynı desende (isThread + caption) state ve
+  publishPost() platformOptions dalı eklendi.
+- Hesap ızgarasının renk mantığına bluesky için #0085ff eklendi.
+- Twitter bloğuyla aynı görsel dilde bir Bluesky ayar kartı (thread
+  anahtarı + 300 karakter sayaçlı özel açıklama) eklendi.
+- README.md'ye AGENTS.md kuralı gereği değişiklik dokümante edildi.
+
+Not: origin/main'de bu sırada ayrı bir commit (fe63050, "resolve invalid
+Ionicons names for newly added platforms") hesap ızgarasındaki Bluesky
+ikonunu zaten 'cloud' olarak düzeltmişti. Bu değişiklik ondan sonra
+rebase edilip yalnızca rengi ekleyecek şekilde uyarlandı, ikon
+mantığına dokunulmadı.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                     | 13 ++++
+ .../presentation/screens/AiUretimScreen.js    | 67 +++++++++++++++++--
+ 2 files changed, 73 insertions(+), 7 deletions(-)
+
+diff --git a/README.md b/README.md
+index c5fd6a3..f66fbbb 100644
+--- a/README.md
++++ b/README.md
+@@ -1152,3 +1152,16 @@ Mobil (`flow`) tarafında "Canlı Fetch" mimarisi (bkz. Adım 5, Sosyal Medya Ba
+ 5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni lex-direction: column ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
+ 6. **Flow Web - Takvim Scroll UX İyileştirmeleri:** Takvim ve Yoğunluk Haritası container'larına yatay kaydırma çubuklarını gizleyen CSS sınıfları eklendi. overscroll-behavior-x: contain eklenerek sağa-sola swipe yaparken tüm ekranın kayması (swipe to go back veya page scroll) engellendi, native mobil hissi yaratıldı.
+ 7. **Flow Web - Ülke Listesi Dropdown Renk Düzeltmesi:** Profil ekranındaki ülke, şehir, ilçe <select> etiketlerindeki <option>'ların varsayılan beyaz/açık renk arka planları #17151A olacak şekilde güncellenerek, üzerine gelen beyaz metinlerin okunamaması sorunu (koyu tema uyumsuzluğu) çözüldü.
++
++### [17.09.2026] Gönderi Ekranı (AiUretimScreen): Bluesky İçin Platforma Özel Seçenekler Eklendi
++
++**Sorun:** Web tarafında (flowweb, `sosyal-medya/share/page.tsx`) tespit edilen aynı eksiklik mobilde de vardı: Zernio'nun kendi "Create Post" panelinde Bluesky için "thread" ve "custom caption" (300 karakter) alanları bulunmasına rağmen, `AiUretimScreen.js`'de Bluesky'nin hiçbir işlemi yoktu — ne bir state, ne bir platforma özel ayar bloğu, ne de `publishPost()` içindeki `platformsPayload` eşlemesinde bir dal. Ayrıca bağlı hesap ızgarasındaki renk mantığı da (satır ~875) Bluesky'yi tanımıyor, varsayılan gri renge (`#A79E96`) düşüyordu.
++
++**Not:** Bu değişiklikten hemen önce ayrı bir düzeltmeyle (`fix(sosyal-medya): resolve invalid Ionicons names for newly added platforms`) hesap ızgarasındaki Bluesky ikonu zaten `cloud` (geçerli bir Ionicons adı) olarak düzeltilmişti; bu değişiklik yalnızca rengi (`#0085ff`) ekliyor, ikon mantığına dokunmuyor.
++
++**Çözüm:**
++1. Twitter/X ile aynı desende (`isThread` + `caption`) `bskyIsThread`/`bskyCustomCaption` state'i ve `publishPost()` içinde karşılık gelen `platformOptions` dalı eklendi.
++2. Hesap ızgarasındaki renk mantığına `bluesky` için `#0085ff` eklendi.
++3. Twitter bloğuyla birebir aynı görsel dilde (thread anahtarı + 300 karakter sayaçlı özel açıklama) bir Bluesky ayar kartı eklendi.
++
++**⚠️ Doğrulanmamış varsayım:** Web tarafındaki notla aynı — Bluesky için Zernio API'nin beklediği `platformSpecificData` alan adları (`isThread`, `caption`) resmi olarak teyit edilmedi, Zernio panelindeki UI ile bu codebase'in Twitter entegrasyonu birebir örtüştüğü için aynı adlandırma varsayıldı.
+diff --git a/src/modules/sosyal_medya/presentation/screens/AiUretimScreen.js b/src/modules/sosyal_medya/presentation/screens/AiUretimScreen.js
+index 6cdd747..c6d6850 100644
+--- a/src/modules/sosyal_medya/presentation/screens/AiUretimScreen.js
++++ b/src/modules/sosyal_medya/presentation/screens/AiUretimScreen.js
+@@ -242,6 +242,16 @@ export default function AiUretimScreen({ route, navigation }) {
+   const [tgChatId, setTgChatId] = useState('');
+   const [tgDisableNotification, setTgDisableNotification] = useState(false);
+ 
++  // Bluesky Settings
++  // 17.09.2026: Web tarafında (flowweb) aynı eksiklik bulunup düzeltildi —
++  // Zernio'nun kendi panelinde Bluesky için "thread" ve "custom caption"
++  // (300 karakter) alanları var ama bu ekranda Bluesky hiç işlenmiyordu.
++  // Alan adları (isThread/caption) Zernio API'de resmi olarak doğrulanmadı;
++  // bu ekrandaki Twitter/X entegrasyonuyla aynı adlandırma kullanıldı çünkü
++  // Zernio panelindeki UI birebir aynı (thread anahtarı + custom caption).
++  const [bskyIsThread, setBskyIsThread] = useState(false);
++  const [bskyCustomCaption, setBskyCustomCaption] = useState('');
++
+   const YOUTUBE_CATEGORIES = [
+     "Film & Animation", "Autos & Vehicles", "Music", "Pets & Animals", "Sports", 
+     "Travel & Events", "Gaming", "People & Blogs", "Comedy", "Entertainment", 
+@@ -411,6 +421,11 @@ export default function AiUretimScreen({ route, navigation }) {
+           privacyStatus: ytVisibility,
+           caption: ytCustomCaption || undefined
+         };
++      } else if (p === 'bluesky') {
++        platformOptions = {
++          isThread: bskyIsThread,
++          caption: bskyCustomCaption || undefined
++        };
+       }
+ 
+       return {
+@@ -857,13 +872,14 @@ export default function AiUretimScreen({ route, navigation }) {
+             {zernioAccounts.map((acc, index) => {
+               const isSelected = selectedPlatforms[acc.platform];
+               const platformId = acc.platform.toLowerCase();
+-              const platformColor = platformId === 'instagram' ? '#C2478D' : 
+-                                    platformId === 'facebook' ? '#1877F2' : 
+-                                    platformId === 'youtube' ? '#ff0000' : 
+-                                    platformId === 'twitter' ? '#1DA1F2' : 
+-                                    platformId === 'linkedin' ? '#0A66C2' : 
++              const platformColor = platformId === 'instagram' ? '#C2478D' :
++                                    platformId === 'facebook' ? '#1877F2' :
++                                    platformId === 'youtube' ? '#ff0000' :
++                                    platformId === 'twitter' ? '#1DA1F2' :
++                                    platformId === 'linkedin' ? '#0A66C2' :
++                                    platformId === 'bluesky' ? '#0085ff' :
+                                     platformId.includes('google') ? '#4285F4' : '#A79E96';
+-              
++
+               let iconName = `logo-${platformId}`;
+               if (platformId === 'twitter' || platformId === 'x') iconName = 'close';
+               else if (platformId === 'telegram') iconName = 'paper-plane';
+@@ -872,7 +888,7 @@ export default function AiUretimScreen({ route, navigation }) {
+               else if (platformId.includes('google')) iconName = 'business';
+ 
+               return (
+-                <TouchableOpacity 
++                <TouchableOpacity
+                   key={index}
+                   onPress={() => setSelectedPlatforms(prev => ({ ...prev, [acc.platform]: !prev[acc.platform] }))}
+                   className={`flex-row items-center justify-between rounded-lg border p-3 mb-3 w-[48%] ${isSelected ? 'bg-[#22B573]/10 border-[#22B573]/50' : 'bg-[#2A2631]/50 border-white/5'}`}
+@@ -1311,6 +1327,43 @@ export default function AiUretimScreen({ route, navigation }) {
+             </View>
+           )}
+ 
++        {/* --- BLUESKY SETTINGS --- */}
++        {selectedPlatforms['bluesky'] && (
++          <View className="mb-4 bg-[#2A2631]/50 rounded-xl p-4 border border-[#0085ff]/30">
++             <View className="flex-row items-center mb-4">
++               <Text style={{ fontSize: 18, marginRight: 8 }}>☁️</Text>
++               <Text className="text-[#F6F1EC] font-semibold text-sm">Bluesky</Text>
++             </View>
++
++             {/* Thread Toggle */}
++             <View className="flex-row items-center justify-between mb-2">
++                <Text className="text-[#A79E96] text-xs font-medium">thread</Text>
++                <TouchableOpacity
++                   activeOpacity={0.8} onPress={() => setBskyIsThread(!bskyIsThread)}
++                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
++                   accessibilityRole="switch"
++                   accessibilityLabel="Thread olarak paylaş"
++                   accessibilityState={{ checked: bskyIsThread }}
++                   className={`w-9 h-5 rounded-full px-0.5 justify-center ${bskyIsThread ? 'bg-[#22B573]' : 'bg-[#A79E96]/50'}`}
++                >
++                   <View className={`w-4 h-4 rounded-full bg-white ${bskyIsThread ? 'self-end' : 'self-start'}`} />
++                </TouchableOpacity>
++             </View>
++             {bskyIsThread && (
++                <Text className="text-[#A79E96]/70 text-[10px] mb-4">Ana metin ilk gönderi olur. Altına zincir eklenebilir.</Text>
++             )}
++
++             <Text className="text-[#A79E96] text-xs font-medium mb-1 mt-2">Özel Açıklama (Opsiyonel)</Text>
++             <TextInput
++                value={bskyCustomCaption} onChangeText={setBskyCustomCaption}
++                placeholder="Ana metni kullanmak için boş bırakın..." placeholderTextColor="rgba(185, 202, 203, 0.5)"
++                className="bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px]"
++                multiline textAlignVertical="top" maxLength={300}
++             />
++             <Text className="text-[#A79E96]/50 text-[10px] text-right">{bskyCustomCaption.length}/300</Text>
++          </View>
++        )}
++
+         {/* --- GOOGLE BUSINESS PROFILE SETTINGS --- */}
+         {selectedPlatforms['googlebusiness'] && (
+           <View className="mb-4">
+-- 
+2.43.0
+

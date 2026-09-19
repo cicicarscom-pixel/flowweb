@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import CropperModal from '@/components/CropperModal';
+import { PLATFORM_MEDIA_RULES } from '@/lib/platformRules';
 
 const PLATFORMS_DATA = [
   { id: "instagram", name: "Instagram", color: "#E1306C", icon: "fa-instagram" },
@@ -169,10 +170,44 @@ export default function SharePage() {
     }
   };
 
+  const [mediaDurationSec, setMediaDurationSec] = useState(0);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setIsImageCropped(false);
+      
+      const isVideo = file.type.startsWith('video/');
+      if (isVideo) {
+        const videoElement = document.createElement('video');
+        videoElement.preload = 'metadata';
+        videoElement.onloadedmetadata = () => {
+          URL.revokeObjectURL(videoElement.src);
+          const duration = videoElement.duration;
+          setMediaDurationSec(duration);
+          
+          let uncheckedPlatforms: string[] = [];
+          const updatedPlatforms = { ...selectedPlatforms };
+          for (const platform of Object.keys(updatedPlatforms)) {
+            if (updatedPlatforms[platform]) {
+              const rule = PLATFORM_MEDIA_RULES[platform.toLowerCase()];
+              if (rule && rule.maxDurationSec && duration > rule.maxDurationSec) {
+                updatedPlatforms[platform] = false;
+                uncheckedPlatforms.push(platform);
+              }
+            }
+          }
+          if (uncheckedPlatforms.length > 0) {
+            setSelectedPlatforms(updatedPlatforms);
+            alert(`Yüklediğiniz video ${Math.round(duration)} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:\n\n` +
+              uncheckedPlatforms.map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} (Max: ${PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec} sn)`).join('\n'));
+          }
+        };
+        videoElement.src = URL.createObjectURL(file);
+      } else {
+        setMediaDurationSec(0);
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setLocalImage(reader.result as string);
@@ -186,6 +221,16 @@ export default function SharePage() {
   const [newTagText, setNewTagText] = useState("");
 
   const togglePlatform = (id: string) => {
+    const isCurrentlySelected = selectedPlatforms[id];
+    
+    if (!isCurrentlySelected && localImage?.startsWith('data:video') && mediaDurationSec > 0) {
+      const rule = PLATFORM_MEDIA_RULES[id.toLowerCase()];
+      if (rule && rule.maxDurationSec && mediaDurationSec > rule.maxDurationSec) {
+        alert(`${id.charAt(0).toUpperCase() + id.slice(1)} platformunda en fazla ${rule.maxDurationSec} saniyelik video paylaşabilirsiniz (Yüklenen: ${Math.round(mediaDurationSec)} sn).`);
+        return;
+      }
+    }
+    
     setSelectedPlatforms(prev => ({ ...prev, [id]: !prev[id] }));
   };
 

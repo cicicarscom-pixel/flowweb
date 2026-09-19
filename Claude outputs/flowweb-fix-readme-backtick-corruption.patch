@@ -1,0 +1,82 @@
+From fc6562174ac3e2b92c8f0056c173d6ad212000bc Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 20:53:32 +0000
+Subject: [PATCH] =?UTF-8?q?fix(docs):=20README.md'deki=20backtick-yeme=20m?=
+ =?UTF-8?q?etin=20bozulmas=C4=B1n=C4=B1=20d=C3=BCzelt=20(8=20=C3=B6rnek)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+flow-repo ve ledger-repo'da bulunanla aynı kök nedenden (Antigravity'nin
+PowerShell tabanlı patch uygulama sürecinin backtick'i kaçış karakteri
+olarak yorumlaması: `` `a ``/`` `b ``/`` `f ``/`` `t ``/`` `e `` ->
+BEL/backspace/form-feed/tab/ESC) kaynaklanan 8 metin bozulması
+düzeltildi — bunlardan biri de bir kod bloğu açılışını
+("```text" -> "`" + TAB + "ext") etkilemişti. Sadece dokümantasyon
+metnini düzeltir, kod dosyalarına dokunmaz.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/README.md b/README.md
+index 86b7bb0..43ce82d 100644
+--- a/README.md
++++ b/README.md
+@@ -123,7 +123,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
+ 5. **Agent KurallarÄ±:** Web ve Mobil projelerin kalÄ±cÄ± hafÄ±zasÄ±na (AGENTS.md) Ã§apraz veritabanÄ± etkileÅŸimi hakkÄ±nda yeni "ğŸš¨ Kritik Kural: Ortak VeritabanÄ± EtkileÅŸimi" kuralÄ± iÅŸlendi.
+ 
+ ### [16.08.2026] Gelen Kutusu (Web) Senkronizasyon Hata Giderimi
+-1. **Gelen Kutusu Silinen Yorumlar Senkronizasyonu:** Silinen yorumlarin Supabase realtime sync dongusu ve edge function tarafindan tekrar getirilip geri gelmesi sorunu Web versiyonu (page.tsx) icinde de cozuldu. Silinen zernio_comment_id'ler i_communication_logs tablosunda zernio_deleted_comment platform markasi ile loglanip Web frontend tarafinda listeleme yapilmadan once filtrelenmesi saglandi.
++1. **Gelen Kutusu Silinen Yorumlar Senkronizasyonu:** Silinen yorumlarin Supabase realtime sync dongusu ve edge function tarafindan tekrar getirilip geri gelmesi sorunu Web versiyonu (page.tsx) icinde de cozuldu. Silinen zernio_comment_id'ler `ai_communication_logs` tablosunda zernio_deleted_comment platform markasi ile loglanip Web frontend tarafinda listeleme yapilmadan once filtrelenmesi saglandi.
+ 
+ ### [16.08.2026] Sosyal Medya Optimizasyonları (Post Silme ve Zamanlama)
+ 1. **Workigom Flow Özel Silme Modalı:** Web tarafındaki "Sadece panelden sil" veya "Platformlardan da sil" şeklindeki Zernio stili şık modal tasarımı tamamlandı. Silinen gönderiler için veritabanında "soft-delete" (`status = 'deleted'`) mantığı kullanıldı ve veri kaybı önlendi.
+@@ -298,7 +298,7 @@ Ağustos 2026 itibarıyla kullanıcı kararıyla AI Core altyapısı frontend (F
+ 
+ ## 2. Klasör Yapısı (ledger/supabase/functions/shared/)
+ 
+-`	ext
++```text
+ application/
+ ├── usecases/
+ │   └── HandleIncomingMessageUseCase.ts (Omnichannel Router & DI Consumer)
+@@ -436,11 +436,11 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
+ 
+ 
+ ### [01.09.2026] Mobil ve Web Modüllerinde Tasarım Eşitlemesi, CRM Entegrasyonu ve Bug Fix'ler
+-1. **Flow Mobil (React Native) - Müşteriler (CRM) Modülü:** Web tarafındaki "Müşteriler" mantığı mobil tarafa Clean Architecture ile (domain/entities/Customer, ICustomerRepository, SupabaseCustomerRepository) eklendi. Müşteriler, Supabase üzerinden customers ve ppointments join'lenerek ekranda listelendi. MusterilerScreen.js oluşturulup TabNavigator'a bağlandı.
++1. **Flow Mobil (React Native) - Müşteriler (CRM) Modülü:** Web tarafındaki "Müşteriler" mantığı mobil tarafa Clean Architecture ile (domain/entities/Customer, ICustomerRepository, SupabaseCustomerRepository) eklendi. Müşteriler, Supabase üzerinden customers ve `appointments` join'lenerek ekranda listelendi. MusterilerScreen.js oluşturulup TabNavigator'a bağlandı.
+ 2. **Flow Mobil - Kırık Import ve Bundle Crash Çözümleri:** WahaService.ts içindeki bozuk @infrastructure/api/supabaseClient importu düzeltilerek Metro Bundler'ın çökmesi (App.js bundling failed) giderildi. Ayrıca OAuth Redirect Uri config ayarları güncellenerek Supabase Whitelist sorunları etrafından dolaşıldı.
+ 3. **Flow Mobil - Master AI Toggle Kaldırılması:** BotYonetimiScreen.js'deki ana AI aç/kapat şalteri UI üzerinden kaldırılarak, alt platform (WhatsApp) şalterlerinin her zaman aktif görünebilmesi sağlandı.
+-4. **Flow Web (Next.js) - Takvim Saat Dilimi Bug Fix:** RandevuClient.tsx'in kullandığı sayfa seviyesindeki (page.tsx) 	oday değişkeni UTC olduğu için gece saatlerinde takvimi önceki günde (ör: hala Ağustos) göstermesine sebep oluyordu. Bu, yerel saat dilimi offset'i kullanılarak düzeltildi.
+-5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni lex-direction: column ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
++4. **Flow Web (Next.js) - Takvim Saat Dilimi Bug Fix:** RandevuClient.tsx'in kullandığı sayfa seviyesindeki (page.tsx) `today` değişkeni UTC olduğu için gece saatlerinde takvimi önceki günde (ör: hala Ağustos) göstermesine sebep oluyordu. Bu, yerel saat dilimi offset'i kullanılarak düzeltildi.
++5. **Flow Web - Randevu Ekranı Tasarımının Mobile Eşitlenmesi:** Web'deki iki sütunlu randevu takvimi ve yoğunluk haritası düzeni `flex-direction: column` ile tek sütun yapıldı. **Takvim** üstte, **Günlük Yoğunluk Haritası (Müsaitlik)** ortada ve **Randevu Listesi** en altta olacak şekilde dikey olarak sıralandı.
+ 6. **Flow Web - Takvim Scroll UX İyileştirmeleri:** Takvim ve Yoğunluk Haritası container'larına yatay kaydırma çubuklarını gizleyen CSS sınıfları eklendi. overscroll-behavior-x: contain eklenerek sağa-sola swipe yaparken tüm ekranın kayması (swipe to go back veya page scroll) engellendi, native mobil hissi yaratıldı.
+ 7. **Flow Web - Ülke Listesi Dropdown Renk Düzeltmesi:** Profil ekranındaki ülke, şehir, ilçe <select> etiketlerindeki <option>'ların varsayılan beyaz/açık renk arka planları #17151A olacak şekilde güncellenerek, üzerine gelen beyaz metinlerin okunamaması sorunu (koyu tema uyumsuzluğu) çözüldü.
+ 
+@@ -508,15 +508,15 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
+ ### [07.09.2026] Zernio Medya İçerikleri İçin Teknik Borç ve Mimari Planlama ( media_type Refaktörü )
+ 
+ **Durum ve Bulgu:**
+-Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), lowweb tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
++Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), `flowweb` tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
+ 
+ **Orta Vadeli Doğru Çözüm (Technical Debt):**
+ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğrudan veritabanında tutmak ve frontend'de buna göre render işlemi yapmak şarttır.
+ 
+ **Planlanan Değişiklikler:**
+ 1. **Veritabanı (ledger reposu):** posts tablosuna media_type adında yeni bir kolon (text veya text[]) eklenecek.
+-2. **Senkronizasyon (zernio-client):** Zernio'nun listPosts yanıtında bulunan mediaItems içerisindeki orijinal 	ype bilgisi (örn. "video" veya "image") çıkarılacak ve bu yeni media_type kolonuna yazılacak.
+-3. **Arayüz (lowweb reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
++2. **Senkronizasyon (zernio-client):** Zernio'nun listPosts yanıtında bulunan mediaItems içerisindeki orijinal `type` bilgisi (örn. "video" veya "image") çıkarılacak ve bu yeni media_type kolonuna yazılacak.
++3. **Arayüz (`flowweb` reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
+ 
+ ### [11.09.2026] Zernio Sosyal Medya Modülü: Yarış Durumu (Race Condition) ve Unpublish Kurgusu Çözümü
+ 1. **Realtime Fetch ve Alert Spam Çözümü:** `posts/page.tsx`'te Supabase Realtime olaylarının sebep olduğu ardışık ve redundant veri çekme (fetch) işlemleri `debounceTimer` ile tekilleştirildi ve `requestSeq` (Sequence / stale state koruması) eklenerek yarış durumları kökten çözüldü. Ayrıca `sosyal-medya/page.tsx`'te sekme odaklanmalarında sürekli tekrar eden cross-tenant conflict (çakışma) uyarıları `shownConflictsRef` kullanılarak oturum bazında tekilleştirildi.
+-- 
+2.43.0
+

@@ -1,0 +1,57 @@
+From 9667474fee60558df24905c7c05be831134b8d29 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 21:06:02 +0000
+Subject: [PATCH] =?UTF-8?q?fix(docs):=20README.md'de=20kalan=203=20k=C3=BC?=
+ =?UTF-8?q?=C3=A7=C3=BCk=20d=C3=BCzeltme=20(kod=20fence=20+=20flowweb=20b?=
+ =?UTF-8?q?=C3=B6l=C3=BCnmesi)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bir önceki düzeltme turunda (2fef9f8) neredeyse tüm örnekler doğru
+onarıldı, ama üç küçük sorun kaldı:
+- Kod bloğu açılışı 3 yerine 4 backtick ile yazılmış: "````text" ->
+  "```text".
+- "flowweb" kelimesi iki yerde "`flow`web" olarak yanlış bölünmüştü
+  (backtick span'i kelimenin ortasında bitiyordu) -> "`flowweb`".
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/README.md b/README.md
+index e9f1762..0444fe4 100644
+--- a/README.md
++++ b/README.md
+@@ -298,7 +298,7 @@ Ağustos 2026 itibarıyla kullanıcı kararıyla AI Core altyapısı frontend (F
+ 
+ ## 2. Klasör Yapısı (ledger/supabase/functions/shared/)
+ 
+-````text
++```text
+ application/
+ ├── usecases/
+ │   └── HandleIncomingMessageUseCase.ts (Omnichannel Router & DI Consumer)
+@@ -508,7 +508,7 @@ waha-webhook ve zernio-webhook uç noktalarındaki eski 'God Object' implementas
+ ### [07.09.2026] Zernio Medya İçerikleri İçin Teknik Borç ve Mimari Planlama ( media_type Refaktörü )
+ 
+ **Durum ve Bulgu:**
+-Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), `flow`web tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
++Zernio'dan gelen .blob uzantılı medya bağlantıları (https://media.zernio.com/media/...blob), hem resim hem de video dosyaları için kullanılabiliyor. URL yapısı dosya türünü belli etmediği için (örneğin .mp4 gibi bir uzantı barındırmıyor), `flowweb` tarafında bu medyanın resim (<img />) olarak mı yoksa video (<video />) olarak mı render edilmesi gerektiğini yalnızca URL'e bakarak anlamak teknik olarak güvenilir değildir. Geçici olarak .blob içeren bağlantıları video olarak render edecek şekilde frontend güncellenmiştir (çünkü mevcut örnekler video idi), ancak bu gelecekte bir resim postu geldiğinde boş bir video oynatıcı görünmesine yol açacaktır.
+ 
+ **Orta Vadeli Doğru Çözüm (Technical Debt):**
+ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğrudan veritabanında tutmak ve frontend'de buna göre render işlemi yapmak şarttır.
+@@ -516,7 +516,7 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
+ **Planlanan Değişiklikler:**
+ 1. **Veritabanı (ledger reposu):** posts tablosuna media_type adında yeni bir kolon (text veya text[]) eklenecek.
+ 2. **Senkronizasyon (zernio-client):** Zernio'nun listPosts yanıtında bulunan mediaItems içerisindeki orijinal `type` bilgisi (örn. "video" veya "image") çıkarılacak ve bu yeni media_type kolonuna yazılacak.
+-3. **Arayüz (`flow`web reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
++3. **Arayüz (`flowweb` reposu):** sosyal-medya/posts/page.tsx ve gelen-kutusu/page.tsx sayfalarında dosya uzantısını kontrol eden Regex (/\.(mp4|blob)/) tamamen kaldırılacak. Bunun yerine, doğrudan media_type === 'video' kontrolü yapılarak render tercihi (<img> vs <video>) belirlenecek.
+ 
+ ### [11.09.2026] Zernio Sosyal Medya Modülü: Yarış Durumu (Race Condition) ve Unpublish Kurgusu Çözümü
+ 1. **Realtime Fetch ve Alert Spam Çözümü:** `posts/page.tsx`'te Supabase Realtime olaylarının sebep olduğu ardışık ve redundant veri çekme (fetch) işlemleri `debounceTimer` ile tekilleştirildi ve `requestSeq` (Sequence / stale state koruması) eklenerek yarış durumları kökten çözüldü. Ayrıca `sosyal-medya/page.tsx`'te sekme odaklanmalarında sürekli tekrar eden cross-tenant conflict (çakışma) uyarıları `shownConflictsRef` kullanılarak oturum bazında tekilleştirildi.
+-- 
+2.43.0
+

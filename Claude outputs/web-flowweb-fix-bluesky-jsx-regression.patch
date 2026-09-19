@@ -1,0 +1,58 @@
+From 53356679440b8eacac3a65eb3668a560863266e4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 19:02:17 +0000
+Subject: [PATCH] =?UTF-8?q?fix(sosyal-medya):=2047c7cf0'da=20bozulan=20Blu?=
+ =?UTF-8?q?esky=20thread=20anahtar=C4=B1=20JSX'ini=20onar?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Antigravity'nin patch'i (mobile-flow-add-bluesky-share-options değil,
+web-flowweb-add-bluesky-share-options.patch) manuel/git apply ile
+entegre edilirken share/page.tsx'te iki bozulma oluşmuş, "harfiyen
+uygulandı" olarak bildirilmişti — bağımsız doğrulamada (git diff +
+esbuild parse check) ikisi de gerçek bulundu:
+
+1. Thread toggle butonunun className'indeki template literal
+   (backtick'ler + ${bskyIsThread ? ... : ...} ternary'si) tamamen
+   kaybolmuş, geriye `{w-4 h-4 rounded-sm border ...}` gibi geçersiz
+   bir JSX ifadesi kalmıştı. Bu, esbuild ile doğrulandı:
+   "Expected '}' but found 'h'" — yani bu haliyle Next.js build'i
+   KIRIKTI, sayfa hiç derlenemezdi.
+2. Kod yorumundaki "Zernio'dan" kelimesi "Zernio'from" olarak
+   bozulmuştu (kozmetik ama yanlış).
+
+Her iki satır da orijinal patch'teki haline geri getirildi; düzeltme
+sonrası esbuild parse-check temiz.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ src/app/(dashboard)/sosyal-medya/share/page.tsx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/app/(dashboard)/sosyal-medya/share/page.tsx b/src/app/(dashboard)/sosyal-medya/share/page.tsx
+index 2b45c72..f28b5ee 100644
+--- a/src/app/(dashboard)/sosyal-medya/share/page.tsx
++++ b/src/app/(dashboard)/sosyal-medya/share/page.tsx
+@@ -92,7 +92,7 @@ export default function SharePage() {
+   // birebir aynı (thread toggle + custom caption). zernio-client zaten
+   // platformSpecificData'yı platform bağımsız, olduğu gibi SDK'ya geçiriyor
+   // (bkz. ledger-repo/supabase/functions/zernio-client/index.ts, ~satır 874),
+-  // bu yüzden burada yalnızca frontend eksikti. Zernio'from hata dönerse bu
++  // bu yüzden burada yalnızca frontend eksikti. Zernio'dan hata dönerse bu
+   // alan adları önce kontrol edilmeli.
+   const [bskyIsThread, setBskyIsThread] = useState(false);
+   const [bskyCustomCaption, setBskyCustomCaption] = useState('');
+@@ -800,7 +800,7 @@ export default function SharePage() {
+                     <span className="text-[#F6F1EC] font-semibold text-sm">Bluesky</span>
+                   </div>
+                   <button onClick={() => setBskyIsThread(!bskyIsThread)} className="flex items-center gap-2 mb-4 group">
+-                    <div className={w-4 h-4 rounded-sm border flex items-center justify-center transition-colors }>
++                    <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${bskyIsThread ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
+                       {bskyIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
+                     </div>
+                     <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.bluesky.threadToggle")}</span>
+-- 
+2.43.0
+

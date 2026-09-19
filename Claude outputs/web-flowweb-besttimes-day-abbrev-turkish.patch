@@ -1,0 +1,56 @@
+From 196bf7cbf5c4018b2b9cfc7ceea4a01b01183a59 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 21:54:47 +0000
+Subject: [PATCH] =?UTF-8?q?fix(analiz):=20Best=20Times=20=C3=B6zet=20sat?=
+ =?UTF-8?q?=C4=B1r=C4=B1ndaki=20g=C3=BCn=20k=C4=B1saltmas=C4=B1=20T=C3=BCr?=
+ =?UTF-8?q?k=C3=A7ele=C5=9Ftirildi?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Isı haritası grid'i Türkçe (Pzt/Sal) gün kısaltmaları kullanırken alt
+özet satırı İngilizce (Mon/Tue) kullanıyordu — mobil (flow-repo) ile
+eşzamanlı olarak düzeltildi.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                           | 6 ++++++
+ src/app/(dashboard)/analiz/page.tsx | 6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index 0444fe4..2aa8d82 100644
+--- a/README.md
++++ b/README.md
+@@ -554,3 +554,9 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
+ **Kök neden:** `getPlatformIcon()` fonksiyonunda `bluesky` için bir karşılık (`case`) yoktu ve varsayılan (`default`) değer olan `fa-circle-dot`'a düşüyordu. Bu varsayılan değer `fa-brands` önekiyle birleştirildiğinde geçersiz bir sınıf kombinasyonu oluşturuyor ve FontAwesome (ikon kütüphanesi) geçersiz ikon üretiyordu.
+ 
+ **Çözüm:** Yeni bir `renderPlatformIcon(platform, idx)` fonksiyonu tanımlandı. Bluesky için doğrudan projenin konvansiyonuna uyan marka rengiyle (`#0085ff`) emojili (`☁️`) `span` elementi render edilmesi sağlandı; diğer tüm platformlar için eski `fa-brands` mantığı aynen korundu.
++
++### [17.09.2026] Analiz Ekranı: Best Times Özet Satırındaki Dil Tutarsızlığı Düzeltildi (Mon/Tue → Pzt/Sal)
++
++**İstek:** Mobil-web parite çalışması sırasında (bkz. `flow-repo/README.md`) fark edilen bir detay — Best Times ısı haritasının (`analiz/page.tsx`) üst grid'i Türkçe gün kısaltmaları (Pzt/Sal/Çar...) kullanırken, altındaki "en iyi 2 zaman" özet satırı İngilizce (Mon/Tue/Wed...) kısaltmalar kullanıyordu. Kullanıcı bu tutarsızlığın düzeltilmesini istedi.
++
++**Çözüm:** Özet satırının `days` dizisi, üstteki grid ile aynı Türkçe kısaltmalara (`["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]`) çevrildi. Mobil taraftaki (`flow-repo`, `AnalyticsScreen.js`) aynı satır da eşzamanlı olarak güncellendi, böylece iki platform hem kendi içlerinde hem birbirleriyle tutarlı. "Best times:" öneki ve saat gösterimindeki am/pm ifadesi kapsam dışı bırakıldı (işaret edilen tutarsızlık yalnızca gün kısaltmalarıyla ilgiliydi).
+diff --git a/src/app/(dashboard)/analiz/page.tsx b/src/app/(dashboard)/analiz/page.tsx
+index 7709f01..5a64a47 100644
+--- a/src/app/(dashboard)/analiz/page.tsx
++++ b/src/app/(dashboard)/analiz/page.tsx
+@@ -950,8 +950,12 @@ export default function AnalyticsScreen() {
+             </div>
+             <div style={{ marginTop: 16, color: "var(--text-secondary)", fontSize: 12, fontWeight: 500 }}>
+                {(() => {
++                  // 17.09.2026: Gün kısaltmaları üstteki grid'le tutarlı olması
++                  // için Türkçeye çevrildi (bkz. README — eskiden İngilizce
++                  // Mon/Tue/... kullanılıyordu; mobil tarafta da (flow-repo,
++                  // AnalyticsScreen.js) aynı düzeltme eşzamanlı olarak yapıldı).
+                   const sorted = [...zernioData.bestTimes].sort((a,b) => (b.avg_engagement || 0) - (a.avg_engagement || 0)).slice(0, 2);
+-                  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
++                  const days = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+                   const texts = sorted.map(s => `${days[s.day_of_week]} ${s.hour}${s.hour < 12 ? 'am' : 'pm'} · ${s.avg_engagement}`);
+                   return texts.length > 0 ? `Best times: ${texts.join(' · ')}` : '';
+                })()}
+-- 
+2.43.0
+

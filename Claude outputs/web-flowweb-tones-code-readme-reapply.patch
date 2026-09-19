@@ -1,0 +1,68 @@
+From 9dd30e1b64a5b7f3af863deb4426286581fd7ba7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 22:06:20 +0000
+Subject: [PATCH] =?UTF-8?q?feat(ai-asistan):=20Komik/Resmi/Samimi=20=C3=BC?=
+ =?UTF-8?q?slup=20kartlar=C4=B1na=20g=C3=B6rsel=20eklendi?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Kullanıcının public/ai-asistan/tones/ altına yerleştirdiği 3 yeni PNG
+(komik/resmi/samimi), diğer 5 mizaçla aynı desende TONES'a avatarUrl
+olarak bağlandı. "Standart" kasıtlı olarak emoji ile bırakıldı. Mobil
+(flow-repo/moods.ts) ile eşzamanlı yapıldı.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                      | 10 ++++++++++
+ src/components/ai-asistan/AICharacterPanel.tsx | 13 ++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/README.md b/README.md
+index 2aa8d82..4a5fe4b 100644
+--- a/README.md
++++ b/README.md
+@@ -560,3 +560,13 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
+ **İstek:** Mobil-web parite çalışması sırasında (bkz. `flow-repo/README.md`) fark edilen bir detay — Best Times ısı haritasının (`analiz/page.tsx`) üst grid'i Türkçe gün kısaltmaları (Pzt/Sal/Çar...) kullanırken, altındaki "en iyi 2 zaman" özet satırı İngilizce (Mon/Tue/Wed...) kısaltmalar kullanıyordu. Kullanıcı bu tutarsızlığın düzeltilmesini istedi.
+ 
+ **Çözüm:** Özet satırının `days` dizisi, üstteki grid ile aynı Türkçe kısaltmalara (`["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"]`) çevrildi. Mobil taraftaki (`flow-repo`, `AnalyticsScreen.js`) aynı satır da eşzamanlı olarak güncellendi, böylece iki platform hem kendi içlerinde hem birbirleriyle tutarlı. "Best times:" öneki ve saat gösterimindeki am/pm ifadesi kapsam dışı bırakıldı (işaret edilen tutarsızlık yalnızca gün kısaltmalarıyla ilgiliydi).
++
++### [17.09.2026] AI Asistan Üslup Kartları: Komik/Resmi/Samimi İçin Görsel Eklendi
++
++**İstek:** Kullanıcı, hem web hem mobil (`flow-repo`) "AI Asistan" bölümündeki üslup seçim kartlarında Resmi/Samimi/Komik için artık emoji yerine kendi sağladığı görselleri kullanmamızı istedi; dosyaları bu reponun `public/ai-asistan/tones/` klasörüne (`resmi`, `samimi`, `komik` isimleriyle) kendisi yerleştirdi.
++
++**Not (bu oturumun kısıtı):** Bu session, kullanıcının bilgisayarına bağlı değildi (device bridge bağlantısı yoktu), bu yüzden klasörü doğrudan göremedim/dosya uzantısını teyit edemedim. Kullanıcıya sorup `.png` olduğunu (diğer 5 mizaç görseliyle — `neseli.png`, `sakin.png`, `dedikoducu.png`, `huysuz.png`, `sinirli.png` — aynı konvansiyon) teyit ettirdim.
++
++**Çözüm:** `AICharacterPanel.tsx`'teki `TONES` dizisinde `Komik`/`Resmi`/`Samimi` girdilerine, mevcut 5 mizaçla (Neşeli/Sakin/Dedikoducu/Huysuz/Sinirli) aynı desende `avatarUrl: "/ai-asistan/tones/{komik,resmi,samimi}.png"` eklendi. `PersonaCard` zaten `avatarUrl` varsa görseli, yoksa emojiyi gösteriyor (bkz. `ToneCarousel.tsx`'teki mevcut yorum), bu yüzden başka bir render değişikliği gerekmedi. Mobil tarafta (`flow-repo/moods.ts`) da aynı üçlüye, dosyanın zaten kullandığı `TONE_AVATAR_BASE` (`https://flow.workigom.com/ai-asistan/tones`) sabitiyle eşzamanlı olarak `avatarUrl` eklendi — mobil zaten bu reponun barındırdığı statik PNG'lere uzaktan URL ile bağlanıyor. "Standart" kasıtlı olarak dokunulmadı (kullanıcının özellikle istediği robot 🤖 teması, hem web hem mobilde emoji ile kalmaya devam ediyor).
++
++**Bilinen risk:** Uzantı `.png` olarak varsayıldı (kullanıcı onayıyla). Farklıysa `avatarUrl` yolları 404 verir ve kartlar otomatik olarak emojiye geri döner (build kırılmaz, sadece eski görünüm sessizce devam eder). Antigravity, `public/ai-asistan/tones/` altındaki 3 yeni PNG dosyasını bu patch'in kod değişikliğiyle birlikte `git add` etmeli — patch sadece kod diff'ini içerir, ikili görsel dosyaları içermez (dosyalar zaten kullanıcının bilgisayarında doğru klasörde duruyor).
+diff --git a/src/components/ai-asistan/AICharacterPanel.tsx b/src/components/ai-asistan/AICharacterPanel.tsx
+index d70d438..705cbb9 100644
+--- a/src/components/ai-asistan/AICharacterPanel.tsx
++++ b/src/components/ai-asistan/AICharacterPanel.tsx
+@@ -82,13 +82,16 @@ const ROLES: (PillItem & { avatarUrl: string })[] = [
+ 
+ // Üslup: mevcut 4 tanesi aynen korundu (organization_ai_settings.tone
+ // kayıtlarıyla uyum için id'ler değişmedi), üzerine 5 yeni mizaç eklendi.
+-// Görseli olmayanlar (Standart/Komik/Resmi/Samimi) emoji ile kalıyor —
+-// "Standart" için robot emojisi, tıpkı KARAKTER'deki Standart kartı gibi.
++// 17.09.2026: Kullanıcı Komik/Resmi/Samimi için de birer görsel sağladı
++// (public/ai-asistan/tones/{komik,resmi,samimi}.png, diğer 5 mizaçla aynı
++// isimlendirme/konvansiyon) — artık sadece "Standart" emoji ile kalıyor
++// (kullanıcının web tarafında özellikle istediği robot teması, bkz.
++// dosya başı not ve mobil tarafın aynı gerekçeyi taşıyan moods.ts'i).
+ const TONES: (PillItem & { avatarUrl?: string })[] = [
+   { id: "Standart", label: "Standart", icon: "🤖" },
+-  { id: "Komik", label: "Komik", icon: "😆" },
+-  { id: "Resmi", label: "Resmi", icon: "👔" },
+-  { id: "Samimi", label: "Samimi", icon: "🤗" },
++  { id: "Komik", label: "Komik", icon: "😆", avatarUrl: "/ai-asistan/tones/komik.png" },
++  { id: "Resmi", label: "Resmi", icon: "👔", avatarUrl: "/ai-asistan/tones/resmi.png" },
++  { id: "Samimi", label: "Samimi", icon: "🤗", avatarUrl: "/ai-asistan/tones/samimi.png" },
+   { id: "Neşeli", label: "Neşeli", icon: "😄", avatarUrl: "/ai-asistan/tones/neseli.png" },
+   { id: "Sakin", label: "Sakin", icon: "😌", avatarUrl: "/ai-asistan/tones/sakin.png" },
+   { id: "Dedikoducu", label: "Dedikoducu", icon: "🗣️", avatarUrl: "/ai-asistan/tones/dedikoducu.png" },
+-- 
+2.43.0
+

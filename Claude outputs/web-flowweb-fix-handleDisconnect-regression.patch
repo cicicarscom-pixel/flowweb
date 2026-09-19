@@ -1,0 +1,43 @@
+From 2f0aa9b44d77611312eeb7acb0673d68a29961f4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 17:23:43 +0000
+Subject: [PATCH] fix(sosyal-medya): remove regressed redundant .update() call
+ in handleDisconnect
+
+The client-side .update({is_active:false}) call on integration.social_accounts
+that was removed in 392b346 (it always fails with 42501 permission denied since
+that schema's table has no UPDATE policy for authenticated, and is redundant
+since zernio-client's disconnect-account action already deletes the row via
+service-role) was reintroduced during manual integration of the Threads-hiding
+patch. Removing it again and restoring the explanatory comment.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ src/app/(dashboard)/sosyal-medya/page.tsx | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/app/(dashboard)/sosyal-medya/page.tsx b/src/app/(dashboard)/sosyal-medya/page.tsx
+index dbe4632..af7dc38 100644
+--- a/src/app/(dashboard)/sosyal-medya/page.tsx
++++ b/src/app/(dashboard)/sosyal-medya/page.tsx
+@@ -227,7 +227,15 @@ export default function SosyalMedyaPage() {
+         return;
+       }
+ 
+-      await supabase.schema('integration').from('social_accounts').update({ is_active: false }).eq('zernio_account_id', accountId);
++      // NOT: Burada önceden ayrıca bir client-side .update({is_active:false}) çağrısı
++      // vardı. zernio-client edge function'ı artık kaydı service-role ile doğrudan
++      // SİLDİĞİ için (yukarıdaki invoke başarılıysa satır zaten yok), bu ikinci çağrı
++      // hem gereksizdi hem de authenticated rolünün bu tabloda UPDATE yetkisi olmadığı
++      // için her seferinde "permission denied for table social_accounts" (42501)
++      // hatası atıp konsolu kirletiyordu. Silme işleminin kendisini engellemiyordu
++      // ama yanıltıcıydı; kaldırıldı (16.09.2026, kullanıcının DevTools ekran
++      // görüntüsüyle tespit edildi). 17.09.2026: Threads-gizleme yamasının manuel
++      // entegrasyonu sırasında bu satır yanlışlıkla geri gelmişti — tekrar kaldırıldı.
+       setAccounts(prev => prev.filter(acc => acc.zernio_account_id !== accountId));
+       fetchAccounts();
+     } catch (err) {
+-- 
+2.43.0
+

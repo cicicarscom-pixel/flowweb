@@ -1,0 +1,83 @@
+From 1383b08188811be1811833c2dc37377b6a2a42aa Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 19:28:42 +0000
+Subject: [PATCH] =?UTF-8?q?fix(sosyal-medya):=20G=C3=B6nderiler=20listesin?=
+ =?UTF-8?q?de=20eksik/k=C4=B1r=C4=B1k=20Bluesky=20ikonunu=20d=C3=BCzelt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+getPlatformIcon() Bluesky için bir case tanımlamıyordu, bu yüzden fa-circle-dot'a
+(solid stil) düşüp fa-brands öneki ile geçersiz bir sınıf kombinasyonu oluşturuyor
+ve kırık/boş bir ikon olarak render oluyordu.
+
+Projenin diğer yerlerinde (sosyal-medya/page.tsx, share/page.tsx) zaten kullanılan
+☁️ emoji + #0085ff renk konvansiyonuna uyularak yeni bir renderPlatformIcon()
+yardımcı fonksiyonu eklendi; yalnızca Bluesky için emoji render ediliyor, diğer
+platformlar mevcut fa-brands mantığını koruyor.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md                                     |  8 +++++++
+ .../(dashboard)/sosyal-medya/posts/page.tsx   | 21 ++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index 1b55377..5cfd671 100644
+--- a/README.md
++++ b/README.md
+@@ -546,3 +546,11 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
+ 4. `messages/{tr,en,de}.json`'a `sharePage.bluesky.threadToggle` / `threadDescription` anahtarları eklendi (özel açıklama alanı zaten paylaşılan `sharePage.platforms.customCaptionLabel/customCaptionPlaceholder` anahtarlarını kullanıyor).
+ 
+ **⚠️ Doğrulanmamış varsayım:** Bluesky için Zernio API'nin beklediği `platformSpecificData` alan adları (`isThread`, `caption`) resmi olarak teyit edilmedi — Zernio'nun ekran görüntüsündeki UI (thread anahtarı + custom caption) bu codebase'in Twitter/X entegrasyonuyla birebir aynı olduğu için aynı adlandırma varsayıldı. Zernio'dan bir alan adı hatası dönerse önce bu isimlendirme kontrol edilmeli.
++
++### [17.09.2026] "Sosyal Medya" Gönderi Listesinde Kırık/Eksik Bluesky İkonu Düzeltildi
++
++**Sorun:** Kullanıcı ekran görüntüsüyle bildirdi: `/sosyal-medya/posts` sayfasındaki gönderi listesinde Bluesky etiketli gönderilerin platform ikonu, küçük kırık/boş bir kare olarak görünüyordu.
++
++**Kök neden:** `posts/page.tsx`'teki `getPlatformIcon()` fonksiyonunun switch/case listesinde `bluesky` hiç tanımlı değildi, bu yüzden `default: return "fa-circle-dot"` dalına düşüyordu. Render satırı (`<i className={\`fa-brands ${getPlatformIcon(platName)}\`}>`) bu dönüş değerini her zaman `fa-brands` (marka ikonları) önekiyle birleştiriyor; ama `fa-circle-dot` bir "solid" stil ikonudur, `fa-brands` ile birlikte kullanılamaz — bu geçersiz sınıf kombinasyonu görünmez/kırık bir glyph olarak render oluyordu. (Projenin kullandığı Font Awesome kitinde ayrıca gerçek bir `fa-bluesky` marka ikonu da yok.)
++
++**Çözüm:** `/sosyal-medya` (Yeni Hesap Bağla) ve Paylaşım Merkezi'nde (`share/page.tsx`) zaten kurulu olan proje konvansiyonuna uyularak — Bluesky için FontAwesome yerine "☁️" emoji (`#0085ff` rengiyle) kullanılıyor — yeni bir `renderPlatformIcon(platformName, idx)` yardımcı fonksiyonu eklendi: `bluesky` için emoji `<span>` döndürüyor, diğer tüm platformlar için mevcut `fa-brands` + `getPlatformIcon()` mantığını koruyor. Gönderi listesindeki ikon render çağrısı bu yeni fonksiyonu kullanacak şekilde güncellendi; `getPlatformIcon()`'un kendisi (diğer platformlar için) değiştirilmedi.
+diff --git a/src/app/(dashboard)/sosyal-medya/posts/page.tsx b/src/app/(dashboard)/sosyal-medya/posts/page.tsx
+index 94e9b29..d362969 100644
+--- a/src/app/(dashboard)/sosyal-medya/posts/page.tsx
++++ b/src/app/(dashboard)/sosyal-medya/posts/page.tsx
+@@ -296,6 +296,25 @@ export default function TumGonderilerPage() {
+     }
+   };
+ 
++  // 17.09.2026: Bluesky için Font Awesome'da "fa-brands" ile uyumlu bir marka
++  // ikonu yok (bu projenin kullandığı kit sürümünde fa-bluesky glyph'i
++  // bulunmuyor); önceki kod bu yüzden bilinmeyen platform olarak "fa-circle-dot"a
++  // düşüyor ve bunu "fa-brands" ile birleştirince geçersiz bir sınıf kombinasyonu
++  // (kırık/boş ikon) oluşuyordu. sosyal-medya/page.tsx'teki PLATFORMS_DATA'da
++  // zaten kurulu olan "☁️" emoji + #0085ff renk konvansiyonuna uyularak burada da
++  // Bluesky için ayrı bir emoji render yolu eklendi.
++  const renderPlatformIcon = (platformName: string, idx: number) => {
++    const pLower = platformName.toLowerCase();
++    if (pLower === 'bluesky') {
++      return (
++        <span key={idx} className="text-[14px] leading-none" style={{ color: '#0085ff' }} title="Bluesky">
++          ☁️
++        </span>
++      );
++    }
++    return <i key={idx} className={`fa-brands ${getPlatformIcon(platformName)} text-[14px] text-[#F6F1EC]`}></i>;
++  };
++
+   return (
+     <div className="flex-1 flex flex-col h-full overflow-hidden text-on-surface">
+       {/* Filters */}
+@@ -407,7 +426,7 @@ export default function TumGonderilerPage() {
+                     {platformsArray.map((platObj: any, idx: number) => {
+                       const platName = typeof platObj === 'string' ? platObj : platObj.platform;
+                       if (!platName) return null;
+-                      return <i key={idx} className={`fa-brands ${getPlatformIcon(platName)} text-[14px] text-[#F6F1EC]`}></i>;
++                      return renderPlatformIcon(platName, idx);
+                     })}
+                   </div>
+ 
+-- 
+2.43.0
+

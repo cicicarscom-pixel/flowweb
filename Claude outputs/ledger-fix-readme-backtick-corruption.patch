@@ -1,0 +1,127 @@
+From 762b75a3c6c82787074b07f298b25267bb50482b Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 20:50:06 +0000
+Subject: [PATCH 1/2] =?UTF-8?q?fix(docs):=20README.md'deki=20backtick-yeme?=
+ =?UTF-8?q?=20metin=20bozulmas=C4=B1n=C4=B1=20d=C3=BCzelt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Antigravity'nin patch uygulama işlemi (replace_file_content, satır
+satır) sırasında backtick karakterleri ve hemen ardından gelen ilk
+harf sistematik olarak siliniyor/kontrol karakterlerine dönüşüyor
+(örn. `flow-reset-ai-data` -> "low-reset-ai-data", `notifications` ->
+"otifications"). Bu, daha önce görülen PowerShell ${...} interpolasyon
+bozulmasıyla aynı kök nedenin farklı bir belirtisi olabilir.
+
+Bu commit iki şeyi düzeltiyor:
+1. Bugünkü "Tehlikeli Bölge" analytics_cache değişikliğinin README
+   girdisindeki bozulmayı (7 backtick çifti etkilenmiş).
+2. Aynı bozulma deseninin çok daha önceden (muhtemelen geçmiş bir
+   Antigravity uygulamasından) dosyada kalmış 9 ek örneğini — ekosistem
+   özeti bölümündeki `ai_muhasebeci`/`flow` domain adları ve [03.08.2026]
+   günlüğündeki dosya yolları/video adları.
+
+Kod tarafında (flow-reset-ai-data/index.ts) hiçbir bozulma yok, bu
+commit yalnızca dokümantasyonu düzeltiyor.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/README.md b/README.md
+index 05803bc..b24fa65 100644
+--- a/README.md
++++ b/README.md
+@@ -10,8 +10,8 @@ Workigom projesi monorepo mimarisinden bağımsız ve modüler 4 ayrı projeye (
+    - **Görev:** Ana landing page ve pazarlama sitesidir. /flow ve /ledger tanıtım sayfalarını içerir. Kullanıcı kayıt/giriş işlemlerini yürütmez, doğrudan uygulamanın login sayfasına yönlendirir.
+    
+ 2. **Workigom Flow (Ana Uygulama)**
+-   - **Repo:** cicicarscom-pixel/flow (Eski adıyla i_muhasebeci)
+-   - **Domain:** low.workigom.com
++   - **Repo:** cicicarscom-pixel/flow (Eski adıyla `ai_muhasebeci`)
++   - **Domain:** `flow`.workigom.com
+    - **Görev:** Flow'un gerçek yapay zeka ve otomasyon uygulamasıdır. Supabase ve arka plan API'lerine bağlıdır. Çalışması için Vercel üzerinde Environment Variables (Ortam Değişkenleri) yapılandırmasına ihtiyaç duyar.
+ 
+ 3. **Workigom Ledger (Ana Uygulama)**
+@@ -25,8 +25,8 @@ Workigom projesi monorepo mimarisinden bağımsız ve modüler 4 ayrı projeye (
+ 
+ ## Geliştirme ve Deployment Kuralları
+ - **Yönlendirmeler:** Tanıtım sayfalarındaki "Giriş Yap" butonları (örn: www.workigom.com/flow veya /ledger), direkt olarak uygulamanın kendi domain'indeki (örn: https://flow.workigom.com/login) giriş sayfalarına yönlendirmelidir.
+-- **Environment Variables:** low ve ledger gibi gerçek uygulama repoları Vercel'de deploy edilirken .env dosyasındaki tüm API ve veritabanı değişkenleri eksiksiz olarak Vercel paneline girilmelidir, aksi takdirde 500 Internal Server Error hatası alınır.
+-- **Root Directory:** Repolar ayrıldığı için Vercel üzerindeki Root Directory ayarları boş bırakılmalıdır (Eskiden pps/flow vs. idi, artık tüm repolar kendi kök dizininde çalışır).
++- **Environment Variables:** `flow` ve ledger gibi gerçek uygulama repoları Vercel'de deploy edilirken .env dosyasındaki tüm API ve veritabanı değişkenleri eksiksiz olarak Vercel paneline girilmelidir, aksi takdirde 500 Internal Server Error hatası alınır.
++- **Root Directory:** Repolar ayrıldığı için Vercel üzerindeki Root Directory ayarları boş bırakılmalıdır (Eskiden `apps/flow` vs. idi, artık tüm repolar kendi kök dizininde çalışır).
+ 
+ ---
+ 
+@@ -193,9 +193,9 @@ Flow AI, sistemin arayüz etkileşimlerini, manuel veri girişlerini ve müşter
+ * **Veri Sınırı:** Sözlü olarak veya manuel olarak kaydedilen tüm işlemleri sadece Flow arayüzü tabanlı olarak kendi bünyesinde (transactions) tutar.
+ 
+ ## [03.08.2026] UI/UX Kararları ve Yapılandırma Notları
+-- **Marketing Landing Page Tasarımı:** Yeni geliştirilen 'Muhasebede Yeni Çağ' konsepti iptal edilerek eski 'Muhasebe Artık Daha Akıllı, Daha Kolay' tasarımına kalıcı olarak geri dönülmüştür. pps/marketing/app/ledger/page.tsx bu tasarıma göre kilitlenmiştir.
+-- **Videolu Anlatım Alanları:** Statik mockuplar yerine ideo1.mp4 ve ideo2.mp4 dosyaları sisteme dahil edilmiştir. ideo2.mp4, eski tasarımdaki AI Asistan ikonunun ve sohbet pencerelerinin tamamının yerini alacak şekilde 2/3 genişlikte ayarlanmıştır.
+-- **Özel Logolar:** Sitenin header ve footer bileşenlerine standart SVG yerine ledgerlogo1.png atanmıştır. Tarayıcı favicon'u avicon-16x16.png olarak güncellenmiştir.
++- **Marketing Landing Page Tasarımı:** Yeni geliştirilen 'Muhasebede Yeni Çağ' konsepti iptal edilerek eski 'Muhasebe Artık Daha Akıllı, Daha Kolay' tasarımına kalıcı olarak geri dönülmüştür. `apps/marketing/app/ledger/page.tsx` bu tasarıma göre kilitlenmiştir.
++- **Videolu Anlatım Alanları:** Statik mockuplar yerine `video1.mp4` ve `video2.mp4` dosyaları sisteme dahil edilmiştir. `video2.mp4`, eski tasarımdaki AI Asistan ikonunun ve sohbet pencerelerinin tamamının yerini alacak şekilde 2/3 genişlikte ayarlanmıştır.
++- **Özel Logolar:** Sitenin header ve footer bileşenlerine standart SVG yerine ledgerlogo1.png atanmıştır. Tarayıcı favicon'u `favicon-16x16.png` olarak güncellenmiştir.
+ - **Next.js 14 Vercel Derlemesi:** API route'larda cookie okunan GET metotlarının statik build sırasında patlamasını önlemek için (DYNAMIC_SERVER_USAGE) ilgili dosyalara xport const dynamic = 'force-dynamic'; eklenmesi kuralı getirilmiştir.
+ 
+ 
+@@ -284,10 +284,8 @@ Built inside apps/ledger/src/ai-core/ using strict Typescript.
+ 
+ **Sorun:** Kullanıcı, "Tehlikeli Bölge" (fabrika ayarlarına sıfırlama) özelliğini kullandıktan sonra hem Flow Web hem Flow Mobil'deki Analiz sayfasındaki eski istatistiklerin (beğeni, yorum, erişim vb.) kaybolmadığını bildirdi.
+ 
+-**Kök neden:** low-reset-ai-data Edge Function'ı 
+-otifications, ppointments, customers, messages, conversations, comments, i_communication_logs ve (hard modda) organization_ai_settings/usiness_services/inance_documents tablolarını temizliyor, ancak public.analytics_cache tablosuna (bkz. 20260705000000_analytics_cache.sql) hiç dokunmuyordu. Web ve Mobil'in Analiz sayfaları zernio-client'ın etchAnalyticsWithCache() yardımcı fonksiyonu üzerinden bu tabloyu (1 saatlik TTL ile) okuyor; fonksiyon bu tabloyu sıfırlamadığı için eski veriler sıfırlama sonrası ekranda kalmaya devam ediyordu. low-reset-ai-data iki platform için de ortak tek bir backend fonksiyonu olduğundan bu düzeltme hem web hem mobili aynı anda kapsıyor.
++**Kök neden:** `flow-reset-ai-data` Edge Function'ı `notifications`, `appointments`, `customers`, `messages`, `conversations`, `comments`, `ai_communication_logs` ve (hard modda) `organization_ai_settings`/`business_services`/`finance_documents` tablolarını temizliyor, ancak `public.analytics_cache` tablosuna (bkz. `20260705000000_analytics_cache.sql`) hiç dokunmuyordu. Web ve Mobil'in Analiz sayfaları `zernio-client`'ın `fetchAnalyticsWithCache()` yardımcı fonksiyonu üzerinden bu tabloyu (1 saatlik TTL ile) okuyor; fonksiyon bu tabloyu sıfırlamadığı için eski veriler sıfırlama sonrası ekranda kalmaya devam ediyordu. `flow-reset-ai-data` iki platform için de ortak tek bir backend fonksiyonu olduğundan bu düzeltme hem web hem mobili aynı anda kapsıyor.
+ 
+-**Çözüm:** nalytics_cache.account_id kolonu organizasyon/müşteri bilgisi taşımadığından (sadece Zernio'nun ccount_id'si var), önce çözülen scopeId'ye (organization_id) ait Zernio hesapları integration.social_accounts tablosundan (zernio_account_id kolonu) bulunuyor, ardından bu hesaplara ait nalytics_cache satırları ccount_id IN (...) filtresiyle siliniyor. Bu adım hem soft hem hard reset modunda çalışıyor — analiz verisi bir "test verisi" kadar geçicidir, kasıtlı olarak korunan ot_settings/social_accounts bağlantı verilerinin aksine.
++**Çözüm:** `analytics_cache.account_id` kolonu organizasyon/müşteri bilgisi taşımadığından (sadece Zernio'nun `account_id`'si var), önce çözülen `scopeId`'ye (`organization_id`) ait Zernio hesapları `integration.social_accounts` tablosundan (`zernio_account_id` kolonu) bulunuyor, ardından bu hesaplara ait `analytics_cache` satırları `account_id IN (...)` filtresiyle siliniyor. Bu adım hem `soft` hem `hard` reset modunda çalışıyor — analiz verisi bir "test verisi" kadar geçicidir, kasıtlı olarak korunan `bot_settings`/`social_accounts` bağlantı verilerinin aksine.
+ 
+-**Deploy notu:** Bu değişiklik yalnızca low-reset-ai-data fonksiyonunu etkiler; deploy sırasında (kurala uygun olarak) sadece bu fonksiyon adıyla tek başına deploy edilmelidir: 
+-px supabase functions deploy flow-reset-ai-data.
++**Deploy notu:** Bu değişiklik yalnızca `flow-reset-ai-data` fonksiyonunu etkiler; deploy sırasında (kurala uygun olarak) sadece bu fonksiyon adıyla tek başına deploy edilmelidir: `npx supabase functions deploy flow-reset-ai-data.`
+-- 
+2.43.0
+
+
+From cc69439d281b4b5b7fc6c2bd72a55eb68075ea14 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 17 Sep 2026 20:52:12 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?fix(docs):=20README.md'de=20g=C3=B6zden=20k?=
+ =?UTF-8?q?a=C3=A7an=201=20backtick-yeme=20=C3=B6rne=C4=9Fini=20daha=20d?=
+ =?UTF-8?q?=C3=BCzelt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bir önceki tarama Ctrl-A/Ctrl-H/Ctrl-L/Ctrl-K aralığındaki kontrol
+karakterlerini kapsıyordu ama ESC (0x1B, PowerShell'in `` `e `` kaçış
+dizisi) atlanmıştı: "`export const dynamic = ...`" ifadesindeki
+backtick+e ESC karakterine dönüşmüştü.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01ELUQJRUzebZ59B9CrwwdV7
+---
+ README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/README.md b/README.md
+index b24fa65..5c6702f 100644
+--- a/README.md
++++ b/README.md
+@@ -196,7 +196,7 @@ Flow AI, sistemin arayüz etkileşimlerini, manuel veri girişlerini ve müşter
+ - **Marketing Landing Page Tasarımı:** Yeni geliştirilen 'Muhasebede Yeni Çağ' konsepti iptal edilerek eski 'Muhasebe Artık Daha Akıllı, Daha Kolay' tasarımına kalıcı olarak geri dönülmüştür. `apps/marketing/app/ledger/page.tsx` bu tasarıma göre kilitlenmiştir.
+ - **Videolu Anlatım Alanları:** Statik mockuplar yerine `video1.mp4` ve `video2.mp4` dosyaları sisteme dahil edilmiştir. `video2.mp4`, eski tasarımdaki AI Asistan ikonunun ve sohbet pencerelerinin tamamının yerini alacak şekilde 2/3 genişlikte ayarlanmıştır.
+ - **Özel Logolar:** Sitenin header ve footer bileşenlerine standart SVG yerine ledgerlogo1.png atanmıştır. Tarayıcı favicon'u `favicon-16x16.png` olarak güncellenmiştir.
+-- **Next.js 14 Vercel Derlemesi:** API route'larda cookie okunan GET metotlarının statik build sırasında patlamasını önlemek için (DYNAMIC_SERVER_USAGE) ilgili dosyalara xport const dynamic = 'force-dynamic'; eklenmesi kuralı getirilmiştir.
++- **Next.js 14 Vercel Derlemesi:** API route'larda cookie okunan GET metotlarının statik build sırasında patlamasını önlemek için (DYNAMIC_SERVER_USAGE) ilgili dosyalara `export const dynamic = 'force-dynamic';` eklenmesi kuralı getirilmiştir.
+ 
+ 
+ ## [16.08.2026] Sosyal Medya Optimizasyonları (Zernio Client)
+-- 
+2.43.0
+

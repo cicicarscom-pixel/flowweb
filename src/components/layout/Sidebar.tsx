@@ -26,11 +26,13 @@ export default function Sidebar() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data: profile } = await supabase
+        const { data: profileData } = await supabase
           .from("profiles")
           .select("authorized_person, business_name, avatar_url")
           .eq("id", session.user.id)
-          .maybeSingle();
+          .limit(1);
+          
+        const profile = profileData?.[0] || null;
           
         const metadata = session.user.user_metadata;
         const googleName = metadata?.full_name || metadata?.name;

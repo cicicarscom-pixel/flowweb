@@ -42,11 +42,13 @@ export default function ProfilPage() {
       
       setEmail(session.user.email || "");
       
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("business_name, authorized_person, category, phone_number, address, avatar_url")
         .eq("id", session.user.id)
-        .maybeSingle();
+        .limit(1);
+        
+      const profile = profileData?.[0] || null;
         
       if (profile) {
         const metadata = session.user.user_metadata;

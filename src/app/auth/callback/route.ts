@@ -20,11 +20,13 @@ export async function GET(request: Request) {
         const avatarUrl = metadata?.avatar_url || metadata?.picture;
         
         if (fullName || avatarUrl) {
-          const { data: profile } = await supabase
+          const { data: profileData } = await supabase
             .from('profiles')
             .select('authorized_person, avatar_url')
             .eq('id', user.id)
-            .maybeSingle();
+            .limit(1);
+          
+          const profile = profileData?.[0] || null;
             
           const updates: any = {};
           if (!profile?.authorized_person && fullName) updates.authorized_person = fullName;

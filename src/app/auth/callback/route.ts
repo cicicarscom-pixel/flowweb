@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -13,7 +14,9 @@ export async function GET(request: Request) {
     if (!error && data?.session?.user) {
       const user = data.session.user;
       
-      const { data: profileData } = await supabase
+      const adminSupabase = createAdminClient();
+      
+      const { data: profileData } = await adminSupabase
         .from('profiles')
         .select('user_type, authorized_person, avatar_url')
         .eq('id', user.id)
@@ -40,11 +43,12 @@ export async function GET(request: Request) {
       }
 
       if (Object.keys(updates).length > 0) {
-        await supabase.from('profiles').update(updates).eq('id', user.id);
+        await adminSupabase.from('profiles').update(updates).eq('id', user.id);
       }
 
       if (createdOrg) {
-        await supabase.from('organizations').insert({ owner_id: user.id, name: null }).select().single();
+        const { error: insertErr } = await adminSupabase.from('organizations').insert({ owner_id: user.id, name: null });
+        if (insertErr) console.error("Org creation error:", insertErr);
       }
 
       return NextResponse.redirect(`${origin}${next}`)

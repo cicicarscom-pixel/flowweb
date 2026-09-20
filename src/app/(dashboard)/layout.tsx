@@ -17,6 +17,15 @@ export default async function DashboardLayout({
    redirect("/login");
  }
 
+ if (!session.user.email_confirmed_at) {
+   redirect("/verify-email");
+ }
+
+ const { data: profile } = await supabase.from('profiles').select('onboarding_completed').eq('id', session.user.id).single();
+ if (profile && profile.onboarding_completed === false) {
+   redirect("/onboarding");
+ }
+
  return (
  <div className=" text-[#e2e8f0] min-h-screen w-full flex overflow-hidden font-sans">
  <Sidebar />

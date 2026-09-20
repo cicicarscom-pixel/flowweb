@@ -18,9 +18,11 @@ export async function authenticate(formData: FormData) {
       email,
       password,
       options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://flow.workigom.com'}/auth/callback`,
         data: {
           authorized_person: fullName,
-          full_name: fullName
+          full_name: fullName,
+          user_type: 'business'
         }
       }
     })
@@ -46,7 +48,7 @@ export async function authenticate(formData: FormData) {
 
   // If email confirmation is required, session will be null after signup
   if (mode === 'signup' && result?.data && !result.data.session) {
-    return { success: true, message: "Kayıt başarılı! Lütfen e-posta adresinize gönderilen onay bağlantısına tıklayın." }
+    redirect('/verify-email?email=' + encodeURIComponent(email))
   }
 
   revalidatePath('/', 'layout')

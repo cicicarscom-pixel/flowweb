@@ -1,25 +1,32 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [email, setEmail] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Get current user's email
+    // If we have an email in URL (after signup redirect)
+    const queryEmail = searchParams.get('email');
+    if (queryEmail) {
+      setEmail(queryEmail);
+    }
+
+    // Try to get current user if they happen to have a session (e.g. from guard redirect)
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         setEmail(user.email ?? null);
         if (user.email_confirmed_at) {
           router.push('/dashboard');
         }
-      } else {
+      } else if (!queryEmail) {
         router.push('/login');
       }
     });
@@ -44,6 +51,9 @@ export default function VerifyEmailPage() {
     const { error } = await supabase.auth.resend({
       type: 'signup',
       email: email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://flow.workigom.com'}/auth/callback`
+      }
     });
 
     if (error) {

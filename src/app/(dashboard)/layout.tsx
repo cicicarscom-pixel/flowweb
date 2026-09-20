@@ -21,8 +21,8 @@ export default async function DashboardLayout({
    redirect("/verify-email");
  }
 
- const { data: profile } = await supabase.from('profiles').select('onboarding_completed').eq('id', session.user.id).single();
- if (profile && profile.onboarding_completed === false) {
+ const { data: profile } = await supabase.from('profiles').select('onboarding_completed, user_type').eq('id', session.user.id).single();
+ if (profile && profile.user_type === 'business' && profile.onboarding_completed === false) {
    redirect("/onboarding");
  }
 

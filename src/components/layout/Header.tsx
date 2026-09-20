@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -13,12 +14,14 @@ export default function Header() {
   const [dateStr, setDateStr] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
+  const { organization } = useProfile();
 
   useEffect(() => {
     fetchUnreadCount();
 
+    if (!organization?.id) return;
     const channel = supabase.channel('header_notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
         fetchUnreadCount();
       })
       .subscribe();
@@ -26,7 +29,7 @@ export default function Header() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [organization]);
 
   useEffect(() => {
     // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile
@@ -38,16 +41,12 @@ export default function Header() {
   }, [locale]);
 
   const fetchUnreadCount = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    
-    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).maybeSingle();
-    if (!orgMember?.organization_id) return;
+    if (!organization?.id) return;
     
     const { count } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
-      .eq('profile_id', orgMember.organization_id)
+      .eq('profile_id', organization.id)
       .eq('is_read', false);
     if (count !== null) setUnreadCount(count);
   };

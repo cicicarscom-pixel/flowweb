@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Sidebar() {
     const pathname = usePathname();
   const router = useRouter();
   const t = useTranslations();
+  const { profile } = useProfile();
   
   const handleLogout = async () => {
     const supabase = createClient();
@@ -22,46 +24,25 @@ export default function Sidebar() {
   const [avatar, setAvatar] = useState("https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=36&h=36&fit=crop&auto=format");
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const supabase = createClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: profileData } = await supabase
-          .from("profiles")
-          .select("authorized_person, business_name, avatar_url")
-          .eq("id", session.user.id)
-          .limit(1);
-          
-        const profile = profileData?.[0] || null;
-          
-        const metadata = session.user.user_metadata;
-        const googleName = metadata?.full_name || metadata?.name;
-        
-        setUserName(profile?.authorized_person || profile?.business_name || googleName || "Kullanıcı");
-
-        if (profile) {
-          let av = profile.avatar_url;
-          if (av && av.startsWith('file://')) {
-            av = null;
-          } else if (av && !av.startsWith('http')) {
-            const { data } = supabase.storage.from('avatars').getPublicUrl(av);
-            av = data.publicUrl;
-          }
-
-          if (av) {
-            setAvatar(av);
-          } else {
-            setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || googleName || 'Esnaf') + '&background=00daf3&color=fff');
-          }
-        } else if (metadata?.avatar_url || metadata?.picture) {
-          setAvatar(metadata.avatar_url || metadata.picture);
-        } else {
-           setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(googleName || 'Esnaf') + '&background=00daf3&color=fff');
-        }
+    if (profile) {
+      setUserName(profile.authorized_person || profile.business_name || "Kullanıcı");
+      
+      let av = profile.avatar_url;
+      if (av && av.startsWith('file://')) {
+        av = null;
+      } else if (av && !av.startsWith('http')) {
+        const supabase = createClient();
+        const { data } = supabase.storage.from('avatars').getPublicUrl(av);
+        av = data.publicUrl;
       }
-    };
-    fetchProfile();
-  }, []);
+
+      if (av) {
+        setAvatar(av);
+      } else {
+        setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || profile.authorized_person || 'Esnaf') + '&background=00daf3&color=fff');
+      }
+    }
+  }, [profile]);
 
   const navItems = [
     { href: "/", label: t("nav.home"), icon: "⬡", color: "#FF7A59" },

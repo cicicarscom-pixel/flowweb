@@ -46,7 +46,7 @@ export default function ProfilPage() {
         .from("profiles")
         .select("business_name, authorized_person, category, phone_number, address, avatar_url")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
         
       if (profile) {
         const metadata = session.user.user_metadata;

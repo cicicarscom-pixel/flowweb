@@ -14,7 +14,7 @@ export async function getZernioConnectUrl(platform: string, redirectUrl: string)
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) throw new Error("Unauthorized")
 
-    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).single()
+    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).maybeSingle()
     if (!orgMember?.organization_id) throw new Error(t('common.serverErrors.noOrganization'))
 
     const orgId = orgMember.organization_id
@@ -119,7 +119,7 @@ export async function syncZernioAccounts() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Unauthorized")
 
-    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).single()
+    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', user.id).limit(1).maybeSingle()
     if (!orgMember?.organization_id) throw new Error(t('common.serverErrors.noOrganization'))
 
     const orgId = orgMember.organization_id

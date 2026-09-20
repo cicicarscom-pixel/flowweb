@@ -186,7 +186,7 @@ export default function SharePage() {
           const duration = videoElement.duration;
           setMediaDurationSec(duration);
           
-          let uncheckedPlatforms: string[] = [];
+          const uncheckedPlatforms: string[] = [];
           const updatedPlatforms = { ...selectedPlatforms };
           for (const platform of Object.keys(updatedPlatforms)) {
             if (updatedPlatforms[platform]) {

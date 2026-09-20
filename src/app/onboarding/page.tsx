@@ -36,7 +36,7 @@ export default function OnboardingPage() {
       const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
       
       if (profile?.onboarding_completed) {
-        router.push('/dashboard');
+        router.push('/');
         return;
       }
 
@@ -72,7 +72,7 @@ export default function OnboardingPage() {
       setError('Kaydedilirken bir hata oluştu: ' + rpcError.message);
       setSubmitting(false);
     } else {
-      router.push('/dashboard');
+      router.push('/');
     }
   };
 

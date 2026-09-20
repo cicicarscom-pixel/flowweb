@@ -24,7 +24,7 @@ export default function VerifyEmailPage() {
       if (user) {
         setEmail(user.email ?? null);
         if (user.email_confirmed_at) {
-          router.push('/dashboard');
+          router.push('/');
         }
       } else if (!queryEmail) {
         router.push('/login');
@@ -36,7 +36,7 @@ export default function VerifyEmailPage() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
-        router.push('/dashboard');
+        router.push('/');
       }
     });
 

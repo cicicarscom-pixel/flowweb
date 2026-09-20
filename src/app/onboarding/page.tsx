@@ -86,72 +86,72 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F172A] text-white p-4 font-sans">
-      <div className="max-w-md w-full bg-[#1E293B] rounded-2xl shadow-xl p-8 border border-white/10">
-        <h1 className="text-2xl font-bold mb-2">Hoş Geldiniz</h1>
-        <p className="text-gray-400 mb-6 text-sm">
+      <div className="max-w-sm w-full bg-[#1E293B] rounded-2xl shadow-xl p-6 border border-white/10">
+        <h1 className="text-xl font-bold mb-1">Hoş Geldiniz</h1>
+        <p className="text-gray-400 mb-4 text-xs">
           Lütfen işletme hesabınızı kurmak için aşağıdaki bilgileri eksiksiz doldurun.
         </p>
 
         {isGoogleLogin && form.fullName && (
-          <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 p-3 rounded-xl mb-6 text-sm flex items-start gap-3">
+          <div className="bg-blue-500/10 border border-blue-500/20 text-blue-400 p-2.5 rounded-xl mb-4 text-xs flex items-start gap-2">
             <i className="fa-brands fa-google mt-0.5"></i>
-            <p>Bilgileriniz Google hesabınızdan otomatik alındı. Lütfen işletme profilinize uygun gerçek bilgilerinizi kontrol edip onaylayın.</p>
+            <p>Bilgileriniz Google hesabınızdan otomatik alındı. Lütfen gerçek bilgilerinizi kontrol edip onaylayın.</p>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">E-posta</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1">E-posta</label>
             <input
               type="email"
               value={email}
               disabled
-              className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-gray-500 focus:outline-none cursor-not-allowed"
+              className="w-full bg-[#0F172A] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-500 focus:outline-none cursor-not-allowed"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Ad Soyad</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1">Ad Soyad</label>
             <input
               type="text"
               required
               value={form.fullName}
               onChange={e => setForm({...form, fullName: e.target.value})}
-              className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#0F172A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
               placeholder="Adınız ve Soyadınız"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Telefon</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1">Telefon</label>
             <input
               type="tel"
               required
               value={form.phone}
               onChange={e => setForm({...form, phone: e.target.value})}
-              className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#0F172A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
               placeholder="05XX XXX XX XX"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">İşletme Adı</label>
+            <label className="block text-xs font-medium text-gray-300 mb-1">İşletme Adı</label>
             <input
               type="text"
               required
               value={form.businessName}
               onChange={e => setForm({...form, businessName: e.target.value})}
-              className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-[#0F172A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors"
               placeholder="İşletmenizin Adı"
             />
           </div>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-xs">{error}</p>}
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-3 px-4 rounded-xl transition-colors mt-6"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors mt-4"
           >
             {submitting ? 'Kaydediliyor...' : 'Kurulumu Tamamla'}
           </button>

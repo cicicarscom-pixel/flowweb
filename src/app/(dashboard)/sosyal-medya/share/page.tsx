@@ -338,12 +338,22 @@ export default function SharePage() {
         if (localImage.startsWith('data:')) {
           const res = await fetch(localImage);
           const blob = await res.blob();
-          const ext = blob.type.split('/')[1] || 'mp4';
-          const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
           
-          const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, blob, {
+          // Get user id for nested folder
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) throw new Error("No session");
+          
+          const file = new File([blob], "image.jpg", { type: blob.type });
+          const { compressImage } = await import('@/lib/imageCompress');
+          const compressedFile = await compressImage(file);
+          
+          const ext = 'jpg';
+          const fileName = `${session.user.id}/post-${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+          
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, compressedFile, {
             cacheControl: '3600',
-            upsert: false
+            upsert: false,
+            contentType: 'image/jpeg'
           });
           
           if (uploadError) throw new Error("Storage Upload Error: " + uploadError.message);

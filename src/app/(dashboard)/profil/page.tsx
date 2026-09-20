@@ -132,12 +132,13 @@ export default function ProfilPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
+      const { compressImage } = await import('@/lib/imageCompress');
+      const compressedFile = await compressImage(file);
+      const fileName = `${session.user.id}/avatar-${Date.now()}.jpg`;
       
       const { data, error } = await supabase.storage
         .from('avatars')
-        .upload(fileName, file);
+        .upload(fileName, compressedFile, { upsert: true, contentType: 'image/jpeg' });
         
       if (error) throw error;
       

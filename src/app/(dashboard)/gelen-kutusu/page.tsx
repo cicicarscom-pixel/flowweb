@@ -461,11 +461,15 @@ export default function GelenKutusuPage() {
   };
 
 
-  const fetchNotifications = async () => {
-    if (!organizationId) return;
-    const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId).order('created_at', { ascending: false });
-    if (data) setNotifications(data);
-  };
+    const fetchNotifications = async () => {
+      if (!organizationId) return;
+      try {
+        const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId).order('created_at', { ascending: false });
+        if (data) setNotifications(data);
+      } catch (err) {
+        console.warn("Notifications fetch err:", err);
+      }
+    };
 
   const fetchReviews = async () => {
     try {

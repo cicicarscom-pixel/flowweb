@@ -31,10 +31,13 @@ export default function Header() {
       fetchUnreadCount();
     }).subscribe();
 
+    window.addEventListener('refresh_unread_count', fetchUnreadCount);
+
     return () => {
       supabase.removeChannel(channel);
+      window.removeEventListener('refresh_unread_count', fetchUnreadCount);
     };
-  }, [organization]);
+  }, [organization, locale]);
 
   useEffect(() => {
     // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile

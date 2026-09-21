@@ -476,13 +476,14 @@ export default function GelenKutusuPage() {
           regularNotifs = data || [];
         }
 
-        // Fetch user type
         const { data: profileData } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).limit(1);
         const userType = profileData?.[0]?.user_type || 'business';
 
-        // Fetch broadcasts
-        const { data: broadcasts } = await supabase.from('broadcast_notifications').select('*').in('target', ['all', userType]);
-        const { data: reads } = await supabase.from('broadcast_reads').select('broadcast_id').eq('user_id', session.user.id);
+        const { data: broadcasts, error: bError } = await supabase.from('broadcast_notifications').select('*').in('target', ['all', userType]);
+        if (bError) throw bError;
+
+        const { data: reads, error: rError } = await supabase.from('broadcast_reads').select('broadcast_id').eq('user_id', session.user.id);
+        if (rError) throw rError;
         
         const readSet = new Set(reads?.map(r => r.broadcast_id) || []);
         
@@ -497,8 +498,9 @@ export default function GelenKutusuPage() {
         
         const combined = [...regularNotifs, ...broadcastNotifs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         setNotifications(combined);
-      } catch (err) {
+      } catch (err: any) {
         console.warn("Notifications fetch err:", err);
+        setNotifications([{ id: 'error', title: 'Error', message: err?.message || JSON.stringify(err), is_read: true, created_at: new Date().toISOString() }]);
       }
     };
 
@@ -576,6 +578,40 @@ export default function GelenKutusuPage() {
       channels.forEach(ch => supabase.removeChannel(ch));
     };
   }, [organizationId]);
+
+  useEffect(() => {
+    if (activeTab === 'bildirimler' && notifications.some(n => !n.is_read)) {
+      const markAsRead = async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session?.user?.id) return;
+          
+          const unreadRegular = notifications.filter(n => !n.is_read && !n.is_broadcast).map(n => n.id);
+          const unreadBroadcasts = notifications.filter(n => !n.is_read && n.is_broadcast).map(n => n.id);
+          
+          const promises = [];
+          
+          if (unreadRegular.length > 0 && organizationId) {
+            promises.push(supabase.from('notifications').update({ is_read: true }).in('id', unreadRegular));
+          }
+          
+          if (unreadBroadcasts.length > 0) {
+            const inserts = unreadBroadcasts.map(id => ({ user_id: session.user.id, broadcast_id: id }));
+            promises.push(supabase.from('broadcast_reads').upsert(inserts, { onConflict: 'user_id, broadcast_id' }));
+          }
+          
+          if (promises.length > 0) {
+            await Promise.all(promises);
+            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+            window.dispatchEvent(new Event('refresh_unread_count'));
+          }
+        } catch (err) {
+          console.warn('Error marking as read:', err);
+        }
+      };
+      markAsRead();
+    }
+  }, [activeTab, notifications, organizationId]);
 
   const toggleSelection = (id: string) => {
     setSelectedItems(prev => 

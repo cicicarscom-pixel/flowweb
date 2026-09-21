@@ -519,55 +519,61 @@ export default function GelenKutusuPage() {
 
   useEffect(() => {
     const loadAll = async () => {
-      if (!organizationId) return;
       setIsLoading(true);
-      await Promise.all([fetchConversations(), fetchComments(1), fetchReviews(), fetchNotifications()]);
+      const promises = [fetchNotifications()];
+      if (organizationId) {
+        promises.push(fetchConversations(), fetchComments(1), fetchReviews());
+      }
+      await Promise.all(promises);
       setIsLoading(false);
     };
     loadAll();
 
-    if (!organizationId) return;
+    const channels: any[] = [];
 
     // Realtime Subscriptions (Döngü Korumalı)
-    const convChannel = supabase.channel('web_realtime_conversations')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, fetchConversations)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'conversations' }, (payload) => {
-         setConversations(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
-      })
-      .subscribe();
+    if (organizationId) {
+      const convChannel = supabase.channel('web_realtime_conversations')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, fetchConversations)
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'conversations' }, (payload) => {
+           setConversations(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
+        })
+        .subscribe();
+      channels.push(convChannel);
 
-    const msgChannel = supabase.channel('web_realtime_messages')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, fetchConversations)
-      .subscribe();
+      const msgChannel = supabase.channel('web_realtime_messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, fetchConversations)
+        .subscribe();
+      channels.push(msgChannel);
 
-    const commentChannel = supabase.channel('web_realtime_comments')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => fetchComments(1))
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comments' }, (payload) => {
-         setComments(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
-      })
-      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'comments' }, (payload) => {
-         setComments(prev => prev.filter(c => c.id !== payload.old.id));
-      })
-      .subscribe();
+      const commentChannel = supabase.channel('web_realtime_comments')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => fetchComments(1))
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comments' }, (payload) => {
+           setComments(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'comments' }, (payload) => {
+           setComments(prev => prev.filter(c => c.id !== payload.old.id));
+        })
+        .subscribe();
+      channels.push(commentChannel);
 
-    const reviewChannel = supabase.channel('web_realtime_reviews')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, fetchReviews)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload) => {
-         setReviews(prev => prev.map(r => r.id === payload.new.id ? { ...r, ...payload.new } : r));
-      })
-      .subscribe();
+      const reviewChannel = supabase.channel('web_realtime_reviews')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, fetchReviews)
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload) => {
+           setReviews(prev => prev.map(r => r.id === payload.new.id ? { ...r, ...payload.new } : r));
+        })
+        .subscribe();
+      channels.push(reviewChannel);
+    }
 
     const notifChannel = supabase.channel('web_realtime_notifications')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, fetchNotifications)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, fetchNotifications)
       .subscribe();
+    channels.push(notifChannel);
 
     return () => {
-      supabase.removeChannel(convChannel);
-      supabase.removeChannel(msgChannel);
-      supabase.removeChannel(commentChannel);
-      supabase.removeChannel(reviewChannel);
-      supabase.removeChannel(notifChannel);
+      channels.forEach(ch => supabase.removeChannel(ch));
     };
   }, [organizationId]);
 

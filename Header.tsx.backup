@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -14,14 +13,48 @@ export default function Header() {
   const [dateStr, setDateStr] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const supabase = createClient();
-  const { organization } = useProfile();
+
+  const fetchUnreadCount = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    
+    // 1. Fetch normal notifications (organization scoped)
+    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).maybeSingle();
+    let regularCount = 0;
+    if (orgMember?.organization_id) {
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('profile_id', orgMember.organization_id)
+        .eq('is_read', false);
+      regularCount = count || 0;
+    }
+
+    // 2. Fetch broadcast notifications (user scoped)
+    let broadcastUnreadCount = 0;
+    const { data: profile } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).maybeSingle();
+    const userType = profile?.user_type || 'business';
+
+    const { count: totalBroadcasts } = await supabase
+      .from('broadcast_notifications')
+      .select('id', { count: 'exact', head: true })
+      .in('target', ['all', userType]);
+
+    const { count: readBroadcasts } = await supabase
+      .from('broadcast_reads')
+      .select('broadcast_id', { count: 'exact', head: true })
+      .eq('user_id', session.user.id);
+
+    broadcastUnreadCount = Math.max(0, (totalBroadcasts || 0) - (readBroadcasts || 0));
+    
+    setUnreadCount(regularCount + broadcastUnreadCount);
+  };
 
   useEffect(() => {
     fetchUnreadCount();
 
-    if (!organization?.id) return;
     const channel = supabase.channel('header_notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
         fetchUnreadCount();
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => {
@@ -32,7 +65,7 @@ export default function Header() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [organization]);
+  }, []);
 
   useEffect(() => {
     // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile
@@ -42,41 +75,6 @@ export default function Header() {
     // yeniden çalışıp tarihi doğru dilde yeniden biçimlendirir.
     setDateStr(new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
   }, [locale]);
-
-  const fetchUnreadCount = async () => {
-    if (!organization?.id) return;
-    
-    // 1. Fetch normal notifications (organization scoped)
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('profile_id', organization.id)
-      .eq('is_read', false);
-    const regularCount = count || 0;
-
-    // 2. Fetch broadcast notifications (user scoped)
-    const { data: { session } } = await supabase.auth.getSession();
-    let broadcastUnreadCount = 0;
-    
-    if (session?.user) {
-      const { data: profileData } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).limit(1);
-      const userType = profileData?.[0]?.user_type || 'business';
-
-      const { count: totalBroadcasts } = await supabase
-        .from('broadcast_notifications')
-        .select('id', { count: 'exact', head: true })
-        .in('target', ['all', userType]);
-
-      const { count: readBroadcasts } = await supabase
-        .from('broadcast_reads')
-        .select('broadcast_id', { count: 'exact', head: true })
-        .eq('user_id', session.user.id);
-
-      broadcastUnreadCount = Math.max(0, (totalBroadcasts || 0) - (readBroadcasts || 0));
-    }
-    
-    setUnreadCount(regularCount + broadcastUnreadCount);
-  };
   
   let pageTitle = t("header.titles.home");
   if (pathname === "/") pageTitle = t("header.titles.home");

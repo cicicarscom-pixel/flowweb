@@ -28,9 +28,9 @@ export default function GelenKutusuPage() {
      const initOrg = async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user?.id) {
-           const { data } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).maybeSingle();
-           if (data?.organization_id) {
-              setOrganizationId(data.organization_id);
+           const { data } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).limit(1);
+           if (data?.[0]?.organization_id) {
+              setOrganizationId(data[0].organization_id);
            }
         }
      };

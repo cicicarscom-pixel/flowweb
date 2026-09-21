@@ -1,0 +1,356 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Country, State, City } from "country-state-city";
+import { useTranslations } from "next-intl";
+import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
+
+
+import { createClient } from "@/lib/supabase/client";
+
+
+export default function ProfilPage() {
+  const t = useTranslations();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+  
+  const [businessName, setBusinessName] = useState("");
+  const [authorizedPerson, setAuthorizedPerson] = useState("");
+  const [category, setCategory] = useState(t("profilPage.defaults.otherCategory"));
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+    const [addressObj, setAddressObj] = useState({ country: "", city: "", district: "", fullAddress: "" });
+  const [avatar, setAvatar] = useState("");
+
+  const [vkn, setVkn] = useState("");
+  const [taxOffice, setTaxOffice] = useState("");
+  const [organizationId, setOrganizationId] = useState("");
+  const [isErrorMessage, setIsErrorMessage] = useState(false);
+  
+  const supabase = createClient();
+
+  useEffect(() => {
+    fetchProfileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      setEmail(session.user.email || "");
+      
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("business_name, authorized_person, category, phone_number, address, avatar_url")
+        .eq("id", session.user.id)
+        .limit(1);
+        
+      const profile = profileData?.[0] || null;
+        
+      if (profile) {
+        const metadata = session.user.user_metadata;
+        const googleName = metadata?.full_name || metadata?.name;
+        
+        setBusinessName(profile.business_name || "");
+        setAuthorizedPerson(profile.authorized_person || googleName || "");
+        setCategory(profile.category || t("profilPage.defaults.otherCategory"));
+        setPhone(profile.phone_number || "");
+        
+        // Handle address object from mobile AddressSelector
+                if (typeof profile.address === 'object' && profile.address !== null) {
+          setAddressObj({
+            country: profile.address.country || "",
+            city: profile.address.city || "",
+            district: profile.address.district || "",
+            fullAddress: profile.address.fullAddress || profile.address.detail || ""
+          });
+        } else {
+          setAddressObj({ country: "", city: "", district: "", fullAddress: profile.address || "" });
+        }
+
+        let av = profile.avatar_url;
+        if (av && av.startsWith('file://')) {
+            av = null;
+        } else if (av && !av.startsWith('http')) {
+            const { data } = supabase.storage.from('avatars').getPublicUrl(av);
+            av = data.publicUrl;
+        }
+        
+        if (!av) {
+            av = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || t("profilPage.defaults.fallbackBusinessName")) + '&background=00daf3&color=fff';
+        }
+        setAvatar(av);
+      }
+      
+      // Fetch organization and legal info for VKN
+      const { data: orgMember } = await supabase
+        .from("organization_members")
+        .select("organization_id")
+        .eq("user_id", session.user.id)
+        .limit(1)
+        .maybeSingle();
+        
+      if (orgMember?.organization_id) {
+        setOrganizationId(orgMember.organization_id);
+        
+        const { data: orgData } = await supabase
+          .from("organizations")
+          .select("name")
+          .eq("id", orgMember.organization_id)
+          .maybeSingle();
+          
+        if (orgData && orgData.name) {
+          setBusinessName(orgData.name);
+        }
+
+        const { data: legalData } = await supabase
+          .from("organization_legal_profiles")
+          .select("tax_identifier, tax_office")
+          .eq("organization_id", orgMember.organization_id)
+          .maybeSingle();
+          
+        if (legalData) {
+          setVkn(legalData.tax_identifier || "");
+          setTaxOffice(legalData.tax_office || "");
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) return;
+      const file = e.target.files[0];
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${session.user.id}-${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file);
+        
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(fileName);
+      const finalUrl = `${publicUrl}?t=${Date.now()}`;
+      setAvatar(finalUrl);
+      
+      await supabase.from('profiles').update({ avatar_url: finalUrl }).eq('id', session.user.id);
+      
+      setIsErrorMessage(false);
+      setMessage(t("profilPage.messages.avatarUpdated"));
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error: any) {
+      console.error("Avatar upload error:", error);
+      setIsErrorMessage(true);
+      setMessage(t("profilPage.messages.avatarUploadError", { error: error.message }));
+      setTimeout(() => setMessage(""), 3000);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage("");
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error(t("profilPage.messages.noSession"));
+      
+      // Keep mobile's AddressSelector compatibility if it expects an object. 
+      // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
+      const addressToSave = addressObj;
+
+      await supabase
+        .from("profiles")
+        .update({
+          business_name: businessName,
+          authorized_person: authorizedPerson,
+          category: category,
+          phone_number: phone,
+          address: addressToSave,
+        })
+        .eq("id", session.user.id);
+        
+      if (organizationId) {
+        await supabase
+          .from("organizations")
+          .update({ name: businessName })
+          .eq("id", organizationId);
+
+        const { data: existingLegal } = await supabase
+          .from("organization_legal_profiles")
+          .select("id")
+          .eq("organization_id", organizationId)
+          .maybeSingle();
+          
+        if (existingLegal) {
+          await supabase
+            .from("organization_legal_profiles")
+            .update({ tax_identifier: vkn, tax_office: taxOffice })
+            .eq("organization_id", organizationId);
+        } else {
+          await supabase
+            .from("organization_legal_profiles")
+            .insert({ organization_id: organizationId, tax_identifier: vkn, tax_office: taxOffice });
+        }
+      }
+      
+      setIsErrorMessage(false);
+      setMessage(t("profilPage.messages.profileUpdated"));
+      setTimeout(() => setMessage(""), 3000);
+    } catch (err: any) {
+      setIsErrorMessage(true);
+      setMessage(t("profilPage.messages.errorPrefix", { error: err.message }));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <div style={{ padding: 40, color: "#fff" }}>{t("profilPage.loading")}</div>;
+
+  return (
+    <div style={{ padding: "40px", maxWidth: 800, margin: "0 auto", width: "100%" }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        select.glass-input option {
+          background-color: #17151A;
+          color: #ffffff;
+        }
+      `}} />
+      <h1 style={{ fontSize: 28, fontWeight: 600, color: "#fff", marginBottom: 8, fontFamily: "Outfit, sans-serif" }}>{t("profilPage.header.title")}</h1>
+      <p style={{ color: "var(--text-muted)", marginBottom: 32 }}>{t("profilPage.header.subtitle")}</p>
+
+      {message && (
+        <div style={{ padding: 16, borderRadius: 12, marginBottom: 24, background: isErrorMessage ? "rgba(239,68,68, 0.1)" : "rgba(34,181,115, 0.1)", color: isErrorMessage ? "#EF4444" : "#22B573", border: '1px solid ' + (isErrorMessage ? "rgba(239,68,68, 0.2)" : "rgba(34,181,115, 0.2)") }}>
+          {message}
+        </div>
+      )}
+      
+      <div className="glass-strong" style={{ padding: 32, borderRadius: 24, border: "1px solid rgba(255,255,255,0.05)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 40 }}>
+            <label style={{ cursor: "pointer", position: "relative" }}>
+              <img src={avatar} alt={t("profilPage.avatarAlt")} style={{ width: 80, height: 80, borderRadius: 20, objectFit: "cover", border: "2px solid rgba(255,122,89, 0.3)" }} />
+              <input type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
+              <div style={{ position: "absolute", bottom: -8, right: -8, background: "var(--primary)", color: "#000", padding: 6, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h3l2-2h6l2 2h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+              </div>
+            </label>
+          </div>
+        
+        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.authorizedPerson")}</label>
+              <input type="text" value={authorizedPerson} onChange={e => setAuthorizedPerson(e.target.value)} placeholder={t("profilPage.fields.authorizedPersonPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", marginBottom: 20 }} />
+            </div>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.businessName")}</label>
+              <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder={t("profilPage.fields.businessNamePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.email")}</label>
+              <input type="email" value={email} disabled className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: 0.6 }} />
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.phone")}</label>
+              <input type="text" value={phone} onChange={e => setPhone(e.target.value)} placeholder={t("profilPage.fields.phonePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.storeCategory")}</label>
+              <input type="text" value={category} onChange={e => setCategory(e.target.value)} placeholder={t("profilPage.fields.storeCategoryPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.taxId")}</label>
+              <input type="text" value={vkn} onChange={e => setVkn(e.target.value)} placeholder={t("profilPage.fields.taxIdPlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+            <div>
+              <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.taxOffice")}</label>
+              <input type="text" value={taxOffice} onChange={e => setTaxOffice(e.target.value)} placeholder={t("profilPage.fields.taxOfficePlaceholder")} className="glass-input" style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }} />
+            </div>
+          </div>
+
+                    <div>
+            <label style={{ display: "block", color: "var(--text-secondary)", fontSize: 13, marginBottom: 8, fontWeight: 500 }}>{t("profilPage.fields.addressInfo")}</label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
+                            <select
+                value={addressObj.country}
+                onChange={e => setAddressObj({...addressObj, country: e.target.value, city: "", district: ""})}
+                className="glass-input"
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff" }}
+              >
+                <option value="">{t("profilPage.fields.selectCountry")}</option>
+                {Country.getAllCountries().map(c => <option key={c.isoCode} value={c.isoCode}>{c.name}</option>)}
+              </select>
+
+              <select
+                value={addressObj.city}
+                onChange={e => setAddressObj({...addressObj, city: e.target.value, district: ""})}
+                disabled={!addressObj.country}
+                className="glass-input"
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.country ? 1 : 0.5 }}
+              >
+                <option value="">{t("profilPage.fields.selectCityState")}</option>
+                {addressObj.country && State.getStatesOfCountry(addressObj.country).map(s => <option key={s.isoCode} value={s.isoCode}>{s.name}</option>)}
+              </select>
+
+              <select
+                value={addressObj.district}
+                onChange={e => setAddressObj({...addressObj, district: e.target.value})}
+                disabled={!addressObj.city}
+                className="glass-input"
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", opacity: addressObj.city ? 1 : 0.5 }}
+              >
+                <option value="">{t("profilPage.fields.selectDistrict")}</option>
+                {addressObj.country && addressObj.city && City.getCitiesOfState(addressObj.country, addressObj.city).map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+              </select>
+            </div>
+            <textarea
+              value={addressObj.fullAddress}
+              onChange={e => setAddressObj({...addressObj, fullAddress: e.target.value})}
+              rows={3}
+              placeholder={t("profilPage.fields.fullAddressPlaceholder")}
+              className="glass-input"
+              style={{ width: "100%", padding: "12px 16px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.2)", color: "#fff", resize: "vertical" }} 
+            />
+          </div>
+          
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
+            <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #22B573)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+              {saving ? t("profilPage.actions.saving") : t("profilPage.actions.save")}
+            </button>
+          </div>
+        </form>
+      </div>
+      <AiDataResetPanel />
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+

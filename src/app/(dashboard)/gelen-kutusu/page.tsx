@@ -466,10 +466,37 @@ export default function GelenKutusuPage() {
 
 
     const fetchNotifications = async () => {
-      if (!organizationId) return;
       try {
-        const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId).order('created_at', { ascending: false });
-        if (data) setNotifications(data);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) return;
+
+        let regularNotifs: any[] = [];
+        if (organizationId) {
+          const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId);
+          regularNotifs = data || [];
+        }
+
+        // Fetch user type
+        const { data: profileData } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).limit(1);
+        const userType = profileData?.[0]?.user_type || 'business';
+
+        // Fetch broadcasts
+        const { data: broadcasts } = await supabase.from('broadcast_notifications').select('*').in('target', ['all', userType]);
+        const { data: reads } = await supabase.from('broadcast_reads').select('broadcast_id').eq('user_id', session.user.id);
+        
+        const readSet = new Set(reads?.map(r => r.broadcast_id) || []);
+        
+        const broadcastNotifs = (broadcasts || []).map(b => ({
+           id: b.id,
+           is_broadcast: true,
+           title: b.title,
+           message: b.message,
+           created_at: b.created_at,
+           is_read: readSet.has(b.id)
+        }));
+        
+        const combined = [...regularNotifs, ...broadcastNotifs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setNotifications(combined);
       } catch (err) {
         console.warn("Notifications fetch err:", err);
       }
@@ -532,6 +559,7 @@ export default function GelenKutusuPage() {
 
     const notifChannel = supabase.channel('web_realtime_notifications')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, fetchNotifications)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, fetchNotifications)
       .subscribe();
 
     return () => {

@@ -24,6 +24,9 @@ export default function Header() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
         fetchUnreadCount();
       })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => {
+        fetchUnreadCount();
+      })
       .subscribe();
 
     return () => {
@@ -43,12 +46,36 @@ export default function Header() {
   const fetchUnreadCount = async () => {
     if (!organization?.id) return;
     
+    // 1. Fetch normal notifications (organization scoped)
     const { count } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
       .eq('profile_id', organization.id)
       .eq('is_read', false);
-    if (count !== null) setUnreadCount(count);
+    const regularCount = count || 0;
+
+    // 2. Fetch broadcast notifications (user scoped)
+    const { data: { session } } = await supabase.auth.getSession();
+    let broadcastUnreadCount = 0;
+    
+    if (session?.user) {
+      const { data: profile } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).maybeSingle();
+      const userType = profile?.user_type || 'business';
+
+      const { count: totalBroadcasts } = await supabase
+        .from('broadcast_notifications')
+        .select('id', { count: 'exact', head: true })
+        .in('target', ['all', userType]);
+
+      const { count: readBroadcasts } = await supabase
+        .from('broadcast_reads')
+        .select('broadcast_id', { count: 'exact', head: true })
+        .eq('user_id', session.user.id);
+
+      broadcastUnreadCount = Math.max(0, (totalBroadcasts || 0) - (readBroadcasts || 0));
+    }
+    
+    setUnreadCount(regularCount + broadcastUnreadCount);
   };
   
   let pageTitle = t("header.titles.home");

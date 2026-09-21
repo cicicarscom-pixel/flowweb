@@ -19,15 +19,17 @@ export default function Header() {
   useEffect(() => {
     fetchUnreadCount();
 
-    if (!organization?.id) return;
-    const channel = supabase.channel('header_notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
+    let channel = supabase.channel('header_notifications');
+    
+    if (organization?.id) {
+      channel = channel.on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
         fetchUnreadCount();
-      })
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => {
-        fetchUnreadCount();
-      })
-      .subscribe();
+      });
+    }
+
+    channel = channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => {
+      fetchUnreadCount();
+    }).subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -44,15 +46,17 @@ export default function Header() {
   }, [locale]);
 
   const fetchUnreadCount = async () => {
-    if (!organization?.id) return;
+    let regularCount = 0;
     
-    // 1. Fetch normal notifications (organization scoped)
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('profile_id', organization.id)
-      .eq('is_read', false);
-    const regularCount = count || 0;
+    // 1. Fetch normal notifications (organization scoped) if org exists
+    if (organization?.id) {
+      const { count } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('profile_id', organization.id)
+        .eq('is_read', false);
+      regularCount = count || 0;
+    }
 
     // 2. Fetch broadcast notifications (user scoped)
     const { data: { session } } = await supabase.auth.getSession();

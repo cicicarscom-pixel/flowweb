@@ -31,7 +31,11 @@ export default function GelenKutusuPage() {
            const { data } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).limit(1);
            if (data?.[0]?.organization_id) {
               setOrganizationId(data[0].organization_id);
+           } else {
+              setIsLoading(false);
            }
+        } else {
+           setIsLoading(false);
         }
      };
      initOrg();

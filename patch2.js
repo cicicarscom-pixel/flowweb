@@ -1,0 +1,1 @@
+﻿const fs = require('fs'); let c = fs.readFileSync('src/actions/calendars.ts', 'utf8'); c = c.replace(/const supabase = createClient\(\);/g, 'const supabase = await createClient();'); fs.writeFileSync('src/actions/calendars.ts', c, 'utf8');

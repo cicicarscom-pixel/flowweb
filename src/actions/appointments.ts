@@ -3,18 +3,24 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function getAppointmentsByDate(dateStr: string) {
+export async function getAppointmentsByDate(dateStr: string, calendarId?: string) {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
 
-  const { data: appointments, error } = await supabase
+  let query = supabase
     .from('appointments')
     .select('*')
     .eq('organization_id', session.user.id)
     .like('date', `${dateStr}%`)
     .in('status', ['Pending', 'Approved'])
     .order('date', { ascending: true })
+
+  if (calendarId) {
+    query = query.eq('calendar_id', calendarId);
+  }
+
+  const { data: appointments, error } = await query;
 
   if (error) return { data: [], error: error.message }
   if (!appointments || appointments.length === 0) return { data: [], error: null }
@@ -54,7 +60,7 @@ export async function getAppointmentsByDate(dateStr: string) {
   return { data: enriched, error: null }
 }
 
-export async function getAvailableSlots(dateStr: string, serviceId: string) {
+export async function getAvailableSlots(dateStr: string, serviceId: string, calendarId?: string) {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
@@ -68,12 +74,18 @@ export async function getAvailableSlots(dateStr: string, serviceId: string) {
 
   const duration = service?.duration_minutes || 30
 
-  const { data: taken } = await supabase
+  let query = supabase
     .from('appointments')
     .select('date')
     .eq('organization_id', session.user.id)
     .like('date', `${dateStr}%`)
     .in('status', ['Pending', 'Approved'])
+
+  if (calendarId) {
+    query = query.eq('calendar_id', calendarId);
+  }
+
+  const { data: taken } = await query;
 
   const takenTimes = new Set(
     (taken || []).map((r) => {
@@ -112,7 +124,7 @@ export async function createAppointment(input: {
       customer_phone: input.customerPhone,
       customer_name: input.customerName || null,
       service_id: input.serviceId,
-      employee_id: input.employeeId || null,
+      calendar_id: (input as any).calendarId || null,
       date: input.date,
       status: 'Pending',
       booking_token: crypto.randomUUID(),

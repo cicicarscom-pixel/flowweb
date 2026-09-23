@@ -100,7 +100,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
           filter: `organization_id=eq.${merchantId}`,
         },
         async () => {
-          const { data } = await getAppointmentsByDate(selectedDate);
+          const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
           setAppointments(data);
         }
       )
@@ -114,7 +114,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   // Load appointments when selected date changes (if not today)
   useEffect(() => {
     async function loadDate() {
-      const { data } = await getAppointmentsByDate(selectedDate);
+      const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
       setAppointments(data);
     }
     if (selectedDate !== today) {
@@ -122,7 +122,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     } else {
       setAppointments(initialAppointments);
     }
-  }, [selectedDate, today, initialAppointments]);
+  }, [selectedDate, today, initialAppointments, activeCalendarId]);
 
   // Load available slots when service changes in modal
   useEffect(() => {
@@ -213,7 +213,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
       return;
     }
     
-    const { data } = await getAppointmentsByDate(selectedDate);
+    const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
     setAppointments(data);
     
     setIsModalOpen(false);
@@ -265,6 +265,64 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
       <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
         
+        {/* Multi-Calendar Chip Bar (Phase 3) */}
+        {multiCalendarEnabled && (
+          <div style={{ display: "flex", alignItems: "center", gap: 12, overflowX: "auto", paddingBottom: 8 }} className="hide-scroll">
+            <button
+              onClick={async () => {
+                setActiveCalendarId(null);
+                const { getAppointmentsByDate } = await import("@/actions/appointments");
+                const res = await getAppointmentsByDate(selectedDate);
+                if (res.data) setAppointments(res.data);
+              }}
+              style={{
+                padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                background: activeCalendarId === null ? "#22B573" : "rgba(255,255,255,0.05)",
+                color: activeCalendarId === null ? "#17151A" : "var(--text-secondary)",
+                border: activeCalendarId === null ? "none" : "1px solid rgba(255,255,255,0.1)"
+              }}
+            >
+              {t("common.all") || "Tümü"}
+            </button>
+            {calendars.map((cal: any) => (
+              <button
+                key={cal.id}
+                onClick={async () => {
+                  setActiveCalendarId(cal.id);
+                  const { getAppointmentsByDate } = await import("@/actions/appointments");
+                  const res = await getAppointmentsByDate(selectedDate, cal.id);
+                  if (res.data) setAppointments(res.data);
+                }}
+                style={{
+                  padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                  background: activeCalendarId === cal.id ? "#22B573" : "rgba(255,255,255,0.05)",
+                  color: activeCalendarId === cal.id ? "#17151A" : "var(--text-secondary)",
+                  border: activeCalendarId === cal.id ? "none" : "1px solid rgba(255,255,255,0.1)"
+                }}
+              >
+                {cal.name}
+              </button>
+            ))}
+            <button
+              onClick={async () => {
+                const name = prompt("Yeni Takvim Adı (Örn: Ayşe Hanım - Manikür):");
+                if (name && name.trim()) {
+                  const { createCalendar, getCalendars } = await import("@/actions/calendars");
+                  await createCalendar(name);
+                  const updated = await getCalendars();
+                  setCalendars(updated);
+                }
+              }}
+              style={{
+                padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                background: "transparent", color: "#00c6ff", border: "1px dashed #00c6ff"
+              }}
+            >
+              + {t("aiAsistan.addCalendar") || "Takvim Ekle"}
+            </button>
+          </div>
+        )}
+
         {/* Left Column */}
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           {/* Calendar Strip */}
@@ -403,7 +461,14 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                         </div>
                         <div>
                           <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || t('randevuPage.timeline.unnamedCustomer')}</h4>
-                          <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
+                            {multiCalendarEnabled && activeCalendarId === null && appt.calendar_id && (
+                              <span style={{ fontSize: 12, color: "#22B573", background: "rgba(34,181,115,0.1)", padding: "2px 8px", borderRadius: 99 }}>
+                                {calendars.find((c: any) => c.id === appt.calendar_id)?.name || "Takvim"}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <button style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", padding: 8 }}>

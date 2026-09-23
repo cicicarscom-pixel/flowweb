@@ -20,7 +20,8 @@
       "wahaStartFailed": "Başlatılamadı",
       "wahaQrFailed": "QR alınamadı",
       "wahaPairingCodeFailed": "Eşleşme kodu alınamadı"
-    }
+    },
+    "all": "Tümü"
   },
   "nav": {
     "home": "Anasayfa",
@@ -964,5 +965,8 @@
     "alerts": {
       "errorPrefix": "Hata: {error}"
     }
+  },
+  "aiAsistan": {
+    "addCalendar": "Takvim Ekle"
   }
 }

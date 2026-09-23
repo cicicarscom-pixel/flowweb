@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
+import MultiCalendarToggle from "@/components/settings/MultiCalendarToggle";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
@@ -712,6 +713,7 @@ export default function BotScreen() {
         </Link>
       </div>
 
+      <MultiCalendarToggle />
       <AiDataResetPanel />
       
       <style dangerouslySetInnerHTML={{__html: `

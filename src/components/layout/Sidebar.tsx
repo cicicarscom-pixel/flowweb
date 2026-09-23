@@ -46,7 +46,6 @@ export default function Sidebar() {
 
   const navItems = [
     { href: "/", label: t("nav.home"), icon: "⬡", color: "#FF7A59" },
-    { href: "/ai-asistan/takvimler", label: "Takvimler", icon: "📅", color: "#FF7A59" },
       { href: "/ai-asistan", label: t("nav.aiAssistant"), icon: "◉", color: "#FF7A59" },
     { href: "/ai-muhasebe", label: t("nav.aiAccounting"), icon: "▤", color: "#F59E0B" },
     { href: "/musteriler", label: t("nav.customers"), icon: "👥", color: "#10B981" },

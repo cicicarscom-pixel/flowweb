@@ -73,7 +73,9 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function RandevuClient({ initialAppointments, services, merchantId, today }: { initialAppointments: any[], services: any[], merchantId: string, today: string }) {
+export default function RandevuClient({ initialAppointments, services, merchantId, today, initialCalendars, multiCalendarEnabled }: { initialAppointments: any[], services: any[], merchantId: string, today: string, initialCalendars?: any[], multiCalendarEnabled?: boolean }) {
+  const [activeCalendarId, setActiveCalendarId] = useState<string | null>(null);
+  const [calendars, setCalendars] = useState(initialCalendars || []);
   const t = useTranslations();
   const supabase = createClient();
   const [currentDate, setCurrentDate] = useState(new Date(today));

@@ -26,6 +26,10 @@ export default async function RandevuPage() {
     // Hata durumunda bo� liste ile devam ediyoruz ki sayfa ��kmesin
   }
 
+  const { data: org } = await supabase.from("organizations").select("multi_calendar_enabled").eq("owner_id", session.user.id).single();
+  const multiCalendarEnabled = org?.multi_calendar_enabled || false;
+  const { getCalendars } = await import("@/actions/calendars");
+  const calendars = await getCalendars();
   const appointmentsRes = await getAppointmentsByDate(today)
 
   return (
@@ -34,6 +38,8 @@ export default async function RandevuPage() {
       services={businessServices} 
       merchantId={session.user.id} 
       today={today}
+      initialCalendars={calendars}
+      multiCalendarEnabled={multiCalendarEnabled}
     />
   )
 }

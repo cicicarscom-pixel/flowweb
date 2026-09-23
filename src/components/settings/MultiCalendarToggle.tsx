@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "next-intl";
+import { toggleMultiCalendarMode } from "@/actions/toggleCalendar";
 
 export default function MultiCalendarToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
@@ -25,23 +26,16 @@ export default function MultiCalendarToggle() {
       setLoading(false);
     }
     load();
-  }, []);
+  }, [supabase]);
 
   const handleToggle = async () => {
     const newVal = !isEnabled;
-    setIsEnabled(newVal);
+    setIsEnabled(newVal); // Optimistic
     
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      const { error } = await supabase
-        .from("organizations")
-        .update({ multi_calendar_enabled: newVal })
-        .eq("owner_id", session.user.id);
-        
-      if (error) {
-        console.error("Toggle error:", error);
-        setIsEnabled(!newVal); // Revert on error
-      }
+    const res = await toggleMultiCalendarMode(newVal);
+    if (res.error) {
+      alert("Hata: " + res.error);
+      setIsEnabled(!newVal); // Revert
     }
   };
 
@@ -82,3 +76,4 @@ export default function MultiCalendarToggle() {
     </div>
   );
 }
+

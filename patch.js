@@ -1,1 +1,0 @@
-﻿const fs = require('fs'); let c = fs.readFileSync('src/components/layout/Sidebar.tsx', 'utf8'); c = c.replace('{ href: "/ai-asistan",', '{ href: "/ai-asistan/takvimler", label: "Takvimler", icon: "📅", color: "#FF7A59" },\n      { href: "/ai-asistan",'); fs.writeFileSync('src/components/layout/Sidebar.tsx', c, 'utf8');

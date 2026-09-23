@@ -1,1 +1,0 @@
-﻿const fs = require('fs'); let c = fs.readFileSync('src/app/(dashboard)/ai-asistan/takvimler/page.tsx', 'utf8'); c = c.replace('const services = servicesResponse.data || [];', 'const services = servicesResponse || [];'); fs.writeFileSync('src/app/(dashboard)/ai-asistan/takvimler/page.tsx', c, 'utf8');

@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Calendar, createCalendar, deleteCalendar, updateCalendar, setCalendarServices } from "@/actions/calendars";
@@ -11,6 +11,10 @@ export default function TakvimAyarlariClient({ initialCalendars, services, initi
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    setCalendars(initialCalendars);
+  }, [initialCalendars]);
 
   const toggleMultiCalendar = async () => {
     setLoading(true);

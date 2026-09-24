@@ -388,7 +388,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
         
         {/* Multi-Calendar Chip Bar (Phase 3) */}
         {multiCalendarEnabled && (
-          <div style={{ display: "flex", alignItems: "center", gap: 12, overflowX: "auto", paddingBottom: 8 }} className="hide-scroll">
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", paddingBottom: 8 }}>
             <button
               onClick={async () => {
                 setActiveCalendarId(null);

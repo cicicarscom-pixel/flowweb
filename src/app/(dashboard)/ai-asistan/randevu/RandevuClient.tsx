@@ -76,6 +76,8 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
 export default function RandevuClient({ initialAppointments, services, merchantId, today, initialCalendars, multiCalendarEnabled }: { initialAppointments: any[], services: any[], merchantId: string, today: string, initialCalendars?: any[], multiCalendarEnabled?: boolean }) {
   const [activeCalendarId, setActiveCalendarId] = useState<string | null>(null);
   const [calendars, setCalendars] = useState(initialCalendars || []);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [promptConfig, setPromptConfig] = useState({ visible: false, title: "", placeholder: "", value: "", onSave: (val: string) => {} });
   const t = useTranslations();
   const supabase = createClient();
   const [currentDate, setCurrentDate] = useState(new Date(today));
@@ -304,22 +306,38 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               </button>
             ))}
             <button
-              onClick={async () => {
-                const name = prompt("Yeni Takvim Adı (Örn: Ayşe Hanım - Manikür):");
-                if (name && name.trim()) {
-                  const { createCalendar, getCalendars } = await import("@/actions/calendars");
-                  await createCalendar(name);
-                  const updated = await getCalendars();
-                  setCalendars(updated);
-                }
-              }}
-              style={{
-                padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
-                background: "transparent", color: "#00c6ff", border: "1px dashed #00c6ff"
-              }}
-            >
-              + {t("aiAsistan.addCalendar") || "Takvim Ekle"}
-            </button>
+                onClick={() => setIsManageModalOpen(true)}
+                style={{
+                  padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                  background: "rgba(239, 68, 68, 0.15)", color: "#EF4444", border: "1px dashed #EF4444"
+                }}
+              >
+                Düzenle
+              </button>
+              <button
+                onClick={() => {
+                  setPromptConfig({
+                    visible: true,
+                    title: "Yeni Takvim",
+                    placeholder: "Yeni takvim/personel adını girin",
+                    value: "",
+                    onSave: async (name: string) => {
+                      if (name && name.trim()) {
+                        const { createCalendar, getCalendars } = await import("@/actions/calendars");
+                        await createCalendar(name.trim());
+                        const updated = await getCalendars();
+                        setCalendars(updated);
+                      }
+                    }
+                  });
+                }}
+                style={{
+                  padding: "8px 16px", borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.2s",
+                  background: "transparent", color: "#00c6ff", border: "1px dashed #00c6ff"
+                }}
+              >
+                + Yeni Ekle
+              </button>
           </div>
         )}
 

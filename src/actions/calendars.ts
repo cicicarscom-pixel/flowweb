@@ -27,6 +27,7 @@ export async function getCalendars(): Promise<Calendar[]> {
       calendar_services(service_id)
     `)
     .eq("merchant_id", session.user.id)
+      .eq("is_active", true)
       .order("created_at", { ascending: true });
 
   if (error || !data) {

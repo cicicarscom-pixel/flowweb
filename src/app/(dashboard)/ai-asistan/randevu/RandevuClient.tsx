@@ -661,7 +661,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                         if (confirm(`'${cal.name}' silinecek. Emin misiniz?`)) {
                           const { createClient } = await import("@/lib/supabase/client");
                           const client = createClient();
-                          const { data } = await client.from("calendars").delete().eq("id", cal.id).select();
+                          const { data } = await client.from("calendars").update({ is_active: false }).eq("id", cal.id).select();
                           if (!data || data.length === 0) alert("Bu takvimi silme yetkiniz yok (eski kayıt olduğu için). Lütfen Supabase panelinden silin.");
                           const { getCalendars } = await import("@/actions/calendars");
                           const updated = await getCalendars();

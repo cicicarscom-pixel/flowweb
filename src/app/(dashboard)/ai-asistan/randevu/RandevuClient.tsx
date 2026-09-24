@@ -106,8 +106,9 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
                       style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: 16, color: "#EF4444" }}
                       onClick={async () => {
                         if (confirm(`'${cal.name}' silinecek. Emin misiniz?`)) {
-                          const { supabase } = await import("@/shared");
-                          const client = await supabase();
+                          
+                          const { createClient } = await import("@/lib/supabase/client");
+                          const client = createClient();
                           await client.from("calendars").delete().eq("id", cal.id);
                           const { getCalendars } = await import("@/actions/calendars");
                           const updated = await getCalendars();

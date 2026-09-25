@@ -60,7 +60,7 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
   return { data: enriched, error: null }
 }
 
-export async function getAvailableSlots(dateStr: string, serviceId: string, calendarId?: string) {
+export async function getAvailableSlots(dateStr: string, serviceId?: string, calendarId?: string) {
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
@@ -232,4 +232,5 @@ export async function updateAppointmentStatus(id: string, status: 'Approved' | '
   revalidatePath('/ai-asistan/randevu')
   return { data, error: null }
 }
+
 

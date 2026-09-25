@@ -130,7 +130,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   // Load available slots when service changes in modal
   useEffect(() => {
-    if (isModalOpen && newAppt.service) {
+    if (isModalOpen) {
       getAvailableSlots(selectedDate, newAppt.service).then(res => {
         if (res.data) setAvailableSlots(res.data);
       });
@@ -754,6 +754,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     </div>
   );
 }
+
 
 
 

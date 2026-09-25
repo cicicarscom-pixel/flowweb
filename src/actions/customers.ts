@@ -28,7 +28,7 @@ export async function getCustomers() {
     // 2. Fetch appointments (no nested embed)
     const { data: appointmentsData, error: apptError } = await supabase
       .from('appointments')
-      .select('id, date, status, customer_phone, service_id')
+      .select('id, date, status, customer_phone, service_id, customer_request_raw')
       .eq('organization_id', session.user.id)
 
     if (apptError) {

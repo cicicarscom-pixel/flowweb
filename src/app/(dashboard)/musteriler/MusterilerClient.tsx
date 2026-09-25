@@ -40,7 +40,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             >
               <div>
                 <div style={{ fontWeight: 500, fontSize: 16, color: 'var(--text-100)' }}>{customer.name}</div>
-                <div style={{ fontSize: 13, color: 'var(--text-300)', marginTop: 4 }}>{customer.phone}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-300)', marginTop: 4 }}>{customer.phone?.replace('@c.us', '')}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 13, color: 'var(--text-200)' }}>{t('musteriler.appointmentCount', { count: customer.total_appointments })}</div>
@@ -56,7 +56,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
         <div style={{ width: 350, flexShrink: 0 }}>
           <div className="glass-strong" style={{ padding: 20, borderRadius: 16, position: 'sticky', top: 20 }}>
             <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-100)' }}>{selectedCustomer.name}</h3>
-            <p style={{ margin: '0 0 20px 0', color: 'var(--text-300)', fontSize: 14 }}>{selectedCustomer.phone}</p>
+            <p style={{ margin: '0 0 20px 0', color: 'var(--text-300)', fontSize: 14 }}>{selectedCustomer.phone?.replace('@c.us', '')}</p>
             
             <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-200)' }}>{t('musteriler.pastAppointments')}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -66,7 +66,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                 selectedCustomer.history.map((appt: any) => (
                   <div key={appt.id} style={{ padding: 12, background: 'rgba(0,0,0,0.2)', borderRadius: 8 }}>
                     <div style={{ fontSize: 14, color: 'var(--text-100)', marginBottom: 4 }}>
-                      {appt.services?.length > 0 ? appt.services.join(' + ') : t('musteriler.unknownService')}
+                      {appt.services?.length > 0 ? appt.services.join(' + ') : (appt.customer_request_raw ? `📝 Not: ${appt.customer_request_raw}` : t('musteriler.unknownService'))}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-300)', display: 'flex', justifyContent: 'space-between' }}>
                       <span>{formatDate(appt.date)}</span>

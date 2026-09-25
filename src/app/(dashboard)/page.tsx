@@ -158,11 +158,23 @@ export default function DashboardHomePage() {
 
         // Appointments (Dummy fallback if table not ready)
         // Adjust this query based on actual schema
-        const { data: appts } = await supabase.from('appointments').select('*').order('date', { ascending: true }).limit(5);
+        
+          const startOfDay = new Date();
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date();
+          endOfDay.setHours(23, 59, 59, 999);
+
+          const { data: appts } = await supabase.from('appointments')
+            .select('*')
+            .eq('organization_id', merchantId)
+            .gte('date', startOfDay.toISOString())
+            .lte('date', endOfDay.toISOString())
+            .order('date', { ascending: true })
+            .limit(5);
         if (appts && appts.length > 0) {
           setAppointments(appts.map(a => ({
             time: a.date ? new Date(a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : "00:00",
-            title: a.customer_name ? `${a.customer_name} - ${a.service_name || t('dashboardHome.appointments.defaultTitle')}` : (a.service_name || t('dashboardHome.appointments.defaultTitle')),
+            title: a.customer_name ? `${a.customer_name} - ${a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))}` : (a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))),
             color: "#FF7A59"
           })));
         } else {

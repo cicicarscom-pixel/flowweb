@@ -197,7 +197,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   };
 
   const handleSave = async () => {
-    if (!newAppt.service || !newAppt.time || !newAppt.phone) {
+    if (!newAppt.time || !newAppt.phone) {
       alert(t('randevuPage.alerts.missingFields'));
       return;
     }
@@ -207,7 +207,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     const res = await createAppointment({
       customerName: newAppt.name,
       customerPhone: newAppt.phone,
-      serviceId: newAppt.service,
+      serviceId: newAppt.service || null, calendarId: activeCalendarId || null,
       date: dateStr
     });
     
@@ -227,7 +227,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   const getServiceName = (serviceId: string) => {
     const s = services.find(x => x.id === serviceId);
-    return s ? s.name : t('randevuPage.timeline.unknownService');
+    return s ? s.name : null;
   };
 
   return (
@@ -477,8 +477,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 const palette = CARD_COLORS[i % CARD_COLORS.length];
                 const d = appt.date || '';
                 const rawTime = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
-                const timeStr = rawTime.substring(0, 5);
-                const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : getServiceName(appt.service_id);
+                const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
+                const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : ((appt.service_id && getServiceName(appt.service_id)) || (appt.customer_request_raw ? `📝 Not: ${appt.customer_request_raw}` : t('randevuPage.timeline.unknownService')));
 
                 return (
                   <div key={appt.id} style={{ display: "flex", gap: 16 }}>
@@ -504,7 +504,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                           <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || t('randevuPage.timeline.unnamedCustomer')}</h4>
                           <div style={{ display: "flex", gap: 8 }}>
                             <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
-                            {multiCalendarEnabled && activeCalendarId === null && appt.calendar_id && (
+                            {multiCalendarEnabled && appt.calendar_id && (
                               <span style={{ fontSize: 12, color: "#22B573", background: "rgba(34,181,115,0.1)", padding: "2px 8px", borderRadius: 99 }}>
                                 {calendars.find((c: any) => c.id === appt.calendar_id)?.name || "Takvim"}
                               </span>
@@ -556,7 +556,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.customerNameLabel')}</label>
+                <div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Tarih</label><input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, marginBottom: 16 }} /></div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.customerNameLabel')}</label>
                 <input
                   type="text"
                   value={newAppt.name}
@@ -595,7 +595,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     value={newAppt.time}
                     onChange={e => setNewAppt({...newAppt, time: e.target.value})}
                     style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14 }}
-                    disabled={!newAppt.service}
+                    
                   >
                     <option value="">{t('randevuPage.modal.selectTimePlaceholder')}</option>
                     {availableSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
@@ -754,4 +754,6 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     </div>
   );
 }
+
+
 

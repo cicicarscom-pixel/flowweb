@@ -534,17 +534,21 @@ export default function RandevuClient({ initialAppointments, services, merchantI
           animation: "fadeIn 0.2s ease"
         }}>
           <div className="glass" style={{
-            width: 440, borderRadius: 32, padding: 32, position: "relative",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow: "0 24px 48px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05)",
-            animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
-          }}>
+              width: 440, maxHeight: "90vh", overflowY: "auto", borderRadius: 32, padding: 32, position: "relative",
+              border: "1px solid rgba(255,255,255,0.1)",
+              boxShadow: "0 24px 48px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05)",
+              animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+            }}>
             <button 
-              onClick={() => setIsModalOpen(false)}
-              style={{ position: "absolute", top: 24, right: 24, width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.05)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-            >
-              ✕
-            </button>
+                onClick={() => setIsModalOpen(false)}
+                style={{ position: "absolute", top: 20, right: 20, width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, zIndex: 10, transition: "all 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 28 }}>
               <div style={{ width: 64, height: 64, borderRadius: "50%", background: "linear-gradient(135deg, rgba(34,181,115,0.2), rgba(0,198,255,0.2))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, marginBottom: 12 }}>

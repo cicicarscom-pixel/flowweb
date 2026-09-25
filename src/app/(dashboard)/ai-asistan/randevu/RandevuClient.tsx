@@ -250,6 +250,27 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", minWidth: 90, textAlign: "center" }}>{monthYearStr}</span>
             <button onClick={handleNextMonth} style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", fontSize: 18, padding: 4 }}>&rsaquo;</button>
           </div>
+          <button
+            onClick={async () => {
+              if (window.confirm('AI Hafızası (son konuşmalar) silinsin mi? Sadece sizin işletmenizin kayıtları silinir.')) {
+                const { clearChatMemory } = await import('@/actions/clearChatMemory');
+                const res = await clearChatMemory();
+                if (res.success) {
+                  alert('AI Hafızası başarıyla silindi!');
+                } else {
+                  alert('Hata oluştu: ' + res.error);
+                }
+              }
+            }}
+            style={{ 
+              background: 'rgba(255, 59, 48, 0.15)', 
+              border: '1px solid rgba(255, 59, 48, 0.3)', borderRadius: 99, padding: '10px 20px', 
+              color: '#ff3b30', fontWeight: 700, fontSize: 14, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8
+            }}
+          >
+            🧹 Hafızayı Sil
+          </button>
           <button 
             onClick={() => setIsModalOpen(true)}
             style={{ 
@@ -733,3 +754,4 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     </div>
   );
 }
+

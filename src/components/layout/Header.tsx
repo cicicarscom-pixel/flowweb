@@ -57,7 +57,8 @@ export default function Header() {
         .from('notifications')
         .select('*', { count: 'exact', head: true })
         .eq('profile_id', organization.id)
-        .eq('is_read', false);
+          .eq('type', 'appointment_created')
+          .eq('is_read', false);
       regularCount = count || 0;
     }
 

@@ -4,8 +4,10 @@ import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 
 export default function DashboardHomePage() {
+  const router = useRouter();
   const t = useTranslations();
   const locale = useLocale();
   const [isLoading, setIsLoading] = useState(true);

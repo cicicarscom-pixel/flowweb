@@ -128,7 +128,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   }, [selectedDate, currentDate]);
 
   
-  const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '' });
+  const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '', calendar_id: '' });
   const [isSaving, setIsSaving] = useState(false);
 
   // Subscribe to real-time updates
@@ -247,7 +247,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     const res = await createAppointment({
       customerName: newAppt.name,
       customerPhone: newAppt.phone,
-      serviceId: newAppt.service || null, calendarId: activeCalendarId || null,
+      serviceId: newAppt.service || null, calendarId: newAppt.calendar_id || activeCalendarId || null,
       date: dateStr
     });
     
@@ -261,7 +261,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     setAppointments(data);
     
     setIsModalOpen(false);
-    setNewAppt({ name: '', phone: '', time: '', service: '' });
+    setNewAppt({ name: '', phone: '', time: '', service: '', calendar_id: '' });
     setIsSaving(false);
   };
 
@@ -578,7 +578,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               width: 440, maxHeight: "90vh", overflowY: "auto", borderRadius: 32, padding: 32, position: "relative",
               border: "1px solid rgba(255,255,255,0.1)",
               boxShadow: "0 24px 48px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05)",
-              animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+              animation: "slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+              transform: "scale(0.75)"
             }}>
             <button 
                 onClick={() => setIsModalOpen(false)}
@@ -622,7 +623,19 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 />
               </div>
 
-              <div style={{ display: "flex", gap: 16 }}>
+              
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Takvim Seçiniz</label>
+                  <select
+                    value={newAppt.calendar_id}
+                    onChange={e => setNewAppt({...newAppt, calendar_id: e.target.value})}
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, marginBottom: 16 }}
+                  >
+                    <option value="">Seçiniz</option>
+                    {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                </div>
+<div style={{ display: "flex", gap: 16 }}>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.serviceTypeLabel')}</label>
                   <select

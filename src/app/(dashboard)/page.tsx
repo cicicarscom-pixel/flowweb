@@ -1,59 +1,549 @@
 "use client";
 
-import React, {/* Randevu Bildirimleri */}
-        <div>
-          <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>Randevu Bildirimleri</p>
-          <div className="glass" style={{ borderRadius: 16, overflow: "hidden" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "var(--text-secondary)", textAlign: "left" }}>
-                  <th style={{ padding: "16px 20px", fontWeight: 600 }}>Tarih</th>
-                  <th style={{ padding: "16px 20px", fontWeight: 600 }}>Bildirim</th>
-                  <th style={{ padding: "16px 20px", fontWeight: 600, textAlign: "right" }}>İşlem</th>
-                </tr>
-              </thead>
-              <tbody>
-                {commLogs.map((log, i) => {
-                  let text = "Yeni randevu oluşturuldu.";
-                  let dateStr = new Date(log.created_at).toLocaleDateString(locale) + ' ' + new Date(log.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
-                  if (log.metadata) {
-                    const md = log.metadata;
-                    const rd = md.starts_at ? new Date(md.starts_at) : null;
-                    const rds = rd ? rd.toLocaleDateString(locale, { month: 'long', day: 'numeric', weekday: 'long'}) + ' ' + rd.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit'}) : '';
-                    text = `${md.customer_name || 'Müşteri'} randevu aldı — ${rds} · ${md.calendar_name || ''}` + (md.customer_request_raw ? ` 📝 ${md.customer_request_raw}` : '');
-                  } else if (log.message) {
-                    text = log.message;
+import React, { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
+
+export default function DashboardHomePage() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const [isLoading, setIsLoading] = useState(true);
+  const [aiActive, setAiActive] = useState(true);
+  const [financeStats, setFinanceStats] = useState({ income: 0, expense: 0 });
+  const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
+  const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [commLogs, setCommLogs] = useState<any[]>([]);
+  const [platformStats, setPlatformStats] = useState<{ platform: string; count: number }[]>([]);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const merchantId = session?.user?.id || null;
+
+        // Bot Status
+        if (merchantId) {
+          const { data: botData } = await supabase
+            .from('bot_settings')
+            .select('is_active')
+            .eq('merchant_id', merchantId)
+            .maybeSingle();
+          if (botData) setAiActive(botData.is_active);
+        }
+
+        // Finance Stats (Transactions + Finance Documents)
+        let inc = 0, exp = 0;
+        const upcoming: any[] = [];
+        const today = new Date().toISOString().split('T')[0];
+
+        const { data: transactions } = await supabase.from('transactions').select('*');
+        if (transactions) {
+          transactions.forEach(tx => {
+            if (tx.type === 'income') inc += Number(tx.amount);
+            if (tx.type === 'expense') {
+              exp += Number(tx.amount);
+              if (tx.date && tx.date >= today) {
+                upcoming.push({ ...tx, description: tx.title || t('dashboardHome.defaults.payment') });
+              }
+            }
+          });
+        }
+
+        let orgId = null;
+        if (merchantId) {
+          const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).maybeSingle();
+          orgId = orgMember?.organization_id;
+        }
+
+        if (orgId) {
+          const { data: docs } = await supabase.from('finance_documents').select('*').eq('organization_id', orgId);
+          if (docs) {
+            docs.forEach(d => {
+              const amt = Number(d.amount_minor) / 100;
+              if (d.type === 'income' || d.type === 'sales') {
+                if (d.flow_payment_status === 'paid') inc += amt;
+              } else if (d.type === 'expense') {
+                if (d.flow_payment_status === 'paid') {
+                  exp += amt;
+                } else {
+                  const docDate = d.created_at ? new Date(d.created_at).toISOString().split('T')[0] : null;
+                  if (docDate && docDate >= today) {
+                    upcoming.push({ id: d.id, date: docDate, amount: amt, description: d.title || t('dashboardHome.defaults.invoicePayment'), type: 'expense' });
                   }
-                  return (
-                    <tr key={log.id || i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: log.is_read ? 'transparent' : 'rgba(255,122,89,0.05)' }}>
-                      <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>
-                        {dateStr}
-                      </td>
-                      <td style={{ padding: "16px 20px", color: log.is_read ? "#fff" : "#FF7A59", fontWeight: log.is_read ? 400 : 600 }}>
-                        {text}
-                      </td>
-                      <td style={{ padding: "16px 20px", textAlign: "right", color: "#FF7A59", cursor: "pointer", fontWeight: 600 }} onClick={async () => {
-                        if (!log.is_read) {
-                          await supabase.from('notifications').update({ is_read: true }).eq('id', log.id);
-                        }
-                        let targetDate = '';
-                        if (log.metadata?.starts_at) targetDate = '?date=' + log.metadata.starts_at.split('T')[0];
-                        router.push('/ai-asistan/randevu' + targetDate);
-                      }}>
-                        Görüntüle
-                      </td>
-                    </tr>
-                  );
-                })}
-                {commLogs.length === 0 && (
-                  <tr>
-                    <td colSpan={3} style={{ padding: "16px 20px", color: "var(--text-secondary)", textAlign: "center" }}>Bildirim bulunmuyor.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                }
+              }
+            });
+          }
+        }
+
+        upcoming.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        setUpcomingPayments(upcoming.slice(0, 5));
+        setFinanceStats({ income: inc, expense: exp });
+
+        // Social Stats (Zernio)
+        const { data: followRes, error: followErr } = await supabase.functions.invoke('zernio-client', {
+          body: { action: 'get-follower-stats', payload: {} }
+        });
+        
+        let totalFollowers = 0;
+        let totalTrend = 0;
+        let accountsWithTrend = 0;
+
+        const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
+        if (actualFollow.accounts) {
+           totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || a.followers || 0), 0);
+           
+           actualFollow.accounts.forEach((a: any) => {
+              const t = a.followerGrowthPercentage || a.growthPercentage || a.trend || a.growth || 0;
+              if (t > 0 || t < 0) {
+                 totalTrend += t;
+                 accountsWithTrend++;
+              }
+           });
+        }
+        
+        // Use average trend if available, otherwise fallback to global actualFollow.trend or 0
+        const finalTrend = accountsWithTrend > 0 
+           ? Number((totalTrend / accountsWithTrend).toFixed(1)) 
+           : (actualFollow.trend || actualFollow.growthPercentage || actualFollow.totalGrowth || 0);
+
+        setSocialStats(prev => ({ ...prev, followers: totalFollowers, trend: finalTrend }));
+
+        // Recent Activities (Messages & Comments)
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayIso = todayStart.toISOString();
+
+        const [{ data: msgs }, { data: comments }, { count: msgCount }, { count: cmtCount }] = await Promise.all([
+          supabase.from('messages').select('*').order('created_at', { ascending: false }).limit(5),
+          supabase.from('comments').select('*').order('created_at', { ascending: false }).limit(5),
+          supabase.from('messages').select('*', { count: 'exact', head: true }).gte('created_at', todayIso),
+          supabase.from('comments').select('*', { count: 'exact', head: true }).gte('created_at', todayIso)
+        ]);
+
+        setDailyStats({ messages: msgCount || 0, comments: cmtCount || 0 });
+        
+        let merged: any[] = [];
+        if (msgs) {
+          merged = [...merged, ...msgs.map(m => ({
+            id: 'msg_'+m.id,
+            type: t('dashboardHome.activityTypes.message'),
+            platform: 'WHATSAPP',
+            name: m.sender_name || t('dashboardHome.defaults.customer'),
+            message: m.message_body || m.content || '',
+            date: m.created_at,
+            color: "#FF7A59"
+          }))];
+        }
+        if (comments) {
+          merged = [...merged, ...comments.map(c => ({
+            id: 'cmt_'+c.id,
+            type: t('dashboardHome.activityTypes.comment'),
+            platform: (c.platform || 'INSTAGRAM').toUpperCase(),
+            name: c.username || t('dashboardHome.defaults.user'),
+            message: c.text || c.content || '',
+            date: c.created_at,
+            color: "#E8A8CD"
+          }))];
+        }
+        
+        merged.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        setRecentActivities(merged.slice(0, 3));
+
+        // Appointments (Dummy fallback if table not ready)
+        // Adjust this query based on actual schema
+        
+          const startOfDay = new Date();
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date();
+          endOfDay.setHours(23, 59, 59, 999);
+
+          const { data: appts } = await supabase.from('appointments')
+            .select('*')
+            .eq('organization_id', merchantId)
+            .gte('date', startOfDay.toISOString())
+            .lte('date', endOfDay.toISOString())
+            .order('date', { ascending: true })
+            .limit(5);
+        if (appts && appts.length > 0) {
+          setAppointments(appts.map(a => ({
+            time: a.date ? new Date(a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : "00:00",
+            title: a.customer_name ? `${a.customer_name} - ${a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))}` : (a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))),
+            color: "#FF7A59"
+          })));
+        } else {
+          setAppointments([]);
+        }
+
+        // Comm Logs
+        const { data: logs } = await supabase.from('ai_communication_logs').select('*').order('created_at', { ascending: false }).limit(5);
+        if (logs) {
+          setCommLogs(logs);
+        }
+
+        // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
+        const statsMap: Record<string, number> = {};
+        if (orgId) {
+          const { data: commentPlatforms } = await supabase.from('comments').select('platform').eq('profile_id', orgId);
+          (commentPlatforms || []).forEach((c: any) => {
+             const p = (c.platform || 'diğer').toLowerCase();
+             statsMap[p] = (statsMap[p] || 0) + 1;
+          });
+          
+          const { data: messagePlatforms } = await supabase.from('messages').select('conversation_id, conversations(platform)').eq('profile_id', orgId);
+          (messagePlatforms || []).forEach((m: any) => {
+             const p = (m.conversations?.platform || 'diğer').toLowerCase();
+             statsMap[p] = (statsMap[p] || 0) + 1;
+          });
+        }
+        
+        if (merchantId) {
+          const { count: waCount } = await supabase.from('ai_communication_logs').select('*', { count: 'exact', head: true }).eq('merchant_id', merchantId);
+          if (waCount) statsMap['whatsapp'] = (statsMap['whatsapp'] || 0) + waCount;
+        }
+        
+        setPlatformStats(
+          Object.entries(statsMap)
+            .map(([platform, count]) => ({ platform, count }))
+            .sort((a, b) => b.count - a.count)
+        );
+
+      } catch (error) {
+        console.warn('Dashboard fetch error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  const toggleAiStatus = async () => {
+    const newStatus = !aiActive;
+    setAiActive(newStatus); // optimistic UI update
+    
+    const { data: { session } } = await supabase.auth.getSession();
+    const merchantId = session?.user?.id;
+    if (merchantId) {
+      await supabase
+        .from('bot_settings')
+        .update({ is_active: newStatus, social_bot_active: newStatus })
+        .eq('merchant_id', merchantId);
+    }
+  };
+
+  const formatCurrency = (amount: number) => Number(amount).toLocaleString(locale);
+  const formatRelativeTime = (dateStr: string) => {
+    if (!dateStr) return '';
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return t('dashboardHome.relativeTime.minutesAgo', { count: Math.max(1, mins) });
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return t('dashboardHome.relativeTime.hoursAgo', { count: hrs });
+    return t('dashboardHome.relativeTime.daysAgo', { count: Math.floor(hrs / 24) });
+  };
+
+  function PlatformIcon({ platform, size = 16 }: { platform: string; size?: number }) {
+    const icons: Record<string, { bg: string; label: string }> = {
+      instagram: { bg: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", label: "IG" },
+      tiktok: { bg: "#010101", label: "TK" },
+      facebook: { bg: "#1877F2", label: "FB" },
+      youtube: { bg: "#FF0000", label: "YT" },
+      linkedin: { bg: "#0A66C2", label: "LI" },
+      google: { bg: "#4285F4", label: "GB" },
+      whatsapp: { bg: "#25D366", label: "WA" },
+    };
+    const p = icons[platform.toLowerCase()] || { bg: "#444", label: "??" };
+    return (
+      <span style={{
+        display: "inline-flex", alignItems: "center", justifyContent: "center",
+        width: size, height: size, borderRadius: "50%", background: p.bg,
+        fontSize: size * 0.38, fontWeight: 700, color: "#fff", flexShrink: 0,
+        fontFamily: "Inter, sans-serif", letterSpacing: "-0.02em",
+      }}>
+        {p.label}
+      </span>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: "28px 32px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF7A59]"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: "28px 32px", maxWidth: 1100, display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* AI Summary Bubble */}
+      <div className="glass neon-cyan" style={{ borderRadius: 20, padding: "20px 24px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+        <div style={{
+          width: 74, height: 74, borderRadius: 23, background: "linear-gradient(135deg,#FF7A5922,#22B57322)",
+          border: "1.5px solid rgba(255,122,89,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
+          flexShrink: 0, overflow: "hidden"
+        }}>
+          <video 
+            src="/video1.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontSize: 11, color: "rgba(255,122,89,0.7)", fontWeight: 600, letterSpacing: "0.08em", marginBottom: 6, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.aiSummary.eyebrow')}</p>
+          <p style={{ color: "rgba(255,255,255,0.85)", fontSize: 14, lineHeight: 1.6 }}>
+            {t.rich('dashboardHome.aiSummary.messagesComments', {
+              messages: dailyStats.messages,
+              comments: dailyStats.comments,
+              msg: (chunks) => <strong style={{ color: "#FF7A59" }}>{chunks}</strong>,
+              cmt: (chunks) => <strong style={{ color: "#22B573" }}>{chunks}</strong>,
+            })}
+            {socialStats.trend > 0 ? (
+               <> {t.rich('dashboardHome.aiSummary.trendUp', {
+                    trend: socialStats.trend,
+                    pct: (chunks) => <strong style={{ color: "#F59E0B" }}>{chunks}</strong>,
+                  })}</>
+            ) : (
+               <> {t('dashboardHome.aiSummary.trendAnalyzing')}</>
+            )}
+            {appointments.length > 0 ? (
+               <> {t.rich('dashboardHome.aiSummary.appointmentsToday', {
+                    count: appointments.length,
+                    ap: (chunks) => <strong style={{ color: "#C2478D" }}>{chunks}</strong>,
+                  })}</>
+            ) : (
+               <> {t('dashboardHome.aiSummary.noAppointmentsToday')}</>
+            )}
+          </p>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, paddingLeft: 20, borderLeft: "1px solid rgba(255,255,255,0.1)", justifyContent: "center" }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: aiActive ? "#FF7A59" : "#A79E96", letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace" }}>
+            {aiActive ? t('dashboardHome.aiSummary.statusActive') : t('dashboardHome.aiSummary.statusInactive')}
+          </span>
+          <div 
+            onClick={toggleAiStatus}
+            style={{ width: 44, height: 24, borderRadius: 12, background: aiActive ? "rgba(255,122,89, 0.2)" : "rgba(255,255,255,0.1)", border: `1.5px solid ${aiActive ? "rgba(255,122,89, 0.4)" : "rgba(255,255,255,0.2)"}`, position: "relative", cursor: "pointer" }}
+          >
+            <div style={{ width: 18, height: 18, borderRadius: 9, background: "#fff", position: "absolute", top: 1.5, right: aiActive ? 2 : 'auto', left: !aiActive ? 2 : 'auto', boxShadow: aiActive ? "0 0 10px #FF7A59" : "none" }} />
           </div>
         </div>
+      </div>
+
+      {/* Financial Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        {[
+          // NOT: "change"/"up" (ör. "+12.4%") alanları kaldırıldı (17.09.2026) — bunlar
+          // gerçek income/expense verisine hiç bağlı olmayan sabit (hardcoded) rozetlerdi,
+          // bu yüzden reset (soft/hard) sonrasında tutarlar sıfırlansa bile hiç değişmiyorlardı.
+          // Kullanıcı fark etti. Gerçek ay-üstü-ay trend hesaplaması ayrı bir özellik olarak
+          // ele alınana kadar rozet tamamen kaldırıldı.
+          { label: t('dashboardHome.finance.monthlyIncome'), value: `₺${formatCurrency(financeStats.income)}`, color: "#22B573" },
+          { label: t('dashboardHome.finance.monthlyExpense'), value: `₺${formatCurrency(financeStats.expense)}`, color: "#EF4444" },
+        ].map(m => (
+          <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>
+            <p style={{ color: m.color, fontSize: 28, fontWeight: 700, fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em" }}>{m.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Split view: Invoice + Quick stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        {/* Invoice Scanner */}
+        <div className="glass neon-orange" style={{ borderRadius: 20, padding: "20px 22px" }}>
+          <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
+          <div style={{ display: "flex", gap: 16 }}>
+            <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)" }}>
+              <img
+                src="https://images.unsplash.com/photo-1648500847390-7792256bb95a?w=80&h=100&fit=crop&auto=format"
+                alt={t('dashboardHome.invoiceScanner.imageAlt')}
+                style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              {[
+                { label: t('dashboardHome.invoiceScanner.fields.supplier'), value: "Ofis Dünyası A.Ş." },
+                { label: t('dashboardHome.invoiceScanner.fields.date'), value: "03.02.2026" },
+                { label: t('dashboardHome.invoiceScanner.fields.vat'), value: "%20" },
+                { label: t('dashboardHome.invoiceScanner.fields.total'), value: "₺4,820.00" },
+              ].map(r => (
+                <div key={r.label} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{r.label}</span>
+                  <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{r.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
+            {t('dashboardHome.invoiceScanner.newInvoiceButton')}
+          </button>
+        </div>
+
+        {/* Today's timeline */}
+        <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardHome.appointments.label')}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {appointments.length > 0 ? appointments.map((a, i) => (
+              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
+                <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
+                <div>
+                  <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+                </div>
+              </div>
+            )) : (
+              <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.appointments.empty')}</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Social Media Stats (Tüm Hesaplar) */}
+      <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
+            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>{t('dashboardHome.social.allAccounts')}</p>
+          </div>
+          <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>{t('dashboardHome.social.liveAnalysis')}</span>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.totalFollowers')}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
+                {socialStats.followers.toLocaleString(locale)}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#22B573" }}>
+                <span style={{ fontSize: 14 }}>↑</span>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>{socialStats.trend}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "right" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.engagementTrend')}</p>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 120, height: 6, borderRadius: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #FF7A59, #C2478D)" }} />
+              </div>
+              <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>{t('dashboardHome.social.high')}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Son Aktiviteler */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <p style={{ fontSize: 16, color: "#fff", fontWeight: 700 }}>{t('dashboardHome.recentActivities.title')}</p>
+          <Link href="/sosyal-medya/inbox" style={{ fontSize: 12, color: "var(--text-secondary)", cursor: "pointer", fontWeight: 600 }}>{t('dashboardHome.recentActivities.viewAll')}</Link>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {recentActivities.map(act => (
+            <div key={act.id} className="glass" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", borderRadius: 16, borderLeft: `3px solid ${act.color}` }}>
+              <div style={{ width: 44, height: 44, borderRadius: 22, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, overflow: "hidden" }}>
+                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(act.name)}&background=random&color=fff`} style={{ width: "100%", height: "100%" }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <p style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{act.name}</p>
+                  <p style={{ color: "var(--text-secondary)", fontSize: 11 }}>{formatRelativeTime(act.date)}</p>
+                </div>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, marginBottom: 8 }}>{act.message}</p>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: `${act.color}22`, color: act.color, fontWeight: 700 }}>{act.type}</span>
+                  <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 4, background: "rgba(255,255,255,0.05)", color: "var(--text-secondary)", fontWeight: 700 }}>{act.platform}</span>
+                </div>
+              </div>
+              <span style={{ color: "var(--text-secondary)", opacity: 0.5, fontSize: 18 }}>›</span>
+            </div>
+          ))}
+          {recentActivities.length === 0 && (
+             <span style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.recentActivities.empty')}</span>
+          )}
+        </div>
+      </div>
+
+      {/* İletişim Raporları */}
+      <div>
+        <p style={{ fontSize: 16, color: "#fff", fontWeight: 700, marginBottom: 16 }}>{t('dashboardHome.commLogs.title')}</p>
+        
+        {platformStats.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 14 }}>
+            {platformStats.map((s) => (
+              <div key={s.platform} className="glass" style={{
+                display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12,
+              }}>
+                <PlatformIcon platform={s.platform} size={20} />
+                <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{s.count}</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 12, textTransform: "capitalize" }}>{s.platform}</span>
+              </div>
+            ))}
+            <div className="glass" style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 12, background: "rgba(255,122,89,0.08)",
+            }}>
+              <span style={{ color: "#FF7A59", fontSize: 13, fontWeight: 700 }}>
+                Toplam: {platformStats.reduce((sum, s) => sum + s.count, 0)}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div className="glass" style={{ borderRadius: 16, overflow: "hidden" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: "rgba(255,255,255,0.02)", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "var(--text-secondary)", textAlign: "left" }}>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.channel')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.dateTime')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600 }}>{t('dashboardHome.commLogs.columns.status')}</th>
+                <th style={{ padding: "16px 20px", fontWeight: 600, textAlign: "right" }}>{t('dashboardHome.commLogs.columns.action')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commLogs.map((log, i) => (
+                <tr key={log.id || i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  <td style={{ padding: "16px 20px", color: "#fff", display: "flex", alignItems: "center", gap: 10 }}>
+                    <PlatformIcon platform={log.platform || 'whatsapp'} size={24} /> 
+                    <span style={{ textTransform: 'capitalize' }}>{log.platform || 'WhatsApp'}</span>
+                  </td>
+                  <td style={{ padding: "16px 20px", color: "rgba(255,255,255,0.7)" }}>
+                    {new Date(log.created_at).toLocaleDateString(locale)} {new Date(log.created_at).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                  <td style={{ padding: "16px 20px" }}>
+                    <span style={{
+                      color: log.status === 'success' ? "#22B573" : "#F59E0B",
+                      background: log.status === 'success' ? "rgba(34,181,115,0.1)" : "rgba(245,158,11,0.1)",
+                      padding: "4px 10px", borderRadius: 10, fontSize: 11, fontWeight: 700
+                    }}>
+                      {log.status === 'success' ? t('dashboardHome.commLogs.status.success') : t('dashboardHome.commLogs.status.pending')}
+                    </span>
+                  </td>
+                  <td style={{ padding: "16px 20px", textAlign: "right", color: "#FF7A59", cursor: "pointer", fontWeight: 600 }}>{t('dashboardHome.commLogs.review')}</td>
+                </tr>
+              ))}
+              {commLogs.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ padding: "16px 20px", color: "var(--text-secondary)", textAlign: "center" }}>{t('dashboardHome.commLogs.empty')}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

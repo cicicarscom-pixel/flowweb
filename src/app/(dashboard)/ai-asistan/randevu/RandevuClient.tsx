@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment } from '@/actions/appointments';
 
@@ -86,7 +87,22 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   const [selectedDate, setSelectedDate] = useState(today);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointments, setAppointments] = useState(initialAppointments);
-  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const searchParams = useSearchParams();
+  const selectedDayRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const param = searchParams.get("date");
+    if (!param || !/^\d{4}-\d{2}-\d{2}$/.test(param)) return;
+    const [y, m, d] = param.split("-").map(Number);
+    setCurrentDate(new Date(y, m - 1, d));
+    setSelectedDate(param);
+  }, [searchParams]);
+
+  useEffect(() => {
+    selectedDayRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [selectedDate, currentDate]);
+
   
   const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '' });
   const [isSaving, setIsSaving] = useState(false);
@@ -371,10 +387,11 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <ScrollableContainer>
               {dynamicDays.map((day, i) => {
                 const isActive = selectedDate === day.fullDate;
-                return (
-                  <div 
-                    key={i} 
-                    onClick={() => setSelectedDate(day.fullDate)}
+                                  return (
+                    <div 
+                      key={i} 
+                      ref={isActive ? selectedDayRef : undefined}
+                      onClick={() => setSelectedDate(day.fullDate)}
                     style={{ 
                       minWidth: 64, height: 80, borderRadius: 20,
                       background: isActive ? "linear-gradient(135deg, #22B573 0%, #00c6ff 100%)" : "rgba(255,255,255,0.03)",

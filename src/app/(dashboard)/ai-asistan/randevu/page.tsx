@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getAppointmentsByDate } from '@/actions/appointments'
 import { getBusinessServices } from '@/actions/businessServices'
 import RandevuClient from './RandevuClient'
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 export default async function RandevuPage() {
@@ -33,7 +34,8 @@ export default async function RandevuPage() {
   const appointmentsRes = await getAppointmentsByDate(today)
 
   return (
-    <RandevuClient 
+    <Suspense fallback={<div style={{ padding: 40, color: '#fff' }}>Yükleniyor...</div>}>
+      <RandevuClient 
       initialAppointments={appointmentsRes.data} 
       services={businessServices} 
       merchantId={session.user.id} 
@@ -41,5 +43,6 @@ export default async function RandevuPage() {
       initialCalendars={calendars}
       multiCalendarEnabled={multiCalendarEnabled}
     />
+    </Suspense>
   )
 }

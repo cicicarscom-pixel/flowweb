@@ -84,6 +84,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   const [promptConfig, setPromptConfig] = useState({ visible: false, title: "", placeholder: "", value: "", onSave: (val: string) => {} });
   const t = useTranslations();
   const supabase = createClient();
+    const searchParams = useSearchParams();
+
     const initialDateFromParam = () => {
     const p = searchParams.get("date");
     if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) {
@@ -97,7 +99,6 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointments, setAppointments] = useState(initialAppointments);
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
-  const searchParams = useSearchParams();
   const selectedDayRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

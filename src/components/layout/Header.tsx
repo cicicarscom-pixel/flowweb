@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { useUnreadAppointmentCount } from "@/components/dashboard/AppointmentNotifications";
 import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Header() {
@@ -12,32 +13,9 @@ export default function Header() {
   const t = useTranslations();
   const locale = useLocale();
   const [dateStr, setDateStr] = useState("");
-  const [unreadCount, setUnreadCount] = useState(0);
+  const unreadCount = useUnreadAppointmentCount();
   const supabase = createClient();
   const { organization } = useProfile();
-
-  useEffect(() => {
-    fetchUnreadCount();
-
-    let channel = supabase.channel('header_notifications');
-    
-    if (organization?.id) {
-      channel = channel.on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `profile_id=eq.${organization.id}` }, () => {
-        fetchUnreadCount();
-      });
-    }
-
-    channel = channel.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => {
-      fetchUnreadCount();
-    }).subscribe();
-
-    window.addEventListener('refresh_unread_count', fetchUnreadCount);
-
-    return () => {
-      supabase.removeChannel(channel);
-      window.removeEventListener('refresh_unread_count', fetchUnreadCount);
-    };
-  }, [organization, locale]);
 
   useEffect(() => {
     // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile
@@ -48,44 +26,6 @@ export default function Header() {
     setDateStr(new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
   }, [locale]);
 
-  const fetchUnreadCount = async () => {
-    let regularCount = 0;
-    
-    // 1. Fetch normal notifications (organization scoped) if org exists
-    if (organization?.id) {
-      const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('profile_id', organization.id)
-          .eq('type', 'appointment_created')
-          .eq('is_read', false);
-      regularCount = count || 0;
-    }
-
-    // 2. Fetch broadcast notifications (user scoped)
-    const { data: { session } } = await supabase.auth.getSession();
-    let broadcastUnreadCount = 0;
-    
-    if (session?.user) {
-      const { data: profileData } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).limit(1);
-      const userType = profileData?.[0]?.user_type || 'business';
-
-      const { count: totalBroadcasts } = await supabase
-        .from('broadcast_notifications')
-        .select('id', { count: 'exact', head: true })
-        .in('target', ['all', userType]);
-
-      const { count: readBroadcasts } = await supabase
-        .from('broadcast_reads')
-        .select('broadcast_id', { count: 'exact', head: true })
-        .eq('user_id', session.user.id);
-
-      broadcastUnreadCount = Math.max(0, (totalBroadcasts || 0) - (readBroadcasts || 0));
-    }
-    
-    setUnreadCount(regularCount + broadcastUnreadCount);
-  };
-  
   let pageTitle = t("header.titles.home");
   if (pathname === "/") pageTitle = t("header.titles.home");
   else if (pathname.includes("ai-asistan")) pageTitle = t("header.titles.aiAssistant");

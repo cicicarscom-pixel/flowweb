@@ -24,8 +24,9 @@ const CARD_COLORS = [
   { bg: 'rgba(255,122,89,0.1)', border: 'rgba(255,122,89,0.3)', text: '#FF7A59', icon: '🖌️' },
 ];
 
-function ScrollableContainer({ children }: { children: React.ReactNode }) {
-  const containerRef = useRef<HTMLDivElement>(null);
+function ScrollableContainer({ children, innerRef }: { children: React.ReactNode, innerRef?: React.RefObject<HTMLDivElement | null> }) {
+  const localRef = useRef<HTMLDivElement>(null);
+  const containerRef = innerRef || localRef;
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -83,8 +84,16 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   const [promptConfig, setPromptConfig] = useState({ visible: false, title: "", placeholder: "", value: "", onSave: (val: string) => {} });
   const t = useTranslations();
   const supabase = createClient();
-  const [currentDate, setCurrentDate] = useState(new Date(today));
-  const [selectedDate, setSelectedDate] = useState(today);
+    const initialDateFromParam = () => {
+    const p = searchParams.get("date");
+    if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) {
+      return p;
+    }
+    return today;
+  };
+  
+  const [selectedDate, setSelectedDate] = useState(initialDateFromParam);
+  const [currentDate, setCurrentDate] = useState(() => new Date(initialDateFromParam()));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointments, setAppointments] = useState(initialAppointments);
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -98,11 +107,21 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     setSelectedDate(param);
   }, [searchParams]);
 
+  const stripRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
-    if (selectedDayRef.current) {
-      setTimeout(() => {
-        selectedDayRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-      }, 100);
+    if (selectedDayRef.current && stripRef.current) {
+      requestAnimationFrame(() => {
+        if (!selectedDayRef.current || !stripRef.current) return;
+        const container = stripRef.current;
+        const target = selectedDayRef.current;
+        const containerCenter = container.offsetWidth / 2;
+        const targetCenter = target.offsetLeft + target.offsetWidth / 2;
+        container.scrollTo({
+          left: targetCenter - containerCenter,
+          behavior: "smooth"
+        });
+      });
     }
   }, [selectedDate, currentDate]);
 
@@ -387,7 +406,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
           {/* Calendar Strip */}
           <div style={{ position: "relative" }}>
-            <ScrollableContainer>
+            <ScrollableContainer innerRef={stripRef}>
               {dynamicDays.map((day, i) => {
                 const isActive = selectedDate === day.fullDate;
                                   return (

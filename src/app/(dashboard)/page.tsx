@@ -183,11 +183,7 @@ export default function DashboardHomePage() {
           setAppointments([]);
         }
 
-        // Comm Logs
-        const { data: logs } = await supabase.from('ai_communication_logs').select('*').order('created_at', { ascending: false }).limit(5);
-        if (logs) {
-          setCommLogs(logs);
-        }
+        
 
         // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
         const statsMap: Record<string, number> = {};

@@ -218,7 +218,7 @@ export default function AppointmentNotifications({ locale = "tr", limit = 10 }: 
   const open = async (n: AppointmentNotification) => {
     if (!n.is_read) await markRead(n.id);
     const date = n.metadata ? localDateParam(n.metadata) : null;
-    router.push(date ? \`/ai-asistan/randevu?date=\${date}\` : "/ai-asistan/randevu");
+    router.push(date ? `/ai-asistan/randevu?date=${date}` : "/ai-asistan/randevu");
   };
 
   return (
@@ -252,7 +252,7 @@ export default function AppointmentNotifications({ locale = "tr", limit = 10 }: 
             <button
               key={n.id}
               type="button"
-              className={\`an-row\${n.is_read ? "" : " an-unread"}\`}
+              className={`an-row${n.is_read ? "" : " an-unread"}`}
               onClick={() => open(n)}
             >
               <span className="an-time">{formatCreatedAt(n.created_at, locale)}</span>
@@ -277,7 +277,7 @@ export default function AppointmentNotifications({ locale = "tr", limit = 10 }: 
   );
 }
 
-const CSS = \`
+const CSS = `
 .an-title { font-size: 16px; font-weight: 700; color: #fff; margin: 0 0 14px; }
 .an-panel {
   border: 1px solid rgba(255,255,255,0.06);
@@ -331,4 +331,4 @@ const CSS = \`
   .an-row { grid-template-columns: 1fr; gap: 6px; }
   .an-right { text-align: left; }
 }
-\`;
+`;

@@ -94,13 +94,16 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   useEffect(() => {
     const param = searchParams.get("date");
     if (!param || !/^\d{4}-\d{2}-\d{2}$/.test(param)) return;
-    const [y, m, d] = param.split("-").map(Number);
-    setCurrentDate(new Date(y, m - 1, d));
+    setCurrentDate(new Date(param));
     setSelectedDate(param);
   }, [searchParams]);
 
   useEffect(() => {
-    selectedDayRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    if (selectedDayRef.current) {
+      setTimeout(() => {
+        selectedDayRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      }, 100);
+    }
   }, [selectedDate, currentDate]);
 
   
@@ -390,7 +393,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                   return (
                     <div 
                       key={i} 
-                      ref={isActive ? selectedDayRef : undefined}
+                      ref={(el) => { if (isActive) selectedDayRef.current = el; }}
                       onClick={() => setSelectedDate(day.fullDate)}
                     style={{ 
                       minWidth: 64, height: 80, borderRadius: 20,

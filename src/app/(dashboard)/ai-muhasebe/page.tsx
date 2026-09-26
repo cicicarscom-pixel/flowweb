@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import styles from './page.module.css';
 import { createClient } from "@/lib/supabase/client";
+import { todayInTimezone } from "@/lib/dates";
 
 export default function AiMuhasebePage() {
   const t = useTranslations();

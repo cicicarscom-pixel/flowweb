@@ -8,6 +8,7 @@ import {
 } from "recharts";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { todayInTimezone } from "@/lib/dates";
 
 // PLATFORMS: 'name' alanı marka adları için literal İngilizce kalır (TikTok,
 // Instagram, Facebook, YouTube, LinkedIn, Google Business — bunlar özel isim,
@@ -219,8 +220,15 @@ export default function AnalyticsScreen() {
         ? socialAccounts
         : socialAccounts.filter(a => a.platform.toLowerCase() === selectedPlatform.id || (selectedPlatform.id === 'googlebusiness' && a.platform.toLowerCase() === 'google'));
 
-      const _toDate = new Date().toISOString().split('T')[0];
-      const _fromDate = new Date(Date.now() - (selectedTimeRange.days || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      let timezone = 'Europe/Istanbul';
+      if (merchantId) {
+        const { data: orgData } = await supabase.from('organizations').select('timezone').eq('owner_id', merchantId).maybeSingle();
+        if (orgData?.timezone) timezone = orgData.timezone;
+      }
+      
+      const _toDate = todayInTimezone(timezone);
+      const fromDateObj = new Date(Date.now() - (selectedTimeRange.days || 30) * 24 * 60 * 60 * 1000);
+      const _fromDate = todayInTimezone(timezone, fromDateObj);
 
       const queryArgs: any = { fromDate: _fromDate, toDate: _toDate };
       if (selectedPlatform.id !== 'all') {

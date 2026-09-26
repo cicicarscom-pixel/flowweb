@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import AppointmentNotifications from "@/components/dashboard/AppointmentNotifications";
 import { useRouter } from "next/navigation";
+import { todayInTimezone } from "@/lib/dates";
 
 export default function DashboardHomePage() {
   const router = useRouter();
@@ -74,7 +75,7 @@ export default function DashboardHomePage() {
                 if (d.flow_payment_status === 'paid') {
                   exp += amt;
                 } else {
-                  const docDate = d.created_at ? new Date(d.created_at).toISOString().split('T')[0] : null;
+                  const docDate = d.created_at ? todayInTimezone(timezone, new Date(d.created_at)) : null;
                   if (docDate && docDate >= today) {
                     upcoming.push({ id: d.id, date: docDate, amount: amt, description: d.title || t('dashboardHome.defaults.invoicePayment'), type: 'expense' });
                   }

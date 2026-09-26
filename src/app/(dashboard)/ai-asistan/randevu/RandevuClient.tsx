@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment } from '@/actions/appointments';
+import { dateFromYmd } from '@/lib/dates';
 
 const TIME_SLOTS = (() => {
   const slots = [];
@@ -95,7 +96,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   };
   
   const [selectedDate, setSelectedDate] = useState(initialDateFromParam);
-  const [currentDate, setCurrentDate] = useState(() => new Date(initialDateFromParam()));
+  const [currentDate, setCurrentDate] = useState(() => dateFromYmd(initialDateFromParam()));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [appointments, setAppointments] = useState(initialAppointments);
     const [availableSlots, setAvailableSlots] = useState<string[]>([]);
@@ -104,7 +105,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   useEffect(() => {
     const param = searchParams.get("date");
     if (!param || !/^\d{4}-\d{2}-\d{2}$/.test(param)) return;
-    setCurrentDate(new Date(param));
+    setCurrentDate(dateFromYmd(param));
     setSelectedDate(param);
   }, [searchParams]);
 

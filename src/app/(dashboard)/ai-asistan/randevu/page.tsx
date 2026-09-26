@@ -13,21 +13,17 @@ export default async function RandevuPage() {
     redirect('/login')
   }
 
-  // Bugünün tarihini YYYY-MM-DD formatında al (Yerel Saat Dilimine Göre)
-  const now = new Date()
-  const offsetMs = now.getTimezoneOffset() * 60 * 1000
-  const localDate = new Date(now.getTime() - offsetMs)
-  const today = localDate.toISOString().split('T')[0]
+  const { data: org } = await supabase.from("organizations").select("multi_calendar_enabled, timezone").eq("owner_id", session.user.id).single();
+  const timezone = org?.timezone || 'Europe/Istanbul';
+  const { todayInTimezone } = await import('@/lib/dates');
+  const today = todayInTimezone(timezone);
 
-  let businessServices = []
+  let businessServices = [];
   try {
-    businessServices = await getBusinessServices(session.user.id)
+    businessServices = await getBusinessServices(session.user.id);
   } catch (error) {
-    console.error('getBusinessServices Error:', error)
-    // Hata durumunda bo� liste ile devam ediyoruz ki sayfa ��kmesin
+    console.error('getBusinessServices Error:', error);
   }
-
-  const { data: org } = await supabase.from("organizations").select("multi_calendar_enabled").eq("owner_id", session.user.id).single();
   const multiCalendarEnabled = org?.multi_calendar_enabled || false;
   const { getCalendars } = await import("@/actions/calendars");
   const calendars = await getCalendars();

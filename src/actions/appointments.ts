@@ -8,11 +8,16 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
 
+  const nextDay = new Date(dateStr);
+  nextDay.setDate(nextDay.getDate() + 1);
+  const nextDayStr = nextDay.toISOString().split('T')[0];
+
   let query = supabase
     .from('appointments')
     .select('*')
     .eq('organization_id', session.user.id)
-    .like('date', `${dateStr}%`)
+    .gte('date', `${dateStr}T00:00:00`)
+    .lt('date', `${nextDayStr}T00:00:00`)
     .in('status', ['Pending', 'Approved'])
     .order('date', { ascending: true })
 
@@ -74,11 +79,12 @@ export async function getAvailableSlots(dateStr: string, serviceId?: string, cal
 
   const duration = service?.duration_minutes || 30
 
+  const nextDay2 = new Date(dateStr); nextDay2.setDate(nextDay2.getDate() + 1); const nextDayStr = nextDay2.toISOString().split('T')[0];
   let query = supabase
     .from('appointments')
     .select('date')
     .eq('organization_id', session.user.id)
-    .like('date', `${dateStr}%`)
+    .gte('date', `${dateStr}T00:00:00`).lt('date', `${nextDayStr}T00:00:00`)
     .in('status', ['Pending', 'Approved'])
 
   if (calendarId) {

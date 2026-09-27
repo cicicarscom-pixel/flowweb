@@ -14,6 +14,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { appointmentSentence } from "@/lib/appointmentSentence";
 import { createClient } from "@/lib/supabase/client";
 
 type Locale = "tr" | "en" | "de";
@@ -129,7 +130,7 @@ function formatCreatedAt(iso: string, locale: Locale): string {
 /* Hooks                                                               */
 /* ------------------------------------------------------------------ */
 
-export function useAppointmentNotifications(limit = 10) {
+export function useAppointmentNotifications(limit = 5) {
   const supabase = useMemo(() => createClient(), []);
   const [items, setItems] = useState<AppointmentNotification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -211,7 +212,7 @@ export function useUnreadAppointmentCount() {
 /* Bileşen                                                             */
 /* ------------------------------------------------------------------ */
 
-export default function AppointmentNotifications({ locale = "tr", limit = 10 }: { locale?: Locale; limit?: number }) {
+export default function AppointmentNotifications({ locale = "tr", limit = 5 }: { locale?: Locale; limit?: number }) {
   const s = STRINGS[locale];
   const router = useRouter();
   const { items, loading, error, refresh, markRead } = useAppointmentNotifications(limit);

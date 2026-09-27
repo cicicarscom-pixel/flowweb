@@ -43,7 +43,12 @@ export default function DashboardHomePage() {
         // Finance Stats (Transactions + Finance Documents)
         let inc = 0, exp = 0;
         const upcoming: any[] = [];
-        const today = new Date().toISOString().split('T')[0];
+        let timezone = 'Europe/Istanbul';
+        if (merchantId) {
+          const { data: org } = await supabase.from('organizations').select('timezone').eq('owner_id', merchantId).maybeSingle();
+          if (org?.timezone) timezone = org.timezone;
+        }
+        const today = todayInTimezone(timezone);
 
         const { data: transactions } = await supabase.from('transactions').select('*');
         if (transactions) {

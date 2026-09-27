@@ -221,8 +221,8 @@ export default function AnalyticsScreen() {
         : socialAccounts.filter(a => a.platform.toLowerCase() === selectedPlatform.id || (selectedPlatform.id === 'googlebusiness' && a.platform.toLowerCase() === 'google'));
 
       let timezone = 'Europe/Istanbul';
-      if (merchantId) {
-        const { data: orgData } = await supabase.from('organizations').select('timezone').eq('owner_id', merchantId).maybeSingle();
+      if (session?.user?.id) {
+        const { data: orgData } = await supabase.from('organizations').select('timezone').eq('owner_id', session?.user?.id).maybeSingle();
         if (orgData?.timezone) timezone = orgData.timezone;
       }
       

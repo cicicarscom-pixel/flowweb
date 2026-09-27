@@ -1,3 +1,4 @@
+import { addDaysYmd } from '@/lib/dates';
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
@@ -8,9 +9,7 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
 
-  const nextDay = new Date(dateStr);
-  nextDay.setDate(nextDay.getDate() + 1);
-  const nextDayStr = nextDay.toISOString().split('T')[0];
+  const nextDayStr = addDaysYmd(dateStr, 1);
 
   let query = supabase
     .from('appointments')
@@ -79,7 +78,7 @@ export async function getAvailableSlots(dateStr: string, serviceId?: string, cal
 
   const duration = service?.duration_minutes || 30
 
-  const nextDay2 = new Date(dateStr); nextDay2.setDate(nextDay2.getDate() + 1); const nextDayStr = nextDay2.toISOString().split('T')[0];
+  const nextDayStr = addDaysYmd(dateStr, 1);
   let query = supabase
     .from('appointments')
     .select('date')

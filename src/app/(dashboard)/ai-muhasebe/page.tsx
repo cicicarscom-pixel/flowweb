@@ -22,7 +22,12 @@ export default function AiMuhasebePage() {
         const userId = session?.user?.id;
 
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        let tz = 'Europe/Istanbul';
+        if (userId) {
+          const { data: org } = await supabase.from('organizations').select('timezone').eq('owner_id', userId).maybeSingle();
+          if (org?.timezone) tz = org.timezone;
+        }
+        const startOfMonth = `${todayInTimezone(tz).slice(0, 7)}-01`;
 
         let totalIncome = 0;
         let totalExpense = 0;

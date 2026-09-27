@@ -1,16 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useTranslations, useLocale } from "next-intl";
 import { appointmentSentence } from '@/lib/appointmentSentence';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-export default function GelenKutusuPage() {
+function GelenKutusuContent() {
   const router = useRouter();
   const t = useTranslations();
   const locale = useLocale();
-  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>(typeof window !== 'undefined' ? ((new URLSearchParams(window.location.search).get('tab') as any) || 'mesajlar') : 'mesajlar');
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>('mesajlar');
+  
+  useEffect(() => {
+    if (tabParam && ['mesajlar', 'yorumlar', 'degerlendirmeler', 'bildirimler'].includes(tabParam)) {
+      setActiveTab(tabParam as any);
+    }
+  }, [tabParam]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -686,7 +694,7 @@ export default function GelenKutusuPage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
+                onClick={() => { router.replace('/gelen-kutusu?tab=' + tab.id, { scroll: false }); setIsSelectionMode(false); setSelectedItems([]); }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
                   isActive 
                     ? 'bg-[#C2478D]/10 text-white border-[#C2478D]' 
@@ -1333,3 +1341,11 @@ export default function GelenKutusuPage() {
 
 
 
+
+export default function GelenKutusuPage() {
+  return (
+    <Suspense fallback={null}>
+      <GelenKutusuContent />
+    </Suspense>
+  );
+}

@@ -111,10 +111,13 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   useEffect(() => {
     const d = dateFromYmd(selectedDate);
-    if (d.getMonth() !== currentDate.getMonth() || d.getFullYear() !== currentDate.getFullYear()) {
-      setCurrentDate(d);
-    }
-  }, [selectedDate, currentDate]);
+    setCurrentDate(prev => {
+      if (d.getMonth() !== prev.getMonth() || d.getFullYear() !== prev.getFullYear()) {
+        return d;
+      }
+      return prev;
+    });
+  }, [selectedDate]);
 
   const stripRef = useRef<HTMLDivElement | null>(null);
 

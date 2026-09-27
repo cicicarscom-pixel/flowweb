@@ -128,7 +128,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   }, [selectedDate, currentDate]);
 
   
-  const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '', calendar_id: '' });
+  const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '', calendar_id: '', note: '' });
   const [isSaving, setIsSaving] = useState(false);
 
   // Subscribe to real-time updates
@@ -247,7 +247,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     const res = await createAppointment({
       customerName: newAppt.name,
       customerPhone: newAppt.phone,
-      serviceId: newAppt.service || null, calendarId: newAppt.calendar_id || activeCalendarId || null,
+      serviceId: newAppt.service || null, calendarId: newAppt.calendar_id || activeCalendarId || null, note: newAppt.note,
       date: dateStr
     });
     
@@ -261,7 +261,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     setAppointments(data);
     
     setIsModalOpen(false);
-    setNewAppt({ name: '', phone: '', time: '', service: '', calendar_id: '' });
+    setNewAppt({ name: '', phone: '', time: '', service: '', calendar_id: '', note: '' });
     setIsSaving(false);
   };
 
@@ -635,7 +635,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-<div style={{ display: "flex", gap: 16 }}>
+{services.length > 0 && (
                 <div style={{ flex: 1 }}>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.serviceTypeLabel')}</label>
                   <select
@@ -647,6 +647,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     {services.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
+              )}
                 <div style={{ flex: 1 }}>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.timeLabel')}</label>
                   <select
@@ -659,6 +660,15 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     {availableSlots.map(slot => <option key={slot} value={slot}>{slot}</option>)}
                   </select>
                 </div>
+              </div>
+              <div style={{ marginTop: 16 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Açıklama / Not</label>
+                  <textarea
+                    value={newAppt.note}
+                    onChange={e => setNewAppt({...newAppt, note: e.target.value})}
+                    placeholder="AI asistana verilen notlar gibi... (Örn: Dolgum düştü dolgu yaptırmak istiyorum)"
+                    style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, minHeight: 80, resize: "vertical" }}
+                  />
               </div>
 
               <button

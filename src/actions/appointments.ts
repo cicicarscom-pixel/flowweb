@@ -137,7 +137,8 @@ export async function createAppointment(input: {
   customerPhone: string
   serviceId?: string | null
   calendarId?: string | null
-  date: string 
+  date: string
+  note?: string 
 }) {
   const supabase = await createClient();
   const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -202,6 +203,7 @@ export async function createAppointment(input: {
       timezone: org.timezone,
       status: 'Pending',
       booking_token: crypto.randomUUID(),
+      customer_request_raw: input.note || null,
     })
     .select()
     .single();

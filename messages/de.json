@@ -964,5 +964,13 @@
     "alerts": {
       "errorPrefix": "Fehler: {error}"
     }
+  },
+  "dashboardScreen": {
+    "appointments": {
+      "todayTitle": "Heutige Termine",
+      "todayEmpty": "Heute sind keine Termine geplant.",
+      "upcomingTitle": "Anstehende Termine",
+      "viewAll": "Alle ansehen"
+    }
   }
 }

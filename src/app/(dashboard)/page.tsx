@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import AppointmentNotifications from "@/components/dashboard/AppointmentNotifications";
 import { useRouter } from "next/navigation";
-import { todayInTimezone } from "@/lib/dates";
+import { todayInTimezone, addDaysYmd } from "@/lib/dates";
 
 export default function DashboardHomePage() {
   const router = useRouter();
@@ -20,6 +20,8 @@ export default function DashboardHomePage() {
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
+  const [totalUpcomingAppointments, setTotalUpcomingAppointments] = useState(0);
     const [platformStats, setPlatformStats] = useState<{ platform: string; count: number }[]>([]);
 
   const supabase = createClient();
@@ -164,34 +166,47 @@ export default function DashboardHomePage() {
         merged.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         setRecentActivities(merged.slice(0, 3));
 
-        // Appointments (Dummy fallback if table not ready)
-        // Adjust this query based on actual schema
-        
-          const startOfDay = new Date();
-          startOfDay.setHours(0, 0, 0, 0);
-          const endOfDay = new Date();
-          endOfDay.setHours(23, 59, 59, 999);
+                  const nextDateStr = addDaysYmd(today, 1);
 
-          const { data: appts } = await supabase.from('appointments')
-            .select('*')
-            .eq('organization_id', merchantId)
-            .gte('date', startOfDay.toISOString())
-            .lte('date', endOfDay.toISOString())
-            .order('date', { ascending: true })
-            .limit(5);
-        if (appts && appts.length > 0) {
-          setAppointments(appts.map(a => ({
-            time: a.date ? new Date(a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) : "00:00",
-            title: a.customer_name ? `${a.customer_name} - ${a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))}` : (a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardHome.appointments.defaultTitle'))),
-            color: "#FF7A59"
-          })));
-        } else {
-          setAppointments([]);
-        }
+          let calsMap: Record<string, string> = {};
+          if (merchantId) {
+            const { data: cals } = await supabase.from('calendars').select('id, name').eq('profile_id', merchantId);
+            if (cals) cals.forEach((c: any) => calsMap[c.id] = c.name);
+          }
 
-        
+          const { data: todayData } = await supabase.from('appointments').select('*')
+            .gte('date', today).lt('date', nextDateStr)
+            .in('status', ['Pending', 'Approved'])
+            .order('starts_at', { ascending: true });
 
-        // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
+          const { data: upcData } = await supabase.from('appointments').select('*')
+            .gte('date', nextDateStr)
+            .in('status', ['Pending', 'Approved'])
+            .order('starts_at', { ascending: true })
+            .limit(7);
+
+          const { count: totalUpc } = await supabase.from('appointments').select('id', { count: 'exact', head: true })
+            .gte('date', nextDateStr)
+            .in('status', ['Pending', 'Approved']);
+
+          setTotalUpcomingAppointments(totalUpc || 0);
+
+          const mapAppt = (a: any) => {
+            const targetDate = a.starts_at || a.date ? new Intl.DateTimeFormat('en-CA', { timeZone: a.timezone || 'Europe/Istanbul' }).format(new Date(a.starts_at || a.date)) : null;
+            return {
+              id: a.id,
+              targetDate,
+              time: (a.starts_at || a.date) ? new Date(a.starts_at || a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: a.timezone || 'Europe/Istanbul' }) : '00:00',
+              title: (a.customer_name ? `${a.customer_name} - ${a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardScreen.appointments.unnamedCustomer'))}` : (a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardScreen.appointments.unnamedCustomer')))) + (a.calendar_id && calsMap[a.calendar_id] ? ` 👨‍⚕️ ${calsMap[a.calendar_id]}` : ''),
+              color: '#FF7A59',
+              dateText: a.starts_at || a.date
+            };
+          };
+
+          setTodayAppointments((todayData || []).map(mapAppt));
+          setAppointments((upcData || []).map(mapAppt));
+
+          // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
         const statsMap: Record<string, number> = {};
         if (orgId) {
           const { data: commentPlatforms } = await supabase.from('comments').select('platform').eq('profile_id', orgId);
@@ -392,26 +407,51 @@ export default function DashboardHomePage() {
           </button>
         </div>
 
-        {/* Today's timeline */}
-        <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardHome.appointments.label')}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {appointments.length > 0 ? appointments.map((a, i) => (
-              <div key={i} style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
-                <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
-                <div>
-                  <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+                  {/* Today's Appointments */}
+          <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 16 }}>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.todayTitle')}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {todayAppointments.length > 0 ? todayAppointments.map((a, i) => (
+                <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
+                  <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
+                  <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
+                  <div>
+                    <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+                  </div>
                 </div>
-              </div>
-            )) : (
-              <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.appointments.empty')}</span>
-            )}
+              )) : (
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardScreen.appointments.todayEmpty')}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Upcoming Appointments */}
+          <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.upcomingTitle')}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {appointments.length > 0 ? appointments.map((a, i) => {
+                const displayTime = (new Date(a.dateText).getDate() === new Date().getDate() ? '' : new Date(a.dateText).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) + ' ') + a.time;
+                return (
+                <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
+                  <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 55, flexShrink: 0, textAlign: 'right' }}>{displayTime}</span>
+                  <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
+                  <div>
+                    <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+                  </div>
+                </div>
+              )}) : (
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardScreen.appointments.empty')}</span>
+              )}
+              {totalUpcomingAppointments > appointments.length && (
+                <div onClick={() => router.push(`/ai-asistan/randevu`)} style={{ marginTop: 10, textAlign: 'center', cursor: 'pointer' }}>
+                  <span style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500 }}>{t('dashboardScreen.appointments.viewAll')} ({totalUpcomingAppointments})</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Social Media Stats (Tüm Hesaplar) */}
+        {/* Social Media Stats (Tüm Hesaplar) */}
       <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
@@ -486,3 +526,7 @@ export default function DashboardHomePage() {
     </div>
   );
 }
+
+
+
+

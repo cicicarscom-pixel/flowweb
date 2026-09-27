@@ -545,7 +545,12 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                           <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || t('randevuPage.timeline.unnamedCustomer')}</h4>
                           <div style={{ display: "flex", gap: 8 }}>
                             <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
-                            {multiCalendarEnabled && appt.calendar_id && (
+                            {appt.customer_request_raw && (
+                                <span style={{ fontSize: 12, color: "#F59E0B", background: "rgba(245,158,11,0.1)", padding: "2px 8px", borderRadius: 99 }}>
+                                  Not: {appt.customer_request_raw}
+                                </span>
+                              )}
+                              {multiCalendarEnabled && appt.calendar_id && (
                               <span style={{ fontSize: 12, color: "#22B573", background: "rgba(34,181,115,0.1)", padding: "2px 8px", borderRadius: 99 }}>
                                 {calendars.find((c: any) => c.id === appt.calendar_id)?.name || "Takvim"}
                               </span>

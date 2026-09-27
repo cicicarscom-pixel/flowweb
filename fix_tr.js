@@ -1,1 +1,0 @@
-﻿const fs = require("fs"); let c = JSON.parse(fs.readFileSync("messages/tr.json", "utf8")); c.common.all = "Tümü"; if(!c.aiAsistan) c.aiAsistan = {}; c.aiAsistan.addCalendar = "Takvim Ekle"; fs.writeFileSync("messages/tr.json", JSON.stringify(c, null, 2), "utf8"); console.log("OK");

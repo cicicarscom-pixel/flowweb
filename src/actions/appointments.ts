@@ -112,115 +112,43 @@ export async function getAvailableSlots(dateStr: string, serviceId?: string, cal
   return { data: slots, error: null }
 }
 
-const LOCAL_RE = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/;
-
-function offsetAt(ms: number, tz: string): number {
-  const p = Object.fromEntries(
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: tz, hourCycle: 'h23',
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-    }).formatToParts(new Date(ms)).map(x => [x.type, x.value])
-  );
-  return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - ms;
-}
-
-function localToUtc(local: string, tz: string): string {
-  const m = LOCAL_RE.exec(local);
-  if (!m) throw new Error('INVALID_LOCAL_FORMAT');
-  const wall = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +(m[6] ?? 0));
-  const offsets = new Set([-864e5, 0, 864e5].map(d => offsetAt(wall + d, tz)));
-  const hits = [...offsets]
-    .map(o => wall - o)
-    .filter(c => offsetAt(c, tz) === wall - c)
-    .sort((a, b) => a - b);
-  if (hits.length === 0) throw new Error('INVALID_LOCAL_TIME');
-  return new Date(hits[0]).toISOString();
-}
-
 export async function createAppointment(input: {
   customerName?: string
   customerPhone: string
   serviceId?: string | null
   calendarId?: string | null
-  date: string
+  date: string // format: YYYY-MM-DDTHH:mm
   note?: string 
 }) {
   const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) return { data: null, error: 'Unauthorized' };
-  const merchantId = user.id;
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { data: null, error: "Unauthorized" };
 
-  const { data: org, error: orgError } = await supabase.from('organizations')
-    .select('timezone, default_appointment_duration_minutes')
-    .eq('owner_id', merchantId)
-    .single();
-  if (orgError || !org) return { data: null, error: 'İşletme bulunamadı' };
-
-  let serviceDuration: number | null = null;
-  if (input.serviceId) {
-    const { data: svc, error } = await supabase.from('business_services')
-      .select('duration_minutes')
-      .eq('id', input.serviceId)
-      .eq('merchant_id', merchantId)
-      .maybeSingle();
-    if (error) return { data: null, error: error.message };
-    if (!svc) return { data: null, error: 'Geçersiz hizmet' };
-    serviceDuration = svc.duration_minutes;
-  }
-
-  const { data: calendars, error: calError } = await supabase.from('calendars')
-    .select('id, default_duration_minutes')
-    .eq('merchant_id', merchantId)
-    .eq('is_active', true);
-  if (calError) return { data: null, error: calError.message };
-  const calendar = input.calendarId
-    ? calendars.find(c => c.id === input.calendarId)
-    : calendars.length === 1 ? calendars[0] : undefined;
-  if (!calendar) {
-    return { data: null, error: input.calendarId ? 'Geçersiz takvim' : 'Lütfen bir takvim seçin' };
-  }
-
-  const durationMins = serviceDuration ?? calendar.default_duration_minutes ?? org.default_appointment_duration_minutes ?? 30;
-
-  let startsAt: string;
-  try {
-    startsAt = localToUtc(input.date, org.timezone);
-  } catch (e) {
-    const code = (e as Error).message;
-    return {
-      data: null,
-      error: code === 'INVALID_LOCAL_TIME'
-        ? 'Bu saat, yaz saati geçişi nedeniyle mevcut değil'
-        : 'Geçersiz tarih/saat formatı',
-    };
-  }
-  const endsAt = new Date(Date.parse(startsAt) + durationMins * 60_000).toISOString();
-
-  const { data, error } = await supabase.from('appointments')
-    .insert({
-      organization_id: merchantId,
-      customer_phone: input.customerPhone,
-      customer_name: input.customerName || null,
-      service_id: input.serviceId || null,
-      calendar_id: calendar.id,
-      starts_at: startsAt,
-      ends_at: endsAt,
-      timezone: org.timezone,
-      status: 'Pending',
-      booking_token: crypto.randomUUID(),
-      customer_request_raw: input.note || null,
-    })
-    .select()
-    .single();
+  const { data, error } = await supabase.rpc("create_manual_appointment", {
+    p_local_start: input.date.substring(0, 16),
+    p_customer_name: input.customerName || null,
+    p_customer_phone: input.customerPhone,
+    p_calendar_id: input.calendarId || null,
+    p_service_id: input.serviceId || null,
+    p_request_raw: input.note || null,
+    p_source: "web"
+  });
 
   if (error) {
-    if (error.code === '23P01') return { data: null, error: 'Bu saat dolu' };
     return { data: null, error: error.message };
   }
 
-  revalidatePath('/ai-asistan/randevu');
-  return { data, error: null };
+  switch (data.status) {
+    case "SUCCESS":
+      revalidatePath("/ai-asistan/randevu");
+      return { data, error: null };
+    case "SLOT_TAKEN": return { data: null, error: "Bu saat dolu" };
+    case "CUSTOMER_TIME_CONFLICT": return { data: null, error: "Bu müşterinin bu saatte başka randevusu var" };
+    case "CALENDAR_REQUIRED": return { data: null, error: "Lütfen bir doktor/takvim seçin" };
+    case "INVALID_LOCAL_TIME": return { data: null, error: "Bu saat, saat değişikliği nedeniyle mevcut değil" };
+    case "CUSTOMER_REQUIRED": return { data: null, error: "Müşteri adı ve telefonu zorunlu" };
+    default: return { data: null, error: "Randevu oluşturulamadı (" + data.status + ")" };
+  }
 }
 
 export async function updateAppointmentStatus(id: string, status: 'Approved' | 'Cancelled') {

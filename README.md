@@ -590,3 +590,12 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 **Kullanıcı kararı:** Kullanıcıya üç seçenek sunuldu (kaldır / başlığı netleştir / veri kaynağını hesap-geneli yap); kullanıcı "zernioda nasıl verileri gösteriyorsa aynı şekilde verileri çeksin" dedi.
 
 **Çözüm:** Kart artık `get-post-timeline` yerine `get-daily-metrics`'i **`attribution: 'received'`** parametresiyle çağırıyor. Zernio SDK tip tanımına göre bu parametre "buckets the per-day increase in engagement by the day it actually arrived (engagement-over-time)" — yani Zernio'nun kendi "Engagement over time" grafiğinin ürettiği veriyle birebir aynı hesaplama mantığı. Yeni state alanı `engagementOverTime` (eski `postTimeline` alanının yerine), hesabın TAMAMININ seçili 30 günlük aralıktaki günlük toplamını taşıyor. Artık gereksiz hale gelen `recentPosts` (Supabase `posts` sorgusu) ve tek-gönderi `get-post-timeline` çağrısı tamamen kaldırıldı — sayfa yüklemesi bir network round-trip daha az yapıyor. Kartın checkbox/legend mantığı (Likes/Comments/Shares/Saves/Views/Impress./Reach/Clicks, Eng. Rate) değişmedi, sadece veri kaynağı düzeltildi. Mobil tarafta bu kart hiç render edilmediği için mobilde herhangi bir değişiklik gerekmedi.
+
+
+## Session 27.09.2026 - Randevu Bug Fixes
+- Separated Notes and Services UI rendering in Randevu cards on Web & Mobile.
+- Synced selectedDate with currentDate for correct month view across platforms.
+- Replaced horizontal scrollable date chips in Mobile with native DateTimePicker.
+- Wrapped Mobile modal form in ScrollView to fix keyboard overlap and unresponsiveness.
+- Made serviceId optional and added Validation Alert in Mobile.
+- Fixed database constraint overlapping bug in Web and Mobile by replacing timestamp LIKE queries with gte/lt bounds.

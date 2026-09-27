@@ -520,3 +520,13 @@ px supabase functions deploy) deploy edildi.
 - **Bug 2 (Silinemeyen Bağlantılar):** Zernio'da halihazırda kopmuş (needs_reconnection=true) olan hesapların, "Yeniden Bağlan" kartlarındaki çöp kutusuna basıldığında `disconnectAccount` API'sinden dönen "404 Not Found" hatası nedeniyle yerelden silinememesi sorunu çözüldü. Artık "not found" durumunda yerel veritabanındaki kayıt güvenle siliniyor (ledger-repo / zernio-client).
 - **Bug 3 (Kritik Veri Kaybı Önlemi):** `zernio-client` içindeki `sync-posts` işleminin, boş/yeni bir profile bağlandığında Zernio'dan boş liste dönmesi sonucu yerel veritabanındaki tüm eski gönderileri (sanki silinmişler gibi) kalıcı olarak silmesi engellendi. `postsList.length === 0` durumunda silme bloğu tamamen atlanarak güvenlik kemeri eklendi.
 - **Bug 4 (TikTok Caption Kaybı & ID Uyuşmazlığı):** TikTok gönderilerindeki "Gönderi detayı bulunamadı" hatasını çözmek için webhook içine REST fallback'i eklendi. Ancak webhook'un döndürdüğü TikTok'a ait native ID ile Zernio'nun REST API'sindeki Mongo tabanlı ID eşleşmediği için fallback çalışmadı. Çözüm olarak `zernio-client` içine `ZERNIO_POST_PLATFORMS_RAW` logu eklendi; buradan TikTok'un gerçek native ID'sinin nasıl geldiği tespit edilip ID eşleştirme ve temizlik yapılacak.
+
+
+## Session 27.09.2026 - Agent Action Log
+Agent resolved multiple issues across flow and flowweb regarding appointments. Specifically:
+1. Separated Note UI from Service UI in cards.
+2. Fixed calendar UI not syncing month with selected date.
+3. Swapped React Native modal chips for DateTimePicker in Mobile.
+4. Debugged multiple JSX parsing errors related to misaligned ScrollView closures in Mobile.
+5. Fixed keyboard overlay overlapping input fields in Mobile RandevuScreen.
+6. Addressed 'no_overlapping_appointments' Supabase constraint by replacing flawed LIKE timestamp queries with gte/lt bounds.

@@ -109,6 +109,13 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     setSelectedDate(param);
   }, [searchParams]);
 
+  useEffect(() => {
+    const d = dateFromYmd(selectedDate);
+    if (d.getMonth() !== currentDate.getMonth() || d.getFullYear() !== currentDate.getFullYear()) {
+      setCurrentDate(d);
+    }
+  }, [selectedDate, currentDate]);
+
   const stripRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -519,7 +526,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 const d = appt.date || '';
                 const rawTime = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
                 const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
-                const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : ((appt.service_id && getServiceName(appt.service_id)) || (appt.customer_request_raw ? `📝 Not: ${appt.customer_request_raw}` : t('randevuPage.timeline.unknownService')));
+                const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : (appt.service_id ? getServiceName(appt.service_id) : null);
 
                 return (
                   <div key={appt.id} style={{ display: "flex", gap: 16 }}>
@@ -544,10 +551,10 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                         <div>
                           <h4 style={{ fontSize: 15, fontWeight: 700, color: "#fff", margin: "0 0 4px 0" }}>{appt.customer_name || t('randevuPage.timeline.unnamedCustomer')}</h4>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>
+                            {svcName && (<span style={{ fontSize: 12, color: "var(--text-secondary)", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>{svcName}</span>)}
                             {appt.customer_request_raw && (
                                 <span style={{ fontSize: 12, color: "#F59E0B", background: "rgba(245,158,11,0.1)", padding: "2px 8px", borderRadius: 99 }}>
-                                  Not: {appt.customer_request_raw}
+                                  📝 {appt.customer_request_raw}
                                 </span>
                               )}
                               {multiCalendarEnabled && appt.calendar_id && (

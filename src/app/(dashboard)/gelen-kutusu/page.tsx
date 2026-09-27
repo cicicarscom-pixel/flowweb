@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslations, useLocale } from "next-intl";
+import { appointmentSentence } from '@/lib/appointmentSentence';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export default function GelenKutusuPage() {
+  const router = useRouter();
   const t = useTranslations();
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>(typeof window !== 'undefined' ? ((new URLSearchParams(window.location.search).get('tab') as any) || 'mesajlar') : 'mesajlar');
@@ -472,7 +475,9 @@ export default function GelenKutusuPage() {
 
         let regularNotifs: any[] = [];
         if (organizationId) {
-          const { data } = await supabase.from('notifications').select('*').eq('profile_id', organizationId);
+          const { data, error } = await supabase.from('notifications').select('*');
+          if (error) console.error('notif fetch error', error);
+          regularNotifs = data || [];
           regularNotifs = data || [];
         }
 
@@ -580,38 +585,8 @@ export default function GelenKutusuPage() {
   }, [organizationId]);
 
   useEffect(() => {
-    if (activeTab === 'bildirimler' && notifications.some(n => !n.is_read)) {
-      const markAsRead = async () => {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session?.user?.id) return;
-          
-          const unreadRegular = notifications.filter(n => !n.is_read && !n.is_broadcast).map(n => n.id);
-          const unreadBroadcasts = notifications.filter(n => !n.is_read && n.is_broadcast).map(n => n.id);
-          
-          const promises = [];
-          
-          if (unreadRegular.length > 0 && organizationId) {
-            promises.push(supabase.from('notifications').update({ is_read: true }).in('id', unreadRegular));
-          }
-          
-          if (unreadBroadcasts.length > 0) {
-            const inserts = unreadBroadcasts.map(id => ({ user_id: session.user.id, broadcast_id: id }));
-            promises.push(supabase.from('broadcast_reads').upsert(inserts, { onConflict: 'user_id, broadcast_id' }));
-          }
-          
-          if (promises.length > 0) {
-            await Promise.all(promises);
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-            window.dispatchEvent(new Event('refresh_unread_count'));
-          }
-        } catch (err) {
-          console.warn('Error marking as read:', err);
-        }
-      };
-      markAsRead();
-    }
-  }, [activeTab, notifications, organizationId]);
+    // Auto-read removed as per requirement
+      }, [activeTab, notifications, organizationId]);
 
   const toggleSelection = (id: string) => {
     setSelectedItems(prev => 
@@ -1313,6 +1288,7 @@ export default function GelenKutusuPage() {
     </div>
   );
 }
+
 
 
 

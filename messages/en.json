@@ -972,5 +972,11 @@
       "upcomingTitle": "Upcoming Appointments",
       "viewAll": "View All"
     }
+  },
+  "notifications": {
+    "sentences": {
+      "appointment": "{customer} booked an appointment with {doctor} on {when}",
+      "appointmentNoDoctor": "{customer} booked an appointment on {when}"
+    }
   }
 }

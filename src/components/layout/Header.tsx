@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import AppointmentNotifications, { useUnreadAppointmentCount } from "@/components/dashboard/AppointmentNotifications";
+import { useUnreadAppointmentCount } from "@/components/dashboard/AppointmentNotifications";
 import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Header() {
@@ -13,7 +13,6 @@ export default function Header() {
   const t = useTranslations();
   const locale = useLocale();
   const [dateStr, setDateStr] = useState("");
-  const [isBellOpen, setIsBellOpen] = useState(false);
   const unreadCount = useUnreadAppointmentCount();
   const supabase = createClient();
   const { organization } = useProfile();
@@ -67,6 +66,7 @@ export default function Header() {
     </header>
   );
 }
+
 
 
 

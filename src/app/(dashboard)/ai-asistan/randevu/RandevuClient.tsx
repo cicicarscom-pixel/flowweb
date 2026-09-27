@@ -174,6 +174,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     
     setCancelModalId(null);
     setCancelReason("");
+    if (data?.status === 'SUCCESS') alert(t('randevuPage.actions.cancelSuccess'));
     
     const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
     setAppointments(refresh.data);
@@ -191,6 +192,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     }
     
     setDeleteModalId(null);
+    if (data?.status === 'SUCCESS') alert(t('randevuPage.actions.deleteSuccess'));
     
     const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
     setAppointments(refresh.data);
@@ -575,7 +577,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 const palette = CARD_COLORS[i % CARD_COLORS.length];
                 const d = appt.date || '';
                 const rawTime = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
-                const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
+                const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
                 const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : (appt.service_id ? getServiceName(appt.service_id) : null);
 
                 return (
@@ -611,8 +613,18 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                               {multiCalendarEnabled && appt.calendar_id && (
                               <span style={{ fontSize: 12, color: "#22B573", background: "rgba(34,181,115,0.1)", padding: "2px 8px", borderRadius: 99 }}>
                                 {calendars.find((c: any) => c.id === appt.calendar_id)?.name || "Takvim"}
-                              </span>
-                            )}
+                                </span>
+                              )}
+                              {appt.status === 'Cancelled' && (
+                                <span style={{ fontSize: 12, color: "#9ca3af", background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: 99 }}>
+                                  {t('randevuPage.actions.cancelledBadge')}
+                                </span>
+                              )}
+                              {appt.status === 'Cancelled' && appt.cancel_reason && (
+                                <span style={{ fontSize: 12, color: "#9ca3af", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 99 }}>
+                                  {t('randevuPage.actions.reasonBadge')}{appt.cancel_reason}
+                                </span>
+                              )}
                           </div>
                         </div>
                       </div>
@@ -644,14 +656,17 @@ export default function RandevuClient({ initialAppointments, services, merchantI
         
       </div>
 
-            {/* Modals for actions */}
-      {cancelModalId && (
+      
+      {/* Modals for actions */}
+      {(() => {
+        const apptToCancel = cancelModalId ? appointments.find(a => a.id === cancelModalId) : null;
+        return cancelModalId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
           <div className="glass" style={{ width: 400, background: "rgba(30,30,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 24 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 16 }}>{t('randevuPage.actions.cancelTitle')}</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 16 }}>
-              {appointments.find(a => a.id === cancelModalId)?.customer_name || t('randevuPage.timeline.unnamedCustomer')} <br/>
-              {appointments.find(a => a.id === cancelModalId)?.starts_at ? new Date(appointments.find(a => a.id === cancelModalId)?.starts_at).toLocaleString("tr-TR", { timeZone: appointments.find(a => a.id === cancelModalId)?.timezone ?? "Europe/Istanbul" }) : ''}
+              {apptToCancel?.customer_name || t('randevuPage.timeline.unnamedCustomer')} <br/>
+              {apptToCancel?.starts_at ? new Date(apptToCancel.starts_at).toLocaleString(undefined, { timeZone: apptToCancel.timezone ?? "Europe/Istanbul" }) : ''}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
               <label style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>{t('randevuPage.actions.reasonLabel')}</label>
@@ -663,7 +678,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             </div>
           </div>
         </div>
-      )}
+      );
+      })()}
 
       {deleteModalId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>

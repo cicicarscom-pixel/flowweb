@@ -157,6 +157,7 @@ export function useAppointmentNotifications(limit = 10) {
     setItems((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
     const { error } = await supabase.from("notifications").update({ is_read: true }).eq("id", id);
     if (error) console.error("[AppointmentNotifications] markRead failed:", error);
+    window.dispatchEvent(new Event('appointment-notifications-changed'));
   }, [supabase]);
 
   useEffect(() => {
@@ -332,3 +333,5 @@ const CSS = `
   .an-right { text-align: left; }
 }
 `;
+
+

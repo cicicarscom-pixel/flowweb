@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 export default function GelenKutusuPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>('mesajlar');
+  const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>(typeof window !== 'undefined' ? ((new URLSearchParams(window.location.search).get('tab') as any) || 'mesajlar') : 'mesajlar');
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -1313,3 +1313,7 @@ export default function GelenKutusuPage() {
     </div>
   );
 }
+
+
+
+

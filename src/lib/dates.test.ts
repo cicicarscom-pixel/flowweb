@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { assertEquals } from "https://deno.land/std@0.220.0/testing/asserts.ts";
 
 export function addDaysYmd(ymd: string, n: number): string {
@@ -48,3 +49,4 @@ Deno.test('addDaysYmd', () => {
   assertEquals(addDaysYmd('2026-09-30', 1), '2026-10-01');
   assertEquals(addDaysYmd('2026-10-01', -1), '2026-09-30');
 });
+

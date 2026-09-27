@@ -268,6 +268,23 @@
     "alerts": {
       "missingFields": "Dienstleistung, Uhrzeit und Telefonnummer sind erforderlich.",
       "saveFailed": "Termin konnte nicht gespeichert werden: {error}"
+    },
+    "actions": {
+      "cancel": "Termin absagen",
+      "delete": "Endgültig löschen",
+      "cancelTitle": "Termin absagen?",
+      "deleteTitle": "Termin endgültig löschen?",
+      "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Der Termin wird endgültig gelöscht.",
+      "reasonLabel": "Stornierungsgrund",
+      "cancelledBadge": "Abgesagt",
+      "reasonBadge": "Grund: ",
+      "back": "Abbrechen",
+      "submit": "Bestätigen",
+      "alreadyCancelled": "Der Termin wurde bereits abgesagt.",
+      "notFound": "Termin nicht gefunden.",
+      "genericError": "Ein Fehler ist aufgetreten.",
+      "cancelSuccess": "Termin erfolgreich abgesagt.",
+      "deleteSuccess": "Termin erfolgreich gelöscht."
     }
   },
   "aiAsistanComponents": {

@@ -268,6 +268,23 @@
     "alerts": {
       "missingFields": "Service, time, and phone number are required.",
       "saveFailed": "Failed to save appointment: {error}"
+    },
+    "actions": {
+      "cancel": "Cancel appointment",
+      "delete": "Delete permanently",
+      "cancelTitle": "Cancel the appointment?",
+      "deleteTitle": "Delete appointment permanently?",
+      "deleteWarning": "This action cannot be undone. The appointment record will be permanently deleted.",
+      "reasonLabel": "Reason for cancellation",
+      "cancelledBadge": "Cancelled",
+      "reasonBadge": "Reason: ",
+      "back": "Cancel",
+      "submit": "Confirm",
+      "alreadyCancelled": "Appointment is already cancelled.",
+      "notFound": "Appointment not found.",
+      "genericError": "An error occurred.",
+      "cancelSuccess": "Appointment cancelled successfully.",
+      "deleteSuccess": "Appointment deleted successfully."
     }
   },
   "aiAsistanComponents": {

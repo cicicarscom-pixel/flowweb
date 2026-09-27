@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { getAppointmentsByDate, getAvailableSlots, createAppointment } from '@/actions/appointments';
+import { getAppointmentsByDate, getAvailableSlots, createAppointment, cancelAppointment, deleteAppointment } from '@/actions/appointments';
 import { dateFromYmd } from '@/lib/dates';
 import { isSlotBusy } from '@/lib/slotBusy';
 
@@ -141,6 +141,61 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   
   const [newAppt, setNewAppt] = useState({ name: '', phone: '', time: '', service: '', calendar_id: '', note: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [actionMenuId, setActionMenuId] = useState<string | null>(null);
+  const [cancelModalId, setCancelModalId] = useState<string | null>(null);
+  const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [isActionLoading, setIsActionLoading] = useState(false);
+
+  // Close menus on click outside
+  useEffect(() => {
+    const handleGlobalClick = () => setActionMenuId(null);
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setActionMenuId(null); };
+    window.addEventListener('click', handleGlobalClick);
+    window.addEventListener('keydown', handleEsc);
+    return () => {
+      window.removeEventListener('click', handleGlobalClick);
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+
+  const handleCancelAppointment = async (id: string, reason: string) => {
+    setIsActionLoading(true);
+    const { data, error } = await cancelAppointment(id, reason);
+    setIsActionLoading(false);
+    
+    if (error || data?.status === 'UNAUTHORIZED') {
+      alert(t('randevuPage.actions.genericError'));
+    } else if (data?.status === 'ALREADY_CANCELLED') {
+      alert(t('randevuPage.actions.alreadyCancelled'));
+    } else if (data?.status === 'NOT_FOUND') {
+      alert(t('randevuPage.actions.notFound'));
+    }
+    
+    setCancelModalId(null);
+    setCancelReason("");
+    
+    const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
+    setAppointments(refresh.data);
+  };
+
+  const handleDeleteAppointment = async (id: string) => {
+    setIsActionLoading(true);
+    const { data, error } = await deleteAppointment(id);
+    setIsActionLoading(false);
+    
+    if (error || data?.status === 'UNAUTHORIZED') {
+      alert(t('randevuPage.actions.genericError'));
+    } else if (data?.status === 'NOT_FOUND') {
+      alert(t('randevuPage.actions.notFound'));
+    }
+    
+    setDeleteModalId(null);
+    
+    const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
+    setAppointments(refresh.data);
+  };
+
 
   // Subscribe to real-time updates
   useEffect(() => {
@@ -533,9 +588,10 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     <div className="glass" style={{ 
                       flex: 1, borderRadius: 20, padding: 16,
                       background: "rgba(255,255,255,0.02)",
-                      border: `1px solid ${palette.border}`, borderLeft: `6px solid ${palette.text}`,
+                      border: `1px solid ${palette.border}`, borderLeft: `6px solid ${appt.status === 'Cancelled' ? '#666' : palette.text}`,
                       display: "flex", alignItems: "center", justifyContent: "space-between",
-                      transition: "transform 0.2s", cursor: "pointer"
+                      transition: "transform 0.2s", cursor: "pointer",
+                      opacity: appt.status === 'Cancelled' ? 0.5 : 1
                     }}
                     onMouseEnter={e => e.currentTarget.style.transform = "translateX(4px)"}
                     onMouseLeave={e => e.currentTarget.style.transform = "translateX(0)"}>
@@ -560,9 +616,23 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                           </div>
                         </div>
                       </div>
-                      <button style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", padding: 8 }}>
-                        <span style={{ fontSize: 18 }}>⋮</span>
-                      </button>
+                      <div style={{ position: "relative" }}>
+                        <button onClick={(e) => { e.stopPropagation(); setActionMenuId(actionMenuId === appt.id ? null : appt.id); }} style={{ background: "transparent", border: "none", color: "var(--text-secondary)", cursor: "pointer", padding: 8 }}>
+                          <span style={{ fontSize: 18 }}>⋮</span>
+                        </button>
+                        {actionMenuId === appt.id && (
+                          <div style={{ position: "absolute", top: 40, right: 0, background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: 8, zIndex: 10, width: 200, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+                            {appt.status !== 'Cancelled' && (
+                              <button onClick={(e) => { e.stopPropagation(); setActionMenuId(null); setCancelModalId(appt.id); }} style={{ width: "100%", padding: "10px 12px", background: "transparent", border: "none", color: "#fff", textAlign: "left", cursor: "pointer", borderRadius: 8 }}>
+                                {t('randevuPage.actions.cancel')}
+                              </button>
+                            )}
+                            <button onClick={(e) => { e.stopPropagation(); setActionMenuId(null); setDeleteModalId(appt.id); }} style={{ width: "100%", padding: "10px 12px", background: "transparent", border: "none", color: "#EF4444", textAlign: "left", cursor: "pointer", borderRadius: 8 }}>
+                              {t('randevuPage.actions.delete')}
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -573,6 +643,40 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
         
       </div>
+
+            {/* Modals for actions */}
+      {cancelModalId && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
+          <div className="glass" style={{ width: 400, background: "rgba(30,30,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 24 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 16 }}>{t('randevuPage.actions.cancelTitle')}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 16 }}>
+              {appointments.find(a => a.id === cancelModalId)?.customer_name || t('randevuPage.timeline.unnamedCustomer')} <br/>
+              {appointments.find(a => a.id === cancelModalId)?.starts_at ? new Date(appointments.find(a => a.id === cancelModalId)?.starts_at).toLocaleString("tr-TR", { timeZone: appointments.find(a => a.id === cancelModalId)?.timezone ?? "Europe/Istanbul" }) : ''}
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+              <label style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>{t('randevuPage.actions.reasonLabel')}</label>
+              <input type="text" value={cancelReason} onChange={e => setCancelReason(e.target.value)} style={{ width: "100%", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "12px 16px", color: "#fff", outline: "none", fontSize: 14 }} />
+            </div>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => { setCancelModalId(null); setCancelReason(""); }} style={{ flex: 1, padding: 14, borderRadius: 12, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, cursor: "pointer" }}>{t('randevuPage.actions.back')}</button>
+              <button onClick={() => handleCancelAppointment(cancelModalId, cancelReason)} disabled={isActionLoading} style={{ flex: 1, padding: 14, borderRadius: 12, background: "#EF4444", border: "none", color: "#fff", fontWeight: 600, cursor: isActionLoading ? "not-allowed" : "pointer", opacity: isActionLoading ? 0.7 : 1 }}>{t('randevuPage.actions.submit')}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteModalId && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
+          <div className="glass" style={{ width: 400, background: "rgba(30,30,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 24 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 16 }}>{t('randevuPage.actions.deleteTitle')}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>{t('randevuPage.actions.deleteWarning')}</p>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={() => setDeleteModalId(null)} style={{ flex: 1, padding: 14, borderRadius: 12, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, cursor: "pointer" }}>{t('randevuPage.actions.back')}</button>
+              <button onClick={() => handleDeleteAppointment(deleteModalId)} disabled={isActionLoading} style={{ flex: 1, padding: 14, borderRadius: 12, background: "#EF4444", border: "none", color: "#fff", fontWeight: 600, cursor: isActionLoading ? "not-allowed" : "pointer", opacity: isActionLoading ? 0.7 : 1 }}>{t('randevuPage.actions.delete')}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Cute Modal */}
       {isModalOpen && (

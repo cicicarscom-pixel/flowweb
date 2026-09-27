@@ -150,23 +150,31 @@ export async function createAppointment(input: {
   }
 }
 
-export async function updateAppointmentStatus(id: string, status: 'Approved' | 'Cancelled') {
-  const supabase = await createClient()
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) return { data: null, error: 'Unauthorized' }
+export async function cancelAppointment(id: string, reason?: string) {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { data: null, error: 'Unauthorized' };
 
-  const { data, error } = await supabase
-    .from('appointments')
-    .update({ status })
-    .eq('id', id)
-    .eq('organization_id', session.user.id) // RLS'e ek, kod seviyesinde de garanti
-    .select()
-    .single()
+  const { data, error } = await supabase.rpc('cancel_appointment', {
+    p_appointment_id: id,
+    p_reason: reason || null
+  });
 
-  if (error) return { data: null, error: error.message }
-  revalidatePath('/ai-asistan/randevu')
-  return { data, error: null }
+  if (error) return { data: null, error: error.message };
+  revalidatePath('/ai-asistan/randevu');
+  return { data, error: null };
 }
 
+export async function deleteAppointment(id: string) {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { data: null, error: 'Unauthorized' };
 
+  const { data, error } = await supabase.rpc('delete_appointment', {
+    p_appointment_id: id
+  });
 
+  if (error) return { data: null, error: error.message };
+  revalidatePath('/ai-asistan/randevu');
+  return { data, error: null };
+}

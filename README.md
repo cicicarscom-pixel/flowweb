@@ -607,3 +607,7 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 4. **Heatmap & UI (flowweb & flow):** Web ve Mobil'deki gün içi yoğunluk haritası (isSlotBusy), yeni slotBusy.ts modülü kullanılarak string (date LIKE) aramasından aralık bazlı çakışma arayışına dönüştürüldü. Yeni Randevu Modalı (mobildeki) saatleri filtrelemek için güncellendi.
 5. **Ledger Güncellemeleri:** waha-webhook v92 canlı ortamdan senkronize edildi. AI Core (ResponseGuards, claimsAction, vs.) testleri ile sisteme dahil edildi. Faz 2 temizliği doğrulandı.
 
+
+
+9. **Flow & FlowWeb - İptal ve Kalıcı Silme Arayüzü:** Randevu listelerinde kullanılmak üzere iptal ve silme işlemleri RPC (cancel_appointment, delete_appointment) üzerinden backend ile tam entegre edildi. Web tarafında iptal nedenleri ve durum bildirimleri kartta soluk rozetler olarak gösterilirken, mobilde kart içine ActionSheet ('⋮') eklendi.
+10. **Flow (Mobil) - Gelen Kutusu Zil Yönlendirmesi:** DashboardScreen'deki bildirim çanının yanlışlıkla 'Sosyal Medya' sekmesine yönlendirmesi sorunu düzeltilip, doğrudan ana gezinme yığını (Stack) seviyesine taşınan 'Inbox > Bildirimler' sekmesine yönlendirildi. Tanımsız kalan eski load data (fetchAppointments) fonksiyonları temizlendi.

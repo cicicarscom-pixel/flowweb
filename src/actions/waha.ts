@@ -1,10 +1,10 @@
-'use server'
+﻿'use server'
 
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 
 const WAHA_BASE_URL = 'http://31.97.37.208:3000';
-const WAHA_API_KEY = 'workigom_key_2026';
+const WAHA_API_KEY = process.env.WAHA_API_KEY as string;
 
 export async function getWahaStatus() {
   const t = await getTranslations();
@@ -143,4 +143,5 @@ export async function getWahaPairingCode(phoneNumber: string) {
     return { success: false, error: error.message };
   }
 }
+
 

@@ -640,7 +640,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                     {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-{services.length > 0 && (
+<div style={{ display: "flex", gap: 16 }}>
+                {services.length > 0 && (
                 <div style={{ flex: 1 }}>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.serviceTypeLabel')}</label>
                   <select

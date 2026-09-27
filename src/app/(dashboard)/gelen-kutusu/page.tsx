@@ -476,18 +476,17 @@ function GelenKutusuContent() {
   };
 
 
+    const [notifError, setNotifError] = useState<string | null>(null);
+
     const fetchNotifications = async () => {
       try {
+        setNotifError(null);
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user?.id) return;
 
-        let regularNotifs: any[] = [];
-        if (organizationId) {
-          const { data, error } = await supabase.from('notifications').select('*');
-          if (error) console.error('notif fetch error', error);
-          regularNotifs = data || [];
-          regularNotifs = data || [];
-        }
+        const { data, error } = await supabase.from('notifications').select('*');
+        if (error) throw error;
+        const regularNotifs = data || [];
 
         const { data: profileData } = await supabase.from('profiles').select('user_type').eq('id', session.user.id).limit(1);
         const userType = profileData?.[0]?.user_type || 'business';
@@ -512,12 +511,12 @@ function GelenKutusuContent() {
         const combined = [...regularNotifs, ...broadcastNotifs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         setNotifications(combined);
       } catch (err: any) {
-        console.warn("Notifications fetch err:", err);
+        setNotifError(err?.message || JSON.stringify(err));
         setNotifications([]);
       }
     };
 
-  const fetchReviews = async () => {
+    const fetchReviews = async () => {
     try {
       const { data, error } = await supabase
         .from('reviews')
@@ -1225,6 +1224,7 @@ function GelenKutusuContent() {
         )}
 
         {/* --- BILDIRIMLER TAB --- */}
+          {notifError && activeTab === 'bildirimler' && <div className="p-4 mb-4 text-sm text-red-500 bg-red-500/10 rounded-xl border border-red-500/20">{notifError}</div>}
         {!isLoading && activeTab === 'bildirimler' && notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">
             <i className="fa-regular fa-bell text-4xl mb-4 text-[#A79E96]"></i>

@@ -969,7 +969,7 @@
   "aiAsistan": {
     "addCalendar": "Takvim Ekle"
   },
-  "dashboardScreen": {
+  "dashboardAppointments": {
     "appointments": {
       "todayTitle": "Bugünkü Randevular",
       "todayEmpty": "Bugün için planlı randevu yok.",

@@ -965,7 +965,7 @@
       "errorPrefix": "Fehler: {error}"
     }
   },
-  "dashboardScreen": {
+  "dashboardAppointments": {
     "appointments": {
       "todayTitle": "Heutige Termine",
       "todayEmpty": "Heute sind keine Termine geplant.",

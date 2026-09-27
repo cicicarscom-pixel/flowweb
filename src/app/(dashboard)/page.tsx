@@ -197,7 +197,10 @@ export default function DashboardHomePage() {
               id: a.id,
               targetDate,
               time: (a.starts_at || a.date) ? new Date(a.starts_at || a.date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', timeZone: a.timezone || 'Europe/Istanbul' }) : '00:00',
-              title: (a.customer_name ? `${a.customer_name} - ${a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardScreen.appointments.unnamedCustomer'))}` : (a.customer_request_raw ? `📝 Not: ${a.customer_request_raw}` : (a.service_name || t('dashboardScreen.appointments.unnamedCustomer')))) + (a.calendar_id && calsMap[a.calendar_id] ? ` 👨‍⚕️ ${calsMap[a.calendar_id]}` : ''),
+              customerName: a.customer_name || t('randevuPage.timeline.unnamedCustomer'),
+              calendarName: a.calendar_id && calsMap[a.calendar_id] ? calsMap[a.calendar_id] : null,
+              serviceName: a.service_name || null,
+              note: a.customer_request_raw || null,
               color: '#FF7A59',
               dateText: a.starts_at || a.date
             };
@@ -409,25 +412,32 @@ export default function DashboardHomePage() {
 
                   {/* Today's Appointments */}
           <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 16 }}>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.todayTitle')}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardAppointments.appointments.todayTitle')}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {todayAppointments.length > 0 ? todayAppointments.map((a, i) => (
                 <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
                   <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
                   <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
                   <div>
-                    <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
-                  </div>
+                      <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
+                      {(a.calendarName || a.serviceName || a.note) && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>👨‍⚕️ Dr. {a.calendarName}</span>}
+                          {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
+                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
+                        </div>
+                      )}
+                    </div>
                 </div>
               )) : (
-                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardScreen.appointments.todayEmpty')}</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
               )}
             </div>
           </div>
 
           {/* Upcoming Appointments */}
           <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.upcomingTitle')}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardAppointments.appointments.upcomingTitle')}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {appointments.length > 0 ? appointments.map((a, i) => {
                 const displayTime = (new Date(a.dateText).getDate() === new Date().getDate() ? '' : new Date(a.dateText).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) + ' ') + a.time;
@@ -436,15 +446,22 @@ export default function DashboardHomePage() {
                   <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 55, flexShrink: 0, textAlign: 'right' }}>{displayTime}</span>
                   <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
                   <div>
-                    <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
-                  </div>
+                      <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
+                      {(a.calendarName || a.serviceName || a.note) && (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>👨‍⚕️ Dr. {a.calendarName}</span>}
+                          {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
+                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
+                        </div>
+                      )}
+                    </div>
                 </div>
               )}) : (
-                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardScreen.appointments.empty')}</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
               )}
               {totalUpcomingAppointments > appointments.length && (
                 <div onClick={() => router.push(`/ai-asistan/randevu`)} style={{ marginTop: 10, textAlign: 'center', cursor: 'pointer' }}>
-                  <span style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500 }}>{t('dashboardScreen.appointments.viewAll')} ({totalUpcomingAppointments})</span>
+                  <span style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500 }}>{t('dashboardAppointments.appointments.viewAll')} ({totalUpcomingAppointments})</span>
                 </div>
               )}
             </div>

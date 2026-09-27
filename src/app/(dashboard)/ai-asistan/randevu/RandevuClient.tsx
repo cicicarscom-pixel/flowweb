@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment } from '@/actions/appointments';
 import { dateFromYmd } from '@/lib/dates';
+import { isSlotBusy } from '@/lib/slotBusy';
 
 const TIME_SLOTS = (() => {
   const slots = [];
@@ -236,15 +237,6 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     t('randevuPage.calendar.months.dec'),
   ];
   const monthYearStr = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-
-  const isSlotBusy = (time: string) => {
-    return appointments.some(app => {
-      if (app.status !== 'Pending' && app.status !== 'Approved') return false;
-      const d = app.date || '';
-      const t = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
-      return t.substring(0, 5) === time;
-    });
-  };
 
   const handleSave = async () => {
     if (!newAppt.time || !newAppt.phone) {
@@ -477,7 +469,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                       {[0, 1, 2].map(row => {
                         const slot = TIME_SLOTS[row * 11 + col];
                         if (!slot) return <div key={row} style={{ width: 44, height: 32 }} />;
-                        const busy = isSlotBusy(slot.time);
+                        const busy = isSlotBusy(slot.time, selectedDate, appointments as any);
                         return (
                           <div
                             key={row}

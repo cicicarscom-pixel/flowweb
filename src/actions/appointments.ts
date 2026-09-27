@@ -17,7 +17,7 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
     .eq('organization_id', session.user.id)
     .gte('date', `${dateStr}T00:00:00`)
     .lt('date', `${nextDayStr}T00:00:00`)
-    .in('status', ['Pending', 'Approved'])
+    .in('status', ['Pending', 'Approved', 'Cancelled'])
     .order('date', { ascending: true })
 
   if (calendarId) {

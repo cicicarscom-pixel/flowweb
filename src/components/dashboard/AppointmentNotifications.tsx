@@ -201,9 +201,11 @@ export function useUnreadAppointmentCount() {
     const timer = setInterval(refresh, REFRESH_MS);
     const onFocus = () => refresh();
     window.addEventListener("focus", onFocus);
+    window.addEventListener("appointment-notifications-changed", refresh);
     return () => {
       clearInterval(timer);
       window.removeEventListener("focus", onFocus);
+      window.removeEventListener("appointment-notifications-changed", refresh);
     };
   }, [refresh]);
 

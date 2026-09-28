@@ -424,7 +424,9 @@
       "documentUploaded": "Belge Yüklendi: {fileName}",
       "documentAnalyzed": "Belge başarıyla analiz edildi ve kaydedildi.",
       "uploadedImageAlt": "Yüklenen görsel",
-      "inputPlaceholder": "Gemini'ye mesaj gönderin..."
+      "inputPlaceholder": "Gemini'ye mesaj gönderin...",
+      "addedToCalendar": "Takvime eklendi",
+      "error": "Hata oluştu: {message}"
     },
     "loading": "Yükleniyor..."
   },

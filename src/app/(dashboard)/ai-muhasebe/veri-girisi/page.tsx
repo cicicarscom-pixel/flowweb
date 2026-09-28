@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiChatInput from "@/components/chat/AiChatInput";
 import { createClient } from "@/lib/supabase/client";
+import { todayInTimezone } from "@/lib/dates";
 
 interface Message {
  id: string;
@@ -69,7 +70,7 @@ function ChatScreen() {
       const supabase = createClient();
       const { profileId, orgId } = await getIds();
       
-      const promptPrefix = `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || new Date().toISOString().split('T')[0]}. `;
+      const promptPrefix = `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)}. `;
       
       const { data: result, error: invokeError } = await supabase.functions.invoke('ledger-isleyici-api', {
         body: { 
@@ -83,13 +84,13 @@ function ChatScreen() {
       if (result && result.error) throw new Error(result.error);
       
       if (result?.saved) {
-        addMessage(t("veriGirisiPage.chat.draftSaved") + ` \nTakvime eklendi: ${result.message || ''}`, "ai");
+        addMessage((result.message || '') + "\n" + t("veriGirisiPage.chat.addedToCalendar"), "ai");
       } else {
         addMessage(result?.message || t("veriGirisiPage.chat.documentAnalyzed"), "ai");
       }
     } catch (error: any) {
       console.error("Sohbet hatası:", error);
-      addMessage("Hata oluştu: " + error.message, "ai");
+      addMessage(t("veriGirisiPage.chat.error", { message: error.message }), "ai");
     } finally {
       setLoading(false);
     }
@@ -112,7 +113,7 @@ function ChatScreen() {
       
       const { data: draftDoc, error: insertError } = await supabase.from('finance_documents').insert([{
         organization_id: orgId || 'unknown',
-        type: transactionType,
+        type: transactionType === "gelir" ? "income" : "expense",
         image_url: null,
         document_status: 'ready_for_review',
         ledger_official_status: 'taslak',
@@ -131,7 +132,7 @@ function ChatScreen() {
         const { data: result, error: invokeError } = await supabase.functions.invoke('ledger-isleyici-api', {
           body: {
             document_id: draftDoc.id,
-            prompt: `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || new Date().toISOString().split('T')[0]}.`,
+            prompt: `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone)}.`,
             mimeType: file.type,
             profile_id: profileId,
             organization_id: orgId,
@@ -152,7 +153,7 @@ function ChatScreen() {
 
     } catch (error: any) {
       console.error("Belge işleme hatası:", error);
-      addMessage("İşleme hatası: " + error.message, "ai");
+      addMessage(t("veriGirisiPage.chat.error", { message: error.message }), "ai");
       setLoading(false);
     }
   };

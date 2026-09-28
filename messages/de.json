@@ -423,7 +423,9 @@
       "documentUploaded": "Dokument hochgeladen: {fileName}",
       "documentAnalyzed": "Das Dokument wurde erfolgreich analysiert und gespeichert.",
       "uploadedImageAlt": "Hochgeladenes Bild",
-      "inputPlaceholder": "Nachricht an Gemini senden..."
+      "inputPlaceholder": "Nachricht an Gemini senden...",
+      "addedToCalendar": "Zum Kalender hinzugefügt",
+      "error": "Ein Fehler ist aufgetreten: {message}"
     },
     "loading": "Wird geladen..."
   },

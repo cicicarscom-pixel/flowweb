@@ -423,7 +423,9 @@
       "documentUploaded": "Document uploaded: {fileName}",
       "documentAnalyzed": "The document was successfully analyzed and saved.",
       "uploadedImageAlt": "Uploaded image",
-      "inputPlaceholder": "Send a message to Gemini..."
+      "inputPlaceholder": "Send a message to Gemini...",
+      "addedToCalendar": "Added to calendar",
+      "error": "Something went wrong: {message}"
     },
     "loading": "Loading..."
   },

@@ -28,7 +28,7 @@ export default function OdemeTakvimiScreen() {
 
   const locale = "tr-TR"; 
   const formatCurrency = (amountMinor: number) => {
-    return new Intl.NumberFormat(locale, { style: "currency", currency: "TRY" }).format(amountMinor / 100);
+    return new Intl.NumberFormat(locale, { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(amountMinor / 100);
   };
 
   const todayStr = todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);

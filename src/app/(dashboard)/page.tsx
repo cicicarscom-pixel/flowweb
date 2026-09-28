@@ -261,7 +261,7 @@ export default function DashboardHomePage() {
     }
   };
 
-  const formatCurrency = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'TRY' }).format(amount);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(amount);
   const formatRelativeTime = (dateStr: string) => {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();

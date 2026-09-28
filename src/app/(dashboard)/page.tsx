@@ -170,7 +170,7 @@ export default function DashboardHomePage() {
 
           let calsMap: Record<string, string> = {};
           if (merchantId) {
-            const { data: cals } = await supabase.from('calendars').select('id, name').eq('profile_id', merchantId);
+            const { data: cals } = await supabase.from('calendars').select('id, name').eq('merchant_id', merchantId);
             if (cals) cals.forEach((c: any) => calsMap[c.id] = c.name);
           }
 
@@ -260,7 +260,7 @@ export default function DashboardHomePage() {
     }
   };
 
-  const formatCurrency = (amount: number) => Number(amount).toLocaleString(locale);
+  const formatCurrency = (amount: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'TRY' }).format(amount);
   const formatRelativeTime = (dateStr: string) => {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -339,7 +339,7 @@ export default function DashboardHomePage() {
             )}
             {appointments.length > 0 ? (
                <> {t.rich('dashboardHome.aiSummary.appointmentsToday', {
-                    count: appointments.length,
+                    count: todayAppointments.length,
                     ap: (chunks) => <strong style={{ color: "#C2478D" }}>{chunks}</strong>,
                   })}</>
             ) : (
@@ -368,8 +368,8 @@ export default function DashboardHomePage() {
           // bu yüzden reset (soft/hard) sonrasında tutarlar sıfırlansa bile hiç değişmiyorlardı.
           // Kullanıcı fark etti. Gerçek ay-üstü-ay trend hesaplaması ayrı bir özellik olarak
           // ele alınana kadar rozet tamamen kaldırıldı.
-          { label: t('dashboardHome.finance.monthlyIncome'), value: `₺${formatCurrency(financeStats.income)}`, color: "#22B573" },
-          { label: t('dashboardHome.finance.monthlyExpense'), value: `₺${formatCurrency(financeStats.expense)}`, color: "#EF4444" },
+          { label: t('dashboardHome.finance.monthlyIncome'), value: `${formatCurrency(financeStats.income)}`, color: "#22B573" },
+          { label: t('dashboardHome.finance.monthlyExpense'), value: `${formatCurrency(financeStats.expense)}`, color: "#EF4444" },
         ].map(m => (
           <div key={m.label} className="glass" style={{ borderRadius: 18, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 500, marginBottom: 10 }}>{m.label}</p>
@@ -422,7 +422,7 @@ export default function DashboardHomePage() {
                       <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
                       {(a.calendarName || a.serviceName || a.note) && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>👨‍⚕️ Dr. {a.calendarName}</span>}
+                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
                           {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
                         </div>
@@ -449,7 +449,7 @@ export default function DashboardHomePage() {
                       <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
                       {(a.calendarName || a.serviceName || a.note) && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>👨‍⚕️ Dr. {a.calendarName}</span>}
+                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
                           {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
                         </div>

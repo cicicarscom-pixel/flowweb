@@ -61,7 +61,7 @@ const STRINGS: Record<Locale, {
     error: "Bildirimler yüklenemedi.",
     retry: "Tekrar dene",
     unknownCustomer: "Bir müşteri",
-    sentence: (name, when) => `${name} için ${when} tarihine randevu oluşturuldu`,
+    sentence: (name, when) => appointmentSentence(name, when, m?.calendar_name),
   },
   en: {
     title: "Appointment notifications",

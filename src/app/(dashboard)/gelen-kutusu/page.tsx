@@ -1290,7 +1290,7 @@ function GelenKutusuContent() {
                     </span>
                   </div>
                   {subtext ? <p className="text-sm text-dark-muted leading-relaxed mt-1">{subtext}</p> : null}
-                  {docLabel && <p className="text-xs text-[#00F2FE] mt-2 font-medium"><i className="fa-solid fa-user-doctor mr-1"></i> Dr. {docLabel}</p>}
+                  {docLabel && <p className="text-xs text-[#00F2FE] mt-2 font-medium"><i className="fa-solid fa-user-doctor mr-1"></i> {docLabel}</p>}
                   {reqNote && <p className="text-xs text-dark-muted mt-1 italic">📝 {reqNote}</p>}
                 </div>
               </div>

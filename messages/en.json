@@ -302,6 +302,8 @@
     "heroSubtitle": "This Month's Performance",
     "incomeThisMonth": "INCOME THIS MONTH",
     "expenseThisMonth": "EXPENSE THIS MONTH",
+    "receivable": "RECEIVABLE",
+    "payable": "PAYABLE",
     "enterIncome": "ADD INCOME",
     "enterExpense": "ADD EXPENSE",
     "myBusiness": {

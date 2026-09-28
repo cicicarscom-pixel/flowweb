@@ -302,6 +302,8 @@
     "heroSubtitle": "Leistung in diesem Monat",
     "incomeThisMonth": "EINNAHMEN DIESEN MONAT",
     "expenseThisMonth": "AUSGABEN DIESEN MONAT",
+    "receivable": "FORDERUNGEN",
+    "payable": "VERBINDLICHKEITEN",
     "enterIncome": "EINNAHME ERFASSEN",
     "enterExpense": "AUSGABE ERFASSEN",
     "myBusiness": {

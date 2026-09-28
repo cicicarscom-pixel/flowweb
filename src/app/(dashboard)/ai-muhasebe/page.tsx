@@ -10,7 +10,7 @@ import { todayInTimezone, monthRangeYmd } from "@/lib/dates";
 export default function AiMuhasebePage() {
   const t = useTranslations();
   const locale = useLocale();
-  const [stats, setStats] = useState({ income: 0, expense: 0 });
+  const [stats, setStats] = useState({ income: 0, expense: 0, receivable: 0, payable: 0 });
   const [isLoading, setIsLoading] = useState(true);
 
   const supabase = createClient();
@@ -31,6 +31,8 @@ export default function AiMuhasebePage() {
 
         let totalIncome = 0;
         let totalExpense = 0;
+        let totalReceivable = 0;
+        let totalPayable = 0;
 
         const { from: p_from, to: p_to } = monthRangeYmd(todayInTimezone(tz));
 
@@ -39,9 +41,11 @@ export default function AiMuhasebePage() {
         if (summaryData && summaryData.status === 'SUCCESS') {
            totalIncome = summaryData.income / 100;
            totalExpense = summaryData.expense / 100;
+           totalReceivable = summaryData.receivable / 100;
+           totalPayable = summaryData.payable / 100;
         }
 
-        setStats({ income: totalIncome, expense: totalExpense });
+        setStats({ income: totalIncome, expense: totalExpense, receivable: totalReceivable, payable: totalPayable });
       } catch (e) {
         console.warn('Muhasebe page fetch error', e);
       } finally {
@@ -76,7 +80,7 @@ export default function AiMuhasebePage() {
       </div>
 
       {/* Income & Expense Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Income Card */}
         <div className="rounded-xl border border-primary/40 bg-surface-container p-6 flex items-center gap-6">
           <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -102,6 +106,34 @@ export default function AiMuhasebePage() {
               <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
             ) : (
               <p className="text-3xl font-bold text-on-surface">{formatCurrency(stats.expense)} <span className="text-xl font-normal">₺</span></p>
+            )}
+          </div>
+        </div>
+        {/* Receivable Card */}
+        <div className="rounded-xl border border-[#0ea5e9]/40 bg-surface-container p-6 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-full bg-[#0ea5e9]/10 flex items-center justify-center flex-shrink-0">
+            <i className="fa-solid fa-hand-holding-dollar text-[#0ea5e9] text-xl"></i>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">{t("aiMuhasebePage.receivable")}</p>
+            {isLoading ? (
+              <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
+            ) : (
+              <p className="text-3xl font-bold text-on-surface">{formatCurrency(stats.receivable)} <span className="text-xl font-normal">₺</span></p>
+            )}
+          </div>
+        </div>
+        {/* Payable Card */}
+        <div className="rounded-xl border border-[#f59e0b]/40 bg-surface-container p-6 flex items-center gap-6">
+          <div className="w-14 h-14 rounded-full bg-[#f59e0b]/10 flex items-center justify-center flex-shrink-0">
+            <i className="fa-solid fa-file-invoice-dollar text-[#f59e0b] text-xl"></i>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-on-surface-variant tracking-wide mb-1 uppercase">{t("aiMuhasebePage.payable")}</p>
+            {isLoading ? (
+              <div className="h-8 w-24 bg-white/10 animate-pulse rounded"></div>
+            ) : (
+              <p className="text-3xl font-bold text-on-surface">{formatCurrency(stats.payable)} <span className="text-xl font-normal">₺</span></p>
             )}
           </div>
         </div>

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { todayInTimezone } from "@/lib/dates";
+import { todayInTimezone, dateFromYmd, monthRangeYmd } from "@/lib/dates";
 
 interface Transaction {
   id: string;
@@ -33,7 +33,7 @@ export default function OdemeTakvimiScreen() {
 
   const todayStr = todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [currentDate, setCurrentDate] = useState(() => {
-    const d = new Date(todayStr);
+    const d = dateFromYmd(todayStr);
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -47,8 +47,7 @@ export default function OdemeTakvimiScreen() {
     setIsLoading(true);
     const y = currentDate.getFullYear();
     const m = currentDate.getMonth();
-    const p_from = new Date(y, m, 1).toISOString().split("T")[0];
-    const p_to = new Date(y, m + 1, 0).toISOString().split("T")[0];
+    const { from: p_from, to: p_to } = monthRangeYmd(`${y}-${String(m + 1).padStart(2, "0")}-01`);
 
     const { data, error } = await supabase.rpc("get_payment_calendar", { p_from, p_to });
     if (!error && data) {

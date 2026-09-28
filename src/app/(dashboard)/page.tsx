@@ -400,7 +400,9 @@ export default function DashboardHomePage() {
                     </div>
                 </div>
               )) : (
-                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
+                <div style={{ textAlign: "center", width: "100%" }}>
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
+                </div>
               )}
             </div>
           </div>
@@ -426,7 +428,9 @@ export default function DashboardHomePage() {
                     </div>
                 </div>
               )}) : (
-                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
+                <div style={{ textAlign: "center", width: "100%" }}>
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
+                </div>
               )}
               {totalUpcomingAppointments > appointments.length && (
                 <div onClick={() => router.push(`/ai-asistan/randevu`)} style={{ marginTop: 10, textAlign: 'center', cursor: 'pointer' }}>

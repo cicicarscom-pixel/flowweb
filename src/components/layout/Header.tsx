@@ -47,7 +47,7 @@ export default function Header() {
         <h1 style={{ fontSize: 18, fontWeight: 700, fontFamily: "Outfit, sans-serif", marginBottom: 1, color: "#fff" }}>
           {pageTitle}
         </h1>
-        <p style={{ fontSize: 11, color: "var(--text-muted)", fontFamily: "JetBrains Mono, monospace" }}>
+        <p style={{ fontSize: 11, color: "var(--text-muted)",  }}>
           {dateStr}
         </p>
       </div>

@@ -394,7 +394,7 @@ export default function DashboardHomePage() {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
                           {a.calendarName && <span style={{ color: '#22B573', background: 'rgba(34,181,115,0.1)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
-                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
+                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 12 }}>📝 {a.note}</span>}
                         </div>
                       )}
                     </div>
@@ -420,7 +420,7 @@ export default function DashboardHomePage() {
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
                           {a.calendarName && <span style={{ color: '#22B573', background: 'rgba(34,181,115,0.1)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
-                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
+                          {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 12 }}>📝 {a.note}</span>}
                         </div>
                       )}
                     </div>
@@ -456,7 +456,7 @@ export default function DashboardHomePage() {
       {/* Invoice & Social */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         <div className="glass neon-orange" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: "20px 22px", height: "100%" }}>
-          <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
+          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
           {latestInvoice ? (
               <div style={{ display: "flex", gap: 16 }}>
                 <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,158,11,0.05)" }}>
@@ -492,7 +492,7 @@ export default function DashboardHomePage() {
                 <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Henüz fatura taranmadı</p>
               </div>
             )}
-            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: "auto", background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
+            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: "auto", background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13, letterSpacing: "normal" }}>
             {t('dashboardHome.invoiceScanner.newInvoiceButton')}
           </button>
         </div>
@@ -502,7 +502,7 @@ export default function DashboardHomePage() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
-            <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>{t('dashboardHome.social.allAccounts')}</p>
+            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em" }}>{t('dashboardHome.social.allAccounts')}</p>
           </div>
           {hasSocialAccounts && (
             <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>

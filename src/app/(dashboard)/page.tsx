@@ -53,27 +53,13 @@ export default function DashboardHomePage() {
           if (org?.timezone) timezone = org.timezone;
         }
         const today = todayInTimezone(timezone);
-
-        const { data: transactions } = await supabase.from('transactions').select('*');
-        if (transactions) {
-          transactions.forEach(tx => {
-            if (tx.type === 'income') inc += Number(tx.amount);
-            if (tx.type === 'expense') {
-              exp += Number(tx.amount);
-              if (tx.date && tx.date >= today) {
-                upcoming.push({ ...tx, description: tx.title || t('dashboardHome.defaults.payment') });
-              }
-            }
-          });
-        }
-
+        
         let orgId = null;
         if (merchantId) {
           const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).limit(1).maybeSingle();
           orgId = orgMember?.organization_id;
         }
 
-        
         if (orgId) {
           const { data: latestDoc } = await supabase.from('finance_documents')
             .select('*')
@@ -85,30 +71,30 @@ export default function DashboardHomePage() {
           setLatestInvoice(latestDoc);
         }
 
-        if (orgId) {
-          const { data: docs } = await supabase.from('finance_documents').select('*').eq('organization_id', orgId);
-          if (docs) {
-            docs.forEach(d => {
-              const amt = Number(d.amount_minor) / 100;
-              if (d.type === 'income' || d.type === 'sales') {
-                if (d.flow_payment_status === 'paid') inc += amt;
-              } else if (d.type === 'expense') {
-                if (d.flow_payment_status === 'paid') {
-                  exp += amt;
-                } else {
-                  const docDate = d.created_at ? todayInTimezone(timezone, new Date(d.created_at)) : null;
-                  if (docDate && docDate >= today) {
-                    upcoming.push({ id: d.id, date: docDate, amount: amt, description: d.title || t('dashboardHome.defaults.invoicePayment'), type: 'expense' });
-                  }
-                }
-              }
-            });
-          }
+        const dateObj = new Date(today);
+        const p_from = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1).toISOString().split("T")[0];
+        const p_to = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).toISOString().split("T")[0];
+
+        const { data: summaryData } = await supabase.rpc('get_finance_summary', { p_from, p_to });
+        if (summaryData && summaryData.status === 'SUCCESS') {
+          setFinanceStats({ income: summaryData.income / 100, expense: summaryData.expense / 100 });
         }
 
-        upcoming.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        setUpcomingPayments(upcoming.slice(0, 5));
-        setFinanceStats({ income: inc, expense: exp });
+        const futureStr = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate() + 30).toISOString().split("T")[0];
+        const { data: calendarData } = await supabase.rpc('get_payment_calendar', { p_from: today, p_to: futureStr });
+        if (calendarData) {
+          const upcomingList = calendarData
+            .filter((d: any) => d.type === 'expense' && d.payment_status !== 'paid')
+            .slice(0, 5)
+            .map((d: any) => ({
+               id: d.id,
+               date: d.day,
+               amount: d.amount_minor / 100,
+               description: d.title || t('dashboardHome.defaults.payment'),
+               type: 'expense'
+            }));
+          setUpcomingPayments(upcomingList);
+        }
 
         // Social Stats (Zernio)
         const { data: followRes, error: followErr } = await supabase.functions.invoke('zernio-client', {

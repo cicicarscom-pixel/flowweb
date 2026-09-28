@@ -32,45 +32,15 @@ export default function AiMuhasebePage() {
         let totalIncome = 0;
         let totalExpense = 0;
 
-        // Fetch transactions for this month
-        const { data: transactions } = await supabase
-          .from('transactions')
-          .select('*')
-          .gte('date', startOfMonth);
+        const dateObj = new Date(startOfMonth);
+        const p_from = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1).toISOString().split("T")[0];
+        const p_to = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).toISOString().split("T")[0];
 
-        if (transactions) {
-          transactions.forEach(t => {
-            if (t.type === 'income') totalIncome += Number(t.amount);
-            if (t.type === 'expense') totalExpense += Number(t.amount);
-          });
-        }
-
-        // Fetch finance_documents for this month
-        if (userId) {
-          const { data: orgMember } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', userId)
-            .limit(1).maybeSingle();
-
-          if (orgMember?.organization_id) {
-            const { data: docs } = await supabase
-              .from('finance_documents')
-              .select('*')
-              .eq('organization_id', orgMember.organization_id)
-              .gte('created_at', startOfMonth);
-
-            if (docs) {
-              docs.forEach(d => {
-                const amt = Number(d.amount_minor) / 100;
-                if (d.type === 'income' || d.type === 'sales') {
-                  if (d.flow_payment_status === 'paid') totalIncome += amt;
-                } else if (d.type === 'expense') {
-                  if (d.flow_payment_status === 'paid') totalExpense += amt;
-                }
-              });
-            }
-          }
+        const { data: summaryData } = await supabase.rpc('get_finance_summary', { p_from, p_to });
+        
+        if (summaryData && summaryData.status === 'SUCCESS') {
+           totalIncome = summaryData.income / 100;
+           totalExpense = summaryData.expense / 100;
         }
 
         setStats({ income: totalIncome, expense: totalExpense });

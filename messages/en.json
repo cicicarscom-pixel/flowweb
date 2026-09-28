@@ -669,7 +669,9 @@
       "empty": "No reviews yet."
     },
     "notifications": {
-      "empty": "No notifications yet."
+      "empty": "No notifications yet.",
+      "markAllRead": "Mark all as read",
+      "markAllError": "Couldn't mark notifications as read."
     },
     "privateReply": {
       "title": "Send Private Message (DM)",
@@ -881,7 +883,7 @@
       "monthlyExpense": "Monthly Expense"
     },
     "invoiceScanner": {
-      "eyebrow": "INVOICE SCANNER · LATEST INVOICE",
+      "eyebrow": "Invoice scanner · Latest invoice",
       "imageAlt": "Invoice document",
       "fields": {
         "supplier": "Supplier",

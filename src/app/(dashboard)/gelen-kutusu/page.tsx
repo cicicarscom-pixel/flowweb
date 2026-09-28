@@ -478,6 +478,40 @@ function GelenKutusuContent() {
 
     const [notifError, setNotifError] = useState<string | null>(null);
 
+    const [markingAll, setMarkingAll] = useState(false);
+    const markAllAsRead = async () => {
+      try {
+        setMarkingAll(true);
+        setNotifError(null);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) return;
+        
+        const unread = notifications.filter(n => !n.is_read);
+        if (unread.length === 0) return;
+
+        const normalIds = unread.filter(n => !n.is_broadcast).map(n => n.id);
+        const broadcastIds = unread.filter(n => n.is_broadcast).map(n => n.id);
+
+        if (normalIds.length > 0) {
+          const { error } = await supabase.from('notifications').update({ is_read: true }).in('id', normalIds);
+          if (error) throw error;
+        }
+
+        if (broadcastIds.length > 0) {
+          const payload = broadcastIds.map(bId => ({ user_id: session.user.id, broadcast_id: bId }));
+          const { error } = await supabase.from('broadcast_reads').upsert(payload, { onConflict: 'user_id, broadcast_id' });
+          if (error) throw error;
+        }
+
+        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+        window.dispatchEvent(new Event('appointment-notifications-changed'));
+      } catch (err: any) {
+        setNotifError(t('gelenKutusuPage.notifications.markAllError'));
+      } finally {
+        setMarkingAll(false);
+      }
+    };
+    
     const fetchNotifications = async () => {
       try {
         setNotifError(null);
@@ -1224,6 +1258,18 @@ function GelenKutusuContent() {
         )}
 
         {/* --- BILDIRIMLER TAB --- */}
+        {activeTab === 'bildirimler' && notifications.some(n => !n.is_read) && (
+          <div className="flex justify-end mb-4">
+            <button 
+              onClick={markAllAsRead}
+              disabled={markingAll}
+              className="text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+              style={{ color: "#FF7A59", border: "1px solid rgba(255,122,89,0.25)", background: "rgba(255,122,89,0.1)", opacity: markingAll ? 0.5 : 1 }}
+            >
+              {t('gelenKutusuPage.notifications.markAllRead')}
+            </button>
+          </div>
+        )}
           {notifError && activeTab === 'bildirimler' && <div className="p-4 mb-4 text-sm text-red-500 bg-red-500/10 rounded-xl border border-red-500/20">{notifError}</div>}
         {!isLoading && activeTab === 'bildirimler' && notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-20 opacity-60">

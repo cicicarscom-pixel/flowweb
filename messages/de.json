@@ -669,7 +669,9 @@
       "empty": "Noch keine Bewertungen vorhanden."
     },
     "notifications": {
-      "empty": "Noch keine Benachrichtigungen vorhanden."
+      "empty": "Noch keine Benachrichtigungen vorhanden.",
+      "markAllRead": "Alle als gelesen markieren",
+      "markAllError": "Benachrichtigungen konnten nicht als gelesen markiert werden."
     },
     "privateReply": {
       "title": "Private Nachricht senden (DM)",
@@ -881,7 +883,7 @@
       "monthlyExpense": "Monatliche Ausgaben"
     },
     "invoiceScanner": {
-      "eyebrow": "RECHNUNGSSCANNER · LETZTE RECHNUNG",
+      "eyebrow": "Rechnungsscanner · Letzte Rechnung",
       "imageAlt": "Rechnungsdokument",
       "fields": {
         "supplier": "Lieferant",

@@ -670,7 +670,9 @@
       "empty": "Henüz değerlendirme bulunmuyor."
     },
     "notifications": {
-      "empty": "Henüz bildirim bulunmuyor."
+      "empty": "Henüz bildirim bulunmuyor.",
+      "markAllRead": "Tümünü okundu işaretle",
+      "markAllError": "Bildirimler okundu işaretlenemedi."
     },
     "privateReply": {
       "title": "Gizli Mesaj Gönder (DM)",
@@ -882,7 +884,7 @@
       "monthlyExpense": "Aylık Gider"
     },
     "invoiceScanner": {
-      "eyebrow": "FATURA TARAYICI · SON FATURA",
+      "eyebrow": "Fatura tarayıcı · Son fatura",
       "imageAlt": "Fatura belgesi",
       "fields": {
         "supplier": "Tedarikçi",

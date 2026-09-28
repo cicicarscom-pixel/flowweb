@@ -523,7 +523,6 @@
       "totalPosts": "TOTAL POSTS",
       "totalComments": "TOTAL COMMENTS",
       "totalFollowers": "TOTAL FOLLOWERS",
-        "noAccounts": "undefined",
       "totalReviews": "REVIEWS",
       "engagement": {
         "title": "Engagement & Impressions",
@@ -901,6 +900,8 @@
       "allAccounts": "All Accounts",
       "liveAnalysis": "LIVE ANALYTICS",
       "totalFollowers": "Total Follower Base",
+      "noAccounts": "No social media accounts connected yet",
+      "connectAccount": "Connect account",
       "engagementTrend": "Engagement Trend",
       "high": "High"
     },

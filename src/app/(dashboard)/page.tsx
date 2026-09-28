@@ -532,7 +532,7 @@ export default function DashboardHomePage() {
           <div style={{ padding: "10px 0", textAlign: "center" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.social.noAccounts')}</p>
             <Link href="/sosyal-medya" style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500, marginTop: 8, display: "inline-block" }}>
-              Hesap Bağla
+              {t('dashboardHome.social.connectAccount')}
             </Link>
           </div>
         )}

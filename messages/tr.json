@@ -524,7 +524,6 @@
       "totalPosts": "TOPLAM GÖNDERİ",
       "totalComments": "TOPLAM YORUM",
       "totalFollowers": "TOPLAM TAKİPÇİ",
-        "noAccounts": "undefined",
       "totalReviews": "DEĞERLENDİRMELER",
       "engagement": {
         "title": "Etkileşim ve Gösterim",
@@ -902,6 +901,8 @@
       "allAccounts": "Tüm Hesaplar",
       "liveAnalysis": "CANLI ANALİZ",
       "totalFollowers": "Toplam Takipçi Kitle",
+      "noAccounts": "Henüz sosyal medya hesabı bağlanmadı",
+      "connectAccount": "Hesap bağla",
       "engagementTrend": "Etkileşim Trendi",
       "high": "Yüksek"
     },

@@ -226,9 +226,9 @@ export default function AppointmentNotifications({ locale = "tr", limit = 5 }: {
   return (
     <section aria-labelledby="appointment-notifications-title">
       <style>{CSS}</style>
-      <h3 id="appointment-notifications-title" className="an-title">{s.title}</h3>
 
-      <div className="an-panel">
+      <div className="an-panel glass">
+        <h3 id="appointment-notifications-title" className="an-title">{s.title}</h3>
         <div className="an-head" aria-hidden="true">
           <span>{s.colTime}</span>
           <span>{s.colNotification}</span>
@@ -280,7 +280,7 @@ export default function AppointmentNotifications({ locale = "tr", limit = 5 }: {
 }
 
 const CSS = `
-.an-title { font-size: 16px; font-weight: 700; color: #fff; margin: 0 0 14px; }
+.an-title { font-size: 12px; font-weight: 600; color: var(--text-secondary, rgba(255,255,255,0.55)); margin: 0; padding: 20px 22px 14px; letter-spacing: 0.07em; }
 .an-panel {
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 20px;

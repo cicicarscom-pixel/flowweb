@@ -57,7 +57,7 @@ export default function Sidebar() {
   return (
     <aside className="glass-strong" style={{
       width: 220, flexShrink: 0, borderRight: "1px solid rgba(255,255,255,0.06)",
-      display: "flex", flexDirection: "column", zIndex: 10, position: "relative",
+      display: "flex", flexDirection: "column", zIndex: 10, position: "sticky", top: 0, height: "100vh", overflowY: "auto",
     }}>
       {/* Logo */}
       <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>

@@ -346,13 +346,15 @@ export default function DashboardHomePage() {
               msg: (chunks) => <strong style={{ color: "#FF7A59" }}>{chunks}</strong>,
               cmt: (chunks) => <strong style={{ color: "#22B573" }}>{chunks}</strong>,
             })}
-            {socialStats.trend > 0 ? (
-               <> {t.rich('dashboardHome.aiSummary.trendUp', {
-                    trend: socialStats.trend,
-                    pct: (chunks) => <strong style={{ color: "#F59E0B" }}>{chunks}</strong>,
-                  })}</>
-            ) : (
-               <> {t('dashboardHome.aiSummary.trendAnalyzing')}</>
+            {hasSocialAccounts && (
+              socialStats.trend > 0 ? (
+                 <> {t.rich('dashboardHome.aiSummary.trendUp', {
+                      trend: socialStats.trend,
+                      pct: (chunks) => <strong style={{ color: "#F59E0B" }}>{chunks}</strong>,
+                    })}</>
+              ) : (
+                 <> {t('dashboardHome.aiSummary.trendAnalyzing')}</>
+              )
             )}
             {todayAppointments.length > 0 ? (
                <> {t.rich('dashboardHome.aiSummary.appointmentsToday', {
@@ -379,9 +381,9 @@ export default function DashboardHomePage() {
       {/* Randevular */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
                   {/* Today's Appointments */}
-          <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
+          <div className="glass" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
             <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardAppointments.appointments.todayTitle')}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
               {todayAppointments.length > 0 ? todayAppointments.map((a, i) => (
                 <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
                   <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
@@ -390,7 +392,7 @@ export default function DashboardHomePage() {
                       <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
                       {(a.calendarName || a.serviceName || a.note) && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
+                          {a.calendarName && <span style={{ color: '#22B573', background: 'rgba(34,181,115,0.1)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
                           {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
                         </div>
@@ -403,9 +405,9 @@ export default function DashboardHomePage() {
             </div>
           </div>
           {/* Upcoming Appointments */}
-          <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
+          <div className="glass" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", height: "100%" }}>
             <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardAppointments.appointments.upcomingTitle')}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1, justifyContent: "center" }}>
               {appointments.length > 0 ? appointments.map((a, i) => {
                 const displayTime = (new Date(a.dateText).getDate() === new Date().getDate() ? '' : new Date(a.dateText).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) + ' ') + a.time;
                 return (
@@ -416,7 +418,7 @@ export default function DashboardHomePage() {
                       <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.customerName}</p>
                       {(a.calendarName || a.serviceName || a.note) && (
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
-                          {a.calendarName && <span style={{ color: '#00F2FE', fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
+                          {a.calendarName && <span style={{ color: '#22B573', background: 'rgba(34,181,115,0.1)', padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 500 }}>{a.calendarName}</span>}
                           {a.serviceName && <span style={{ color: 'var(--text-secondary)', fontSize: 11 }}>🏷️ {a.serviceName}</span>}
                           {a.note && <span style={{ color: 'var(--text-secondary)', fontSize: 11, fontStyle: 'italic' }}>📝 {a.note}</span>}
                         </div>
@@ -453,7 +455,7 @@ export default function DashboardHomePage() {
       </div>
       {/* Invoice & Social */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
-        <div className="glass neon-orange" style={{ borderRadius: 20, padding: "20px 22px", height: "100%" }}>
+        <div className="glass neon-orange" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: "20px 22px", height: "100%" }}>
           <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
           {latestInvoice ? (
               <div style={{ display: "flex", gap: 16 }}>
@@ -486,16 +488,16 @@ export default function DashboardHomePage() {
                 </div>
               </div>
             ) : (
-              <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
+              <div style={{ display: "flex", flex: 1, gap: 16, alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
                 <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Henüz fatura taranmadı</p>
               </div>
             )}
-            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
+            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: "auto", background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
             {t('dashboardHome.invoiceScanner.newInvoiceButton')}
           </button>
         </div>
         {/* Social Media Stats (Tüm Hesaplar) */}
-      <div className="glass neon-cyan" style={{ borderRadius: 20, padding: 24, position: "relative", overflow: "hidden", height: "100%" }}>
+      <div className="glass neon-cyan" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: 24, position: "relative", overflow: "hidden", height: "100%" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -525,7 +527,7 @@ export default function DashboardHomePage() {
             </div>
           </div>
         ) : (
-          <div style={{ padding: "10px 0", textAlign: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center", alignItems: "center", padding: "10px 0", textAlign: "center" }}>
             <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.social.noAccounts')}</p>
             <Link href="/sosyal-medya" style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500, marginTop: 8, display: "inline-block" }}>
               {t('dashboardHome.social.connectAccount')}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import styles from './page.module.css';
 import { createClient } from "@/lib/supabase/client";
-import { todayInTimezone } from "@/lib/dates";
+import { todayInTimezone, monthRangeYmd } from "@/lib/dates";
 
 export default function AiMuhasebePage() {
   const t = useTranslations();
@@ -32,9 +32,7 @@ export default function AiMuhasebePage() {
         let totalIncome = 0;
         let totalExpense = 0;
 
-        const dateObj = new Date(startOfMonth);
-        const p_from = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1).toISOString().split("T")[0];
-        const p_to = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).toISOString().split("T")[0];
+        const { from: p_from, to: p_to } = monthRangeYmd(todayInTimezone(tz));
 
         const { data: summaryData } = await supabase.rpc('get_finance_summary', { p_from, p_to });
         

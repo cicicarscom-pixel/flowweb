@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import AppointmentNotifications from "@/components/dashboard/AppointmentNotifications";
 import { useRouter } from "next/navigation";
-import { todayInTimezone, addDaysYmd } from "@/lib/dates";
+import { todayInTimezone, addDaysYmd, monthRangeYmd } from "@/lib/dates";
 
 export default function DashboardHomePage() {
   const router = useRouter();
@@ -71,16 +71,14 @@ export default function DashboardHomePage() {
           setLatestInvoice(latestDoc);
         }
 
-        const dateObj = new Date(today);
-        const p_from = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1).toISOString().split("T")[0];
-        const p_to = new Date(dateObj.getFullYear(), dateObj.getMonth() + 1, 0).toISOString().split("T")[0];
+        const { from: p_from, to: p_to } = monthRangeYmd(today);
 
         const { data: summaryData } = await supabase.rpc('get_finance_summary', { p_from, p_to });
         if (summaryData && summaryData.status === 'SUCCESS') {
           setFinanceStats({ income: summaryData.income / 100, expense: summaryData.expense / 100 });
         }
 
-        const futureStr = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate() + 30).toISOString().split("T")[0];
+        const futureStr = addDaysYmd(today, 30);
         const { data: calendarData } = await supabase.rpc('get_payment_calendar', { p_from: today, p_to: futureStr });
         if (calendarData) {
           const upcomingList = calendarData

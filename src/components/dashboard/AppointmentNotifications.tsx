@@ -49,7 +49,7 @@ const STRINGS: Record<Locale, {
   error: string;
   retry: string;
   unknownCustomer: string;
-  sentence: (name: string, when: string) => string;
+  sentence: (name: string, when: string, calendarName?: string) => string;
 }> = {
   tr: {
     title: "Randevu Bildirimleri",
@@ -61,7 +61,7 @@ const STRINGS: Record<Locale, {
     error: "Bildirimler yüklenemedi.",
     retry: "Tekrar dene",
     unknownCustomer: "Bir müşteri",
-    sentence: (name, when) => appointmentSentence(name, when, m?.calendar_name),
+    sentence: (name, when, calendarName) => appointmentSentence(name, when, calendarName),
   },
   en: {
     title: "Appointment notifications",
@@ -73,7 +73,7 @@ const STRINGS: Record<Locale, {
     error: "Couldn't load notifications.",
     retry: "Try again",
     unknownCustomer: "A customer",
-    sentence: (name, when) => `Appointment booked for ${name} on ${when}`,
+    sentence: (name, when, calendarName) => `Appointment booked for ${name} on ${when}`,
   },
   de: {
     title: "Terminbenachrichtigungen",
@@ -85,7 +85,7 @@ const STRINGS: Record<Locale, {
     error: "Benachrichtigungen konnten nicht geladen werden.",
     retry: "Erneut versuchen",
     unknownCustomer: "Ein Kunde",
-    sentence: (name, when) => `Termin für ${name} am ${when} erstellt`,
+    sentence: (name, when, calendarName) => `Termin für ${name} am ${when} erstellt`,
   },
 };
 

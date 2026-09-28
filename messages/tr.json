@@ -524,6 +524,7 @@
       "totalPosts": "TOPLAM GÖNDERİ",
       "totalComments": "TOPLAM YORUM",
       "totalFollowers": "TOPLAM TAKİPÇİ",
+        "noAccounts": "undefined",
       "totalReviews": "DEĞERLENDİRMELER",
       "engagement": {
         "title": "Etkileşim ve Gösterim",

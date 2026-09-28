@@ -523,6 +523,7 @@
       "totalPosts": "BEITRÄGE GESAMT",
       "totalComments": "KOMMENTARE GESAMT",
       "totalFollowers": "FOLLOWER GESAMT",
+        "noAccounts": "undefined",
       "totalReviews": "BEWERTUNGEN",
       "engagement": {
         "title": "Interaktion & Impressionen",

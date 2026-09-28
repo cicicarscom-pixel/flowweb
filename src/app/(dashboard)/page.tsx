@@ -83,7 +83,8 @@ export default function DashboardHomePage() {
             .limit(1)
             .maybeSingle();
           setLatestInvoice(latestDoc);
-  // keep old logic
+        }
+
         if (orgId) {
           const { data: docs } = await supabase.from('finance_documents').select('*').eq('organization_id', orgId);
           if (docs) {
@@ -505,27 +506,36 @@ export default function DashboardHomePage() {
             <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
             <p style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>{t('dashboardHome.social.allAccounts')}</p>
           </div>
-          <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>{t('dashboardHome.social.liveAnalysis')}</span>
-          </div>
+          {hasSocialAccounts && (
+            <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>{t('dashboardHome.social.liveAnalysis')}</span>
+            </div>
+          )}
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.totalFollowers')}</p>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
-                {socialStats.followers.toLocaleString(locale)}
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, color: socialStats.trend > 0 ? "#22B573" : socialStats.trend < 0 ? "#EF4444" : "var(--text-secondary)" }}>
-                <span style={{ fontSize: 14 }}>{socialStats.trend > 0 ? "↑" : socialStats.trend < 0 ? "↓" : "—"}</span>
-                {socialStats.trend !== 0 && <span style={{ fontSize: 13, fontWeight: 700 }}>{Math.abs(socialStats.trend)}%</span>}
+        {hasSocialAccounts ? (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.totalFollowers')}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
+                  {socialStats.followers.toLocaleString(locale)}
+                </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, color: socialStats.trend > 0 ? "#22B573" : socialStats.trend < 0 ? "#EF4444" : "var(--text-secondary)" }}>
+                  <span style={{ fontSize: 14 }}>{socialStats.trend > 0 ? "↑" : socialStats.trend < 0 ? "↓" : "—"}</span>
+                  {socialStats.trend !== 0 && <span style={{ fontSize: 13, fontWeight: 700 }}>{Math.abs(socialStats.trend)}%</span>}
+                </div>
               </div>
             </div>
           </div>
-
-          
-        </div>
+        ) : (
+          <div style={{ padding: "10px 0", textAlign: "center" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.social.noAccounts')}</p>
+            <Link href="/sosyal-medya" style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500, marginTop: 8, display: "inline-block" }}>
+              Hesap Bağla
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Son Aktiviteler */}

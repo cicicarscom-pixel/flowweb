@@ -17,6 +17,8 @@ export default function DashboardHomePage() {
   const [financeStats, setFinanceStats] = useState({ income: 0, expense: 0 });
   const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
   const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
+  const [latestInvoice, setLatestInvoice] = useState<any>(null);
+  const [hasSocialAccounts, setHasSocialAccounts] = useState(true);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -71,6 +73,17 @@ export default function DashboardHomePage() {
           orgId = orgMember?.organization_id;
         }
 
+        
+        if (orgId) {
+          const { data: latestDoc } = await supabase.from('finance_documents')
+            .select('*')
+            .eq('organization_id', orgId)
+            .is('archived_at', null)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          setLatestInvoice(latestDoc);
+  // keep old logic
         if (orgId) {
           const { data: docs } = await supabase.from('finance_documents').select('*').eq('organization_id', orgId);
           if (docs) {
@@ -124,6 +137,9 @@ export default function DashboardHomePage() {
            : (actualFollow.trend || actualFollow.growthPercentage || actualFollow.totalGrowth || 0);
 
         setSocialStats(prev => ({ ...prev, followers: totalFollowers, trend: finalTrend }));
+        const hasAccounts = Array.isArray(actualFollow.accounts) && actualFollow.accounts.length > 0;
+        setHasSocialAccounts(hasAccounts);
+
 
         // Recent Activities (Messages & Comments)
         const todayStart = new Date();
@@ -383,29 +399,42 @@ export default function DashboardHomePage() {
         {/* Invoice Scanner */}
         <div className="glass neon-orange" style={{ borderRadius: 20, padding: "20px 22px" }}>
           <p style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14, fontFamily: "JetBrains Mono, monospace" }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
-          <div style={{ display: "flex", gap: 16 }}>
-            <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)" }}>
-              <img
-                src="https://images.unsplash.com/photo-1648500847390-7792256bb95a?w=80&h=100&fit=crop&auto=format"
-                alt={t('dashboardHome.invoiceScanner.imageAlt')}
-                style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              {[
-                { label: t('dashboardHome.invoiceScanner.fields.supplier'), value: "Ofis Dünyası A.Ş." },
-                { label: t('dashboardHome.invoiceScanner.fields.date'), value: "03.02.2026" },
-                { label: t('dashboardHome.invoiceScanner.fields.vat'), value: "%20" },
-                { label: t('dashboardHome.invoiceScanner.fields.total'), value: "₺4,820.00" },
-              ].map(r => (
-                <div key={r.label} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{r.label}</span>
-                  <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{r.value}</span>
+          {latestInvoice ? (
+              <div style={{ display: "flex", gap: 16 }}>
+                <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,158,11,0.05)" }}>
+                  {latestInvoice.image_url ? (
+                    <img src={latestInvoice.image_url} alt="Invoice" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} />
+                  ) : (
+                    <i className="fa-solid fa-file-invoice text-[#F59E0B] text-2xl" style={{ opacity: 0.6 }}></i>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-          <button className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.supplier')}</span>
+                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{latestInvoice.counterparty_name || latestInvoice.title || "-"}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.date')}</span>
+                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{latestInvoice.due_date || latestInvoice.created_at ? new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(latestInvoice.due_date || latestInvoice.created_at)) : "-"}</span>
+                  </div>
+                  {latestInvoice.tax_details?.rate != null && (
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                      <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.vat')}</span>
+                      <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>%{latestInvoice.tax_details.rate}</span>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.total')}</span>
+                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{new Intl.NumberFormat(locale, { style: 'currency', currency: latestInvoice.currency_code || 'TRY' }).format(Number(latestInvoice.amount_minor)/100)}</span>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 16, alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Henüz fatura taranmadı</p>
+              </div>
+            )}
+            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: 14, background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13 }}>
             {t('dashboardHome.invoiceScanner.newInvoiceButton')}
           </button>
         </div>
@@ -495,15 +524,7 @@ export default function DashboardHomePage() {
             </div>
           </div>
 
-          <div style={{ textAlign: "right" }}>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.engagementTrend')}</p>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 120, height: 6, borderRadius: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
-                <div style={{ width: "82%", height: "100%", background: "linear-gradient(90deg, #FF7A59, #C2478D)" }} />
-              </div>
-              <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>{t('dashboardHome.social.high')}</span>
-            </div>
-          </div>
+          
         </div>
       </div>
 

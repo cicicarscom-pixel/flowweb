@@ -353,7 +353,7 @@ export default function DashboardHomePage() {
             ) : (
                <> {t('dashboardHome.aiSummary.trendAnalyzing')}</>
             )}
-            {appointments.length > 0 ? (
+            {todayAppointments.length > 0 ? (
                <> {t.rich('dashboardHome.aiSummary.appointmentsToday', {
                     count: todayAppointments.length,
                     ap: (chunks) => <strong style={{ color: "#C2478D" }}>{chunks}</strong>,
@@ -517,9 +517,9 @@ export default function DashboardHomePage() {
               <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
                 {socialStats.followers.toLocaleString(locale)}
               </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#22B573" }}>
-                <span style={{ fontSize: 14 }}>↑</span>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>{socialStats.trend}%</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, color: socialStats.trend > 0 ? "#22B573" : socialStats.trend < 0 ? "#EF4444" : "var(--text-secondary)" }}>
+                <span style={{ fontSize: 14 }}>{socialStats.trend > 0 ? "↑" : socialStats.trend < 0 ? "↓" : "—"}</span>
+                {socialStats.trend !== 0 && <span style={{ fontSize: 13, fontWeight: 700 }}>{Math.abs(socialStats.trend)}%</span>}
               </div>
             </div>
           </div>

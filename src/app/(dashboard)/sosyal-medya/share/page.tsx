@@ -114,7 +114,7 @@ export default function SharePage() {
       if (!userId) return;
 
       try {
-        const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+        const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).limit(1).maybeSingle();
         const organizationId = orgMember?.organization_id || userId;
 
         const { data } = await supabase

@@ -387,7 +387,8 @@
       "paid": "Ödendi",
       "payable": "Ödenecek",
       "noIncomeRecords": "Gelir kaydı bulunmuyor",
-      "noExpenseRecords": "Gider kaydı bulunmuyor"
+      "noExpenseRecords": "Gider kaydı bulunmuyor",
+      "day": "Gün"
     }
   },
   "veriGirisiPage": {

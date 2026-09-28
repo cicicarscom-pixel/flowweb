@@ -386,7 +386,8 @@
       "paid": "Bezahlt",
       "payable": "Zu zahlen",
       "noIncomeRecords": "Keine Einnahmenbuchungen gefunden",
-      "noExpenseRecords": "Keine Ausgabenbuchungen gefunden"
+      "noExpenseRecords": "Keine Ausgabenbuchungen gefunden",
+      "day": "Tag"
     }
   },
   "veriGirisiPage": {

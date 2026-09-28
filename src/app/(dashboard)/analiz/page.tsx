@@ -120,7 +120,7 @@ export default function AnalyticsScreen() {
       const userId = session?.user?.id;
       if (!userId) return;
 
-      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).limit(1).maybeSingle();
       const orgId = orgMember?.organization_id;
       if (!orgId) return;
 

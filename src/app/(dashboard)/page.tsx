@@ -69,7 +69,7 @@ export default function DashboardHomePage() {
 
         let orgId = null;
         if (merchantId) {
-          const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).maybeSingle();
+          const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', merchantId).limit(1).maybeSingle();
           orgId = orgMember?.organization_id;
         }
 

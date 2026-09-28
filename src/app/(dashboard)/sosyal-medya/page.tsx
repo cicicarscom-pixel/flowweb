@@ -141,7 +141,7 @@ export default function SosyalMedyaPage() {
         return; 
       }
 
-      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).maybeSingle();
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', userId).limit(1).maybeSingle();
       const organizationId = orgMember?.organization_id || userId;
 
       if (syncWithZernio) {
@@ -191,7 +191,7 @@ export default function SosyalMedyaPage() {
       const userId = session?.user?.id;
       if (!userId) throw new Error(t("sosyalMedyaPage.errors.noSession"));
       
-      const { data: orgMember } = await supabase.from('organization_members').select('organization_id, organizations(name)').eq('user_id', userId).maybeSingle();
+      const { data: orgMember } = await supabase.from('organization_members').select('organization_id, organizations(name)').eq('user_id', userId).limit(1).maybeSingle();
       const organizationId = orgMember?.organization_id || userId;
       const organizationName = (orgMember?.organizations as any)?.name || 'Bireysel Hesap';
 

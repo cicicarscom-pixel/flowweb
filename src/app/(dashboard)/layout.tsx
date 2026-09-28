@@ -27,7 +27,7 @@ export default async function DashboardLayout({
    redirect("/onboarding");
  }
 
- const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).single();
+ const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).limit(1).maybeSingle();
  let organization = null;
  if (orgMember) {
    const { data: orgData } = await supabase.from('organizations').select('*').eq('id', orgMember.organization_id).single();

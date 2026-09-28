@@ -51,7 +51,7 @@ export default function AiMuhasebePage() {
             .from('organization_members')
             .select('organization_id')
             .eq('user_id', userId)
-            .maybeSingle();
+            .limit(1).maybeSingle();
 
           if (orgMember?.organization_id) {
             const { data: docs } = await supabase

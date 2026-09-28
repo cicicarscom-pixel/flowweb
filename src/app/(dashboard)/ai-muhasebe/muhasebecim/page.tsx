@@ -26,7 +26,7 @@ export default function MuhasebecimPage() {
         .from('organization_members')
         .select('organization_id')
         .eq('user_id', session.user.id)
-        .maybeSingle();
+        .limit(1).maybeSingle();
 
       if (orgMember?.organization_id) {
         const { data: link } = await supabase

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiChatInput from "@/components/chat/AiChatInput";
+import { createClient } from "@/lib/supabase/client";
 
 interface Message {
  id: string;
@@ -54,32 +55,107 @@ function ChatScreen() {
  ]);
  };
 
- const processTextWithAI = (textPrompt: string) => {
- setLoading(true);
- // Simulate AI response delay
- setTimeout(() => {
- addMessage(t("veriGirisiPage.chat.draftSaved"), "ai");
- setLoading(false);
- }, 1500);
- };
+   const getIds = async () => {
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user?.id) return { profileId: null, orgId: null };
+    const { data: orgMember } = await supabase.from('organization_members').select('organization_id').eq('user_id', session.user.id).limit(1).maybeSingle();
+    return { profileId: session.user.id, orgId: orgMember?.organization_id || session.user.id };
+  };
 
- const processFileWithAI = (file: File) => {
- setLoading(true);
- const isImage = file.type.startsWith("image/");
- const fileUrl = URL.createObjectURL(file);
+  const processTextWithAI = async (textPrompt: string) => {
+    setLoading(true);
+    try {
+      const supabase = createClient();
+      const { profileId, orgId } = await getIds();
+      
+      const promptPrefix = `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || new Date().toISOString().split('T')[0]}. `;
+      
+      const { data: result, error: invokeError } = await supabase.functions.invoke('ledger-isleyici-api', {
+        body: { 
+          prompt: promptPrefix + textPrompt,
+          profile_id: profileId,
+          organization_id: orgId
+        }
+      });
 
- if (isImage) {
- addMessage(fileUrl, "user", true);
- } else {
- addMessage(t("veriGirisiPage.chat.documentUploaded", { fileName: file.name }), "user");
- }
+      if (invokeError) throw invokeError;
+      if (result && result.error) throw new Error(result.error);
+      
+      if (result?.saved) {
+        addMessage(t("veriGirisiPage.chat.draftSaved") + ` \nTakvime eklendi: ${result.message || ''}`, "ai");
+      } else {
+        addMessage(result?.message || t("veriGirisiPage.chat.documentAnalyzed"), "ai");
+      }
+    } catch (error: any) {
+      console.error("Sohbet hatası:", error);
+      addMessage("Hata oluştu: " + error.message, "ai");
+    } finally {
+      setLoading(false);
+    }
+  };
 
- // Simulate AI response delay
- setTimeout(() => {
- addMessage(t("veriGirisiPage.chat.documentAnalyzed"), "ai");
- setLoading(false);
- }, 2000);
- };
+  const processFileWithAI = async (file: File) => {
+    setLoading(true);
+    const isImage = file.type.startsWith("image/");
+    const fileUrl = URL.createObjectURL(file);
+
+    if (isImage) {
+      addMessage(fileUrl, "user", true);
+    } else {
+      addMessage(t("veriGirisiPage.chat.documentUploaded", { fileName: file.name }), "user");
+    }
+
+    try {
+      const supabase = createClient();
+      const { profileId, orgId } = await getIds();
+      
+      const { data: draftDoc, error: insertError } = await supabase.from('finance_documents').insert([{
+        organization_id: orgId || 'unknown',
+        type: transactionType,
+        image_url: null,
+        document_status: 'ready_for_review',
+        ledger_official_status: 'taslak',
+        flow_payment_status: 'unpaid',
+        title: `Belge: ${file.name}`,
+        amount_minor: 0
+      }]).select().maybeSingle();
+
+      if (insertError) throw insertError;
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64Data = reader.result?.toString().split(',')[1];
+        
+        const { data: result, error: invokeError } = await supabase.functions.invoke('ledger-isleyici-api', {
+          body: {
+            document_id: draftDoc.id,
+            prompt: `Tür: ${transactionType}, Tarih: ${searchParams.get("date") || new Date().toISOString().split('T')[0]}.`,
+            mimeType: file.type,
+            profile_id: profileId,
+            organization_id: orgId,
+            imageBase64: base64Data
+          }
+        });
+
+        if (invokeError) throw invokeError;
+        if (result && result.error) throw new Error(result.error);
+
+        addMessage(result?.message || t("veriGirisiPage.chat.documentAnalyzed"), "ai");
+        setLoading(false);
+      };
+      
+      reader.onerror = (error) => {
+        throw error;
+      };
+
+    } catch (error: any) {
+      console.error("Belge işleme hatası:", error);
+      addMessage("İşleme hatası: " + error.message, "ai");
+      setLoading(false);
+    }
+  };
 
  const handleSendText = (text: string, file: File | null) => {
  if (file) {

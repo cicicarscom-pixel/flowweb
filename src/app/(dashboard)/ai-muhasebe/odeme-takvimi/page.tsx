@@ -1,162 +1,276 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
+import { todayInTimezone } from "@/lib/dates";
 
-export default function OdemeTakvimiPage() {
+interface Transaction {
+  id: string;
+  type: "income" | "expense";
+  title: string;
+  amount_minor: number;
+  currency_code: string;
+  day: string;
+  due_date: string | null;
+  date: string;
+  payment_status: "paid" | "pending" | "partial";
+  is_overdue: boolean;
+  source: string;
+  document_id: string | null;
+  category: string | null;
+}
+
+export default function OdemeTakvimiScreen() {
   const t = useTranslations();
-  const locale = useLocale();
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
   const supabase = createClient();
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      setIsLoading(true);
-      try {
-        const { data } = await supabase
-          .from('transactions')
-          .select('*')
-          .order('date', { ascending: false });
+  const locale = "tr-TR"; 
+  const formatCurrency = (amountMinor: number) => {
+    return new Intl.NumberFormat(locale, { style: "currency", currency: "TRY" }).format(amountMinor / 100);
+  };
 
-        if (data) {
-          setTransactions(data);
-        }
-      } catch (err) {
-        console.warn('Error fetching transactions:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchTransactions();
-  }, []);
-
-  const formatCurrency = (amount: number) => Number(amount).toLocaleString(locale);
-
-  // Helper to get days in month
-  const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
-  
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-  const daysInMonth = getDaysInMonth(year, month);
-  
-  // Group transactions by day
-  const transactionsByDay = Array.from({ length: daysInMonth }, (_, i) => {
-    const day = i + 1;
-    const dayTransactions = transactions.filter(t => {
-      const tDate = new Date(t.date || t.created_at);
-      return tDate.getDate() === day && tDate.getMonth() === month && tDate.getFullYear() === year;
-    });
-    
-    return {
-      day,
-      incomes: dayTransactions.filter(t => t.type === 'income' || t.type === 'sales'),
-      expenses: dayTransactions.filter(t => t.type === 'expense' || t.type === 'ALIS')
-    };
+  const todayStr = todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date(todayStr);
+    return new Date(d.getFullYear(), d.getMonth(), 1);
   });
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({});
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
 
-  const monthName = currentDate.toLocaleString(locale, { month: 'long', year: 'numeric' });
-  const shortMonth = currentDate.toLocaleString(locale, { month: 'short' });
+  const todayRowRef = useRef<HTMLDivElement>(null);
 
-  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
-  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
+  const loadData = async () => {
+    setIsLoading(true);
+    const y = currentDate.getFullYear();
+    const m = currentDate.getMonth();
+    const p_from = new Date(y, m, 1).toISOString().split("T")[0];
+    const p_to = new Date(y, m + 1, 0).toISOString().split("T")[0];
+
+    const { data, error } = await supabase.rpc("get_payment_calendar", { p_from, p_to });
+    if (!error && data) {
+      setTransactions(data as Transaction[]);
+    } else {
+      console.error(error);
+      setTransactions([]);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [currentDate]);
+
+  useEffect(() => {
+    if (!isLoading && todayRowRef.current) {
+      todayRowRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, [isLoading]);
+
+  const setStatus = async (id: string, status: string) => {
+    const { error } = await supabase.rpc("set_transaction_payment_status", { p_id: id, p_status: status });
+    if (!error) {
+      loadData();
+    }
+    setActiveMenu(null);
+  };
+
+  const y = currentDate.getFullYear();
+  const m = currentDate.getMonth();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  const grouped = transactions.reduce((acc, t) => {
+    if (!acc[t.day]) acc[t.day] = [];
+    acc[t.day].push(t);
+    return acc;
+  }, {} as Record<string, Transaction[]>);
+
+  let summaryInc = 0, summaryExp = 0, summaryOverdueCount = 0, summaryOverdueAmount = 0;
+  transactions.forEach(t => {
+    if (t.type === "income") summaryInc += t.amount_minor;
+    if (t.type === "expense") summaryExp += t.amount_minor;
+    if (t.is_overdue) {
+      summaryOverdueCount++;
+      summaryOverdueAmount += t.amount_minor;
+    }
+  });
+  const summaryNet = summaryInc - summaryExp;
+
+  const monthName = currentDate.toLocaleString(locale, { month: "long", year: "numeric" });
+
+  const renderStatus = (tx: Transaction) => {
+    if (tx.payment_status === "paid") return <span className="px-2 py-0.5 rounded text-[10px] bg-[#3ccf8e]/10 text-[#3ccf8e] uppercase border border-[#3ccf8e]/20">{t("aiMuhasebePage.odemeTakvimi.statusPaid") || "Ödendi"}</span>;
+    if (tx.is_overdue) return <span className="px-2 py-0.5 rounded text-[10px] bg-[#ff7b7b]/10 text-[#ff7b7b] uppercase border border-[#ff7b7b]/20">{t("aiMuhasebePage.odemeTakvimi.statusOverdue") || "Gecikti"}</span>;
+    if (tx.payment_status === "partial") return <span className="px-2 py-0.5 rounded text-[10px] bg-yellow-500/10 text-yellow-500 uppercase border border-yellow-500/20">{t("aiMuhasebePage.odemeTakvimi.statusPartial") || "Kısmi"}</span>;
+    return <span className="px-2 py-0.5 rounded text-[10px] bg-yellow-500/10 text-yellow-500 uppercase border border-yellow-500/20">{t("aiMuhasebePage.odemeTakvimi.statusPending") || "Bekliyor"}</span>;
+  };
+
+  const renderTransaction = (tx: Transaction) => (
+    <div key={tx.id} className="relative h-[34px] flex items-center justify-between px-2 rounded hover:bg-white/5 border border-transparent hover:border-white/10 group/item cursor-pointer" onClick={() => setActiveMenu(activeMenu === tx.id ? null : tx.id)}>
+      <div className="flex items-center gap-2 overflow-hidden">
+        {renderStatus(tx)}
+        <span className="text-sm truncate text-on-surface/90">{tx.title}</span>
+      </div>
+      <span className={`text-sm font-medium whitespace-nowrap ${tx.type === 'income' ? 'text-[#3ccf8e]' : 'text-[#ff7b7b]'}`}>
+        {tx.type === "income" ? "+" : "−"}{formatCurrency(tx.amount_minor)}
+      </span>
+      
+      {activeMenu === tx.id && (
+        <div className="absolute top-8 right-0 z-10 bg-[#1c1b1d] border border-outline-variant/30 rounded-lg shadow-xl p-1 min-w-[150px]">
+          <button onClick={(e) => { e.stopPropagation(); setStatus(tx.id, "paid"); }} className="w-full text-left px-3 py-2 text-sm hover:bg-white/5 text-[#3ccf8e] rounded">
+            {t("aiMuhasebePage.odemeTakvimi.markPaid") || "Ödendi"}
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); setStatus(tx.id, "pending"); }} className="w-full text-left px-3 py-2 text-sm hover:bg-white/5 text-yellow-500 rounded">
+            {t("aiMuhasebePage.odemeTakvimi.markPending") || "Bekliyor"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderDayRows = () => {
+    const rows = [];
+    let emptyStreakStart = -1;
+
+    const pushEmptyStreak = (end: number) => {
+      if (emptyStreakStart === -1) return;
+      const startStr = emptyStreakStart;
+      const endStr = end;
+      const label = startStr === endStr ? `${startStr} ${currentDate.toLocaleString(locale, { month: 'short' })}` : `${startStr}-${endStr} ${currentDate.toLocaleString(locale, { month: 'short' })} · ${t("aiMuhasebePage.odemeTakvimi.noRecords") || "kayıt yok"}`;
+      
+      rows.push(
+        <div key={`empty-${startStr}`} className="flex items-center justify-center py-2 text-xs text-on-surface-variant/40 bg-surface-container/20 rounded-md my-1">
+          {label}
+        </div>
+      );
+      emptyStreakStart = -1;
+    };
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const isToday = dayStr === todayStr;
+      const hasRecords = grouped[dayStr] && grouped[dayStr].length > 0;
+
+      if (!hasRecords && !isToday) {
+        if (emptyStreakStart === -1) emptyStreakStart = d;
+        continue;
+      }
+
+      pushEmptyStreak(d - 1);
+
+      const dayDate = new Date(y, m, d);
+      const dayName = dayDate.toLocaleString(locale, { weekday: "long" });
+      const incomes = grouped[dayStr]?.filter(t => t.type === "income") || [];
+      const expenses = grouped[dayStr]?.filter(t => t.type === "expense") || [];
+      const dayInc = incomes.reduce((sum, t) => sum + t.amount_minor, 0);
+      const dayExp = expenses.reduce((sum, t) => sum + t.amount_minor, 0);
+      const dayNet = dayInc - dayExp;
+      
+      const isExpanded = expandedDays[dayStr];
+      const visibleInc = isExpanded ? incomes : incomes.slice(0, 3);
+      const visibleExp = isExpanded ? expenses : expenses.slice(0, 3);
+
+      rows.push(
+        <div key={dayStr} ref={isToday ? todayRowRef : null} className={`grid grid-cols-[112px_1fr_1fr_150px] min-h-[80px] bg-surface-container/50 border rounded-xl overflow-hidden mb-2 transition-all ${isToday ? 'border-[#FF7A59]/50 shadow-[0_0_15px_rgba(255,122,89,0.1)]' : 'border-outline-variant/20'}`}>
+          <div className="flex flex-col items-center justify-center border-r border-outline-variant/20 p-2">
+            {isToday && <span className="text-[10px] font-bold text-[#FF7A59] mb-1">{t("aiMuhasebePage.odemeTakvimi.today") || "BUGÜN"}</span>}
+            <span className={`font-mono text-2xl font-bold ${isToday ? 'text-[#FF7A59]' : 'text-on-surface'}`}>{d}</span>
+            <span className="text-xs text-on-surface-variant capitalize">{dayName}</span>
+          </div>
+
+          <div className="border-r border-outline-variant/20 p-2 flex flex-col gap-1 relative group">
+            {visibleInc.map(renderTransaction)}
+            {incomes.length > 3 && (
+              <button onClick={() => setExpandedDays(p => ({ ...p, [dayStr]: !isExpanded }))} className="text-xs text-secondary mt-1 hover:underline">
+                {isExpanded ? t("aiMuhasebePage.odemeTakvimi.showLess") || "Daha az" : (t("aiMuhasebePage.odemeTakvimi.moreRecords", { count: incomes.length - 3 }) || `+${incomes.length - 3} kayıt daha`)}
+              </button>
+            )}
+            <Link href={`/ai-muhasebe/veri-girisi?type=gelir&date=${dayStr}`} className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 bg-[#3ccf8e]/20 text-[#3ccf8e] text-xs px-2 py-1 rounded transition-opacity">
+              {t("aiMuhasebePage.odemeTakvimi.addIncome") || "+ Gelir"}
+            </Link>
+          </div>
+
+          <div className="border-r border-outline-variant/20 p-2 flex flex-col gap-1 relative group">
+            {visibleExp.map(renderTransaction)}
+            {expenses.length > 3 && (
+              <button onClick={() => setExpandedDays(p => ({ ...p, [dayStr]: !isExpanded }))} className="text-xs text-secondary mt-1 hover:underline">
+                {isExpanded ? t("aiMuhasebePage.odemeTakvimi.showLess") || "Daha az" : (t("aiMuhasebePage.odemeTakvimi.moreRecords", { count: expenses.length - 3 }) || `+${expenses.length - 3} kayıt daha`)}
+              </button>
+            )}
+            <Link href={`/ai-muhasebe/veri-girisi?type=gider&date=${dayStr}`} className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 bg-[#ff7b7b]/20 text-[#ff7b7b] text-xs px-2 py-1 rounded transition-opacity">
+              {t("aiMuhasebePage.odemeTakvimi.addExpense") || "+ Gider"}
+            </Link>
+          </div>
+
+          <div className="flex items-center justify-center p-4">
+            <span className={`font-mono text-base font-bold ${dayNet > 0 ? 'text-[#3ccf8e]' : dayNet < 0 ? 'text-[#ff7b7b]' : 'text-on-surface-variant'}`}>
+              {dayNet > 0 ? "+" : dayNet < 0 ? "−" : ""}{formatCurrency(Math.abs(dayNet))}
+            </span>
+          </div>
+        </div>
+      );
+    }
+    pushEmptyStreak(daysInMonth);
+    return rows;
+  };
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#17151A] p-6 pb-20 custom-scrollbar">
+    <div className="flex-1 flex flex-col h-full bg-[#17151A] p-6 custom-scrollbar overflow-y-auto">
       
-      {/* Calendar Header & Navigation */}
-      <div className="flex items-center justify-between bg-surface-container-low p-4 rounded-xl border border-outline-variant/30 shadow-lg backdrop-blur-sm mb-6 shrink-0">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Link href="/ai-muhasebe" className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-outline-variant/20">
-            <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+          <Link href="/ai-muhasebe" className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-white transition-colors">
+            <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <button onClick={prevMonth} className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-outline-variant/20">
-            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+          <button onClick={() => setCurrentDate(new Date(y, m - 1, 1))} className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-white transition-colors">
+            <span className="material-symbols-outlined">chevron_left</span>
           </button>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-wide drop-shadow-md capitalize">{monthName}</h1>
-          <button onClick={nextMonth} className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-secondary hover:bg-surface-container-highest transition-colors shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-outline-variant/20">
-            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+          <h1 className="text-xl text-white font-medium capitalize">{monthName}</h1>
+          <button onClick={() => setCurrentDate(new Date(y, m + 1, 1))} className="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface-variant hover:text-white transition-colors">
+            <span className="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
-        <div className="font-label-sm text-xs text-secondary uppercase tracking-widest px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20 shadow-[0_0_10px_rgba(68,226,205,0.1)]">
-          {t("aiMuhasebePage.odemeTakvimi.title") || "Ödeme Takvimi"}
+        <div className="px-4 py-1.5 bg-secondary/10 text-secondary text-sm font-medium rounded-full uppercase tracking-wide">
+          Gündem
         </div>
       </div>
 
-      {/* Column Headers */}
-      <div className="grid grid-cols-[80px_1fr_1fr] gap-4 px-4 py-2 border-b border-secondary/30 mb-4 shrink-0">
-        <div className="text-center font-label-sm text-xs text-on-surface-variant opacity-60 uppercase">{t("aiMuhasebePage.odemeTakvimi.day") || "GÜN"}</div>
-        <div className="text-center font-label-sm text-xs text-secondary tracking-widest drop-shadow-[0_0_5px_rgba(68,226,205,0.5)] uppercase">{t("aiMuhasebePage.odemeTakvimi.incomes") || "GELİR"}</div>
-        <div className="text-center font-label-sm text-xs text-[#EF4444] tracking-widest drop-shadow-[0_0_5px_rgba(239,68,68,0.5)] uppercase">{t("aiMuhasebePage.odemeTakvimi.expenses") || "GİDER"}</div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="bg-surface-container/30 border border-outline-variant/20 rounded-xl p-4 flex flex-col justify-center">
+          <span className="text-xs text-on-surface-variant uppercase">{t("aiMuhasebePage.odemeTakvimi.summaryIncome") || "Gelir"}</span>
+          <span className="text-lg text-[#3ccf8e] font-medium">{formatCurrency(summaryInc)}</span>
+        </div>
+        <div className="bg-surface-container/30 border border-outline-variant/20 rounded-xl p-4 flex flex-col justify-center">
+          <span className="text-xs text-on-surface-variant uppercase">{t("aiMuhasebePage.odemeTakvimi.summaryExpense") || "Gider"}</span>
+          <span className="text-lg text-[#ff7b7b] font-medium">{formatCurrency(summaryExp)}</span>
+        </div>
+        <div className="bg-surface-container/30 border border-outline-variant/20 rounded-xl p-4 flex flex-col justify-center">
+          <span className="text-xs text-on-surface-variant uppercase">{t("aiMuhasebePage.odemeTakvimi.summaryNet") || "Net"}</span>
+          <span className={`text-lg font-medium ${summaryNet >= 0 ? 'text-white' : 'text-[#ff7b7b]'}`}>{summaryNet > 0 ? '+' : ''}{formatCurrency(summaryNet)}</span>
+        </div>
+        <div className="bg-[#ff7b7b]/10 border border-[#ff7b7b]/30 rounded-xl p-4 flex flex-col justify-center">
+          <span className="text-xs text-[#ff7b7b] uppercase">{t("aiMuhasebePage.odemeTakvimi.summaryOverdue") || "Geciken"} ({summaryOverdueCount})</span>
+          <span className="text-lg text-[#ff7b7b] font-medium">{formatCurrency(summaryOverdueAmount)}</span>
+        </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-3 pr-2">
+      <div className="grid grid-cols-[112px_1fr_1fr_150px] gap-0 px-4 py-2 border-b border-outline-variant/30 mb-2">
+        <div className="text-center text-xs text-on-surface-variant uppercase">{t("aiMuhasebePage.odemeTakvimi.day") || "GÜN"}</div>
+        <div className="text-left text-xs text-on-surface-variant uppercase pl-2">{t("aiMuhasebePage.odemeTakvimi.incomes") || "GELİRLER"}</div>
+        <div className="text-left text-xs text-on-surface-variant uppercase pl-2">{t("aiMuhasebePage.odemeTakvimi.expenses") || "GİDERLER"}</div>
+        <div className="text-center text-xs text-on-surface-variant uppercase">{t("aiMuhasebePage.odemeTakvimi.net") || "NET"}</div>
+      </div>
+
+      <div className="flex flex-col">
         {isLoading ? (
           <div className="animate-pulse space-y-3">
-             {[1,2,3,4,5].map(i => <div key={i} className="h-[92px] bg-white/5 rounded-xl border border-outline-variant/20"></div>)}
+             {[1,2,3,4,5].map(i => <div key={i} className="h-[80px] bg-white/5 rounded-xl border border-outline-variant/20"></div>)}
           </div>
         ) : (
-          transactionsByDay.map(({ day, incomes, expenses }) => {
-            const hasIncome = incomes.length > 0;
-            const hasExpense = expenses.length > 0;
-
-            return (
-              <div 
-                key={day} 
-                className={`group relative grid grid-cols-[80px_1fr_1fr] gap-4 bg-surface-container/50 hover:bg-surface-container p-4 rounded-xl border transition-all duration-300 backdrop-blur-md shadow-sm ${
-                  hasIncome && hasExpense ? 'border-secondary/30 neon-border-cyan' : 
-                  hasIncome ? 'border-secondary/30' : 
-                  hasExpense ? 'border-[#EF4444]/30 shadow-[0_0_10px_rgba(239,68,68,0.05)]' : 
-                  'border-outline-variant/20 hover:border-secondary/40'
-                }`}
-              >
-                <div className={`flex flex-col items-center justify-center border-r pr-4 transition-all ${hasIncome ? 'border-secondary/20' : hasExpense ? 'border-[#EF4444]/20' : 'border-outline-variant/20'}`}>
-                  <span className={`font-headline-lg text-[28px] font-bold ${hasIncome ? 'text-secondary drop-shadow-[0_0_8px_rgba(68,226,205,0.6)]' : hasExpense ? 'text-[#EF4444] drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'text-on-surface-variant group-hover:text-secondary group-hover:drop-shadow-[0_0_8px_rgba(68,226,205,0.6)]'}`}>
-                    {day}
-                  </span>
-                  <span className={`font-code-sm text-[10px] uppercase tracking-wider ${hasIncome ? 'text-secondary' : hasExpense ? 'text-[#EF4444]' : 'text-on-surface-variant'}`}>
-                    {shortMonth}
-                  </span>
-                </div>
-                
-                {/* Incomes Column */}
-                <div className={`border-r pr-4 flex flex-col gap-2 min-h-[60px] justify-center ${hasIncome || hasExpense ? (hasIncome ? 'border-secondary/20' : 'border-[#EF4444]/20') : 'border-outline-variant/20'}`}>
-                  {hasIncome ? (
-                    incomes.map(item => (
-                      <div key={item.id} className="bg-secondary/10 border border-secondary/30 rounded-lg p-2 flex justify-between items-center">
-                        <span className="font-code-sm text-sm text-on-surface truncate pr-2">{item.title || item.name || t("aiMuhasebePage.odemeTakvimi.incomeTransaction") || "Gelir İşlemi"}</span>
-                        <span className="font-headline-md text-sm text-secondary shrink-0">+₺{formatCurrency(item.amount)}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-                      <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Expenses Column */}
-                <div className="flex flex-col gap-2 min-h-[60px] justify-center pl-4">
-                  {hasExpense ? (
-                    expenses.map(item => (
-                      <div key={item.id} className="bg-[#EF4444]/10 border border-[#EF4444]/30 rounded-lg p-2 flex justify-between items-center">
-                        <span className="font-code-sm text-sm text-on-surface truncate pr-2">{item.title || item.name || t("aiMuhasebePage.odemeTakvimi.expenseTransaction") || "Gider İşlemi"}</span>
-                        <span className="font-headline-md text-sm text-[#EF4444] shrink-0">-₺{formatCurrency(item.amount)}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="w-full h-full rounded-md bg-surface-container-highest/30 border border-dashed border-outline-variant/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-surface-container-highest">
-                      <span className="material-symbols-outlined text-outline text-[18px]">add</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })
+          renderDayRows()
         )}
       </div>
     </div>

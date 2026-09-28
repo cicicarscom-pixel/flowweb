@@ -388,7 +388,24 @@
       "payable": "Ödenecek",
       "noIncomeRecords": "Gelir kaydı bulunmuyor",
       "noExpenseRecords": "Gider kaydı bulunmuyor",
-      "day": "Gün"
+      "day": "Gün",
+      "summaryIncome": "Toplam Gelir",
+      "summaryExpense": "Toplam Gider",
+      "summaryNet": "Net",
+      "summaryOverdue": "Geciken",
+      "net": "NET",
+      "noRecords": "kayıt yok",
+      "today": "BUGÜN",
+      "moreRecords": "+{count} kayıt daha",
+      "showLess": "Daha az göster",
+      "addIncome": "+ Gelir ekle",
+      "addExpense": "+ Gider ekle",
+      "statusPaid": "Ödendi",
+      "statusPending": "Bekliyor",
+      "statusOverdue": "Gecikti",
+      "statusPartial": "Kısmi",
+      "markPaid": "Ödendi olarak işaretle",
+      "markPending": "Bekliyor olarak işaretle"
     }
   },
   "veriGirisiPage": {

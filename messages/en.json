@@ -387,7 +387,24 @@
       "payable": "Payable",
       "noIncomeRecords": "No income records found",
       "noExpenseRecords": "No expense records found",
-      "day": "Day"
+      "day": "Day",
+      "summaryIncome": "Total Income",
+      "summaryExpense": "Total Expense",
+      "summaryNet": "Net",
+      "summaryOverdue": "Overdue",
+      "net": "NET",
+      "noRecords": "no records",
+      "today": "TODAY",
+      "moreRecords": "+{count} more records",
+      "showLess": "Show less",
+      "addIncome": "+ Add Income",
+      "addExpense": "+ Add Expense",
+      "statusPaid": "Paid",
+      "statusPending": "Pending",
+      "statusOverdue": "Overdue",
+      "statusPartial": "Partial",
+      "markPaid": "Mark as Paid",
+      "markPending": "Mark as Pending"
     }
   },
   "veriGirisiPage": {

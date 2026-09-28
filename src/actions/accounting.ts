@@ -25,14 +25,14 @@ export async function addTransaction(formData: FormData) {
   const type = formData.get('type') as string // 'income' or 'expense'
   const amount = parseFloat(formData.get('amount') as string)
   const date = formData.get('date') as string
-  const status = formData.get('status') as string || 'completed'
+  const payment_status = formData.get('payment_status') as string || 'paid'
 
-  const { error } = await supabase.from('transactions').insert({
-    title,
-    type,
-    amount,
-    date,
-    status
+  const { error } = await supabase.rpc('create_finance_entry', {
+    p_type: type,
+    p_title: title,
+    p_amount: amount,
+    p_date: date,
+    p_payment_status: payment_status
   })
 
   if (error) {

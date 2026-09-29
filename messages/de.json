@@ -1013,18 +1013,18 @@
     }
   },
   "musteriler": {
-    "phoneRequired": "Telefon ist erforderlich",
-    "customerCount": "{count} Kunden",
+    "search": "Name oder Telefon suchen",
+    "addCustomer": "Kunde hinzufügen",
     "add": "Hinzufügen",
-    "error": "Ein Fehler ist aufgetreten",
+    "customerCount": "{count} Kunden",
+    "openCard": "Karte öffnen",
     "noUpcoming": "Kein bevorstehender Termin",
     "randevu": "Termine",
-    "openCard": "Karte öffnen",
-    "empty": "Keine Kunden gefunden.",
-    "addCustomer": "Kunde hinzufügen",
-    "search": "Name oder Telefon suchen",
-    "invalidPhone": "Ungültige Telefonnummer",
     "nameRequired": "Name ist erforderlich",
-    "alreadyExists": "Diese Nummer ist bereits registriert"
+    "phoneRequired": "Telefon ist erforderlich",
+    "invalidPhone": "Ungültige Telefonnummer",
+    "alreadyExists": "Diese Nummer ist bereits registriert",
+    "error": "Ein Fehler ist aufgetreten",
+    "empty": "Keine Kunden gefunden."
   }
 }

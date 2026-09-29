@@ -1011,18 +1011,18 @@
     }
   },
   "musteriler": {
-    "phoneRequired": "Telefon gerekli",
-    "customerCount": "{count} müşteri",
+    "search": "İsim veya telefon ara",
+    "addCustomer": "Müşteri ekle",
     "add": "Ekle",
-    "error": "Bir hata oluştu",
+    "customerCount": "{count} müşteri",
+    "openCard": "Kartı aç",
     "noUpcoming": "Yaklaşan randevu yok",
     "randevu": "randevu",
-    "openCard": "Kartı aç",
-    "empty": "Müşteri bulunamadı.",
-    "addCustomer": "Müşteri ekle",
-    "search": "İsim veya telefon ara",
-    "invalidPhone": "Geçersiz telefon numarası",
     "nameRequired": "Ad gerekli",
-    "alreadyExists": "Bu numara zaten kayıtlı"
+    "phoneRequired": "Telefon gerekli",
+    "invalidPhone": "Geçersiz telefon numarası",
+    "alreadyExists": "Bu numara zaten kayıtlı",
+    "error": "Bir hata oluştu",
+    "empty": "Müşteri bulunamadı."
   }
 }

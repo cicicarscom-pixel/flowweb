@@ -1013,18 +1013,18 @@
     }
   },
   "musteriler": {
-    "phoneRequired": "Phone is required",
-    "customerCount": "{count} customers",
+    "search": "Search name or phone",
+    "addCustomer": "Add customer",
     "add": "Add",
-    "error": "Something went wrong",
+    "customerCount": "{count} customers",
+    "openCard": "Open card",
     "noUpcoming": "No upcoming appointment",
     "randevu": "appointments",
-    "openCard": "Open card",
-    "empty": "No customers found.",
-    "addCustomer": "Add customer",
-    "search": "Search name or phone",
-    "invalidPhone": "Invalid phone number",
     "nameRequired": "Name is required",
-    "alreadyExists": "This number is already registered"
+    "phoneRequired": "Phone is required",
+    "invalidPhone": "Invalid phone number",
+    "alreadyExists": "This number is already registered",
+    "error": "Something went wrong",
+    "empty": "No customers found."
   }
 }

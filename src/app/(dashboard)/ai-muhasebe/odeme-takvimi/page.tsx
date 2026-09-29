@@ -1,3 +1,4 @@
+﻿import { formatMoney } from '@/lib/money';
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
@@ -27,9 +28,7 @@ export default function OdemeTakvimiScreen() {
   const supabase = createClient();
 
   const locale = "tr-TR"; 
-  const formatCurrency = (amountMinor: number) => {
-    return new Intl.NumberFormat(locale, { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(amountMinor / 100);
-  };
+  const formatCurrency = (amountMinor: number) => formatMoney(amountMinor / 100, locale);
 
   const todayStr = todayInTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [currentDate, setCurrentDate] = useState(() => {

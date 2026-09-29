@@ -1,3 +1,4 @@
+import { formatAmount } from '@/lib/money';
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -56,9 +57,7 @@ export default function AiMuhasebePage() {
     fetchData();
   }, []);
 
-  const formatCurrency = (amount: number) => {
-    return Number(amount).toLocaleString(locale);
-  };
+  const formatCurrency = (amount: number) => formatAmount(amount, locale);
 
   return (
     <div className="w-full space-y-6 p-6 pb-24">

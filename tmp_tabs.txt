@@ -1,0 +1,9 @@
+
+              return (
+                <button
+                  key={tab.id}
+>                 onClick={() => { setActiveTab(tab.id as any); setIsSelectionMode(false); setSelectedItems([]); }}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-t-lg font-semibold text-sm transition-all whitespace-nowrap border-b-2 ${
+                    isActive 
+                      ? 'bg-[#C2478D]/10 text-white border-[#C2478D]' 
+

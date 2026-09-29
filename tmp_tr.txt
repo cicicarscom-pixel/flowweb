@@ -1,0 +1,14 @@
+
+    "aiAsistan": {
+      "addCalendar": "Takvim Ekle"
+    },
+>   "dashboardScreen": {
+      "appointments": {
+        "todayTitle": "Bugünkü Randevular",
+        "todayEmpty": "Bugün için planlı randevu yok.",
+        "upcomingTitle": "Yaklaşan Randevular",
+        "viewAll": "Tümünü gör"
+      }
+    }
+  }
+

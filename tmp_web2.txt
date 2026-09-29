@@ -1,0 +1,10 @@
+
+            <div className="glass" style={{ width: 400, background: "rgba(30,30,30,0.95)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 24 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 16 }}>{t('randevuPage.actions.cancelTitle')}</h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 16 }}>
+>               {appointments.find(a => a.id === cancelModalId)?.customer_name || t('randevuPage.timeline.unnamedCustomer')} <br/>
+>               {appointments.find(a => a.id === cancelModalId)?.starts_at ? new Date(appointments.find(a => a.id === cancelModalId)?.starts_at).toLocaleString("tr-TR", { timeZone: appointments.find(a => a.id === cancelModalId)?.timezone ?? "Europe/Istanbul" }) : ''}
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
+                <label style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>{t('randevuPage.actions.reasonLabel')}</label>
+

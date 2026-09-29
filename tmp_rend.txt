@@ -1,0 +1,31 @@
+
+            <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)", marginBottom: 16 }}>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.todayTitle')}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+>               {todayAppointments.length > 0 ? todayAppointments.map((a, i) => (
+                  <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
+                    <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 38, flexShrink: 0 }}>{a.time}</span>
+                    <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
+                    <div>
+                      <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+                    </div>
+                  </div>
+                )) : (
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardScreen.appointments.todayEmpty')}</span>
+                )}
+              </div>
+            </div>
+  
+            {/* Upcoming Appointments */}
+            <div className="glass" style={{ borderRadius: 20, padding: "20px 22px", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardScreen.appointments.upcomingTitle')}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {appointments.length > 0 ? appointments.map((a, i) => {
+                  const displayTime = (new Date(a.dateText).getDate() === new Date().getDate() ? '' : new Date(a.dateText).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) + ' ') + a.time;
+                  return (
+                  <div key={i} onClick={() => a.targetDate && router.push(`/ai-asistan/randevu?date=${a.targetDate}`)} style={{ display: "flex", gap: 12, alignItems: "center", cursor: a.targetDate ? "pointer" : "default" }}>
+                    <span style={{ color: a.color, fontSize: 11, fontWeight: 600, fontFamily: "JetBrains Mono, monospace", width: 55, flexShrink: 0, textAlign: 'right' }}>{displayTime}</span>
+                    <div style={{ width: 3, height: 36, borderRadius: 2, background: a.color, flexShrink: 0, opacity: 0.6 }} />
+                    <div>
+                      <p style={{ color: "var(--text-primary)", fontSize: 13, fontWeight: 500 }}>{a.title}</p>
+

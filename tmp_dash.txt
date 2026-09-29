@@ -1,0 +1,28 @@
+
+        "published": "Gönderi başarıyla paylaşıldı!"
+      }
+    },
+>   "dashboardHome": {
+      "aiSummary": {
+        "eyebrow": "AI ASISTAN · GÜNLÜK ÖZET",
+        "messagesComments": "Bugün <msg>{messages} mesaj</msg> ve <cmt>{comments} yorum</cmt> otomatik yanıtlandı.",
+        "trendUp": "Sosyal medya hesaplarınızın etkileşimi <pct>%{trend}</pct> artış gösterdi!",
+        "trendAnalyzing": "Son 7 günde sosyal medya etkileşimleriniz analiz ediliyor.",
+        "appointmentsToday": "Bugün <ap>{count} randevunuz</ap> var.",
+        "noAppointmentsToday": "Bugün için planlı randevunuz bulunmuyor.",
+        "statusActive": "AKTİF",
+        "statusInactive": "KAPALI"
+      },
+    "aiAsistan": {
+      "addCalendar": "Takvim Ekle"
+    },
+>   "dashboardScreen": {
+      "appointments": {
+        "todayTitle": "Bugünkü Randevular",
+        "todayEmpty": "Bugün için planlı randevu yok.",
+        "upcomingTitle": "Yaklaşan Randevular",
+        "viewAll": "Tümünü gör"
+      }
+    }
+  }
+

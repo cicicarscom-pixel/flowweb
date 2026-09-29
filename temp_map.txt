@@ -1,0 +1,26 @@
+
+            </div>
+          ) : !isLoading && activeTab === 'bildirimler' && notifications.length > 0 && (
+            <div className="flex flex-col gap-4">
+>             {notifications.map(notification => (
+                <div 
+                  key={notification.id}
+                  className={`glass flex items-start gap-4 p-4 rounded-xl border transition-all ${
+                    !notification.is_read ? 'border-[#FF7A59] bg-[#FF7A59]/5' : 'border-dark-border bg-dark-card'
+                  }`}
+                >
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/10 shrink-0">
+                    <i className={`fa-solid fa-bell text-lg ${!notification.is_read ? 'text-[#FF7A59]' : 'text-[#A79E96]'}`}></i>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-center mb-1">
+                      <h4 className={`text-sm ${!notification.is_read ? 'font-bold text-white' : 'font-medium text-dark-muted'}`}>
+                        {notification.title}
+                      </h4>
+                      <span className="text-xs text-dark-muted">
+                        {new Date(notification.created_at).toLocaleDateString(locale, { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-dark-muted leading-relaxed">
+                      {notification.message}
+

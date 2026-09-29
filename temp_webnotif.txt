@@ -1,0 +1,28 @@
+
+  export default function AppointmentNotifications({ locale = "tr", limit = 10 }: { locale?: Locale; limit?: number }) {
+    const s = STRINGS[locale];
+    const router = useRouter();
+    const { items, loading, error, refresh, markRead } = useAppointmentNotifications(limit);
+  
+>   const open = async (n: AppointmentNotification) => {
+      if (!n.is_read) await markRead(n.id);
+      const date = n.metadata ? localDateParam(n.metadata) : null;
+      router.push(date ? `/ai-asistan/randevu?date=${date}` : "/ai-asistan/randevu");
+    };
+  
+    return (
+      <section aria-labelledby="appointment-notifications-title">
+        <style>{CSS}</style>
+        <h3 id="appointment-notifications-title" className="an-title">{s.title}</h3>
+  
+        <div className="an-panel">
+          <div className="an-head" aria-hidden="true">
+            <span>{s.colTime}</span>
+            <span>{s.colNotification}</span>
+            <span className="an-right">{s.colAction}</span>
+          </div>
+  
+          {loading && <div className="an-state">…</div>}
+  
+          {!loading && error && (
+

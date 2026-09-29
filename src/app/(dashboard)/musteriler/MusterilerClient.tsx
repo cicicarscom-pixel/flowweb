@@ -71,8 +71,11 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
   };
 
   const handleNotesBlur = async (id: string, notes: string) => {
+    const current = customers.find((c: any) => c.id === id)?.notes || '';
+    if (notes === current) return;
     const res = await updateCustomerNotes(id, notes);
     if (res.status === 'SUCCESS') {
+      setCustomers((prev: any[]) => prev.map((c: any) => (c.id === id ? { ...c, notes } : c)));
       const span = document.getElementById('notes-saved-' + id);
       if (span) {
         span.style.opacity = '1';

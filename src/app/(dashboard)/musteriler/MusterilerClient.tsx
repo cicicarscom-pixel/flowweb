@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -10,14 +10,17 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
   const locale = useLocale();
   const router = useRouter();
   const [customers, setCustomers] = useState(initialCustomers);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  useEffect(() => { setCustomers(initialCustomers); }, [initialCustomers]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   
+  const selectedCustomer = customers.find((c: any) => c.id === selectedId);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [addName, setAddName] = useState('');
   const [addPhone, setAddPhone] = useState('');
   const [addError, setAddError] = useState('');
+  const [addExistingId, setAddExistingId] = useState<string | null>(null);
 
   const filteredCustomers = customers.filter(c => {
     if (!search) return true;
@@ -62,7 +65,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
   };
 
   const openCard = (customer: any) => {
-    setSelectedCustomer(customer);
+    setSelectedId(customer.id);
     setAppointments([]);
     loadAppointments(customer.id);
   };
@@ -80,16 +83,28 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
 
   const handleAdd = async () => {
     setAddError('');
-    if (!addName.trim()) { setAddError(t('musteriler.nameRequired', { defaultValue: 'İsim gerekli' })); return; }
-    if (!addPhone.trim()) { setAddError(t('musteriler.phoneRequired', { defaultValue: 'Telefon gerekli' })); return; }
+    setAddExistingId(null);
+    if (!addName.trim()) { setAddError(t('musteriler.nameRequired')); return; }
+    if (!addPhone.trim()) { setAddError(t('musteriler.phoneRequired')); return; }
     
     const res = await createCustomer(addName, addPhone);
-    if (res.status === 'SUCCESS' || res.status === 'ALREADY_EXISTS') {
-      window.location.reload();
+    if (res.status === 'SUCCESS') {
+      setIsAddOpen(false);
+      setAddName('');
+      setAddPhone('');
+      router.refresh();
+      if (res.id) {
+        setSelectedId(res.id);
+        setAppointments([]);
+        loadAppointments(res.id);
+      }
+    } else if (res.status === 'ALREADY_EXISTS') {
+      setAddError(t('musteriler.alreadyExists'));
+      setAddExistingId(res.id);
     } else if (res.status === 'INVALID_PHONE') {
-      setAddError(t('musteriler.invalidPhone', { defaultValue: 'Geçersiz telefon formatı' }));
+      setAddError(t('musteriler.invalidPhone'));
     } else {
-      setAddError(t('musteriler.error', { defaultValue: 'Bir hata oluştu' }));
+      setAddError(t('musteriler.error'));
     }
   };
 
@@ -99,16 +114,16 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 500, margin: '0 0 4px 0', color: 'var(--text-100)' }}>
-            {t('header.titles.customers', { defaultValue: 'Müşteriler' })}
+            {t('header.titles.customers')}
           </h1>
           <p style={{ margin: 0, color: 'var(--text-300)', fontSize: 14 }}>
-            {customers.length} {t('musteriler.customerCount', { defaultValue: 'müşteri' })}
+            {t('musteriler.customerCount', { count: customers.length })}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <input 
             type="text" 
-            placeholder={t('musteriler.search', { defaultValue: 'İsim veya telefon ara...' })}
+            placeholder={t('musteriler.search')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ 
@@ -123,7 +138,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
               padding: '8px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 500 
             }}
           >
-            + {t('musteriler.addCustomer', { defaultValue: 'Müşteri ekle' })}
+            + {t('musteriler.addCustomer')}
           </button>
         </div>
       </div>
@@ -133,7 +148,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
           {filteredCustomers.length === 0 ? (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-300)' }}>
-              {t('musteriler.empty', { defaultValue: 'Müşteri bulunamadı.' })}
+              {t('musteriler.empty')}
             </div>
           ) : (
             filteredCustomers.map(customer => (
@@ -196,7 +211,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                     </>
                   ) : (
                     <div style={{ fontSize: 12, color: 'var(--text-300)' }}>
-                      {t('musteriler.noUpcoming', { defaultValue: 'Yaklaşan randevu yok' })}
+                      {t('musteriler.noUpcoming')}
                       {customer.last_visit_at && ` - Son ziyaret: ${formatDate(customer.last_visit_at)}`}
                     </div>
                   )}
@@ -217,7 +232,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                     color: 'var(--text-100)', padding: '8px', borderRadius: 8, cursor: 'pointer' 
                   }}
                 >
-                  {t('musteriler.openCard', { defaultValue: 'Kartı aç' })}
+                  {t('musteriler.openCard')}
                 </button>
               </div>
             ))
@@ -290,7 +305,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                     <div key={appt.id} style={{ background: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 8, borderLeft: `3px solid ${appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#6b7280'}` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span style={{ color: '#FF7A59', fontFamily: 'JetBrains Mono', fontSize: 12, fontWeight: 600 }}>{formatDate(appt.starts_at, appt.timezone)}</span>
-                        <span style={{ fontSize: 11, color: appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#9ca3af' }}>{t('musteriler.status.' + appt.status, { defaultValue: appt.status })}</span>
+                        <span style={{ fontSize: 11, color: appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#9ca3af' }}>{t('musteriler.status.' + appt.status)}</span>
                       </div>
                       <div style={{ fontSize: 13, color: 'var(--text-100)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>"{appt.request}"</div>
                       <div style={{ fontSize: 11, color: '#7ddba8' }}>{appt.doctor}</div>
@@ -316,7 +331,24 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
               <label style={{ display: 'block', fontSize: 12, color: 'var(--text-300)', marginBottom: 4 }}>Telefon (+90 5XX ...)</label>
               <input value={addPhone} onChange={e => setAddPhone(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', padding: 10, borderRadius: 8, color: '#fff' }} />
             </div>
-            {addError && <div style={{ color: '#ef4444', fontSize: 12, marginBottom: 16 }}>{addError}</div>}
+                        {addError && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ color: '#ef4444', fontSize: 12 }}>{addError}</div>
+                {addExistingId && (
+                  <button 
+                    onClick={() => {
+                      setIsAddOpen(false);
+                      setSelectedId(addExistingId);
+                      setAppointments([]);
+                      loadAppointments(addExistingId);
+                    }}
+                    style={{ marginTop: 8, padding: '4px 12px', background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}
+                  >
+                    {t('musteriler.openCard')}
+                  </button>
+                )}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
               <button onClick={() => setIsAddOpen(false)} style={{ padding: '8px 16px', background: 'transparent', color: 'var(--text-200)', border: 'none', cursor: 'pointer' }}>İptal</button>
               <button onClick={handleAdd} style={{ padding: '8px 16px', background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Ekle</button>

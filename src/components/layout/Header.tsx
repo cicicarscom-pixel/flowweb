@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,6 +35,7 @@ export default function Header() {
   else if (pathname.includes("sosyal-medya")) pageTitle = t("header.titles.socialMedia");
   else if (pathname.includes("analiz")) pageTitle = t("header.titles.analytics");
   else if (pathname.includes("gelen-kutusu")) pageTitle = t("header.titles.inbox");
+  else if (pathname.includes("musteriler")) pageTitle = t("header.titles.customers");
 
   return (
     <header className="glass-strong" style={{

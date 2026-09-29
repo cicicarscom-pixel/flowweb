@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
@@ -6,91 +6,74 @@ import { getTranslations } from 'next-intl/server'
 export async function getCustomers() {
   try {
     const supabase = await createClient()
-    const t = await getTranslations()
 
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     if (sessionError || !session?.user) {
       throw new Error("Unauthorized")
     }
 
-    // 1. Fetch customers
-    const { data: customersData, error: customersError } = await supabase
-      .from('customers')
-      .select('id, name, phone, created_at')
-      .eq('organization_id', session.user.id)
-      .order('created_at', { ascending: false })
+    const { data, error } = await supabase.rpc('get_customers')
 
-    if (customersError) {
-      console.error("Error fetching customers:", customersError)
+    if (error) {
+      console.error("Error fetching customers:", error)
       return []
     }
 
-    // 2. Fetch appointments (no nested embed)
-    const { data: appointmentsData, error: apptError } = await supabase
-      .from('appointments')
-      .select('id, date, status, customer_phone, service_id, customer_request_raw')
-      .eq('organization_id', session.user.id)
-
-    if (apptError) {
-      console.error("Error fetching appointments for customers:", apptError)
-    }
-
-    const apptList = appointmentsData || []
-
-    // 3. Fetch business_services
-    const { data: servicesData } = await supabase
-      .from('business_services')
-      .select('id, name')
-      .eq('merchant_id', session.user.id)
-    const serviceNameById = new Map((servicesData || []).map((s: any) => [s.id, s.name]))
-
-    // 4. Fetch appointment_services
-    const appointmentIds = apptList.map((a: any) => a.id)
-    const servicesByAppointment: Record<string, string[]> = {}
-    if (appointmentIds.length > 0) {
-      const { data: apptServices } = await supabase
-        .from('appointment_services')
-        .select('appointment_id, service_id')
-        .in('appointment_id', appointmentIds)
-      
-      for (const row of apptServices || []) {
-        const name = serviceNameById.get(row.service_id)
-        if (!name) continue
-        if (!servicesByAppointment[row.appointment_id]) servicesByAppointment[row.appointment_id] = []
-        servicesByAppointment[row.appointment_id].push(name)
-      }
-    }
-
-    // 5. Map in JS by phone number
-    const processedData = (customersData || []).map((customer: any) => {
-      const customerAppts = apptList.filter((a: any) => a.customer_phone === customer.phone).map((a: any) => {
-        // Build services array for this appointment
-        const sList = servicesByAppointment[a.id] || []
-        if (sList.length === 0 && a.service_id) {
-          const fallback = serviceNameById.get(a.service_id)
-          if (fallback) sList.push(fallback)
-        }
-        return { ...a, services: sList }
-      })
-
-      const sortedAppts = [...customerAppts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      const lastVisit = sortedAppts.length > 0 ? sortedAppts[0].date : null
-      
-      return {
-        id: customer.id,
-        name: customer.name || t('musteriler.unnamedCustomer'),
-        phone: customer.phone,
-        created_at: customer.created_at,
-        total_appointments: customerAppts.length,
-        last_visit: lastVisit,
-        history: sortedAppts
-      }
-    })
-
-    return processedData
+    return data || []
 
   } catch (error) {
     console.error("Customers fetch exception:", error)
     return []
+  }
+}
+
+export async function getCustomerAppointments(id: string) {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc('get_customer_appointments', { p_customer_id: id })
+    
+    if (error) {
+      console.error("Error fetching customer appointments:", error)
+      return []
+    }
+    
+    return data || []
+  } catch (error) {
+    console.error("Customer appointments fetch exception:", error)
+    return []
+  }
+}
+
+export async function updateCustomerNotes(id: string, notes: string) {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc('update_customer_notes', { p_customer_id: id, p_notes: notes })
+    
+    if (error) {
+      console.error("Error updating customer notes:", error)
+      return { status: 'ERROR', error }
+    }
+    
+    return data || { status: 'ERROR' }
+  } catch (error) {
+    console.error("Customer notes update exception:", error)
+    return { status: 'ERROR' }
+  }
+}
+
+export async function createCustomer(name: string, phone: string) {
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.rpc('create_customer', { p_name: name, p_phone: phone })
+    
+    if (error) {
+      console.error("Error creating customer:", error)
+      return { status: 'ERROR', error }
+    }
+    
+    return data || { status: 'ERROR' }
+  } catch (error) {
+    console.error("Create customer exception:", error)
+    return { status: 'ERROR' }
   }
 }

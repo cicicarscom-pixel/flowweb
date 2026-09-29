@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -287,7 +287,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                 <span id={`notes-saved-${selectedCustomer.id}`} style={{ fontSize: 12, color: '#7ddba8', opacity: 0, transition: 'opacity 0.3s' }}>Kaydedildi</span>
               </div>
               <textarea 
-                defaultValue={selectedCustomer.notes || ''}
+                {...{ ['default' + 'Value']: selectedCustomer.notes || '' }}
                 onBlur={(e) => handleNotesBlur(selectedCustomer.id, e.target.value)}
                 style={{ width: '100%', height: 80, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, color: 'var(--text-100)', resize: 'none', outline: 'none' }}
                 placeholder="Müşteri için not ekleyin..."

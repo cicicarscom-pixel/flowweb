@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "language": {
       "title": "Sprache",
@@ -1029,7 +1029,7 @@
     "status": {
       "Pending": "Ausstehend",
       "Approved": "Genehmigt",
-      "Cancelled": "Abgebrochen",
+      "Cancelled": "Storniert",
       "Expired": "Abgelaufen"
     }
   }

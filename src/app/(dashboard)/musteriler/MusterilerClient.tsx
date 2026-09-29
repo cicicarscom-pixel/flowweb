@@ -283,17 +283,17 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             {/* Notes */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                <h4 style={{ margin: 0, fontSize: 14, color: 'var(--text-100)' }}>Notlar</h4>
-                <span id={`notes-saved-${selectedCustomer.id}`} style={{ fontSize: 12, color: '#7ddba8', opacity: 0, transition: 'opacity 0.3s' }}>Kaydedildi</span>
+                <h4 style={{ margin: 0, fontSize: 14, color: 'var(--text-100)' }}>{t('musteriler.notes')}</h4>
+                <span id={"notes-saved-" + selectedCustomer.id} style={{ fontSize: 12, color: '#7ddba8', opacity: 0, transition: 'opacity 0.3s' }}>{t('musteriler.saved')}</span>
               </div>
               <textarea 
-                {...{ ['default' + 'Value']: selectedCustomer.notes || '' }}
+                key={selectedCustomer.id}
+                defaultValue={selectedCustomer.notes || ''}
                 onBlur={(e) => handleNotesBlur(selectedCustomer.id, e.target.value)}
                 style={{ width: '100%', height: 80, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: 12, color: 'var(--text-100)', resize: 'none', outline: 'none' }}
-                placeholder="Müşteri için not ekleyin..."
+                placeholder={t('musteriler.notesPlaceholder')}
               />
             </div>
-
             {/* Appointments */}
             <div>
               <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-100)' }}>Randevu Geçmişi</h4>

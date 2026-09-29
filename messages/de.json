@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "language": {
       "title": "Sprache",
@@ -1031,6 +1031,9 @@
       "Approved": "Genehmigt",
       "Cancelled": "Storniert",
       "Expired": "Abgelaufen"
-    }
+    },
+    "notes": "Notizen",
+    "saved": "Gespeichert",
+    "notesPlaceholder": "Notiz zum Kunden hinzufügen..."
   }
 }

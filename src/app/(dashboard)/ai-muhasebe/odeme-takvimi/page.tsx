@@ -1,5 +1,5 @@
-﻿import { formatMoney } from '@/lib/money';
-"use client";
+﻿"use client";
+import { formatMoney } from '@/lib/money';
 
 import React, { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";

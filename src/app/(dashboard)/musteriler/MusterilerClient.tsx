@@ -290,7 +290,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
                     <div key={appt.id} style={{ background: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 8, borderLeft: `3px solid ${appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#6b7280'}` }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
                         <span style={{ color: '#FF7A59', fontFamily: 'JetBrains Mono', fontSize: 12, fontWeight: 600 }}>{formatDate(appt.starts_at, appt.timezone)}</span>
-                        <span style={{ fontSize: 11, color: appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#9ca3af' }}>{appt.status}</span>
+                        <span style={{ fontSize: 11, color: appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#9ca3af' }}>{t('musteriler.status.' + appt.status, { defaultValue: appt.status })}</span>
                       </div>
                       <div style={{ fontSize: 13, color: 'var(--text-100)', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>"{appt.request}"</div>
                       <div style={{ fontSize: 11, color: '#7ddba8' }}>{appt.doctor}</div>

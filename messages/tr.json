@@ -40,7 +40,8 @@
       "aiAccountingPaymentCalendar": "Ai Muhasebe / Ödeme Takvimi",
       "socialMedia": "Sosyal Medya",
       "analytics": "Analiz",
-      "inbox": "Gelen Kutusu"
+      "inbox": "Gelen Kutusu",
+      "customers": "Müşteriler"
     }
   },
   "personas": {
@@ -431,17 +432,6 @@
       "error": "Hata oluştu: {message}"
     },
     "loading": "Yükleniyor..."
-  },
-  "musteriler": {
-    "title": "Müşteriler",
-    "subtitle": "Tüm müşteri portföyünüz ve geçmiş randevuları",
-    "empty": "Henüz hiç müşteri kaydı yok.",
-    "appointmentCount": "{count} Randevu",
-    "lastVisit": "Son: {date}",
-    "pastAppointments": "Geçmiş Randevular",
-    "noAppointments": "Kayıtlı randevu yok.",
-    "unknownService": "Bilinmeyen Hizmet",
-    "unnamedCustomer": "İsimsiz"
   },
   "profilPage": {
     "loading": "Yükleniyor...",
@@ -1019,5 +1009,20 @@
       "upcomingTitle": "Yaklaşan Randevular",
       "viewAll": "Tümünü gör"
     }
+  },
+  "musteriler": {
+    "phoneRequired": "Telefon gerekli",
+    "customerCount": "{count} müşteri",
+    "add": "Ekle",
+    "error": "Bir hata oluştu",
+    "noUpcoming": "Yaklaşan randevu yok",
+    "randevu": "randevu",
+    "openCard": "Kartı aç",
+    "empty": "Müşteri bulunamadı.",
+    "addCustomer": "Müşteri ekle",
+    "search": "İsim veya telefon ara",
+    "invalidPhone": "Geçersiz telefon numarası",
+    "nameRequired": "Ad gerekli",
+    "alreadyExists": "Bu numara zaten kayıtlı"
   }
 }

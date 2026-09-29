@@ -39,7 +39,8 @@
       "aiAccountingPaymentCalendar": "AI Accounting / Payment Calendar",
       "socialMedia": "Social Media",
       "analytics": "Analytics",
-      "inbox": "Inbox"
+      "inbox": "Inbox",
+      "customers": "Customers"
     }
   },
   "personas": {
@@ -430,17 +431,6 @@
       "error": "Something went wrong: {message}"
     },
     "loading": "Loading..."
-  },
-  "musteriler": {
-    "title": "Customers",
-    "subtitle": "Your entire customer portfolio and past appointments",
-    "empty": "No customers recorded yet.",
-    "appointmentCount": "{count} Appointments",
-    "lastVisit": "Last: {date}",
-    "pastAppointments": "Past Appointments",
-    "noAppointments": "No appointments recorded.",
-    "unknownService": "Unknown Service",
-    "unnamedCustomer": "Unnamed"
   },
   "profilPage": {
     "loading": "Loading...",
@@ -1021,5 +1011,20 @@
       "appointment": "{customer} booked an appointment with {doctor} on {when}",
       "appointmentNoDoctor": "{customer} booked an appointment on {when}"
     }
+  },
+  "musteriler": {
+    "phoneRequired": "Phone is required",
+    "customerCount": "{count} customers",
+    "add": "Add",
+    "error": "Something went wrong",
+    "noUpcoming": "No upcoming appointment",
+    "randevu": "appointments",
+    "openCard": "Open card",
+    "empty": "No customers found.",
+    "addCustomer": "Add customer",
+    "search": "Search name or phone",
+    "invalidPhone": "Invalid phone number",
+    "nameRequired": "Name is required",
+    "alreadyExists": "This number is already registered"
   }
 }

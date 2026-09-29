@@ -1,12 +1,14 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { getCustomerAppointments, updateCustomerNotes, createCustomer } from '@/actions/customers';
 
 export default function MusterilerClient({ initialCustomers }: { initialCustomers: any[] }) {
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
   const [customers, setCustomers] = useState(initialCustomers);
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -245,7 +247,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
               <button onClick={() => window.open(`https://wa.me/${selectedCustomer.phone_display?.replace(/\D/g, '')}`, '_blank')} style={{ flex: 1, padding: 8, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>WhatsApp</button>
               <button onClick={() => window.location.href = `tel:+${selectedCustomer.phone_display?.replace(/\D/g, '')}`} style={{ flex: 1, padding: 8, background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Ara</button>
-              <button onClick={() => alert('Mevcut randevu akışına yönlendirilecek')} style={{ flex: 1, padding: 8, background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Randevu ver</button>
+              <button onClick={() => router.push('/ai-asistan/randevu')} style={{ flex: 1, padding: 8, background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Randevu ver</button>
             </div>
 
             {/* 4 Stats */}

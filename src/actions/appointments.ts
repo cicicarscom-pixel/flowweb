@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 import { addDaysYmd } from '@/lib/dates';
 
 import { createClient } from '@/lib/supabase/server'
@@ -69,46 +69,60 @@ export async function getAvailableSlots(dateStr: string, serviceId?: string, cal
   const { data: { session } } = await supabase.auth.getSession()
   if (!session) return { data: [], error: 'Unauthorized' }
 
-  const { data: service } = await supabase
-    .from('business_services')
-    .select('duration_minutes')
-    .eq('id', serviceId)
-    .eq('merchant_id', session.user.id)
-    .single()
+  const { data, error } = await supabase.rpc('get_available_slots', {
+    p_date: dateStr,
+    p_calendar_id: calendarId ?? null,
+    p_service_id: serviceId ?? null
+  });
 
-  const duration = service?.duration_minutes || 30
+  if (error) return { data: [], error: error.message };
+  return { data: (data || []).map((s: any) => s.local_time), error: null };
+}
 
-  const nextDayStr = addDaysYmd(dateStr, 1);
-  let query = supabase
-    .from('appointments')
-    .select('date')
-    .eq('organization_id', session.user.id)
-    .gte('date', `${dateStr}T00:00:00`).lt('date', `${nextDayStr}T00:00:00`)
-    .in('status', ['Pending', 'Approved'])
+export async function getDaySchedule(dateStr: string, calendarId?: string) {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { data: [], error: 'Unauthorized' };
 
-  if (calendarId) {
-    query = query.eq('calendar_id', calendarId);
-  }
+  const { data, error } = await supabase.rpc('get_day_schedule', {
+    p_date: dateStr,
+    p_calendar_id: calendarId ?? null
+  });
 
-  const { data: taken } = await query;
+  if (error) return { data: [], error: error.message };
+  return { data: data || [], error: null };
+}
 
-  const takenTimes = new Set(
-    (taken || []).map((r) => {
-      const d = r.date || ''
-      const t = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || ''
-      return t.substring(0, 5)
-    })
-  )
+export async function createCalendarBlock(calendarId: string | null, localStart: string, localEnd: string, reason: string, note?: string) {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { error: 'Unauthorized' };
 
-  const slots: string[] = []
-  for (let h = 9; h < 18; h++) {
-    for (let m = 0; m < 60; m += duration) {
-      const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-      if (!takenTimes.has(time)) slots.push(time)
-    }
-  }
+  const { data, error } = await supabase.rpc('create_calendar_block', {
+    p_calendar_id: calendarId,
+    p_local_start: localStart,
+    p_local_end: localEnd,
+    p_reason: reason,
+    p_note: note || null
+  });
 
-  return { data: slots, error: null }
+  if (error) return { data: null, error: error.message };
+  revalidatePath('/ai-asistan/randevu');
+  return { data, error: null };
+}
+
+export async function deleteCalendarBlock(id: string) {
+  const supabase = await createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { error: 'Unauthorized' };
+
+  const { data, error } = await supabase.rpc('delete_calendar_block', {
+    p_block_id: id
+  });
+
+  if (error) return { data: null, error: error.message };
+  revalidatePath('/ai-asistan/randevu');
+  return { data, error: null };
 }
 
 export async function createAppointment(input: {

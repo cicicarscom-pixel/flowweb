@@ -53,7 +53,55 @@ function ScrollableContainer({ children, innerRef }: { children: React.ReactNode
     <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
       
 
-      <style dangerouslySetInnerHTML={{__html: `
+      
+      {menuConfig?.visible && (
+        <>
+          <div style={{ position: 'fixed', inset: 0, zIndex: 99998 }} onClick={() => setMenuConfig({ ...menuConfig, visible: false })} />
+          <div style={{
+            position: 'absolute',
+            left: menuConfig.x,
+            top: menuConfig.y + 8,
+            zIndex: 99999,
+            background: '#1A181C',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 12,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            overflow: 'hidden',
+            minWidth: 160,
+            animation: 'fadeIn 0.15s ease'
+          }}>
+            {menuConfig.options.map((opt: any, i: number) => (
+              <button
+                key={i}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setMenuConfig({ ...menuConfig, visible: false });
+                  opt.onClick();
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  textAlign: 'left',
+                  padding: '12px 16px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: i < menuConfig.options.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  color: opt.destructive ? '#ef4444' : '#fff',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+        <style dangerouslySetInnerHTML={{__html: `
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
       `}} />
@@ -170,6 +218,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
   const [cancelReason, setCancelReason] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [menuConfig, setMenuConfig] = useState<any>({ visible: false, x: 0, y: 0, options: [] });
 
   // Close menus on click outside
   useEffect(() => {

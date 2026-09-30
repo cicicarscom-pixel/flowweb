@@ -625,9 +625,9 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                 cursor: "pointer", transition: "all 0.2s", opacity
                               }}
                             >
-                              <span style={{ fontSize: 10, fontWeight: 800, color }}>
-                                {slotTime}
-                              </span>
+                              <span style={{ fontSize: 9, fontWeight: 800, color, textAlign: 'center', lineHeight: 1 }}>
+                                  {status === 'blocked' ? (bReason === 'meeting' ? t('randevu.block.reasonMeeting') : bReason === 'leave' ? t('randevu.block.reasonLeave') : bReason === 'break' ? t('randevu.block.reasonBreak') : t('randevu.block.reasonOther')) : slotTime}
+                                </span>
                               {badge && (
                                 <div style={{ position: 'absolute', top: -4, right: -4, background: '#22B573', padding: '2px 4px', borderRadius: 4, fontSize: 8, color: '#fff', fontWeight: 'bold' }}>
                                   {badge}

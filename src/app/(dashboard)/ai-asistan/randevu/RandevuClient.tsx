@@ -557,7 +557,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                       <div key={col} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         {[0, 1, 2].map(row => {
                           const slotTime = row === 0 ? morningSlots[col] : row === 1 ? noonSlots[col] : eveningSlots[col];
-                          if (!slotTime) return <div key={row} style={{ width: 48, height: 32 }} />;
+                          if (!slotTime) return <div key={row} style={{ width: 48, height: 40 }} />;
                           
                           const slots = daySchedule.filter(s => s.local_time === slotTime);
                           let status = 'free';
@@ -622,7 +622,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                               onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
                               style={{
                                 position: "relative",
-                                width: 52, minWidth: 52, flexShrink: 0, height: 32, borderRadius: 8, padding: 0,
+                                width: 52, minWidth: 52, flexShrink: 0, height: 40, borderRadius: 8, padding: 0,
                                 background: bg,
                                 border: border,
                                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -632,13 +632,13 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                             >
                               {status === 'blocked' ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1.1' }}>
-                                      <span style={{ fontSize: 9, fontWeight: 800, color }}>{slotTime}</span>
-                                      <span style={{ fontSize: 7, fontWeight: 500, color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                      <span style={{ fontSize: 12, fontWeight: 800, color }}>{slotTime}</span>
+                                      <span style={{ fontSize: 10, fontWeight: 500, color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         {bReason === 'meeting' ? t('randevu.block.reasonMeeting') : bReason === 'leave' ? t('randevu.block.reasonLeave') : bReason === 'break' ? t('randevu.block.reasonBreak') : t('randevu.block.reasonOther')}
                                       </span>
                                     </div>
                                   ) : (
-                                    <span style={{ fontSize: 9, fontWeight: 800, color, textAlign: 'center', lineHeight: 1 }}>{slotTime}</span>
+                                    <span style={{ fontSize: 12, fontWeight: 800, color, textAlign: 'center', lineHeight: 1 }}>{slotTime}</span>
                                   )}
                               {badge && (
                                 <div style={{ position: 'absolute', top: -4, right: -4, background: '#22B573', padding: '2px 4px', borderRadius: 4, fontSize: 8, color: '#fff', fontWeight: 'bold' }}>

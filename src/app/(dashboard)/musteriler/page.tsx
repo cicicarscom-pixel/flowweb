@@ -1,4 +1,4 @@
-﻿import { getCustomers } from '@/actions/customers';
+import { getCustomers } from '@/actions/customers';
 import MusterilerClient from './MusterilerClient';
 
 export default async function MusterilerPage() {

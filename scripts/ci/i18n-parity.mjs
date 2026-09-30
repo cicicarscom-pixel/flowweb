@@ -1,39 +1,19 @@
-// i18n-parity.mjs
-import fs from 'fs';
-import path from 'path';
-
-const localesDir = path.resolve('messages');
-if (!fs.existsSync(localesDir)) {
-    console.log('No messages dir found, skipping i18n parity check.');
-    process.exit(0);
+// Çeviri dosyalarında her dilin aynı anahtarlara sahip olduğunu denetler.
+// Kullanım: node scripts/ci/i18n-parity.mjs <klasör> <istisna.json> tr en de
+// istisna.json: { "tr": ["bilinçli olarak eksik anahtar", ...], "en": [], "de": [] }
+import fs from 'node:fs';
+const [dir, ignoreFile, ...langs] = process.argv.slice(2);
+if (!dir || !ignoreFile || langs.length < 2) { console.log('Kullanım: node i18n-parity.mjs <klasör> <istisna.json> tr en de'); process.exit(2); }
+const ignore = JSON.parse(fs.readFileSync(ignoreFile, 'utf8'));
+const flat = (o, p = '') => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' && !Array.isArray(v)) ? flat(v, p + k + '.') : [p + k]);
+const sets = Object.fromEntries(langs.map((l) => [l, new Set(flat(JSON.parse(fs.readFileSync(`${dir}/${l}.json`, 'utf8'))))]));
+const all = new Set(langs.flatMap((l) => [...sets[l]]));
+let missing = 0;
+for (const l of langs) {
+  const skip = new Set(ignore[l] || []);
+  const miss = [...all].filter((k) => !sets[l].has(k) && !skip.has(k));
+  missing += miss.length;
+  console.log(`${l}: ${sets[l].size} anahtar, eksik ${miss.length}${miss.length ? ' → ' + miss.join(', ') : ''}`);
 }
-
-const tr = JSON.parse(fs.readFileSync(path.join(localesDir, 'tr.json'), 'utf-8'));
-const en = JSON.parse(fs.readFileSync(path.join(localesDir, 'en.json'), 'utf-8'));
-const de = JSON.parse(fs.readFileSync(path.join(localesDir, 'de.json'), 'utf-8'));
-
-function getKeys(obj, prefix = '') {
-    return Object.keys(obj).reduce((res, el) => {
-        if (Array.isArray(obj[el])) {
-            return res;
-        } else if (typeof obj[el] === 'object' && obj[el] !== null) {
-            return [...res, ...getKeys(obj[el], prefix + el + '.')];
-        }
-        return [...res, prefix + el];
-    }, []);
-}
-
-const trKeys = new Set(getKeys(tr));
-const enKeys = new Set(getKeys(en));
-const deKeys = new Set(getKeys(de));
-
-const allowedMissing = new Set(['dashboardAppointments.appointments.status.cancelled']);
-
-let error = false;
-for (const key of trKeys) {
-    if (allowedMissing.has(key)) continue;
-    if (!enKeys.has(key)) { console.error('Missing in EN:', key); error = true; }
-    if (!deKeys.has(key)) { console.error('Missing in DE:', key); error = true; }
-}
-if (error) process.exit(1);
-console.log('i18n parity check passed.');
+if (missing) { console.log('HATA: eksik çeviri anahtarı var'); process.exit(1); }
+console.log('OK: çeviri anahtarları eşit');

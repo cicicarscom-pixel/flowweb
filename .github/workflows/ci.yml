@@ -1,18 +1,19 @@
 name: CI
 on: [push, pull_request]
-
 jobs:
-  build:
+  kontroller:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - name: Check BOM
+          node-version: 20
+      - name: BOM yok
         run: bash scripts/ci/check-bom.sh
-      - name: Check Names
-        run: bash scripts/ci/check-names.sh
-      - name: Check i18n parity
-        run: node scripts/ci/i18n-parity.mjs
+      - name: Tanımsız isim, sözdizimi, bulunamayan modül
+        run: bash scripts/ci/check-names.sh src
+      - name: Çeviri anahtarları (tr/en/de)
+        run: node scripts/ci/i18n-parity.mjs messages scripts/ci/i18n-parity-ignore.json tr en de
+      - name: JSON geçerli
+        run: for f in messages/*.json package.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1; done
+# Derleme (next build) Vercel'de her push'ta ayrıca çalışıyor.

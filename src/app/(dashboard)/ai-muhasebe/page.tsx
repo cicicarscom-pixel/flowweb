@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { formatAmount } from '@/lib/money';
 
 import React, { useState, useEffect } from 'react';

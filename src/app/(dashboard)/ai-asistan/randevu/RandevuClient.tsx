@@ -578,7 +578,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
                           let bg = "rgba(255,255,255,0.03)", border = "1px solid rgba(255,255,255,0.06)", color = "var(--text-secondary)", opacity = 1;
                           if (status === 'booked') { bg = "#22B573"; border = "none"; color = "#17151A"; }
-                          else if (status === 'blocked') { bg = "rgba(100,100,100,0.5)"; border = "1px solid #999"; color = "#fff"; }
+                          else if (status === 'blocked') { bg = "rgba(255,255,255,0.05)"; border = "1px dashed rgba(255,255,255,0.3)"; color = "var(--text-secondary)"; }
                           else if (status === 'past') { opacity = 0.3; }
 
                           return (

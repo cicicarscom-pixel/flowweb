@@ -592,7 +592,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                   setMenuConfig({
                                     visible: true,
                                     x: rect.left,
-                                    y: rect.bottom + window.scrollY,
+                                    y: rect.bottom,
                                     options: [
                                       { label: t('randevu.block.createAppointment'), onClick: () => { setNewApptTime(slotTime); setIsModalVisible(true); } },
                                       { label: t('randevu.block.reserve'), onClick: () => { setReserveModal({ visible: true, time: slotTime, endTime: add30Mins(slotTime) }); setReserveError(''); setReserveConflicts([]); setReserveDurationType('single'); setReserveScope(activeCalendarId ? 'doctor' : 'clinic'); } }
@@ -603,7 +603,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                   setMenuConfig({
                                     visible: true,
                                     x: rect.left,
-                                    y: rect.bottom + window.scrollY,
+                                    y: rect.bottom,
                                     options: [
                                       { label: `${bReason}${bNote ? ' - ' + bNote : ''}`, onClick: () => {} },
                                       { label: t('randevu.block.removeReservation'), onClick: async () => {
@@ -1120,7 +1120,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
       <div style={{ display: menuConfig?.visible ? 'block' : 'none' }}>
         <div style={{ position: 'fixed', inset: 0, zIndex: 99998 }} onClick={() => setMenuConfig({ ...menuConfig, visible: false })} />
         <div style={{
-          position: 'absolute',
+          position: 'fixed',
           left: menuConfig?.x || 0,
           top: (menuConfig?.y || 0) + 8,
           zIndex: 99999,

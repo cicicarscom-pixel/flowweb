@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
@@ -240,6 +240,8 @@ export default function RandevuClient({ initialAppointments, services, merchantI
         async () => {
           const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
           setAppointments(data);
+          const sched = await getDaySchedule(selectedDate, activeCalendarId || undefined);
+          setDaySchedule(sched.data || []);
         }
       )
       .subscribe();
@@ -247,7 +249,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedDate, merchantId, supabase]);
+  }, [selectedDate, merchantId, supabase, activeCalendarId]);
 
     // Load appointments when selected date or active calendar changes
   useEffect(() => {
@@ -577,6 +579,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                             const blockedSlot = slots.find(s => s.status === 'blocked');
                             if (blockedSlot) { bId = blockedSlot.block_id; bReason = blockedSlot.block_reason; bNote = blockedSlot.block_note; }
                           }
+
 
                           let bg = "rgba(255,255,255,0.03)", border = "1px solid rgba(255,255,255,0.06)", color = "var(--text-secondary)", opacity = 1;
                           if (status === 'booked') { bg = "#22B573"; border = "none"; color = "#17151A"; }

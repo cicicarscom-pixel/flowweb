@@ -1058,7 +1058,9 @@
       "statusBooked": "belegt",
       "statusBlocked": "reserviert",
       "confirmRemove": "Diese Reservierung entfernen?",
-      "alreadyBlocked": "Diese Zeit ist bereits reserviert"
+      "alreadyBlocked": "Diese Zeit ist bereits reserviert",
+      "noteLabel": "Notiz (optional)",
+      "notePlaceholder": "Kurze Notiz schreiben…"
     }
   }
 }

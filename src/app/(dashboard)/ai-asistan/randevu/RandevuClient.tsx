@@ -630,9 +630,16 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                 cursor: "pointer", transition: "all 0.2s", opacity
                               }}
                             >
-                              <span style={{ fontSize: 9, fontWeight: 800, color, textAlign: 'center', lineHeight: 1 }}>
-                                  {status === 'blocked' ? (bReason === 'meeting' ? t('randevu.block.reasonMeeting') : bReason === 'leave' ? t('randevu.block.reasonLeave') : bReason === 'break' ? t('randevu.block.reasonBreak') : t('randevu.block.reasonOther')) : slotTime}
-                                </span>
+                              {status === 'blocked' ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1.1' }}>
+                                      <span style={{ fontSize: 9, fontWeight: 800, color }}>{slotTime}</span>
+                                      <span style={{ fontSize: 7, fontWeight: 500, color, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {bReason === 'meeting' ? t('randevu.block.reasonMeeting') : bReason === 'leave' ? t('randevu.block.reasonLeave') : bReason === 'break' ? t('randevu.block.reasonBreak') : t('randevu.block.reasonOther')}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span style={{ fontSize: 9, fontWeight: 800, color, textAlign: 'center', lineHeight: 1 }}>{slotTime}</span>
+                                  )}
                               {badge && (
                                 <div style={{ position: 'absolute', top: -4, right: -4, background: '#22B573', padding: '2px 4px', borderRadius: 4, fontSize: 8, color: '#fff', fontWeight: 'bold' }}>
                                   {badge}
@@ -937,7 +944,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Kapsam</span>
                 {activeCalendarId ? (
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => setReserveScope('doctor')} style={{ flex: 1, padding: 8, background: reserveScope === 'doctor' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Seçili doktor</button>
+                    <button onClick={() => setReserveScope('doctor')} style={{ flex: 1, padding: 8, background: reserveScope === 'doctor' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{activeCalendarId ? calendars.find(c => c.id === activeCalendarId)?.name || 'Seçili doktor' : 'Seçili doktor'}</button>
                     <button onClick={() => setReserveScope('clinic')} style={{ flex: 1, padding: 8, background: reserveScope === 'clinic' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Tüm klinik</button>
                   </div>
                 ) : (

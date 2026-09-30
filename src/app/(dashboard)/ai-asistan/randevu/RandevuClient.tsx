@@ -594,7 +594,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                     x: rect.left,
                                     y: rect.bottom,
                                     options: [
-                                      { label: t('randevu.block.createAppointment'), onClick: () => { setNewApptTime(slotTime); setIsModalVisible(true); } },
+                                      { label: t('randevu.block.createAppointment'), onClick: () => { setNewAppt(prev => ({ ...prev, time: slotTime, calendar_id: activeCalendarId || prev.calendar_id })); setIsModalOpen(true); } },
                                       { label: t('randevu.block.reserve'), onClick: () => { setReserveModal({ visible: true, time: slotTime, endTime: add30Mins(slotTime) }); setReserveError(''); setReserveConflicts([]); setReserveDurationType('single'); setReserveScope(activeCalendarId ? 'doctor' : 'clinic'); } }
                                     ]
                                   });
@@ -608,8 +608,11 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                                       { label: `${bReason}${bNote ? ' - ' + bNote : ''}`, onClick: () => {} },
                                       { label: t('randevu.block.removeReservation'), onClick: async () => {
                                           const res = await deleteCalendarBlock(bId);
-                                          if (res.status !== 'SUCCESS') alert(t('musteriler.error'));
-                                          else refreshDaySchedule(activeCalendarId || undefined);
+                                            if (res.error || res.data?.status !== 'SUCCESS') alert(t('musteriler.error'));
+                                            else {
+                                              const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
+                                              setDaySchedule(refreshed.data || []);
+                                            }
                                       }, destructive: true }
                                     ]
                                   });
@@ -977,23 +980,31 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               <input value={reserveNote} onChange={e => setReserveNote(e.target.value)} placeholder={t('randevu.block.note')} style={{ padding: 12, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
               <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 12 }}>
                 <button onClick={() => setReserveModal({ visible: false, time: '', endTime: '' })} style={{ padding: '10px 16px', background: 'transparent', color: '#fff', border: 'none', cursor: 'pointer' }}>{t('common.cancel')}</button>
-                <button onClick={async () => {
-                  setReserveError(''); setReserveConflicts([]);
-                  const blockCalId = reserveScope === 'clinic' ? null : (activeCalendarId || reserveScope);
-                  const res = await createCalendarBlock(blockCalId, `${selectedDate}T${reserveModal.time}:00`, `${selectedDate}T${reserveModal.endTime}:00`, reserveReason, reserveNote);
-                  
-                  if (res.data?.status === 'SUCCESS') {
-                    setReserveModal({ visible: false, time: '', endTime: '' });
-                    const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
-                    setDaySchedule(refreshed.data || []);
-                  } else if (res.data?.status === 'CONFLICTS_WITH_APPOINTMENTS') {
-                    setReserveConflicts(res.data.appointments || []);
-                  } else if (res.data?.status === 'INVALID_RANGE') {
-                    setReserveError(t('randevu.block.invalidRange'));
-                  } else {
-                    setReserveError(t('musteriler.error'));
+                <button disabled={isSaving} onClick={async () => {
+                  if (isSaving) return;
+                  setIsSaving(true);
+                  try {
+                    setReserveError(''); setReserveConflicts([]);
+                    const blockCalId = reserveScope === 'clinic' ? null : (activeCalendarId || reserveScope);
+                    const res = await createCalendarBlock(blockCalId, `${selectedDate}T${reserveModal.time}:00`, `${selectedDate}T${reserveModal.endTime}:00`, reserveReason, reserveNote);
+                    
+                    if (res.data?.status === 'SUCCESS') {
+                      setReserveModal({ visible: false, time: '', endTime: '' });
+                      const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
+                      setDaySchedule(refreshed.data || []);
+                    } else if (res.data?.status === 'CONFLICTS_WITH_APPOINTMENTS') {
+                      setReserveConflicts(res.data.appointments || []);
+                    } else if (res.data?.status === 'INVALID_RANGE') {
+                      setReserveError(t('randevu.block.invalidRange'));
+                    } else if (res.data?.status === 'ALREADY_BLOCKED') {
+                      setReserveError(t('randevu.block.alreadyBlocked'));
+                    } else {
+                      setReserveError(t('musteriler.error'));
+                    }
+                  } finally {
+                    setIsSaving(false);
                   }
-                }} style={{ padding: '10px 16px', background: '#22B573', color: '#17151A', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>{t('randevu.block.save')}</button>
+                }} style={{ padding: '10px 16px', background: '#22B573', color: '#17151A', border: 'none', borderRadius: 8, fontWeight: 700, cursor: isSaving ? 'not-allowed' : 'pointer', opacity: isSaving ? 0.7 : 1 }}>{t('randevu.block.save')}</button>
               </div>
             </div>
           </div>

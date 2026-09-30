@@ -566,13 +566,11 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                             status = slots[0]?.status || 'free';
                             bId = slots[0]?.block_id; bReason = slots[0]?.block_reason; bNote = slots[0]?.block_note;
                           } else {
-                            if (slots.every(s => s.status === 'blocked')) status = 'blocked';
-                            else if (slots.some(s => s.status === 'free')) {
-                              status = 'free';
-                              
-                            }
-                            else if (slots.every(s => s.status === 'past')) status = 'past';
-                            else status = 'booked';
+                            if (slots.some(s => s.status === 'booked')) status = 'booked';
+                              else if (slots.every(s => s.status === 'blocked')) status = 'blocked';
+                              else if (slots.some(s => s.status === 'free')) status = 'free';
+                              else if (slots.every(s => s.status === 'past')) status = 'past';
+                              else status = 'booked';
                             
                             const blockedSlot = slots.find(s => s.status === 'blocked');
                             if (blockedSlot) { bId = blockedSlot.block_id; bReason = blockedSlot.block_reason; bNote = blockedSlot.block_note; }
@@ -587,7 +585,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                             <button
                               key={row}
                               onClick={(e) => {
-                                if (status === 'free') {
+                                if (status === 'free' || (status === 'booked' && !activeCalendarId)) {
                                   const rect = e.currentTarget.getBoundingClientRect();
                                   setMenuConfig({
                                     visible: true,

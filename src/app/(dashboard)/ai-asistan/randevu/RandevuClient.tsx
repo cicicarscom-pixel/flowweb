@@ -247,18 +247,16 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     };
   }, [selectedDate, merchantId, supabase]);
 
-  // Load appointments when selected date changes (if not today)
+    // Load appointments when selected date or active calendar changes
   useEffect(() => {
+    let mounted = true;
     async function loadDate() {
       const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
-      setAppointments(data);
+      if (mounted) setAppointments(data || []);
     }
-    if (selectedDate !== today) {
-      loadDate();
-    } else {
-      setAppointments(initialAppointments);
-    }
-  }, [selectedDate, today, initialAppointments, activeCalendarId]);
+    loadDate();
+    return () => { mounted = false; };
+  }, [selectedDate, activeCalendarId]);
 
   // Load available slots when service changes in modal
   useEffect(() => {

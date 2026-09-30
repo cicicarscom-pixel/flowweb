@@ -103,7 +103,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
   const [daySchedule, setDaySchedule] = useState<any[]>([]);
   const [reserveModal, setReserveModal] = useState<any>({ visible: false, time: '', endTime: '' });
-  const [reserveScope, setReserveScope] = useState<any>('doctor');
+  const [reserveScope, setReserveScope] = useState<any>('clinic');
   const [reserveDurationType, setReserveDurationType] = useState<any>('single');
   const [reserveReason, setReserveReason] = useState('meeting');
   const [reserveNote, setReserveNote] = useState('');

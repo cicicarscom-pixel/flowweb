@@ -999,6 +999,9 @@
       "errorPrefix": "Fehler: {error}"
     }
   },
+  "aiAsistan": {
+    "addCalendar": "Kalender hinzufügen"
+  },
   "dashboardAppointments": {
     "appointments": {
       "todayTitle": "Heutige Termine",

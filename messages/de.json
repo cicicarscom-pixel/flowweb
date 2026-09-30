@@ -20,7 +20,8 @@
       "wahaStartFailed": "Konnte nicht gestartet werden",
       "wahaQrFailed": "QR-Code konnte nicht abgerufen werden",
       "wahaPairingCodeFailed": "Kopplungscode konnte nicht abgerufen werden"
-    }
+    },
+    "all": "Alle"
   },
   "nav": {
     "home": "Startseite",

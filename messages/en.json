@@ -20,7 +20,8 @@
       "wahaStartFailed": "Could not start",
       "wahaQrFailed": "Could not retrieve QR code",
       "wahaPairingCodeFailed": "Could not retrieve pairing code"
-    }
+    },
+    "all": "All"
   },
   "nav": {
     "home": "Home",

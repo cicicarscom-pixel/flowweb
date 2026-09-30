@@ -668,7 +668,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                 const palette = CARD_COLORS[i % CARD_COLORS.length];
                 const d = appt.date || '';
                 const rawTime = d.includes('T') ? d.split('T')[1] : d.split(' ')[1] || '';
-                const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
+                const timeStr = appt.starts_at ? new Date(appt.starts_at).toLocaleTimeString('tr-TR', { hour: "2-digit", minute: "2-digit", timeZone: appt.timezone ?? "Europe/Istanbul" }) : rawTime.substring(0, 5);
                 const svcName = appt.services?.length > 0 ? appt.services.join(' + ') : (appt.service_id ? getServiceName(appt.service_id) : null);
 
                 return (
@@ -757,7 +757,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 16 }}>{t('randevuPage.actions.cancelTitle')}</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 16 }}>
               {apptToCancel?.customer_name || t('randevuPage.timeline.unnamedCustomer')} <br/>
-              {apptToCancel?.starts_at ? new Date(apptToCancel.starts_at).toLocaleString(undefined, { timeZone: apptToCancel.timezone ?? "Europe/Istanbul" }) : ''}
+              {apptToCancel?.starts_at ? new Date(apptToCancel.starts_at).toLocaleString('tr-TR', { timeZone: apptToCancel.timezone ?? "Europe/Istanbul" }) : ''}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24 }}>
               <label style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 600 }}>{t('randevuPage.actions.reasonLabel')}</label>

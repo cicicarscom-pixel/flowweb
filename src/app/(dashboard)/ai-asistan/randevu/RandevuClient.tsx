@@ -545,7 +545,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
               </div>
               
               <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}>
-                <div style={{ display: "flex", gap: 6, minHeight: 120 }}>
+                <div style={{ display: "flex", gap: 6 }}>
                   {(() => {
                     const uniqueTimes = Array.from(new Set(daySchedule.map(s => s.local_time))).sort();
                     const morningSlots = uniqueTimes.filter(t => t < '13:00' && t >= '00:01');
@@ -621,7 +621,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
                               onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
                               style={{
                                 position: "relative",
-                                width: 48, height: 32, borderRadius: 8,
+                                width: 52, minWidth: 52, flexShrink: 0, height: 32, borderRadius: 8, padding: 0,
                                 background: bg,
                                 border: border,
                                 display: "flex", alignItems: "center", justifyContent: "center",

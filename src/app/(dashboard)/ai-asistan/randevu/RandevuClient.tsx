@@ -536,194 +536,127 @@ export default function RandevuClient({ initialAppointments, services, merchantI
 
             
             {/* Heatmap Grid */}
-            <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", marginTop: 20 }}>
-              <div style={{ display: "flex", gap: 6, minHeight: 120 }}>
-                {(() => {
-                  const uniqueTimes = Array.from(new Set(daySchedule.map(s => s.local_time))).sort();
-                  const columns = Math.ceil(uniqueTimes.length / 3) || 11;
-                  return Array.from({ length: columns }).map((_, col) => (
-                    <div key={col} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                      {[0, 1, 2].map(row => {
-                        const index = row * columns + col;
-                        const slotTime = uniqueTimes[index];
-                        if (!slotTime) return <div key={row} style={{ width: 44, height: 32 }} />;
-                        
-                        const slots = daySchedule.filter(s => s.local_time === slotTime);
-                        let status = 'free';
-                        let badge = null;
-                        let bId = '', bReason = '', bNote = '';
-
-                        if (activeCalendarId) {
-                          status = slots[0]?.status || 'free';
-                          bId = slots[0]?.block_id; bReason = slots[0]?.block_reason; bNote = slots[0]?.block_note;
-                        } else {
-                          if (slots.every(s => s.status === 'blocked')) status = 'blocked';
-                          else if (slots.some(s => s.status === 'free')) {
-                            status = 'free';
-                            badge = `${slots.filter(s => s.status === 'free').length}/${slots.length}`;
-                          }
-                          else if (slots.every(s => s.status === 'past')) status = 'past';
-                          else status = 'booked';
+            <div style={{ display: "flex", gap: 12, marginTop: 20 }}>
+              {/* Row Labels */}
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-around", paddingBottom: 6 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.morning')}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.noon')}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", textAlign: "right" }}>{t('randevuPage.heatmap.rowLabels.evening')}</span>
+              </div>
+              
+              <div className="hide-scroll" style={{ flex: 1, overflowX: "auto", paddingBottom: 6, overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}>
+                <div style={{ display: "flex", gap: 6, minHeight: 120 }}>
+                  {(() => {
+                    const uniqueTimes = Array.from(new Set(daySchedule.map(s => s.local_time))).sort();
+                    const morningSlots = uniqueTimes.filter(t => t < '13:00' && t >= '00:01');
+                    const noonSlots = uniqueTimes.filter(t => t >= '13:00' && t < '18:30');
+                    const eveningSlots = uniqueTimes.filter(t => t >= '18:30' || t === '00:00');
+                    const maxCols = Math.max(morningSlots.length, noonSlots.length, eveningSlots.length);
+                    
+                    return Array.from({ length: maxCols }).map((_, col) => (
+                      <div key={col} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {[0, 1, 2].map(row => {
+                          const slotTime = row === 0 ? morningSlots[col] : row === 1 ? noonSlots[col] : eveningSlots[col];
+                          if (!slotTime) return <div key={row} style={{ width: 48, height: 32 }} />;
                           
-                          const blockedSlot = slots.find(s => s.status === 'blocked');
-                          if (blockedSlot) { bId = blockedSlot.block_id; bReason = blockedSlot.block_reason; bNote = blockedSlot.block_note; }
-                        }
+                          const slots = daySchedule.filter(s => s.local_time === slotTime);
+                          let status = 'free';
+                          let badge = null;
+                          let bId = '', bReason = '', bNote = '';
 
-                        let bg = "rgba(255,255,255,0.03)", border = "1px solid rgba(255,255,255,0.06)", color = "var(--text-secondary)", opacity = 1;
-                        if (status === 'booked') { bg = "#22B573"; border = "none"; color = "#17151A"; }
-                        else if (status === 'blocked') { bg = "rgba(100,100,100,0.5)"; border = "1px solid #999"; color = "#fff"; }
-                        else if (status === 'past') { opacity = 0.3; }
+                          if (activeCalendarId) {
+                            status = slots[0]?.status || 'free';
+                            bId = slots[0]?.block_id; bReason = slots[0]?.block_reason; bNote = slots[0]?.block_note;
+                          } else {
+                            if (slots.every(s => s.status === 'blocked')) status = 'blocked';
+                            else if (slots.some(s => s.status === 'free')) {
+                              status = 'free';
+                              badge = `${slots.filter(s => s.status === 'free').length}/${slots.length}`;
+                            }
+                            else if (slots.every(s => s.status === 'past')) status = 'past';
+                            else status = 'booked';
+                            
+                            const blockedSlot = slots.find(s => s.status === 'blocked');
+                            if (blockedSlot) { bId = blockedSlot.block_id; bReason = blockedSlot.block_reason; bNote = blockedSlot.block_note; }
+                          }
 
-                        return (
-                          <button
-                            key={row}
-                            onClick={(e) => {
-                              if (status === 'free') setPopover({ type: 'free', time: slotTime, x: e.clientX, y: e.clientY });
-                              else if (status === 'blocked') setPopover({ type: 'blocked', id: bId, reason: bReason, note: bNote, time: slotTime, x: e.clientX, y: e.clientY });
-                            }}
-                            aria-label={`${slotTime}, ${status}`}
-                            style={{
-                              width: 44, height: 32, borderRadius: 8, background: bg, border, opacity, color,
-                              display: "flex", alignItems: "center", justifyContent: "center", position: "relative",
-                              cursor: status === 'past' ? 'default' : 'pointer', transition: "all 0.2s"
-                            }}
-                          >
-                            <span style={{ fontSize: 10, fontWeight: 800 }}>{slotTime}</span>
-                            {badge && <span style={{ position: 'absolute', top: -4, right: -4, background: '#22B573', color: '#fff', fontSize: 8, padding: '2px 4px', borderRadius: 4 }}>{badge}</span>}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ));
-                })()}
+                          let bg = "rgba(255,255,255,0.03)", border = "1px solid rgba(255,255,255,0.06)", color = "var(--text-secondary)", opacity = 1;
+                          if (status === 'booked') { bg = "#22B573"; border = "none"; color = "#17151A"; }
+                          else if (status === 'blocked') { bg = "rgba(100,100,100,0.5)"; border = "1px solid #999"; color = "#fff"; }
+                          else if (status === 'past') { opacity = 0.3; }
+
+                          return (
+                            <button
+                              key={row}
+                              onClick={(e) => {
+                                if (status === 'free') {
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setMenuConfig({
+                                    visible: true,
+                                    x: rect.left,
+                                    y: rect.bottom + window.scrollY,
+                                    options: [
+                                      { label: t('randevu.block.createAppointment'), onClick: () => { setNewApptTime(slotTime); setIsModalVisible(true); } },
+                                      { label: t('randevu.block.reserve'), onClick: () => { setReserveModal({ visible: true, time: slotTime, endTime: add30Mins(slotTime) }); setReserveError(''); setReserveConflicts([]); setReserveDurationType('single'); setReserveScope(activeCalendarId ? 'doctor' : 'clinic'); } }
+                                    ]
+                                  });
+                                } else if (status === 'blocked') {
+                                  const rect = e.currentTarget.getBoundingClientRect();
+                                  setMenuConfig({
+                                    visible: true,
+                                    x: rect.left,
+                                    y: rect.bottom + window.scrollY,
+                                    options: [
+                                      { label: `${bReason}${bNote ? ' - ' + bNote : ''}`, onClick: () => {} },
+                                      { label: t('randevu.block.removeReservation'), onClick: async () => {
+                                          const res = await deleteCalendarBlock(bId);
+                                          if (res.status !== 'SUCCESS') alert(t('musteriler.error'));
+                                          else refreshDaySchedule(activeCalendarId || undefined);
+                                      }, destructive: true }
+                                    ]
+                                  });
+                                }
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
+                              onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                              style={{
+                                position: "relative",
+                                width: 48, height: 32, borderRadius: 8,
+                                background: bg,
+                                border: border,
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                boxShadow: status !== 'free' ? "0 0 10px rgba(34,181,115,0.3)" : "none",
+                                cursor: "pointer", transition: "all 0.2s", opacity
+                              }}
+                            >
+                              <span style={{ fontSize: 10, fontWeight: 800, color }}>
+                                {slotTime}
+                              </span>
+                              {badge && (
+                                <div style={{ position: 'absolute', top: -4, right: -4, background: '#22B573', padding: '2px 4px', borderRadius: 4, fontSize: 8, color: '#fff', fontWeight: 'bold' }}>
+                                  {badge}
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ));
+                  })()}
+                </div>
               </div>
             </div>
             
-            {popover && (
-              <>
-                <div onClick={() => setPopover(null)} style={{ position: 'fixed', inset: 0, zIndex: 9998 }} />
-                <div style={{ position: 'fixed', left: popover.x, top: popover.y + 10, zIndex: 9999, background: '#1c1b1d', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {popover.type === 'free' ? (
-                    <>
-                      <button onClick={() => { setPopover(null); setNewAppt(p => ({ ...p, time: popover.time! })); setIsModalOpen(true); }} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>{t('randevu.block.createAppointment')}</button>
-                      <button onClick={() => { setPopover(null); setReserveModal({ visible: true, time: popover.time!, endTime: add30Mins(popover.time!) }); setReserveError(''); setReserveConflicts([]); setReserveDurationType('single'); setReserveScope(activeCalendarId ? 'doctor' : 'clinic'); }} style={{ padding: '8px 12px', background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>{t('randevu.block.reserve')}</button>
-                    </>
-                  ) : (
-                    <>
-                      {popoverError && <div style={{ color: '#ff4444', fontSize: 11, marginBottom: 4 }}>{popoverError}</div>}
-                      <div style={{ color: '#fff', fontSize: 12, fontWeight: 600 }}>{popover.reason}</div>
-                      {popover.note && <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11 }}>{popover.note}</div>}
-                      <button onClick={async () => {
-                        if (confirm(t('randevu.block.confirmRemove'))) {
-  const res = await deleteCalendarBlock(popover.id!);
-  if (res.data?.status === 'SUCCESS') {
-    setPopoverError('');
-    setPopover(null);
-    const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
-    setDaySchedule(refreshed.data || []);
-  } else {
-    setPopoverError(t('musteriler.error'));
-  }
-
-}
-}} style={{ padding: '8px 12px', background: 'rgba(255,0,0,0.2)', color: '#ff4444', border: 'none', borderRadius: 6, cursor: 'pointer', marginTop: 4 }}>{t('randevu.block.removeReservation')}</button>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
-
-            {reserveModal.visible && (
-              <div style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-                <div style={{ background: '#1c1b1d', border: '1px solid rgba(255,255,255,0.1)', padding: 24, borderRadius: 16, width: 450, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <h3 style={{ color: '#fff', margin: 0 }}>{t('randevu.block.title')}</h3>
-                  
-                  {reserveError && <div style={{ background: 'rgba(255,0,0,0.1)', color: '#ff4444', padding: 8, borderRadius: 6, fontSize: 13 }}>{reserveError}</div>}
-                  {reserveConflicts.length > 0 && (
-                    <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', padding: 12, borderRadius: 8 }}>
-                      <span style={{ color: '#F59E0B', fontSize: 13, fontWeight: 600, display: 'block', marginBottom: 8 }}>{t('randevu.block.conflicts') || 'Bu aralıkta randevular var:'}</span>
-                      <ul style={{ margin: 0, paddingLeft: 20, color: '#F59E0B', fontSize: 12 }}>
-                        {reserveConflicts.map((c: any) => (
-                          <li key={c.id}>{c.customer_name} · {c.starts_at?.split('T')[1]?.substring(0,5)} · {c.calendar_name}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Kapsam</span>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      {activeCalendarId ? (
-                        <>
-                          <button onClick={() => setReserveScope('doctor')} style={{ flex: 1, padding: 8, background: reserveScope === 'doctor' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Doktor</button>
-                          <button onClick={() => setReserveScope('clinic')} style={{ flex: 1, padding: 8, background: reserveScope === 'clinic' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Tüm klinik</button>
-                        </>
-                      ) : (
-                        <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                          <select onChange={e => setReserveScope(e.target.value as any)} value={reserveScope} style={{ flex: 1, padding: 8, background: 'rgba(0,0,0,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, outline: 'none' }}>
-                            <option value="clinic">Tüm klinik</option>
-                            {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                          </select>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Süre</span>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button onClick={() => { setReserveDurationType('single'); setReserveModal((p: any) => ({...p, endTime: add30Mins(p.time)})); }} style={{ flex: 1, padding: 8, background: reserveDurationType === 'single' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Tek slot</button>
-                      <button onClick={() => setReserveDurationType('range')} style={{ flex: 1, padding: 8, background: reserveDurationType === 'range' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Başlangıç-bitiş</button>
-                    </div>
-                  </div>
-
-                  {reserveDurationType === 'range' && (
-                    <div style={{ display: 'flex', gap: 12 }}>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Başlangıç</span>
-                        <input type="time" step="1800" value={reserveModal.time} onChange={e => { const v = e.target.value; setReserveModal((p: any) => ({...p, time: v, endTime: add30Mins(v)})); }} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
-                      </div>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                        <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Bitiş</span>
-                        <input type="time" step="1800" value={reserveModal.endTime} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
-                      </div>
-                    </div>
-                  )}
-
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => setReserveReason('meeting')} style={{ flex: 1, padding: 8, background: reserveReason === 'meeting' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t('randevu.block.reasonMeeting')}</button>
-                    <button onClick={() => setReserveReason('leave')} style={{ flex: 1, padding: 8, background: reserveReason === 'leave' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t('randevu.block.reasonLeave')}</button>
-                    <button onClick={() => setReserveReason('break')} style={{ flex: 1, padding: 8, background: reserveReason === 'break' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t('randevu.block.reasonBreak')}</button>
-                    <button onClick={() => setReserveReason('other')} style={{ flex: 1, padding: 8, background: reserveReason === 'other' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t('randevu.block.reasonOther')}</button>
-                  </div>
-                  <input value={reserveNote} onChange={e => setReserveNote(e.target.value)} placeholder={t('randevu.block.note')} style={{ padding: 12, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
-                  <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 12 }}>
-                    <button onClick={() => setReserveModal({ visible: false, time: '', endTime: '' })} style={{ padding: '10px 16px', background: 'transparent', color: '#fff', border: 'none', cursor: 'pointer' }}>{t('common.cancel')}</button>
-                    <button onClick={async () => {
-                      setReserveError(''); setReserveConflicts([]);
-                      const blockCalId = reserveScope === 'clinic' ? null : (activeCalendarId || reserveScope);
-                      const res = await createCalendarBlock(blockCalId, `${selectedDate}T${reserveModal.time}:00`, `${selectedDate}T${reserveModal.endTime}:00`, reserveReason, reserveNote);
-                      
-                      if (res.data?.status === 'SUCCESS') {
-                        setReserveModal({ visible: false, time: '', endTime: '' });
-                        const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
-                        setDaySchedule(refreshed.data || []);
-                      } else if (res.data?.status === 'CONFLICTS_WITH_APPOINTMENTS') {
-                        setReserveConflicts(res.data.appointments || []);
-                      } else if (res.data?.status === 'INVALID_RANGE') {
-                        setReserveError(t('randevu.block.invalidRange'));
-                      } else {
-                        setReserveError(t('musteriler.error'));
-                      }
-                    }} style={{ padding: '10px 16px', background: '#22B573', color: '#17151A', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}>{t('randevu.block.save')}</button>
-                  </div>
-                </div>
-              </div>
-            )}
-            
+            <div style={{ marginTop: 24, padding: "16px", background: "rgba(255,122,89,0.05)", borderRadius: 16, border: "1px dashed rgba(255,122,89,0.3)", display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 24 }}>💡</span>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.5 }}>
+                {t('randevuPage.heatmap.tip')}
+              </p>
+            </div>
           </div>
         </div>
-{/* Timeline */}
+
+        {/* Timeline */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 10 }}>
             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fff", margin: "0 0 8px 0" }}>{t('randevuPage.timeline.title', { date: selectedDate.split('-').reverse().join('.') })}</h3>
 

@@ -374,9 +374,16 @@
       "backToAccountingPanel": "Back to Accounting Panel",
       "defaultFirmName": "Your Accountant",
       "defaultRepresentative": "Accountant Representative",
-      "sampleFirmName": "Sample Accounting Firm",
-      "sampleAccountantName": "Sample Accountant",
-      "enterValidCodeAlert": "Please enter a valid accountant code."
+      "enterValidCodeAlert": "Please enter a valid accountant code.",
+      "pendingTitle": "Your connection request was sent",
+      "pendingDescription": "Your connection will be active once {firm} approves it.",
+      "cancelRequest": "Withdraw request",
+      "disconnect": "Disconnect",
+      "disconnectConfirm": "Your connection with {firm} will end and your advisor will no longer access your documents. Are you sure?",
+      "connectedSince": "Connected since: {date}",
+      "codeNotFound": "No advisor found for this code.",
+      "alreadyConnected": "You are already connected to this advisor.",
+      "actionError": "Something went wrong, please try again."
     },
     "odemeTakvimi": {
       "title": "Payment Calendar",

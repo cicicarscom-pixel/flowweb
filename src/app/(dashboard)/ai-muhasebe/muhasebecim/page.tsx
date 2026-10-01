@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function MuhasebecimPage() {
   const t = useTranslations();
-  const [step, setStep] = useState<'initial' | 'verified' | 'connected'>('initial');
+  const [step, setStep] = useState<'initial' | 'verified' | 'connected' | 'pending_confirmation'>('initial');
   const [accountantCode, setAccountantCode] = useState('');
   const [firm, setFirm] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,60 +19,18 @@ export default function MuhasebecimPage() {
 
   const checkConnection = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      const { data, error } = await supabase.rpc('get_my_accountant_connection');
+      if (error) throw error;
 
-      const { data: orgMember } = await supabase
-        .from('organization_members')
-        .select('organization_id')
-        .eq('user_id', session.user.id)
-        .limit(1).maybeSingle();
-
-      if (orgMember?.organization_id) {
-        const { data: link } = await supabase
-          .from('accountant_taxpayer_links')
-          .select('accounting_firm_id')
-          .eq('taxpayer_organization_id', orgMember.organization_id)
-          .eq('status', 'active')
-          .maybeSingle();
-
-          if (link?.accounting_firm_id) {
-          const { data: firmInfo } = await supabase
-            .from('accounting_firms')
-            .select(`
-              name,
-              accounting_firm_members (
-                profiles (
-                  authorized_person,
-                  avatar_url,
-                  phone,
-                  email
-                )
-              )
-            `)
-            .eq('id', link.accounting_firm_id)
-            .maybeSingle();
-
-          if (firmInfo) {
-            let accountantProfile = null;
-            if (firmInfo.accounting_firm_members && firmInfo.accounting_firm_members.length > 0) {
-              // Extract the first member's profile
-              const member = Array.isArray(firmInfo.accounting_firm_members) ? firmInfo.accounting_firm_members[0] : firmInfo.accounting_firm_members;
-              if (member && member.profiles) {
-                 accountantProfile = Array.isArray(member.profiles) ? member.profiles[0] : member.profiles;
-              }
-            }
-
-            setFirm({
-              name: firmInfo.name || t("aiMuhasebePage.muhasebecim.defaultFirmName"),
-              authorized_person: accountantProfile?.authorized_person || t("aiMuhasebePage.muhasebecim.defaultRepresentative"),
-              avatar_url: accountantProfile?.avatar_url || null,
-              phone: accountantProfile?.phone || '-',
-              email: accountantProfile?.email || '-'
-            });
-            setStep('connected');
-          }
-        }
+      if (data?.status === 'active') {
+        setFirm({ name: data.firm_name, connected_at: data.connected_at });
+        setStep('connected');
+      } else if (data?.status === 'pending_confirmation') {
+        setFirm({ name: data.firm_name, requested_at: data.requested_at });
+        setStep('pending_confirmation');
+      } else {
+        setFirm(null);
+        setStep('initial');
       }
     } catch (err) {
       console.error('Error checking connection:', err);
@@ -81,33 +39,78 @@ export default function MuhasebecimPage() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (accountantCode.trim().length > 0) {
       setIsLoading(true);
-      // Simulate API verification
-      setTimeout(() => {
-        setFirm({
-          name: t("aiMuhasebePage.muhasebecim.sampleFirmName"),
-          authorized_person: t("aiMuhasebePage.muhasebecim.sampleAccountantName"),
-          avatar_url: null,
-          phone: '-',
-          email: '-'
-        });
+      try {
+        const { data, error } = await supabase.rpc('resolve_accountant_code', { input_code: accountantCode.trim() });
+        if (error) throw error;
+
+        if (data?.status === 'SUCCESS') {
+          setFirm({ name: data.firm_name });
+          setStep('verified');
+        } else if (data?.status === 'CODE_NOT_FOUND') {
+          alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
+        } else {
+          alert(t("aiMuhasebePage.muhasebecim.actionError"));
+        }
+      } catch (err) {
+        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+      } finally {
         setIsLoading(false);
-        setStep('verified');
-      }, 800);
+      }
     } else {
       alert(t("aiMuhasebePage.muhasebecim.enterValidCodeAlert"));
     }
   };
 
-  const handleConnectFinal = () => {
+  const handleConnectFinal = async () => {
     setIsLoading(true);
-    // Simulate final connection
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.rpc('request_accountant_connection', { p_code: accountantCode.trim() });
+      if (error) throw error;
+
+      if (data?.status === 'SUCCESS' || data?.status === 'REQUEST_PENDING') {
+        setStep('pending_confirmation');
+      } else if (data?.status === 'ALREADY_CONNECTED') {
+        alert(t("aiMuhasebePage.muhasebecim.alreadyConnected"));
+        checkConnection();
+      } else if (data?.status === 'CODE_NOT_FOUND') {
+        alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
+      } else {
+        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+      }
+    } catch (err) {
+      alert(t("aiMuhasebePage.muhasebecim.actionError"));
+    } finally {
       setIsLoading(false);
-      setStep('connected');
-    }, 1000);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.rpc('cancel_accountant_request');
+      if (error) throw error;
+      checkConnection();
+    } catch (err) {
+      alert(t("aiMuhasebePage.muhasebecim.actionError"));
+      setIsLoading(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (window.confirm(t("aiMuhasebePage.muhasebecim.disconnectConfirm", { firm: firm?.name }))) {
+      setIsLoading(true);
+      try {
+        const { error } = await supabase.rpc('disconnect_current_accountant', { p_reason: 'User request' });
+        if (error) throw error;
+        checkConnection();
+      } catch (err) {
+        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+        setIsLoading(false);
+      }
+    }
   };
 
   return (
@@ -168,30 +171,6 @@ export default function MuhasebecimPage() {
               </div>
             </div>
 
-            {/* Share Code Card */}
-            <div className="bg-[#1a1b22] border border-white/10 rounded-xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <i className="fa-solid fa-share-nodes text-[#FF7A59]"></i>
-                <h3 className="text-lg font-medium text-on-surface">{t("aiMuhasebePage.muhasebecim.shareYourCode")}</h3>
-              </div>
-              <p className="text-sm text-on-surface-variant mb-6">
-                {t("aiMuhasebePage.muhasebecim.shareYourCodeDescription")}
-              </p>
-
-              <div className="flex justify-between items-center bg-[#0e0e11] border border-white/5 rounded-lg px-5 py-4">
-                <span className="text-xl font-bold tracking-widest text-[#FF7A59]">WG-73492</span>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText('WG-73492');
-                    alert(t("aiMuhasebePage.muhasebecim.copiedAlert"));
-                  }}
-                  className="text-on-surface-variant hover:text-white transition-colors"
-                >
-                  <i className="fa-regular fa-copy text-xl"></i>
-                </button>
-              </div>
-            </div>
-
             {step === 'verified' && firm && (
               <div className="bg-[#1a1b22] border border-[#22B573]/30 rounded-xl p-6 animate-in fade-in zoom-in-95 duration-300">
                 <div className="flex items-center gap-2 text-[#22B573] mb-6">
@@ -230,7 +209,24 @@ export default function MuhasebecimPage() {
           </div>
         )}
 
-        {/* Connected State */}
+        {step === 'pending_confirmation' && (
+            <div className="bg-[#1a1b22] border border-[#F59E0B]/30 rounded-xl p-8 text-center animate-in fade-in zoom-in-95 duration-300">
+              <i className="fa-solid fa-hourglass-empty text-4xl text-[#F59E0B] mb-4"></i>
+              <h2 className="text-2xl font-bold text-on-surface mb-2">{t("aiMuhasebePage.muhasebecim.pendingTitle")}</h2>
+              <p className="text-on-surface-variant text-sm mb-8">
+                {t("aiMuhasebePage.muhasebecim.pendingDescription", { firm: firm?.name })}
+              </p>
+              <button
+                onClick={handleCancelRequest}
+                disabled={isLoading}
+                className="bg-transparent border border-[#FCA5A5] text-[#FCA5A5] px-6 py-3 rounded-lg font-semibold hover:bg-[#FCA5A5]/10 transition-colors disabled:opacity-70"
+              >
+                {isLoading ? '...' : t("aiMuhasebePage.muhasebecim.cancelRequest")}
+              </button>
+            </div>
+          )}
+          
+          {/* Connected State */}
         {step === 'connected' && (
           <div className="animate-in fade-in zoom-in-95 duration-500 flex flex-col items-center">
             

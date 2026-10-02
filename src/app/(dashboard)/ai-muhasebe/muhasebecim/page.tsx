@@ -15,6 +15,17 @@ export default function MuhasebecimPage() {
 
   useEffect(() => {
     checkConnection();
+    // Müşavir isteği kabul/ret ettiğinde ya da bağlantıyı kestiğinde sayfa kendiliğinden güncellenir.
+    // RLS: işletme yalnız kendi bağlantı olaylarını alır.
+    const channel = supabase
+      .channel('my-accountant-connection')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'accountant_taxpayer_links' }, () => {
+        checkConnection();
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const checkConnection = async () => {

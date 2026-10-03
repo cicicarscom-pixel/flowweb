@@ -147,15 +147,27 @@ export default function SharePage() {
       const base64Data = isBase64 ? localImage?.split(',')[1] : undefined;
       const mimeType = isBase64 ? localImage?.match(/data:(.*?);/)?.[1] : undefined;
       
-      const { data, error } = await supabase.functions.invoke('flow-gemini-chat', {
+      // Tek metin servisi (flow-caption, JWT'li): persona tonu + platform kuralları + günlük sınır sunucuda uygulanır.
+      // Mobil AI Üretim ile aynı servis ve aynı kurallar. Video gönderilmez (AI metni ürün fotoğrafı/reklam içindir).
+      const selectedNames = Object.keys(selectedPlatforms).filter((p) => selectedPlatforms[p]);
+      const { data, error } = await supabase.functions.invoke('flow-caption', {
         body: {
-          prompt: `SADECE bir sosyal medya gönderi metni (caption) üret. KESİNLİKLE yeni bir görsel üretme. Eğer sana bir görsel verildiyse o görseli analiz et ve şu kullanıcı talimatına göre metin yaz: ${aiPrompt}`,
-          image: isBase64 ? base64Data : undefined,
+          brief: aiPrompt,
+          platforms: selectedNames,
+          media: isBase64 ? base64Data : undefined,
           mimeType: isBase64 ? mimeType : undefined
         }
       });
 
       if (error || data?.error) {
+        let code: string | undefined = data?.error;
+        if (error) {
+          try { code = (await (error as any).context?.json?.())?.error; } catch { /* gövde okunamadı */ }
+        }
+        if (code === 'DAILY_LIMIT') {
+          alert(t("sharePage.errors.captionLimit"));
+          return;
+        }
         throw new Error(error?.message || data?.error);
       }
 
@@ -550,6 +562,12 @@ export default function SharePage() {
                   )}
                 </button>
               </div>
+              <p
+                data-testid="ai-caption-note"
+                className={`text-[11px] leading-4 mb-4 ${localImage?.startsWith('data:video') ? 'text-[#F5A524] font-semibold' : 'text-[#A79E96]/80'}`}
+              >
+                {t("sharePage.captionEditor.aiCaptionNote")}
+              </p>
 
               <div className="flex flex-wrap gap-2 items-center mt-2">
                 {tags.map(tag => (

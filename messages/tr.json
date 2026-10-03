@@ -819,6 +819,7 @@
       "editPlaceholder": "Yapay zeka tarafından üretilen metin veya kendi metniniz...",
       "emptyPreview": "Yapay zeka tarafından oluşturulan içerik metni burada görünecek. Gelişmiş dil modelleri ile hedef kitlenize uygun metinler hazırlanıyor...",
       "aiPromptPlaceholder": "Görselle uyumlu bir metin üret...",
+      "aiCaptionNote": "ℹ️ AI ile içerik metni yalnızca ürün fotoğrafları ve reklam gönderileri için kullanılabilir. Videolarda çalışmaz; video gönderilerinde metni kendin yaz.",
       "addTagButton": "Etiket ekle"
     },
     "accounts": {
@@ -881,7 +882,8 @@
       "noPlatform": "Lütfen en az bir platform seçin.",
       "invalidDateFormat": "Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.",
       "publishFailed": "Gönderi paylaşılırken bir hata oluştu: {message}",
-      "captionGenerationFailed": "Hata: {message}"
+      "captionGenerationFailed": "Hata: {message}",
+      "captionLimit": "Bugünlük gönderi metni üretim sınırına ulaştın. Yarın tekrar dene."
     },
     "success": {
       "published": "Gönderi başarıyla paylaşıldı!"

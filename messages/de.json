@@ -819,6 +819,7 @@
       "editPlaceholder": "KI-generierter Text oder Ihr eigener Text...",
       "emptyPreview": "Der von der KI erstellte Inhaltstext wird hier angezeigt. Fortschrittliche Sprachmodelle erstellen passende Texte für Ihre Zielgruppe...",
       "aiPromptPlaceholder": "Zum Bild passenden Text generieren...",
+      "aiCaptionNote": "ℹ️ Der KI-Beitragstext funktioniert nur für Produktfotos und Werbebeiträge. Bei Videos funktioniert er nicht; schreibe den Text bei Videobeiträgen selbst.",
       "addTagButton": "Tag hinzufügen"
     },
     "accounts": {
@@ -881,7 +882,8 @@
       "noPlatform": "Bitte wählen Sie mindestens eine Plattform aus.",
       "invalidDateFormat": "Ungültiges Datumsformat. Bitte im Format 'TAG.MONAT.JAHR STUNDE:MINUTE' eingeben (z. B. 16.08.2026 16:26).",
       "publishFailed": "Beim Teilen des Beitrags ist ein Fehler aufgetreten: {message}",
-      "captionGenerationFailed": "Fehler: {message}"
+      "captionGenerationFailed": "Fehler: {message}",
+      "captionLimit": "Du hast das heutige Limit für Beitragstexte erreicht. Versuche es morgen erneut."
     },
     "success": {
       "published": "Beitrag erfolgreich geteilt!"

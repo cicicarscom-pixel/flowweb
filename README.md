@@ -128,6 +128,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 3. Tasarımdaki form öğeleri ve dinamik chart verileri, dış kütüphanelere yük bindirmemek için statik arayüz iskeletleri (React skeleton) olarak kodlanmalıdır.
 
 ## 📌 Son Güncellemeler
+
+- **[03.10.2026] Paylaş ekranı metin üretimi tek servise taşındı:** AI içerik metni artık `flow-caption` Edge Function'ını (JWT'li) çağırır; mobil AI Üretim ile aynı servis ve aynı kurallar (persona tonu, platform karakter sınırı, günlük sınır, kullanım ölçümü). Metin girişinin altına kapsam notu eklendi: AI içerik metni yalnızca ürün fotoğrafları ve reklam gönderileri içindir, videolarda çalışmaz (video seçiliyken not amber/kalın görünür). Çeviriler `sharePage.captionEditor.aiCaptionNote` ve `sharePage.errors.captionLimit` (tr/en/de).
 - 13 farklı statik HTML tasarımı Next.js'e başarıyla uyarlandı.
 - Vercel üretim ortamı derleme testleri (Build) 0 hata ile tamamlandı.
 - **Düzen ve Ölçeklendirme:** Genel `globals.css` üzerindeki font küçültme (14px) kaldırılarak orjinal boyutlar (%100 ölçekleme) geri getirildi. `layout.tsx` iskeleti `w-full` ile esnek hale getirilerek sayfaların (örn. Ai Muhasebe) ekrana tam oturması sağlandı.

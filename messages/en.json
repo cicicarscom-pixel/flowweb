@@ -819,6 +819,7 @@
       "editPlaceholder": "AI-generated text or your own text...",
       "emptyPreview": "AI-generated content text will appear here. Advanced language models are preparing text tailored to your audience...",
       "aiPromptPlaceholder": "Generate text that matches the image...",
+      "aiCaptionNote": "ℹ️ AI-written post text works only for product photos and advertising posts. It does not work for videos; write the text yourself for video posts.",
       "addTagButton": "Add tag"
     },
     "accounts": {
@@ -881,7 +882,8 @@
       "noPlatform": "Please select at least one platform.",
       "invalidDateFormat": "Invalid date format. Please enter it as 'DAY.MONTH.YEAR HOUR:MINUTE' (e.g. 16.08.2026 16:26).",
       "publishFailed": "An error occurred while sharing the post: {message}",
-      "captionGenerationFailed": "Error: {message}"
+      "captionGenerationFailed": "Error: {message}",
+      "captionLimit": "You've reached today's caption generation limit. Try again tomorrow."
     },
     "success": {
       "published": "Post shared successfully!"

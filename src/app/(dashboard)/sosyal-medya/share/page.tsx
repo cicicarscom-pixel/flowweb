@@ -355,23 +355,33 @@ export default function SharePage() {
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) throw new Error("No session");
           
-          const file = new File([blob], "image.jpg", { type: blob.type });
-          const { compressImage } = await import('@/lib/imageCompress');
-          const compressedFile = await compressImage(file);
-          
-          const ext = 'jpg';
+          // Medya türü blob'dan okunur: video, görsel gibi .jpg/image/jpeg DAMGALANMAZ (aksi halde YouTube gibi
+          // platformlar "video gerekli" hatası verir). Yalnız görseller sıkıştırılır.
+          const mime = blob.type || 'application/octet-stream';
+          const isVideoBlob = mime.startsWith('video/');
+          let uploadBody: Blob | File = blob;
+          let uploadMime = mime;
+          let ext = isVideoBlob ? (mime.split('/')[1] || 'mp4').split(';')[0].replace('quicktime', 'mov') : 'jpg';
+          if (!isVideoBlob) {
+            const file = new File([blob], "image.jpg", { type: mime });
+            const { compressImage } = await import('@/lib/imageCompress');
+            uploadBody = await compressImage(file);
+            uploadMime = 'image/jpeg';
+            ext = 'jpg';
+          }
+
           const fileName = `${session.user.id}/post-${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
-          
-          const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, compressedFile, {
+
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(fileName, uploadBody, {
             cacheControl: '3600',
             upsert: false,
-            contentType: 'image/jpeg'
+            contentType: uploadMime
           });
-          
+
           if (uploadError) throw new Error("Storage Upload Error: " + uploadError.message);
-          
+
           const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-          finalMediaItems = [{ url: publicUrlData.publicUrl }];
+          finalMediaItems = [{ url: publicUrlData.publicUrl, type: isVideoBlob ? 'video' : 'image', mimeType: uploadMime }];
         } else {
           finalMediaItems = [{ url: localImage }];
         }

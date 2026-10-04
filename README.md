@@ -129,6 +129,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[04.10.2026] Paylaşım Merkezi video yükleme düzeltmesi:** video, depolamaya her zaman `image.jpg` adı ve `image/jpeg` türüyle yükleniyordu; bu yüzden YouTube'a "videoya ihtiyaç var" hatası dönüyordu. Artık tür dosyadan okunur: video orijinal türü/uzantısıyla (sıkıştırılmadan), görsel sıkıştırılıp `.jpg` olarak yüklenir; `mediaItems` içine `type`/`mimeType` eklenir.
+
 ### [04.10.2026] Faz F4-1 — İstemci artık kimlik göndermiyor
 - Randevu, müşteri/hizmet, takvim, bot ayarları, AI kişilik ayarları ve gelen kutusu günlüklerinde `merchant_id` / `organization_id = session.user.id` filtreleri ve yazma alanları **kaldırıldı**. İşletme kimliği veritabanında çözülür: RLS satırları kapsar, yazılan satırların `org_id` sütunu `DEFAULT current_org_id()` ile dolar (`src/lib/org.ts` → `getCurrentOrgId`, silme/toplu güncelleme gibi filtre gereken yerlerde).
 - `organization_ai_settings` upsert çakışma anahtarı `merchant_id` → `org_id`. `getBusinessServices()` / `createBusinessService(formData)` artık kimlik parametresi almaz. `RandevuClient` prop'u `merchantId` → `orgId` (realtime filtresi `org_id=eq.…`).

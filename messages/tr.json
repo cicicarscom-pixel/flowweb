@@ -119,10 +119,6 @@
       "humorLevel": "Mizah Seviyesi",
       "modernAdaptation": "Modern Uyarlama"
     },
-    "customRole": {
-      "label": "Kendi iş kolunu yaz",
-      "placeholder": "Listede yoksa kendi iş kolunuzu yazın (ör. Halı yıkama)"
-    },
     "otherRole": "Diğer",
     "loading": "Karakterler yükleniyor...",
     "empty": "Şu an seçilebilecek yayınlanmış bir karakter yok.",
@@ -158,6 +154,15 @@
       "dedikoducu": "Dedikoducu",
       "huysuz": "Huysuz",
       "sinirli": "Sinirli"
+    },
+    "addRole": {
+      "card": "Ekle",
+      "title": "Kendi işletme rolünü ekle",
+      "placeholder": "Rolünü yaz (ör. Muhalif haber sayfası)",
+      "save": "Ekle",
+      "cancel": "Vazgeç",
+      "remove": "Rolü sil",
+      "error": "Rol eklenemedi (en fazla 20 rol eklenebilir)."
     }
   },
   "aiAsistanPage": {

@@ -10,7 +10,10 @@
 // render once a real persona is selected — "Standart" has no dials to tune.
 // ==============================================================================
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { createClient } from "@/lib/supabase/client";
+import PersonaCard from "./PersonaCard";
 import { PillItem } from "./PillGroup";
 import RoleCarousel from "./RoleCarousel";
 import ToneCarousel from "./ToneCarousel";
@@ -129,6 +132,50 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
     ...r,
     label: t(`personas.roles.${ROLE_KEY_BY_ID[r.id]}`),
   }));
+  // Kullanıcının eklediği roller (custom_business_roles; kimlik RLS ile çözülür). Seçili rol listede yoksa
+  // (eski serbest metin) geçici kart olarak gösterilir.
+  const supabase = createClient();
+  const [customRoles, setCustomRoles] = useState<{ id: string; label: string }[]>([]);
+  const [addOpen, setAddOpen] = useState(false);
+  const [newRole, setNewRole] = useState("");
+  const [addError, setAddError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    supabase.from("custom_business_roles").select("id, label").order("created_at", { ascending: true })
+      .then(({ data }) => { if (alive && data) setCustomRoles(data as any); });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const addRole = async () => {
+    const label = newRole.replace(/\s+/g, " ").trim().slice(0, 60);
+    if (!label) return;
+    setAddError(null);
+    const existing = customRoles.find((r) => r.label.toLowerCase() === label.toLowerCase());
+    if (existing) { props.onSelectRole(existing.label); setAddOpen(false); setNewRole(""); return; }
+    const { data, error } = await supabase.from("custom_business_roles").insert({ label }).select("id, label").single();
+    if (error || !data) { setAddError(t("personas.addRole.error")); return; }
+    setCustomRoles((r) => [...r, data as any]);
+    props.onSelectRole((data as any).label);
+    setAddOpen(false);
+    setNewRole("");
+  };
+
+  const removeRole = async (id: string) => {
+    const role = customRoles.find((r) => r.id === id);
+    const { error } = await supabase.from("custom_business_roles").delete().eq("id", id);
+    if (error) return;
+    setCustomRoles((r) => r.filter((x) => x.id !== id));
+    if (role && props.selectedRole === role.label) props.onSelectRole("");
+  };
+
+  const builtinIds = new Set(ROLES.map((r) => r.id));
+  const customCards = customRoles.map((r) => ({ id: r.label, label: r.label, icon: "🏷️", onRemove: () => removeRole(r.id) }));
+  const orphanSelected = props.selectedRole && !builtinIds.has(props.selectedRole) && !customRoles.some((r) => r.label === props.selectedRole)
+    ? [{ id: props.selectedRole, label: props.selectedRole, icon: "🏷️" }] : [];
+  const allRoles = [...orphanSelected, ...customCards, ...translatedRoles];
+
   const translatedTones = TONES.map((tn) => ({
     ...tn,
     label: t(`personas.tones.${TONE_KEY_BY_ID[tn.id]}`),
@@ -151,17 +198,45 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
         <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.06em", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
           <span>🏢</span> {t("personas.sectionLabels.businessRole")}
         </p>
-        <RoleCarousel roles={translatedRoles} selectedId={props.selectedRole} onSelect={props.onSelectRole} />
-        {/* Listede olmayan iş kolu: serbest metin (mobildeki "Diğer" ile aynı; business_role'e ham metin yazılır) */}
-        <input
-          type="text"
-          maxLength={60}
-          value={ROLES.some((r) => r.id === props.selectedRole) ? "" : props.selectedRole}
-          onChange={(e) => props.onSelectRole(e.target.value)}
-          placeholder={t("personas.customRole.placeholder")}
-          aria-label={t("personas.customRole.label")}
-          style={{ marginTop: 12, width: "100%", padding: "10px 14px", borderRadius: 12, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff", fontSize: 14, outline: "none" }}
+        <RoleCarousel
+          roles={allRoles}
+          selectedId={props.selectedRole}
+          onSelect={props.onSelectRole}
+          removeLabel={t("personas.addRole.remove")}
+          leading={
+            <PersonaCard
+              label={t("personas.addRole.card")}
+              icon="➕"
+              accentColor="#22B573"
+              selected={addOpen}
+              onSelect={() => { setAddOpen((v) => !v); setAddError(null); }}
+              title={t("personas.addRole.title")}
+              compact
+            />
+          }
         />
+        {addOpen && (
+          <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <input
+              type="text"
+              autoFocus
+              maxLength={60}
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") addRole(); }}
+              placeholder={t("personas.addRole.placeholder")}
+              aria-label={t("personas.addRole.title")}
+              style={{ flex: 1, minWidth: 200, padding: "10px 14px", borderRadius: 12, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff", fontSize: 14, outline: "none" }}
+            />
+            <button type="button" disabled={!newRole.trim()} onClick={addRole} style={{ padding: "10px 18px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#22B573,#16a34a)", color: "#fff", fontWeight: 700, cursor: newRole.trim() ? "pointer" : "not-allowed", opacity: newRole.trim() ? 1 : 0.5 }}>
+              {t("personas.addRole.save")}
+            </button>
+            <button type="button" onClick={() => { setAddOpen(false); setNewRole(""); setAddError(null); }} style={{ padding: "10px 14px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.12)", background: "transparent", color: "#A79E96", cursor: "pointer" }}>
+              {t("personas.addRole.cancel")}
+            </button>
+            {addError && <p style={{ width: "100%", color: "#EF4444", fontSize: 12 }}>{addError}</p>}
+          </div>
+        )}
       </div>
 
       <div style={{ marginBottom: 24 }}>

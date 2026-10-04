@@ -129,6 +129,9 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] Özel işletme rolü kartları:** AI Asistan > İşletme Rolü listesinin başına "Ekle" kartı geldi. Tıklayınca rol yazılır (ör. "Muhalif haber sayfası"), kart olarak listeye eklenir, seçilir ve kaydedilince asistan o iş koluna göre davranır; × ile silinir (en fazla 20 rol). Roller `custom_business_roles` tablosunda işletmeye özel tutulur (RLS, kimlik gönderilmez). Önceki serbest metin kutusu kaldırıldı.
+## 📌 Son Güncellemeler
+
 - **[05.10.2026] Paylaşım Merkezi:** "Ne paylaşalım?" kutusu kaldırıldı (içerik yalnız "İçerik Metni" alanından yazılır). Kullanılmayan `sharePage.contentInput` çevirileri silindi.
 ## 📌 Son Güncellemeler
 

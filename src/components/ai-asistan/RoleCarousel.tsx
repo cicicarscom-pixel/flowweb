@@ -12,19 +12,22 @@
 // Sürükleyerek kaydırma davranışı PersonaCarousel'den birebir taşındı.
 // ==============================================================================
 
-import { useRef, useState, MouseEvent } from "react";
+import { useRef, useState, MouseEvent, ReactNode } from "react";
 import PersonaCard from "./PersonaCard";
 import type { PillItem } from "./PillGroup";
 
 const ROLE_ACCENT = "#C2478D";
 
 interface RoleCarouselProps {
-  roles: (PillItem & { avatarUrl?: string | null })[];
+  roles: (PillItem & { avatarUrl?: string | null; onRemove?: () => void })[];
   selectedId: string;
   onSelect: (id: string) => void;
+  /** Listenin başında duran ekstra kart(lar) (ör. "Ekle" kartı). */
+  leading?: ReactNode;
+  removeLabel?: string;
 }
 
-export default function RoleCarousel({ roles, selectedId, onSelect }: RoleCarouselProps) {
+export default function RoleCarousel({ roles, selectedId, onSelect, leading, removeLabel }: RoleCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -83,18 +86,31 @@ export default function RoleCarousel({ roles, selectedId, onSelect }: RoleCarous
           display: none;
         }
       `}</style>
+      {leading}
       {roles.map((r) => (
-        <PersonaCard
-          key={r.id}
-          label={r.label}
-          icon={r.icon}
-          avatarUrl={r.avatarUrl}
-          accentColor={ROLE_ACCENT}
-          selected={selectedId === r.id}
-          onSelect={() => onSelect(r.id)}
-          title={r.label}
-          compact
-        />
+        <div key={r.id} style={{ position: "relative", flexShrink: 0 }}>
+          <PersonaCard
+            label={r.label}
+            icon={r.icon}
+            avatarUrl={r.avatarUrl}
+            accentColor={ROLE_ACCENT}
+            selected={selectedId === r.id}
+            onSelect={() => onSelect(r.id)}
+            title={r.label}
+            compact
+          />
+          {r.onRemove && (
+            <button
+              type="button"
+              aria-label={removeLabel}
+              title={removeLabel}
+              onClick={(e) => { e.stopPropagation(); r.onRemove?.(); }}
+              style={{ position: "absolute", top: 6, right: 6, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(0,0,0,0.55)", color: "#fff", fontSize: 11, lineHeight: "20px", cursor: "pointer", padding: 0 }}
+            >
+              ×
+            </button>
+          )}
+        </div>
       ))}
     </div>
   );

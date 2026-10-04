@@ -119,10 +119,6 @@
       "humorLevel": "Humor Level",
       "modernAdaptation": "Modern Adaptation"
     },
-    "customRole": {
-      "label": "Enter your own business type",
-      "placeholder": "If it is not in the list, type your own business type (e.g. Carpet cleaning)"
-    },
     "otherRole": "Other",
     "loading": "Loading characters...",
     "empty": "No published character available to select right now.",
@@ -158,6 +154,15 @@
       "dedikoducu": "Gossipy",
       "huysuz": "Grumpy",
       "sinirli": "Irritable"
+    },
+    "addRole": {
+      "card": "Add",
+      "title": "Add your own business role",
+      "placeholder": "Type your role (e.g. Opposition news page)",
+      "save": "Add",
+      "cancel": "Cancel",
+      "remove": "Delete role",
+      "error": "Could not add the role (up to 20 roles)."
     }
   },
   "aiAsistanPage": {

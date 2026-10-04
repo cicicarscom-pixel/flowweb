@@ -70,7 +70,6 @@ export default function BotScreen() {
       const { data: botData } = await supabase
         .from('bot_settings')
         .select('whatsapp_bot_active, is_active')
-        .eq('merchant_id', session.user.id)
         .maybeSingle();
 
       if (botData) {
@@ -209,13 +208,12 @@ export default function BotScreen() {
     const { data: existingData } = await supabase
       .from('bot_settings')
       .select('id')
-      .eq('merchant_id', session.user.id)
       .limit(1);
 
     if (existingData && existingData.length > 0) {
-      await supabase.from('bot_settings').update(updateData).eq('merchant_id', session.user.id);
+      await supabase.from('bot_settings').update(updateData).eq('id', existingData[0].id);
     } else {
-      await supabase.from('bot_settings').insert([{ merchant_id: session.user.id, ...updateData }]);
+      await supabase.from('bot_settings').insert([{ ...updateData }]);
     }
   };
 

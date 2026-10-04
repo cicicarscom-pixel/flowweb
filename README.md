@@ -129,6 +129,11 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+### [04.10.2026] Faz F4-1 — İstemci artık kimlik göndermiyor
+- Randevu, müşteri/hizmet, takvim, bot ayarları, AI kişilik ayarları ve gelen kutusu günlüklerinde `merchant_id` / `organization_id = session.user.id` filtreleri ve yazma alanları **kaldırıldı**. İşletme kimliği veritabanında çözülür: RLS satırları kapsar, yazılan satırların `org_id` sütunu `DEFAULT current_org_id()` ile dolar (`src/lib/org.ts` → `getCurrentOrgId`, silme/toplu güncelleme gibi filtre gereken yerlerde).
+- `organization_ai_settings` upsert çakışma anahtarı `merchant_id` → `org_id`. `getBusinessServices()` / `createBusinessService(formData)` artık kimlik parametresi almaz. `RandevuClient` prop'u `merchantId` → `orgId` (realtime filtresi `org_id=eq.…`).
+- Bilerek DOKUNULMADI: `persona-test` çağrısındaki `merchantId` (fonksiyon canlıda eski paketle çalışıyor, deploy edilmeyecek) ve `waha.ts` içindeki WAHA oturum adı (`user.id`; değişirse canlı WhatsApp oturumları kopar).
+
 - **[03.10.2026] Paylaş ekranı metin üretimi tek servise taşındı:** AI içerik metni artık `flow-caption` Edge Function'ını (JWT'li) çağırır; mobil AI Üretim ile aynı servis ve aynı kurallar (persona tonu, platform karakter sınırı, günlük sınır, kullanım ölçümü). Metin girişinin altına kapsam notu eklendi: AI içerik metni yalnızca ürün fotoğrafları ve reklam gönderileri içindir, videolarda çalışmaz (video seçiliyken not amber/kalın görünür). Çeviriler `sharePage.captionEditor.aiCaptionNote` ve `sharePage.errors.captionLimit` (tr/en/de).
 - 13 farklı statik HTML tasarımı Next.js'e başarıyla uyarlandı.
 - Vercel üretim ortamı derleme testleri (Build) 0 hata ile tamamlandı.

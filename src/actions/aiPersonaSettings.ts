@@ -79,10 +79,9 @@ export async function saveAiPersonaSettings(
 
     // Written with the NORMAL, RLS-respecting client (not the admin client) —
     // organization_ai_settings' own RLS policy already restricts writes to
-    // `auth.uid() = merchant_id`, so this can never touch another merchant's row.
+    // `org_id = current_org_id()`; org_id column DEFAULT current_org_id() ile veritabanında çözülür (istemci göndermez).
     const { error } = await supabase.from('organization_ai_settings').upsert(
       {
-        merchant_id: user.id,
         persona_id: personaId,
         business_role: input.businessRole,
         tone: input.tone,
@@ -94,7 +93,7 @@ export async function saveAiPersonaSettings(
         assistant_enabled: true,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: 'merchant_id' },
+      { onConflict: 'org_id' },
     )
 
     if (error) {
@@ -135,7 +134,6 @@ export async function getAiPersonaSettings(): Promise<AiPersonaSettings | null> 
   const { data: settings } = await supabase
     .from('organization_ai_settings')
     .select('*')
-    .eq('merchant_id', user.id)
     .maybeSingle()
 
   if (!settings) return null

@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { createBusinessService, updateBusinessService, deleteBusinessService } from '@/actions/businessServices';
 
-export default function HizmetAyarlarıiClient({ initialServices, merchantId }: { initialServices: any[], merchantId: string }) {
+export default function HizmetAyarlarıiClient({ initialServices }: { initialServices: any[] }) {
   const t = useTranslations();
   const [services, setServices] = useState(initialServices);
   const [selectedService, setSelectedService] = useState<any>(null);
@@ -16,7 +16,7 @@ export default function HizmetAyarlarıiClient({ initialServices, merchantId }: 
         if (selectedService) {
           await updateBusinessService(selectedService.id, formData);
         } else {
-          await createBusinessService(merchantId, formData);
+          await createBusinessService(formData);
         }
         // Ideally we fetch the updated list here or rely on router.refresh() 
         // which server actions trigger via revalidatePath.

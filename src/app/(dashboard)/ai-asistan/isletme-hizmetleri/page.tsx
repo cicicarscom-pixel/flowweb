@@ -14,9 +14,9 @@ export default async function IsletmeHizmetleriPage() {
     return <div>{t("hizmetAyarlari.sessionNotFound")}</div>;
   }
   
-  const services = await getBusinessServices(session.user.id);
+  const services = await getBusinessServices();
   
   return (
-    <HizmetAyarlariClient initialServices={services} merchantId={session.user.id} />
+    <HizmetAyarlariClient initialServices={services} />
   );
 }

@@ -3,23 +3,21 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export async function getBusinessServices(merchantId: string) {
+export async function getBusinessServices() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('business_services')
     .select('*')
-    .eq('merchant_id', merchantId)
     .order('created_at', { ascending: true });
 
   if (error) throw new Error(error.message);
   return data || [];
 }
 
-export async function createBusinessService(merchantId: string, formData: FormData) {
+export async function createBusinessService(formData: FormData) {
   const supabase = await createClient();
   
   const payload = {
-    merchant_id: merchantId,
     name: formData.get('name') as string,
     price: parseFloat(formData.get('price') as string),
     currency: formData.get('currency') as string || 'TL',

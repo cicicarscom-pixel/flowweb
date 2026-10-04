@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getCurrentOrgId } from "@/lib/org";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import AppointmentNotifications from "@/components/dashboard/AppointmentNotifications";
@@ -40,7 +41,6 @@ export default function DashboardHomePage() {
           const { data: botData } = await supabase
             .from('bot_settings')
             .select('is_active')
-            .eq('merchant_id', merchantId)
             .maybeSingle();
           if (botData) setAiActive(botData.is_active);
         }
@@ -172,7 +172,7 @@ export default function DashboardHomePage() {
 
           let calsMap: Record<string, string> = {};
           if (merchantId) {
-            const { data: cals } = await supabase.from('calendars').select('id, name').eq('merchant_id', merchantId);
+            const { data: cals } = await supabase.from('calendars').select('id, name');
             if (cals) cals.forEach((c: any) => calsMap[c.id] = c.name);
           }
 
@@ -228,7 +228,7 @@ export default function DashboardHomePage() {
         }
         
         if (merchantId) {
-          const { count: waCount } = await supabase.from('ai_communication_logs').select('*', { count: 'exact', head: true }).eq('merchant_id', merchantId);
+          const { count: waCount } = await supabase.from('ai_communication_logs').select('*', { count: 'exact', head: true });
           if (waCount) statsMap['whatsapp'] = (statsMap['whatsapp'] || 0) + waCount;
         }
         
@@ -253,12 +253,12 @@ export default function DashboardHomePage() {
     setAiActive(newStatus); // optimistic UI update
     
     const { data: { session } } = await supabase.auth.getSession();
-    const merchantId = session?.user?.id;
-    if (merchantId) {
+    const orgId = session ? await getCurrentOrgId(supabase) : null;
+    if (orgId) {
       await supabase
         .from('bot_settings')
         .update({ is_active: newStatus, social_bot_active: newStatus })
-        .eq('merchant_id', merchantId);
+        .eq('org_id', orgId);
     }
   };
 

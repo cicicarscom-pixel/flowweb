@@ -79,7 +79,7 @@ function ScrollableContainer({ children, innerRef }: { children: React.ReactNode
   );
 }
 
-export default function RandevuClient({ initialAppointments, services, merchantId, today, initialCalendars, multiCalendarEnabled }: { initialAppointments: any[], services: any[], merchantId: string, today: string, initialCalendars?: any[], multiCalendarEnabled?: boolean }) {
+export default function RandevuClient({ initialAppointments, services, orgId, today, initialCalendars, multiCalendarEnabled }: { initialAppointments: any[], services: any[], orgId: string | null, today: string, initialCalendars?: any[], multiCalendarEnabled?: boolean }) {
   const [activeCalendarId, setActiveCalendarId] = useState<string | null>(null);
   const [calendars, setCalendars] = useState(initialCalendars || []);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
@@ -228,14 +228,14 @@ export default function RandevuClient({ initialAppointments, services, merchantI
   // Subscribe to real-time updates
   useEffect(() => {
     const channel = supabase
-      .channel(`appointments-${merchantId}-${selectedDate}`)
+      .channel(`appointments-${orgId}-${selectedDate}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'appointments',
-          filter: `organization_id=eq.${merchantId}`,
+          filter: `org_id=eq.${orgId}`,
         },
         async () => {
           const { data } = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
@@ -249,7 +249,7 @@ export default function RandevuClient({ initialAppointments, services, merchantI
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedDate, merchantId, supabase, activeCalendarId]);
+  }, [selectedDate, orgId, supabase, activeCalendarId]);
 
     // Load appointments when selected date or active calendar changes
   useEffect(() => {

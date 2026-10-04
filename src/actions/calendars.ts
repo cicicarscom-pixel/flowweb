@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export type Calendar = {
   id: string;
-  merchant_id: string;
+  merchant_id?: string; // eski sütun (F5'te kalkacak); istemci kullanmaz
   name: string;
   is_active: boolean;
   working_hours: any;
@@ -26,7 +26,6 @@ export async function getCalendars(): Promise<Calendar[]> {
       *,
       calendar_services(service_id)
     `)
-    .eq("merchant_id", session.user.id)
       .eq("is_active", true)
       .order("created_at", { ascending: true });
 
@@ -50,7 +49,6 @@ export async function createCalendar(name: string, workingHours?: any): Promise<
   const { error } = await supabase
     .from("calendars")
     .insert({
-      merchant_id: session.user.id,
       name,
       working_hours: workingHours || null
     });

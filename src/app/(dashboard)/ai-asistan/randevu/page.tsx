@@ -18,9 +18,12 @@ export default async function RandevuPage() {
   const { todayInTimezone } = await import('@/lib/dates');
   const today = todayInTimezone(timezone);
 
+  const { getCurrentOrgId } = await import('@/lib/org');
+  const orgId = await getCurrentOrgId(supabase);
+
   let businessServices = [];
   try {
-    businessServices = await getBusinessServices(session.user.id);
+    businessServices = await getBusinessServices();
   } catch (error) {
     console.error('getBusinessServices Error:', error);
   }
@@ -34,7 +37,7 @@ export default async function RandevuPage() {
       <RandevuClient 
       initialAppointments={appointmentsRes.data} 
       services={businessServices} 
-      merchantId={session.user.id} 
+      orgId={orgId}
       today={today}
       initialCalendars={calendars}
       multiCalendarEnabled={multiCalendarEnabled}

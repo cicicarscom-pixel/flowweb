@@ -14,7 +14,6 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
   let query = supabase
     .from('appointments')
     .select('*')
-    .eq('organization_id', session.user.id)
     .gte('date', `${dateStr}T00:00:00`)
     .lt('date', `${nextDayStr}T00:00:00`)
     .in('status', ['Pending', 'Approved', 'Cancelled'])
@@ -39,7 +38,6 @@ export async function getAppointmentsByDate(dateStr: string, calendarId?: string
   const { data: services } = await supabase
     .from('business_services')
     .select('id, name')
-    .eq('merchant_id', session.user.id)
 
   const serviceNameById = new Map((services || []).map((s) => [s.id, s.name]))
 

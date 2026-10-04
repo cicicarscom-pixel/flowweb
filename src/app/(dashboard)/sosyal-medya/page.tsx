@@ -78,6 +78,9 @@ export default function SosyalMedyaPage() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
+  const [socialBotActive, setSocialBotActive] = useState(false);
+  const [systemBotActive, setSystemBotActive] = useState(true);
+  const [isUpdatingBot, setIsUpdatingBot] = useState(false);
   const isSyncingRef = useRef(false);
   const shownConflictsRef = useRef<Set<string>>(new Set());
   const supabase = createClient();
@@ -124,6 +127,32 @@ export default function SosyalMedyaPage() {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
+
+  useEffect(() => {
+    // RLS yalnız oturumdaki işletmenin satırını döndürür; kimlik istemciden gönderilmez.
+    supabase.from('bot_settings').select('social_bot_active, is_active').limit(1).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      setSocialBotActive(data.social_bot_active !== false);
+      setSystemBotActive(data.is_active !== false);
+    });
+  }, []);
+
+  const handleToggleBot = async (value: boolean) => {
+    setSocialBotActive(value);
+    setIsUpdatingBot(true);
+    try {
+      const { data: row } = await supabase.from('bot_settings').select('id').limit(1).maybeSingle();
+      if (!row) throw new Error('bot_settings not found');
+      const { error } = await supabase.from('bot_settings').update({ social_bot_active: value }).eq('id', row.id);
+      if (error) throw error;
+    } catch (err) {
+      console.error('Bot ayarı güncellenemedi:', err);
+      setSocialBotActive(!value);
+      alert(t("sosyalMedyaPage.assistant.updateError"));
+    } finally {
+      setIsUpdatingBot(false);
+    }
+  };
 
   const fetchAccounts = async (syncWithZernio = false) => {
     if (syncWithZernio) {
@@ -284,6 +313,30 @@ export default function SosyalMedyaPage() {
             <p className="text-xs text-dark-muted font-jetbrains">{t("sosyalMedyaPage.quickLinks.shareCenter.subtitle")}</p>
           </div>
         </Link>
+      </div>
+
+      {/* Sosyal Medya Asistanı (mobildeki şalterin aynısı) */}
+      <div className="glass p-5 rounded-2xl border border-dark-border mb-12 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: socialBotActive && systemBotActive ? "rgba(34,181,115,0.12)" : "rgba(255,255,255,0.05)", border: `1px solid ${socialBotActive && systemBotActive ? "rgba(34,181,115,0.4)" : "rgba(255,255,255,0.1)"}` }}>
+            <i className="fa-solid fa-robot" style={{ color: socialBotActive ? "#22B573" : "#756D66" }}></i>
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-base font-bold text-on-surface font-outfit">{t("sosyalMedyaPage.assistant.title")}</h3>
+            <p className="text-xs text-dark-muted font-jetbrains">{systemBotActive ? t("sosyalMedyaPage.assistant.description") : t("sosyalMedyaPage.assistant.systemOff")}</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={socialBotActive}
+          aria-label={t("sosyalMedyaPage.assistant.title")}
+          disabled={!systemBotActive || isUpdatingBot}
+          onClick={() => handleToggleBot(!socialBotActive)}
+          style={{ width: 48, height: 26, borderRadius: 99, border: "none", position: "relative", flexShrink: 0, cursor: !systemBotActive || isUpdatingBot ? "not-allowed" : "pointer", opacity: !systemBotActive ? 0.5 : 1, background: socialBotActive ? "rgba(34,181,115,0.5)" : "rgba(255,255,255,0.15)", transition: "background .2s" }}
+        >
+          <span style={{ position: "absolute", top: 3, left: socialBotActive ? 25 : 3, width: 20, height: 20, borderRadius: "50%", background: socialBotActive ? "#22B573" : "#fff", transition: "left .2s" }} />
+        </button>
       </div>
 
       {/* Eklediğiniz Hesaplarınız (Bağlı Olanlar) */}

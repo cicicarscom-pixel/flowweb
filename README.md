@@ -129,6 +129,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[04.10.2026] Sosyal Medya sayfasına asistan şalteri:** mobildeki "Sosyal Medya Asistanı" şalteri web Sosyal Medya sayfasına eklendi (`bot_settings.social_bot_active`; Ana Sayfa'dan kapatılmışsa pasif görünür). Metinler `sosyalMedyaPage.assistant.*` (tr/en/de).
+
 - **[04.10.2026] WAHA işlemleri sunucuya taşındı:** `src/actions/waha.ts` artık WAHA'ya doğrudan bağlanmaz; sunucudaki `waha-session` Edge Function'ını çağırır (durum, başlat, QR, eşleştirme kodu). WAHA adresi ve yönetici anahtarı bu depodan **tamamen kaldırıldı** (önceden kodda varsayılan anahtar vardı). Askıda/banlı hesap yeni WhatsApp oturumu açamaz (`common.serverErrors.wahaAccountNotActive`, tr/en/de).
 
 - **[04.10.2026] Paylaşım Merkezi video yükleme düzeltmesi:** video, depolamaya her zaman `image.jpg` adı ve `image/jpeg` türüyle yükleniyordu; bu yüzden YouTube'a "videoya ihtiyaç var" hatası dönüyordu. Artık tür dosyadan okunur: video orijinal türü/uzantısıyla (sıkıştırılmadan), görsel sıkıştırılıp `.jpg` olarak yüklenir; `mediaItems` içine `type`/`mimeType` eklenir.

@@ -704,6 +704,12 @@
     }
   },
   "sosyalMedyaPage": {
+    "assistant": {
+      "title": "Social-Media-Assistent",
+      "description": "KI antwortet auf DMs und Kommentare",
+      "updateError": "Assistent-Einstellung konnte nicht aktualisiert werden.",
+      "systemOff": "Der Assistent ist im Dashboard ausgeschaltet."
+    },
     "errors": {
       "connectError": "Bei der Verbindung ist ein Fehler aufgetreten",
       "noSession": "Sitzung nicht gefunden",

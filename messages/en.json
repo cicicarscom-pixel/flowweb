@@ -704,6 +704,12 @@
     }
   },
   "sosyalMedyaPage": {
+    "assistant": {
+      "title": "Social Media Assistant",
+      "description": "Let AI reply to DMs and comments",
+      "updateError": "Could not update the assistant setting.",
+      "systemOff": "The assistant is turned off from the dashboard."
+    },
     "errors": {
       "connectError": "An error occurred during the connection",
       "noSession": "Session not found",

@@ -704,6 +704,12 @@
     }
   },
   "sosyalMedyaPage": {
+    "assistant": {
+      "title": "Sosyal Medya Asistanı",
+      "description": "Yapay zeka DM ve yorumlara yanıt versin",
+      "updateError": "Asistan ayarı güncellenemedi.",
+      "systemOff": "Asistan, Ana Sayfa’dan kapatılmış durumda."
+    },
     "errors": {
       "connectError": "Bağlantı sırasında bir hata oluştu",
       "noSession": "Oturum bulunamadı",

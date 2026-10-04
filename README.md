@@ -129,6 +129,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[04.10.2026] Flow AI düğmesi mobille birebir:** 138x52 koyu hap, dönen neon (cyan → mor → kırmızı) halka, mavi parlama, "Flow Ai" etiketi; mobildeki gibi sürüklenebilir. Panelde de mobildeki "düşünüyor" nokta animasyonu ve sparkles avatarı kullanıldı.
+
 - **[04.10.2026] Flow AI web paneli (FA-W):** panel dashboard'un tüm sayfalarında sağ altta açılır; mobildeki Flow AI ile aynı sunucuyu (`flow-ai-agent`, `client: "web"`) kullanır. Sohbet, ekrana yönlendirme (`open_screen` → web yolları), proaktif öneri kartları ve onaylı yayın/zamanlama kartı (Onayla/Vazgeç) vardır. Vurgu, rehber modu ve taslak aracı webde yoktur. Metinler `flowAi.*` (tr/en/de).
 
 - **[04.10.2026] Sosyal Medya sayfasına asistan şalteri:** mobildeki "Sosyal Medya Asistanı" şalteri web Sosyal Medya sayfasına eklendi (`bot_settings.social_bot_active`; Ana Sayfa'dan kapatılmışsa pasif görünür). Metinler `sosyalMedyaPage.assistant.*` (tr/en/de).

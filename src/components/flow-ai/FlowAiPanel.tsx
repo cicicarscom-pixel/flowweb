@@ -79,6 +79,47 @@ function formatWhen(preview: any) {
   }
 }
 
+const SPARKLES = (size: number) => (
+  <svg width={size} height={size} viewBox="0 0 512 512" fill="currentColor" aria-hidden="true">
+    <path d="M259.92 262.91L216.4 149.77a9 9 0 00-16.8 0l-43.52 113.14a9 9 0 01-5.17 5.17L37.77 311.6a9 9 0 000 16.8l113.14 43.52a9 9 0 015.17 5.17l43.52 113.14a9 9 0 0016.8 0l43.52-113.14a9 9 0 015.17-5.17l113.14-43.52a9 9 0 000-16.8l-113.14-43.52a9 9 0 01-5.17-5.17zM108 68L88 16 68 68 16 88l52 20 20 52 20-52 52-20zM426.67 117.33L400 48l-26.67 69.33L304 144l69.33 26.67L400 240l26.67-69.33L496 144z"/>
+  </svg>
+);
+
+/** Mobildeki FlowAiOrb ile birebir: 138x52 koyu hap, dönen neon (cyan → mor → kırmızı) halka, mavi parlama, beyaz etiket. */
+function FlowAiOrb({ label, ariaLabel, onClick }: { label: string; ariaLabel: string; onClick: () => void }) {
+  const W = 138, H = 52, RING = 2.5;
+  return (
+    <button
+      type="button"
+      data-testid="flow_ai_fab"
+      aria-label={ariaLabel}
+      onClick={onClick}
+      style={{ position: "relative", width: W, height: H, borderRadius: H / 2, padding: 0, border: "none", background: "transparent", cursor: "pointer", boxShadow: "0 0 14px rgba(0,162,255,0.55)", display: "block" }}
+    >
+      <style>{`@keyframes flowAiOrbSpin{to{transform:rotate(360deg)}}`}</style>
+      <span style={{ position: "absolute", inset: 0, borderRadius: H / 2, overflow: "hidden", background: "#00a2ff" }}>
+        <span style={{ position: "absolute", left: (W - 260) / 2, top: (H - 260) / 2, width: 260, height: 260, background: "linear-gradient(135deg,#00f3ff,#9D00FF,#FF0055,#00a2ff,#00f3ff)", animation: "flowAiOrbSpin 4.5s linear infinite" }} />
+      </span>
+      <span style={{ position: "absolute", inset: RING, borderRadius: (H - RING * 2) / 2, background: "#080B10", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+        <span style={{ position: "absolute", inset: 0, borderRadius: (H - RING * 2) / 2, background: "linear-gradient(180deg,rgba(0,218,243,0.28),transparent)", opacity: 0.5 }} />
+        <span style={{ position: "relative", color: "#fff", fontSize: 15, fontWeight: 700, letterSpacing: 0.4, textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}>{label}</span>
+      </span>
+    </button>
+  );
+}
+
+/** "Düşünüyor" animasyonu: üç nokta sırayla yanıp söner ve hafifçe yükselir (mobildeki TypingDots). */
+function TypingDots({ color = "#9D5CFF", size = 7 }: { color?: string; size?: number }) {
+  return (
+    <span role="progressbar" aria-label="..." style={{ display: "inline-flex", alignItems: "center" }}>
+      <style>{`@keyframes flowAiDot{0%,100%{opacity:.3;transform:translateY(0)}35%{opacity:1;transform:translateY(-${size * 0.6}px)}}`}</style>
+      {[0, 160, 320].map((d) => (
+        <span key={d} style={{ width: size, height: size, borderRadius: "50%", background: color, margin: "0 2.5px", animation: `flowAiDot 960ms ease-in-out ${d}ms infinite` }} />
+      ))}
+    </span>
+  );
+}
+
 export default function FlowAiPanel() {
   const t = useTranslations("flowAi");
   const locale = useLocale();
@@ -95,6 +136,8 @@ export default function FlowAiPanel() {
   const cardsAt = useRef(0);
   const seq = useRef(0);
   const endRef = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ sx: number; sy: number; ox: number; oy: number; moved: boolean } | null>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
   const push = useCallback((role: Msg["role"], text: string) => {
     setMessages((m) => [...m, { id: ++seq.current, role, text }]);
@@ -186,15 +229,31 @@ export default function FlowAiPanel() {
   };
 
   if (!open) {
+    // Mobildeki gibi sürüklenebilir: kısa dokunuş/tık paneli açar, sürükleme konumu değiştirir.
     return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={t("open")}
-        style={{ position: "fixed", right: 24, bottom: 24, zIndex: 60, display: "flex", alignItems: "center", gap: 8, padding: "12px 18px", borderRadius: 99, border: "1px solid rgba(157,92,255,0.5)", background: "linear-gradient(135deg,#3B82F6,#9D5CFF)", color: "#fff", fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 30px rgba(157,92,255,0.35)" }}
+      <div
+        onPointerDown={(e) => {
+          drag.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, moved: false };
+        }}
+        onPointerMove={(e) => {
+          const d = drag.current;
+          if (!d) return;
+          const dx = e.clientX - d.sx, dy = e.clientY - d.sy;
+          if (!d.moved && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+            d.moved = true;
+            (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); // yalnız sürüklemede; dokunuş tıklamasını bozmaz
+          }
+          if (d.moved) setPos({ x: d.ox + dx, y: d.oy + dy });
+        }}
+        onPointerUp={() => { if (drag.current && !drag.current.moved) drag.current = null; }}
+        onClickCapture={(e) => {
+          if (drag.current?.moved) { e.stopPropagation(); e.preventDefault(); }
+          drag.current = null;
+        }}
+        style={{ position: "fixed", right: 24, bottom: 24, zIndex: 60, transform: `translate(${pos.x}px, ${pos.y}px)`, touchAction: "none" }}
       >
-        <i className="fa-solid fa-wand-magic-sparkles"></i> {t("orbLabel")}
-      </button>
+        <FlowAiOrb label={t("orbLabel")} ariaLabel={t("open")} onClick={() => setOpen(true)} />
+      </div>
     );
   }
 
@@ -208,7 +267,7 @@ export default function FlowAiPanel() {
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div style={{ width: 36, height: 36, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#3B82F6,#9D5CFF)", color: "#fff" }}>
-          <i className="fa-solid fa-wand-magic-sparkles"></i>
+          {SPARKLES(18)}
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>{t("title")}</div>
@@ -268,8 +327,8 @@ export default function FlowAiPanel() {
         ))}
 
         {busy && messages.length > 0 && (
-          <div style={{ alignSelf: "flex-start", ...box, padding: "10px 14px", color: "#9D5CFF", letterSpacing: 3 }} aria-hidden="true">
-            <span className="animate-pulse">●●●</span>
+          <div data-testid="flow_ai_typing" style={{ alignSelf: "flex-start", border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.04)", borderRadius: 18, borderTopLeftRadius: 6, padding: "12px 16px" }}>
+            <TypingDots color="#9D5CFF" size={7} />
           </div>
         )}
 

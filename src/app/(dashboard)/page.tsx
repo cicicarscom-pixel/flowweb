@@ -104,7 +104,12 @@ export default function DashboardHomePage() {
         let totalTrend = 0;
         let accountsWithTrend = 0;
 
-        const actualFollow = followRes?.data?.data?.data || followRes?.data?.data || {};
+        // zernio-client yanıtı {success, data: <gövde>}; gövde {accounts,...}. Eski sürümler bir kat daha sarmalıyordu.
+        const fb: any = (followRes as any)?.data;
+        const actualFollow: any = Array.isArray(fb?.accounts) ? fb
+          : Array.isArray(fb?.data?.accounts) ? fb.data
+          : Array.isArray(fb?.data?.data?.accounts) ? fb.data.data
+          : {};
         if (actualFollow.accounts) {
            totalFollowers = actualFollow.accounts.reduce((sum: number, a: any) => sum + (a.currentFollowers || a.followers || 0), 0);
            

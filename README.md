@@ -129,6 +129,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] Anasayfa sosyal özet:** "Tüm Hesaplar" takipçi istatistiği yanıtının biçimi değişmişti; bağlı hesaplar görünmüyordu. Artık eski ve yeni yanıt biçimleri okunuyor.
+
 - **[05.10.2026] AI Asistan: serbest işletme rolü:** İşletme Rolü listesinin altına "Kendi iş kolunu yaz" alanı eklendi (en çok 60 karakter, tek satır; mobildeki "Diğer" ile aynı: `business_role` ham metin). Asistan artık işletmenin gerçek adını (`organizations.name`) biliyor ve başka ad uydurmuyor; giden DM'lerin gelen kutusunda çift görünmesi giderildi (sunucu tarafı).
 
 - **[04.10.2026] Flow AI düğmesi mobille birebir:** 138x52 koyu hap, dönen neon (cyan → mor → kırmızı) halka, mavi parlama, "Flow Ai" etiketi; mobildeki gibi sürüklenebilir. Panelde de mobildeki "düşünüyor" nokta animasyonu ve sparkles avatarı kullanıldı.

@@ -875,10 +875,6 @@
     "header": {
       "title": "Paylaşım Merkezi"
     },
-    "contentInput": {
-      "label": "Ne Paylaşalım?",
-      "placeholder": "Örn: Yeni yaz koleksiyonumuz için enerjik bir post..."
-    },
     "imageContainer": {
       "cropButton": "Kırp (Instagram 4:5)",
       "selectTitle": "Görsel & Video Seç ya da Üret",

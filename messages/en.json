@@ -875,10 +875,6 @@
     "header": {
       "title": "Sharing Center"
     },
-    "contentInput": {
-      "label": "What Shall We Share?",
-      "placeholder": "E.g.: An energetic post for our new summer collection..."
-    },
     "imageContainer": {
       "cropButton": "Crop (Instagram 4:5)",
       "selectTitle": "Select or Generate Image & Video",

@@ -22,7 +22,6 @@ const PLATFORMS_DATA = [
 
 export default function SharePage() {
   const t = useTranslations();
-  const [prompt, setPrompt] = useState("");
   const [localImage, setLocalImage] = useState<string | null>(null);
   const [localText, setLocalText] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
@@ -251,7 +250,7 @@ export default function SharePage() {
     if (needsInstagramCrop) {
       return alert(t("sharePage.imageContainer.cropWarning"));
     }
-    if (!localText.trim() && !prompt.trim()) {
+    if (!localText.trim()) {
       return alert(t("sharePage.errors.noText"));
     }
     
@@ -391,7 +390,7 @@ export default function SharePage() {
         body: {
           action: 'create-post',
           payload: {
-            content: localText || prompt,
+            content: localText,
             mediaItems: finalMediaItems,
             platforms: platformsToShare,
             publishNow: publishMode === 'now',
@@ -439,19 +438,6 @@ export default function SharePage() {
       <div className="flex-1 overflow-y-auto custom-scrollbar px-5 pt-6 pb-32">
         <div className="max-w-2xl mx-auto space-y-6">
           
-          {/* Input Section */}
-          <div>
-            <label className="block text-[#A79E96] text-xs font-medium uppercase tracking-wider mb-2 ml-1">
-              {t("sharePage.contentInput.label")}
-            </label>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder={t("sharePage.contentInput.placeholder")}
-              className="w-full bg-[#201D24]/50 rounded-lg border border-white/10 text-[#F6F1EC] text-base p-3 min-h-[100px] focus:outline-none focus:border-white/20 resize-none"
-            ></textarea>
-          </div>
-
           {/* Central Feature: Image Container */}
           <div className="flex flex-col items-center w-full relative gap-2">
             <div className="w-full aspect-square max-w-[350px] p-[3px] rounded-[24px] relative group overflow-hidden bg-white/5">

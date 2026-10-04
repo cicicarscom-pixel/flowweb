@@ -875,10 +875,6 @@
     "header": {
       "title": "Freigabe-Center"
     },
-    "contentInput": {
-      "label": "Was möchten wir teilen?",
-      "placeholder": "Z. B.: Ein energiegeladener Beitrag für unsere neue Sommerkollektion..."
-    },
     "imageContainer": {
       "cropButton": "Zuschneiden (Instagram 4:5)",
       "selectTitle": "Bild & Video auswählen oder generieren",

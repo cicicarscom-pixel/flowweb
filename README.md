@@ -129,6 +129,9 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] Paylaşım Merkezi:** "Ne paylaşalım?" kutusu kaldırıldı (içerik yalnız "İçerik Metni" alanından yazılır). Kullanılmayan `sharePage.contentInput` çevirileri silindi.
+## 📌 Son Güncellemeler
+
 - **[05.10.2026] Anasayfa fatura kartı yenilendi:** belge önizlemesi artık görünür (özel `finance_receipts` kovasından `finance-receipt-url` Edge Function'ı ile kısa ömürlü imzalı adres alınır; büyütmek için tıklanır), tutar vurgulu, ödeme/taslak rozeti, KDV ve fatura no, son ödemeye kalan gün. Bileşen: `src/components/dashboard/InvoiceCard.tsx`.
 ## 📌 Son Güncellemeler
 

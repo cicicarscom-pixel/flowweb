@@ -985,7 +985,22 @@
         "vat": "VAT",
         "total": "Total"
       },
-      "newInvoiceButton": "+ Scan New Invoice"
+      "newInvoiceButton": "+ Scan New Invoice",
+      "card": {
+        "invoiceNo": "Invoice no",
+        "vatAmount": "VAT amount",
+        "dueDate": "Due date",
+        "paid": "Paid",
+        "unpaid": "Unpaid",
+        "draft": "Draft",
+        "dueToday": "Due today",
+        "dueIn": "{n} days left",
+        "overdue": "{n} days overdue",
+        "viewReceipt": "View document",
+        "close": "Close",
+        "noPreview": "No preview",
+        "latest": "LATEST INVOICE"
+      }
     },
     "appointments": {
       "label": "TODAY'S APPOINTMENTS",

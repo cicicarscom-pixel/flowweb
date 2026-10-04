@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import AppointmentNotifications from "@/components/dashboard/AppointmentNotifications";
 import { useRouter } from "next/navigation";
 import { formatMoney } from '@/lib/money';
+import InvoiceCard from "@/components/dashboard/InvoiceCard";
 import { todayInTimezone, addDaysYmd, monthRangeYmd } from "@/lib/dates";
 
 export default function DashboardHomePage() {
@@ -20,6 +21,7 @@ export default function DashboardHomePage() {
   const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
   const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
   const [latestInvoice, setLatestInvoice] = useState<any>(null);
+  const [orgTimezone, setOrgTimezone] = useState('Europe/Istanbul');
   const [hasSocialAccounts, setHasSocialAccounts] = useState(true);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
@@ -53,6 +55,7 @@ export default function DashboardHomePage() {
           const { data: org } = await supabase.from('organizations').select('timezone').eq('owner_id', merchantId).maybeSingle();
           if (org?.timezone) timezone = org.timezone;
         }
+        setOrgTimezone(timezone);
         const today = todayInTimezone(timezone);
         
         let orgId = null;
@@ -449,47 +452,7 @@ export default function DashboardHomePage() {
       </div>
       {/* Invoice & Social */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
-        <div className="glass neon-orange" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: "20px 22px", height: "100%" }}>
-          <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em", marginBottom: 14 }}>{t('dashboardHome.invoiceScanner.eyebrow')}</p>
-          {latestInvoice ? (
-              <div style={{ display: "flex", gap: 16 }}>
-                <div style={{ width: 80, height: 100, borderRadius: 10, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(245,158,11,0.2)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,158,11,0.05)" }}>
-                  {latestInvoice.image_url ? (
-                    <img src={latestInvoice.image_url} alt="Invoice" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} />
-                  ) : (
-                    <i className="fa-solid fa-file-invoice text-[#F59E0B] text-2xl" style={{ opacity: 0.6 }}></i>
-                  )}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.supplier')}</span>
-                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{latestInvoice.counterparty_name || latestInvoice.title || "-"}</span>
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.date')}</span>
-                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{latestInvoice.due_date || latestInvoice.created_at ? new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(latestInvoice.due_date || latestInvoice.created_at)) : "-"}</span>
-                  </div>
-                  {latestInvoice.tax_details?.rate != null && (
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                      <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.vat')}</span>
-                      <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>%{latestInvoice.tax_details.rate}</span>
-                    </div>
-                  )}
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                    <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardHome.invoiceScanner.fields.total')}</span>
-                    <span style={{ color: "var(--text-primary)", fontSize: 12, fontWeight: 600, fontFamily: "JetBrains Mono, monospace" }}>{new Intl.NumberFormat(locale, { style: 'currency', currency: latestInvoice.currency_code || 'TRY' }).format(Number(latestInvoice.amount_minor)/100)}</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flex: 1, gap: 16, alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
-                <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Henüz fatura taranmadı</p>
-              </div>
-            )}
-            <button onClick={() => router.push("/ai-muhasebe/veri-girisi")} className="fab" style={{ marginTop: "auto", background: "rgba(245,158,11,0.12)", color: "#F59E0B", border: "1px solid rgba(245,158,11,0.25)", width: "100%", justifyContent: "center", fontSize: 13, letterSpacing: "normal" }}>
-            {t('dashboardHome.invoiceScanner.newInvoiceButton')}
-          </button>
-        </div>
+        <InvoiceCard invoice={latestInvoice} locale={locale} todayYmd={todayInTimezone(orgTimezone)} onScan={() => router.push("/ai-muhasebe/veri-girisi")} />
         {/* Social Media Stats (Tüm Hesaplar) */}
       <div className="glass neon-cyan" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: 24, position: "relative", overflow: "hidden", height: "100%" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />

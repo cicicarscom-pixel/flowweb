@@ -985,7 +985,22 @@
         "vat": "MwSt.",
         "total": "Gesamt"
       },
-      "newInvoiceButton": "+ Neue Rechnung scannen"
+      "newInvoiceButton": "+ Neue Rechnung scannen",
+      "card": {
+        "invoiceNo": "Rechnungsnr.",
+        "vatAmount": "MwSt.-Betrag",
+        "dueDate": "Fällig am",
+        "paid": "Bezahlt",
+        "unpaid": "Unbezahlt",
+        "draft": "Entwurf",
+        "dueToday": "Heute fällig",
+        "dueIn": "Noch {n} Tage",
+        "overdue": "{n} Tage überfällig",
+        "viewReceipt": "Beleg ansehen",
+        "close": "Schließen",
+        "noPreview": "Keine Vorschau",
+        "latest": "LETZTE RECHNUNG"
+      }
     },
     "appointments": {
       "label": "HEUTIGE TERMINE",

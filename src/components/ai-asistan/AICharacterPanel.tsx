@@ -152,6 +152,16 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
           <span>🏢</span> {t("personas.sectionLabels.businessRole")}
         </p>
         <RoleCarousel roles={translatedRoles} selectedId={props.selectedRole} onSelect={props.onSelectRole} />
+        {/* Listede olmayan iş kolu: serbest metin (mobildeki "Diğer" ile aynı; business_role'e ham metin yazılır) */}
+        <input
+          type="text"
+          maxLength={60}
+          value={ROLES.some((r) => r.id === props.selectedRole) ? "" : props.selectedRole}
+          onChange={(e) => props.onSelectRole(e.target.value)}
+          placeholder={t("personas.customRole.placeholder")}
+          aria-label={t("personas.customRole.label")}
+          style={{ marginTop: 12, width: "100%", padding: "10px 14px", borderRadius: 12, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.12)", color: "#fff", fontSize: 14, outline: "none" }}
+        />
       </div>
 
       <div style={{ marginBottom: 24 }}>

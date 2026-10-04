@@ -119,6 +119,10 @@
       "humorLevel": "Humor Level",
       "modernAdaptation": "Modern Adaptation"
     },
+    "customRole": {
+      "label": "Enter your own business type",
+      "placeholder": "If it is not in the list, type your own business type (e.g. Carpet cleaning)"
+    },
     "otherRole": "Other",
     "loading": "Loading characters...",
     "empty": "No published character available to select right now.",

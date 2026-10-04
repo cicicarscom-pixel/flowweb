@@ -83,7 +83,7 @@ export async function saveAiPersonaSettings(
     const { error } = await supabase.from('organization_ai_settings').upsert(
       {
         persona_id: personaId,
-        business_role: input.businessRole,
+        business_role: input.businessRole ? input.businessRole.replace(/[\r\n\t"]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60) || null : null,
         tone: input.tone,
         persona_intensity: input.personaIntensity ?? personaDefaults.persona_intensity,
         humor_level: input.humorLevel ?? personaDefaults.humor_level,

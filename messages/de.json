@@ -119,6 +119,10 @@
       "humorLevel": "Humorlevel",
       "modernAdaptation": "Moderne Anpassung"
     },
+    "customRole": {
+      "label": "Eigene Branche eingeben",
+      "placeholder": "Wenn sie nicht in der Liste ist, geben Sie Ihre eigene Branche ein (z. B. Teppichreinigung)"
+    },
     "otherRole": "Sonstiges",
     "loading": "Charaktere werden geladen...",
     "empty": "Derzeit ist kein veröffentlichter Charakter auswählbar.",

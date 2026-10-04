@@ -119,6 +119,10 @@
       "humorLevel": "Mizah Seviyesi",
       "modernAdaptation": "Modern Uyarlama"
     },
+    "customRole": {
+      "label": "Kendi iş kolunu yaz",
+      "placeholder": "Listede yoksa kendi iş kolunuzu yazın (ör. Halı yıkama)"
+    },
     "otherRole": "Diğer",
     "loading": "Karakterler yükleniyor...",
     "empty": "Şu an seçilebilecek yayınlanmış bir karakter yok.",

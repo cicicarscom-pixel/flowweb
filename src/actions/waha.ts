@@ -3,146 +3,48 @@
 import { createClient } from '@/lib/supabase/server'
 import { getTranslations } from 'next-intl/server'
 
-const WAHA_BASE_URL = 'http://31.97.37.208:3000';
-const WAHA_API_KEY = process.env.WAHA_API_KEY || 'workigom_key_2026';
+// WAHA işlemleri sunucu tarafındaki `waha-session` Edge Function'ı üzerinden yapılır. WAHA adresi ve yönetici anahtarı
+// bu depoda TUTULMAZ. Oturum adı sunucuda JWT'den (kullanıcı kimliği) çözülür; istemci oturum adı gönderemez.
 
-export async function getWahaStatus() {
-  const t = await getTranslations();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
+type WahaResult = { success: boolean; data?: any; error?: string }
+
+async function callWaha(body: Record<string, unknown>, fallbackKey: string): Promise<WahaResult> {
+  const t = await getTranslations()
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') }
 
   try {
-    const response = await fetch(`${WAHA_BASE_URL}/api/sessions?all=true`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'X-Api-Key': WAHA_API_KEY,
-      },
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      return { success: false, error: t('common.serverErrors.wahaSessionInfoUnavailable') };
+    const { data, error } = await supabase.functions.invoke('waha-session', { body })
+    if (error) {
+      let code = ''
+      try { code = (await (error as any).context?.json?.())?.error || '' } catch { /* gövde okunamadı */ }
+      if (code === 'ACCOUNT_NOT_ACTIVE') return { success: false, error: t('common.serverErrors.wahaAccountNotActive') }
+      return { success: false, error: t(fallbackKey) }
     }
-    
-    const sessions = await response.json();
-    const session = sessions.find((s: any) => s.name === user.id);
-    return { success: true, data: session || null };
+    if (data?.success === false) {
+      if (data.error === 'ACCOUNT_NOT_ACTIVE') return { success: false, error: t('common.serverErrors.wahaAccountNotActive') }
+      return { success: false, error: t(fallbackKey) }
+    }
+    return { success: true, data: data?.data ?? null }
   } catch (error: any) {
-    console.error('getWahaStatus Error:', error);
-    return { success: false, error: error.message };
+    console.error('waha-session Error:', error)
+    return { success: false, error: error.message }
   }
+}
+
+export async function getWahaStatus() {
+  return callWaha({ action: 'status' }, 'common.serverErrors.wahaSessionInfoUnavailable')
 }
 
 export async function startWahaSession() {
-  const t = await getTranslations();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
-  
-  try {
-    const requestBody = {
-      name: user.id,
-      config: {
-        webhooks: [
-          {
-            url: "https://qybzidylewzsnmlofjul.supabase.co/functions/v1/waha-webhook",
-            events: ["message", "session.status"]
-          }
-        ]
-      },
-      engine: "NOWEB"
-    };
-
-    const response = await fetch(`${WAHA_BASE_URL}/api/sessions/start`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Api-Key': WAHA_API_KEY,
-      },
-      body: JSON.stringify(requestBody),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      if (response.status === 422 && errorData.message && errorData.message.includes('already started')) {
-        // Auto-heal
-        await fetch(`${WAHA_BASE_URL}/api/sessions/stop`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Api-Key': WAHA_API_KEY },
-          body: JSON.stringify({ name: user.id, logout: true })
-        });
-        
-        const retryResponse = await fetch(`${WAHA_BASE_URL}/api/sessions/start`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Api-Key': WAHA_API_KEY },
-          body: JSON.stringify(requestBody)
-        });
-        
-        if (!retryResponse.ok) return { success: false, error: t('common.serverErrors.wahaAutoHealFailed') };
-
-        await new Promise(resolve => setTimeout(resolve, 4000));
-        return { success: true, data: await retryResponse.json() };
-      }
-      return { success: false, error: errorData.message || t('common.serverErrors.wahaStartFailed') };
-    }
-    
-    return { success: true, data: await response.json() };
-  } catch (error: any) {
-    console.error('startWahaSession Error:', error);
-    return { success: false, error: error.message };
-  }
+  return callWaha({ action: 'start' }, 'common.serverErrors.wahaStartFailed')
 }
 
 export async function getWahaQrCode() {
-  const t = await getTranslations();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
-
-  try {
-    const response = await fetch(`${WAHA_BASE_URL}/api/${user.id}/auth/qr`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'X-Api-Key': WAHA_API_KEY,
-      },
-      cache: 'no-store'
-    });
-
-    if (!response.ok) return { success: false, error: t('common.serverErrors.wahaQrFailed') };
-    return { success: true, data: await response.json() };
-  } catch (error: any) {
-    console.error('getWahaQrCode Error:', error);
-    return { success: false, error: error.message };
-  }
+  return callWaha({ action: 'qr' }, 'common.serverErrors.wahaQrFailed')
 }
 
 export async function getWahaPairingCode(phoneNumber: string) {
-  const t = await getTranslations();
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { success: false, error: t('common.serverErrors.sessionNotFound') };
-
-  try {
-    const response = await fetch(`${WAHA_BASE_URL}/api/${user.id}/auth/request-code`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Api-Key': WAHA_API_KEY,
-      },
-      body: JSON.stringify({ phoneNumber }),
-    });
-
-    if (!response.ok) return { success: false, error: t('common.serverErrors.wahaPairingCodeFailed') };
-    return { success: true, data: await response.json() };
-  } catch (error: any) {
-    console.error('getWahaPairingCode Error:', error);
-    return { success: false, error: error.message };
-  }
+  return callWaha({ action: 'pairing-code', phoneNumber }, 'common.serverErrors.wahaPairingCodeFailed')
 }
-
-
-

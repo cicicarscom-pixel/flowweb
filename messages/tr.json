@@ -19,7 +19,8 @@
       "wahaAutoHealFailed": "Oto-onarım başarısız",
       "wahaStartFailed": "Başlatılamadı",
       "wahaQrFailed": "QR alınamadı",
-      "wahaPairingCodeFailed": "Eşleşme kodu alınamadı"
+      "wahaPairingCodeFailed": "Eşleşme kodu alınamadı",
+      "wahaAccountNotActive": "Hesabınız etkin olmadığı için WhatsApp bağlantısı kurulamıyor. Lütfen destekle iletişime geçin."
     },
     "all": "Tümü"
   },

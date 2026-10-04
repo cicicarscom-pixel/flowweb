@@ -19,7 +19,8 @@
       "wahaAutoHealFailed": "Automatische Reparatur fehlgeschlagen",
       "wahaStartFailed": "Konnte nicht gestartet werden",
       "wahaQrFailed": "QR-Code konnte nicht abgerufen werden",
-      "wahaPairingCodeFailed": "Kopplungscode konnte nicht abgerufen werden"
+      "wahaPairingCodeFailed": "Kopplungscode konnte nicht abgerufen werden",
+      "wahaAccountNotActive": "WhatsApp kann nicht verbunden werden, weil Ihr Konto nicht aktiv ist. Bitte kontaktieren Sie den Support."
     },
     "all": "Alle"
   },

@@ -19,7 +19,8 @@
       "wahaAutoHealFailed": "Auto-repair failed",
       "wahaStartFailed": "Could not start",
       "wahaQrFailed": "Could not retrieve QR code",
-      "wahaPairingCodeFailed": "Could not retrieve pairing code"
+      "wahaPairingCodeFailed": "Could not retrieve pairing code",
+      "wahaAccountNotActive": "WhatsApp cannot be connected because your account is not active. Please contact support."
     },
     "all": "All"
   },

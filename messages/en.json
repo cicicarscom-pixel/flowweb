@@ -1,4 +1,65 @@
 {
+  "flowAi": {
+    "title": "Flow AI",
+    "orbLabel": "Flow Ai",
+    "online": "● Online",
+    "chipAppointments": "My appointments today",
+    "chipPost": "I want to share a post",
+    "chipAccounts": "My connected accounts",
+    "open": "Open Flow AI",
+    "close": "Close",
+    "placeholder": "Ask Flow AI or request something...",
+    "empty": "Hi! I can help you use the app: ask about your appointments, connected accounts, or how a screen works.",
+    "error": "I couldn't answer right now. Please try again shortly.",
+    "dailyLimit": "You've reached today's Flow AI message limit ({limit}). Try again tomorrow.",
+    "pendingTitle": "Waiting for your approval",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Approved and applied.",
+    "rejected": "Rejected, nothing was done.",
+    "notApplied": "The action could not be applied (it may have expired or changed).",
+    "publish": {
+      "title": "Waiting for publish approval",
+      "now": "will be published now",
+      "at": "will be published on {when}",
+      "approveNow": "Publish",
+      "approveSchedule": "Schedule",
+      "cancel": "Cancel",
+      "published": "Published.",
+      "scheduled": "Post scheduled.",
+      "failed": "Publishing failed. The draft is kept, you can try again.",
+      "changed": "The draft changed after approval; nothing was published.",
+      "used": "This draft was already used.",
+      "past": "The scheduled time has passed; please ask again."
+    },
+    "suggest": {
+      "header": "My suggestions for you",
+      "dismiss": "Dismiss",
+      "connect_account": {
+        "title": "Connect a social account",
+        "body": "Connect an account to share posts and see performance.",
+        "cta": "Connect account"
+      },
+      "free_slots": {
+        "title": "{free} open appointment slots on {day}",
+        "body": "Share a short promotion to fill the open slots.",
+        "cta": "Write promo text",
+        "prompt": "I have {free} open appointment slots on {day}. Write a short promotional post to fill them."
+      },
+      "best_time": {
+        "title": "Best time to post: {day} {hour}",
+        "body": "Based on your past {postCount} posts, this slot got the highest engagement.",
+        "cta": "Schedule for then",
+        "prompt": "Help me schedule a post for {day} at {hour}."
+      },
+      "growth": {
+        "title": "{platform} follower change: {change}",
+        "body": "Change over the last {days} days.",
+        "cta": "Explain",
+        "prompt": "My {platform} followers changed by {change} in the last {days} days. Explain it and tell me what to do."
+      }
+    }
+  },
   "common": {
     "language": {
       "title": "Language",

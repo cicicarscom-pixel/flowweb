@@ -129,6 +129,8 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[04.10.2026] Flow AI web paneli (FA-W):** panel dashboard'un tüm sayfalarında sağ altta açılır; mobildeki Flow AI ile aynı sunucuyu (`flow-ai-agent`, `client: "web"`) kullanır. Sohbet, ekrana yönlendirme (`open_screen` → web yolları), proaktif öneri kartları ve onaylı yayın/zamanlama kartı (Onayla/Vazgeç) vardır. Vurgu, rehber modu ve taslak aracı webde yoktur. Metinler `flowAi.*` (tr/en/de).
+
 - **[04.10.2026] Sosyal Medya sayfasına asistan şalteri:** mobildeki "Sosyal Medya Asistanı" şalteri web Sosyal Medya sayfasına eklendi (`bot_settings.social_bot_active`; Ana Sayfa'dan kapatılmışsa pasif görünür). Metinler `sosyalMedyaPage.assistant.*` (tr/en/de).
 
 - **[04.10.2026] WAHA işlemleri sunucuya taşındı:** `src/actions/waha.ts` artık WAHA'ya doğrudan bağlanmaz; sunucudaki `waha-session` Edge Function'ını çağırır (durum, başlat, QR, eşleştirme kodu). WAHA adresi ve yönetici anahtarı bu depodan **tamamen kaldırıldı** (önceden kodda varsayılan anahtar vardı). Askıda/banlı hesap yeni WhatsApp oturumu açamaz (`common.serverErrors.wahaAccountNotActive`, tr/en/de).

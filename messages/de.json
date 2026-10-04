@@ -1,4 +1,65 @@
 {
+  "flowAi": {
+    "title": "Flow AI",
+    "orbLabel": "Flow Ai",
+    "online": "● Online",
+    "chipAppointments": "Meine Termine heute",
+    "chipPost": "Ich möchte einen Beitrag teilen",
+    "chipAccounts": "Meine verbundenen Konten",
+    "open": "Flow AI öffnen",
+    "close": "Schließen",
+    "placeholder": "Frag Flow AI oder bitte um etwas...",
+    "empty": "Hallo! Ich helfe dir bei der Nutzung der App: Frag nach deinen Terminen, verbundenen Konten oder wie ein Bildschirm funktioniert.",
+    "error": "Ich konnte gerade nicht antworten. Bitte versuche es gleich noch einmal.",
+    "dailyLimit": "Du hast das heutige Nachrichtenlimit von Flow AI erreicht ({limit}). Versuche es morgen erneut.",
+    "pendingTitle": "Wartet auf deine Bestätigung",
+    "approve": "Bestätigen",
+    "reject": "Ablehnen",
+    "approved": "Bestätigt und ausgeführt.",
+    "rejected": "Abgelehnt, es wurde nichts getan.",
+    "notApplied": "Die Aktion konnte nicht ausgeführt werden (abgelaufen oder geändert).",
+    "publish": {
+      "title": "Wartet auf Veröffentlichungsfreigabe",
+      "now": "wird sofort veröffentlicht",
+      "at": "wird am {when} veröffentlicht",
+      "approveNow": "Veröffentlichen",
+      "approveSchedule": "Planen",
+      "cancel": "Abbrechen",
+      "published": "Veröffentlicht.",
+      "scheduled": "Beitrag geplant.",
+      "failed": "Veröffentlichung fehlgeschlagen. Der Entwurf bleibt erhalten, du kannst es erneut versuchen.",
+      "changed": "Der Entwurf wurde nach der Freigabe geändert; nichts wurde veröffentlicht.",
+      "used": "Dieser Entwurf wurde bereits verwendet.",
+      "past": "Der geplante Zeitpunkt liegt in der Vergangenheit; bitte erneut anfragen."
+    },
+    "suggest": {
+      "header": "Meine Vorschläge für dich",
+      "dismiss": "Schließen",
+      "connect_account": {
+        "title": "Social-Media-Konto verbinden",
+        "body": "Verbinde ein Konto, um Beiträge zu teilen und die Leistung zu sehen.",
+        "cta": "Konto verbinden"
+      },
+      "free_slots": {
+        "title": "{free} freie Termine am {day}",
+        "body": "Teile eine kurze Aktion, um die freien Zeiten zu füllen.",
+        "cta": "Aktionstext schreiben",
+        "prompt": "Ich habe am {day} {free} freie Termine. Schreibe einen kurzen Aktionsbeitrag, um sie zu füllen."
+      },
+      "best_time": {
+        "title": "Beste Zeit zum Posten: {day} {hour}",
+        "body": "Nach deinen letzten {postCount} Beiträgen hatte dieser Zeitpunkt das höchste Engagement.",
+        "cta": "Dafür planen",
+        "prompt": "Hilf mir, einen Beitrag für {day} um {hour} zu planen."
+      },
+      "growth": {
+        "title": "{platform} Follower-Änderung: {change}",
+        "body": "Änderung der letzten {days} Tage.",
+        "cta": "Erklären",
+        "prompt": "Meine {platform}-Follower haben sich in den letzten {days} Tagen um {change} geändert. Erkläre das und sag mir, was ich tun soll."
+      }
+    }
+  },
   "common": {
     "language": {
       "title": "Sprache",

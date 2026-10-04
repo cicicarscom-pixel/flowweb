@@ -3,6 +3,7 @@ import Header from "@/components/layout/Header";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { RealtimeProvider } from "@/providers/ProfileProvider";
+import FlowAiPanel from "@/components/flow-ai/FlowAiPanel";
 
 export const dynamic = 'force-dynamic';
 
@@ -46,6 +47,7 @@ export default async function DashboardLayout({
  </main>
  </div>
  </div>
+ <FlowAiPanel />
  </RealtimeProvider>
  );
 }

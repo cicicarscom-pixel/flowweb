@@ -30,7 +30,8 @@ export default function AccountDeletePanel({ email }: { email: string }) {
       setBusy(false);
       return;
     }
-    await supabase.auth.signOut();
+    // Kullanıcı sunucuda artık yok: global çıkış 403 verir, yalnız yerel oturumu kapat.
+    await supabase.auth.signOut({ scope: "local" });
     window.location.href = "/login";
   };
 

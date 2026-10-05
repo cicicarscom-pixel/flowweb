@@ -590,7 +590,8 @@
       "signupButton": "Sign Up",
       "noAccountYet": "Don't have an account yet?",
       "alreadyHaveAccount": "Already have an account?",
-      "createFreeAccount": "Create a Free Account"
+      "createFreeAccount": "Create a Free Account",
+      "privacyLink": "Privacy Policy"
     }
   },
   "analizPage": {
@@ -1168,5 +1169,119 @@
       "noteLabel": "Note (optional)",
       "notePlaceholder": "Write a short note…"
     }
+  },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "updated": "Last updated: 5 October 2026",
+    "back": "Back to sign in",
+    "sections": [
+      {
+        "title": "1. Introduction",
+        "body": [
+          "Workigom Flow (the \"Service\") is a mobile app and web dashboard that helps businesses manage appointments, customers, finances and social media with AI assistance. This policy explains what personal data we collect, why we use it, who we share it with, and your rights. By using the Service you accept this policy."
+        ]
+      },
+      {
+        "title": "2. Data we collect",
+        "body": [
+          "Account data: email address, name, phone number, business name and category, address and (optionally) tax details.",
+          "Business data: appointments, services, calendars, and your customers' names, phone numbers and notes.",
+          "Financial data: invoice/receipt images you upload and the fields read from them (amount, date, supplier); income and expense records.",
+          "Social media data: profile information, posts, comments, messages and statistics from the accounts you connect (Facebook, Instagram, YouTube, etc.).",
+          "WhatsApp data: messages exchanged with your customers through the WhatsApp session you connect.",
+          "AI interactions: conversations with Flow AI and the customer assistant, and content you generate.",
+          "Technical data: app version, device type and error logs."
+        ]
+      },
+      {
+        "title": "3. How we use data",
+        "body": [
+          "To provide the Service and manage your account; to handle appointments, messages and social media replies; to generate content and replies with AI; to keep the Service secure, prevent abuse and fix errors; and to meet legal obligations. We do not sell your data for advertising."
+        ]
+      },
+      {
+        "title": "4. Who we share data with",
+        "body": [
+          "We work with trusted providers to deliver the Service: database, authentication and file storage (Supabase); web hosting (Vercel); AI processing (Google Gemini); social account connection and publishing (Zernio and the relevant platforms such as Meta/Facebook/Instagram/WhatsApp and Google/YouTube); WhatsApp connectivity (a WhatsApp bridge running on our own server).",
+          "These providers process data only on our behalf and under our instructions. We do not share your data with third parties unless legally required."
+        ]
+      },
+      {
+        "title": "5. Retention",
+        "body": [
+          "We keep your data while your account is active. When you delete your account, your profile, your business and all related data (appointments, customers, financial records, social connections, messages, AI records and uploaded files) are permanently deleted. Records subject to a legal retention duty may be kept separately and restricted until that period ends."
+        ]
+      },
+      {
+        "title": "6. Security",
+        "body": [
+          "Data is transmitted over encrypted connections (HTTPS) and access is limited by user- and business-level authorization rules. No system is completely secure; please tell us if you notice anything suspicious."
+        ]
+      },
+      {
+        "title": "7. Your rights",
+        "body": [
+          "Under applicable law (e.g. Turkish KVKK and GDPR) you may access, correct and delete your data, object to its processing and request a copy. You are responsible for providing the required notices and obtaining consent when you add your customers' data to the Service."
+        ]
+      },
+      {
+        "title": "8. Account and data deletion",
+        "body": [
+          "You can delete your account at any time: use the \"Delete my account\" section at the bottom of the Profile page in the app or web dashboard. If you cannot sign in, follow the steps on our account deletion page. Deletion cannot be undone."
+        ]
+      },
+      {
+        "title": "9. Children",
+        "body": [
+          "The Service is intended for businesses and not for anyone under 18; we do not knowingly collect data from people under 18."
+        ]
+      },
+      {
+        "title": "10. Changes",
+        "body": [
+          "We may update this policy. We will announce significant changes in the app or dashboard; the current version is always on this page."
+        ]
+      },
+      {
+        "title": "11. Contact",
+        "body": [
+          "For privacy and data requests, use the Profile section of the Workigom Flow app or flow.workigom.com."
+        ]
+      }
+    ]
+  },
+  "deleteAccountPage": {
+    "title": "Account and Data Deletion",
+    "back": "Back to sign in",
+    "privacyLink": "Privacy Policy",
+    "intro": "You can permanently delete your Workigom Flow account and all data linked to it at any time.",
+    "stepsTitle": "How do I delete it?",
+    "steps": [
+      "Sign in to your account in the Workigom Flow app (or at flow.workigom.com).",
+      "Go to the \"Delete my account\" section at the bottom of the Profile page.",
+      "Type your email address to confirm and press \"Permanently delete my account\".",
+      "If you cannot sign in, first use \"Forgot password\" or contact us."
+    ],
+    "deletedTitle": "What is deleted?",
+    "deleted": [
+      "Your profile and sign-in details",
+      "Your business: appointments, customers, services and calendars",
+      "Invoice/receipt records and uploaded files",
+      "Social media and WhatsApp connections, messages and comments",
+      "AI settings, conversations and records"
+    ],
+    "noteTitle": "Important",
+    "note": "Deletion cannot be undone. Records subject to a legal retention duty may be kept separately and restricted until that period ends.",
+    "loginCta": "Sign in and delete my account"
+  },
+  "accountDelete": {
+    "title": "Delete account",
+    "warning": "Your account and all business data (appointments, customers, financial records, social media and WhatsApp connections, AI records) will be permanently deleted. This cannot be undone.",
+    "confirmLabel": "Type your email address to confirm:",
+    "button": "Permanently delete my account",
+    "deleting": "Deleting...",
+    "adminBlocked": "Administrator accounts cannot be deleted here.",
+    "error": "Could not delete the account. Please try again.",
+    "privacy": "Privacy Policy"
   }
 }

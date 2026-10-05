@@ -199,6 +199,10 @@ export default function LoginPage() {
                 ></div>
               )}
             </button>
+
+            <p className="text-center text-[12px] text-[#A79E96] mt-3">
+              <a href="/gizlilik" target="_blank" rel="noopener noreferrer" className="text-[#FF7A59] hover:text-white transition-colors">{t('loginPage.form.privacyLink')}</a>
+            </p>
           </form>
 
           <p className="text-center text-[14px] text-[#A79E96] mt-8">

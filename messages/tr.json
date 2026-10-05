@@ -590,7 +590,8 @@
       "signupButton": "Kayıt Ol",
       "noAccountYet": "Henüz hesabınız yok mu?",
       "alreadyHaveAccount": "Zaten hesabınız var mı?",
-      "createFreeAccount": "Ücretsiz Hesap Oluştur"
+      "createFreeAccount": "Ücretsiz Hesap Oluştur",
+      "privacyLink": "Gizlilik Politikası"
     }
   },
   "analizPage": {
@@ -1162,5 +1163,119 @@
       "noteLabel": "Not (isteğe bağlı)",
       "notePlaceholder": "Kısa bir not yazın…"
     }
+  },
+  "privacyPage": {
+    "title": "Gizlilik Politikası",
+    "updated": "Son güncelleme: 5 Ekim 2026",
+    "back": "Girişe dön",
+    "sections": [
+      {
+        "title": "1. Giriş",
+        "body": [
+          "Workigom Flow (\"Hizmet\"), işletmelerin randevu, müşteri, finans ve sosyal medya süreçlerini yapay zeka desteğiyle yönetmesini sağlayan bir mobil uygulama ve web panelidir. Bu politika, hangi kişisel verileri topladığımızı, neden kullandığımızı, kimlerle paylaştığımızı ve haklarınızı açıklar. Hizmeti kullanarak bu politikayı kabul etmiş olursunuz."
+        ]
+      },
+      {
+        "title": "2. Topladığımız veriler",
+        "body": [
+          "Hesap bilgileri: e-posta adresi, ad-soyad, telefon numarası, işletme adı ve kategorisi, adres ve (isteğe bağlı) vergi bilgileri.",
+          "İşletme verileri: randevular, hizmetler, takvimler, müşterilerinizin adı, telefon numarası ve notları.",
+          "Finans verileri: yüklediğiniz fatura/fiş görselleri ve bunlardan okunan tutar, tarih, tedarikçi gibi alanlar; gelir-gider kayıtları.",
+          "Sosyal medya verileri: bağladığınız hesapların (Facebook, Instagram, YouTube vb.) profil bilgileri, gönderiler, yorumlar, mesajlar ve istatistikler.",
+          "WhatsApp verileri: bağladığınız WhatsApp oturumu üzerinden müşterilerinizle yazışılan mesajlar.",
+          "Yapay zeka etkileşimleri: Flow AI ve müşteri asistanıyla yapılan yazışmalar ve ürettiğiniz içerikler.",
+          "Teknik veriler: uygulama sürümü, cihaz türü ve hata kayıtları."
+        ]
+      },
+      {
+        "title": "3. Verileri neden kullanıyoruz",
+        "body": [
+          "Hizmeti sunmak ve hesabınızı yönetmek; randevu, mesaj ve sosyal medya yanıtlarını yürütmek; yapay zeka ile içerik ve yanıt üretmek; güvenliği sağlamak, kötüye kullanımı önlemek ve hataları gidermek; yasal yükümlülükleri yerine getirmek. Verilerinizi reklam amacıyla satmayız."
+        ]
+      },
+      {
+        "title": "4. Verilerin paylaşıldığı taraflar",
+        "body": [
+          "Hizmeti sunabilmek için güvenilir hizmet sağlayıcılarımızla çalışırız: veritabanı, kimlik doğrulama ve dosya depolama (Supabase); web barındırma (Vercel); yapay zeka işleme (Google Gemini); sosyal medya hesabı bağlantısı ve yayın (Zernio ve ilgili platformlar: Meta/Facebook/Instagram/WhatsApp, Google/YouTube vb.); WhatsApp bağlantısı (kendi sunucumuzda çalışan WhatsApp köprüsü).",
+          "Bu sağlayıcılar verileri yalnızca bizim adımıza ve talimatlarımız doğrultusunda işler. Yasal bir zorunluluk olmadıkça verilerinizi üçüncü kişilerle paylaşmayız."
+        ]
+      },
+      {
+        "title": "5. Saklama süresi",
+        "body": [
+          "Verilerinizi hesabınız açık olduğu sürece saklarız. Hesabınızı sildiğinizde profiliniz, işletmeniz ve ona bağlı bütün veriler (randevular, müşteriler, finans kayıtları, sosyal medya bağlantıları, mesajlar, yapay zeka kayıtları ve yüklenen dosyalar) kalıcı olarak silinir. Yasal saklama zorunluluğu bulunan kayıtlar, süresi dolana kadar ayrı ve kısıtlı olarak tutulabilir."
+        ]
+      },
+      {
+        "title": "6. Güvenlik",
+        "body": [
+          "Verileriniz şifreli bağlantı (HTTPS) üzerinden iletilir; erişim, kullanıcı ve işletme bazında yetkilendirme kurallarıyla sınırlandırılır. Hiçbir sistem yüzde yüz güvenli değildir; şüpheli bir durum fark ederseniz bize bildirin."
+        ]
+      },
+      {
+        "title": "7. Haklarınız",
+        "body": [
+          "6698 sayılı KVKK ve ilgili mevzuat (ör. GDPR) kapsamında verilerinize erişme, düzeltme, silme, işlenmesine itiraz etme ve verilerinizin bir kopyasını isteme hakkınız vardır. Müşterilerinizin verilerini bu Hizmete yüklerken gerekli aydınlatma ve izinleri sağlamak sizin sorumluluğunuzdadır."
+        ]
+      },
+      {
+        "title": "8. Hesap ve veri silme",
+        "body": [
+          "Hesabınızı istediğiniz zaman silebilirsiniz: uygulamada veya web panelinde Profil sayfasının en altındaki \"Hesabımı sil\" bölümünü kullanın. Giriş yapamıyorsanız hesap silme sayfamızdaki adımları izleyin. Silme işlemi geri alınamaz."
+        ]
+      },
+      {
+        "title": "9. Çocuklar",
+        "body": [
+          "Hizmet işletmelere yöneliktir ve 18 yaşın altındaki kişilere yönelik değildir; bilerek 18 yaş altı kişilerden veri toplamayız."
+        ]
+      },
+      {
+        "title": "10. Değişiklikler",
+        "body": [
+          "Bu politikayı güncelleyebiliriz. Önemli değişiklikleri uygulama veya web paneli üzerinden duyururuz; güncel sürüm her zaman bu sayfadadır."
+        ]
+      },
+      {
+        "title": "11. İletişim",
+        "body": [
+          "Gizlilik ve veri talepleriniz için Workigom Flow uygulaması içindeki Profil bölümünü veya flow.workigom.com adresini kullanabilirsiniz."
+        ]
+      }
+    ]
+  },
+  "deleteAccountPage": {
+    "title": "Hesap ve Veri Silme",
+    "back": "Girişe dön",
+    "privacyLink": "Gizlilik Politikası",
+    "intro": "Workigom Flow hesabınızı ve hesabınıza bağlı bütün verileri istediğiniz zaman kalıcı olarak silebilirsiniz.",
+    "stepsTitle": "Nasıl silerim?",
+    "steps": [
+      "Workigom Flow uygulamasında (veya flow.workigom.com üzerinde) hesabınıza giriş yapın.",
+      "Profil sayfasının en altındaki \"Hesabımı sil\" bölümüne gidin.",
+      "E-posta adresinizi yazarak silmeyi onaylayın ve \"Hesabımı kalıcı olarak sil\" düğmesine basın.",
+      "Giriş yapamıyorsanız önce \"Şifremi unuttum\" ile giriş yapın ya da bizimle iletişime geçin."
+    ],
+    "deletedTitle": "Neler silinir?",
+    "deleted": [
+      "Profiliniz ve giriş bilgileriniz",
+      "İşletmeniz; randevular, müşteriler, hizmetler ve takvimler",
+      "Fatura/fiş kayıtları ve yüklenen dosyalar",
+      "Sosyal medya ve WhatsApp bağlantıları, mesajlar ve yorumlar",
+      "Yapay zeka ayarları, konuşmaları ve kayıtları"
+    ],
+    "noteTitle": "Önemli",
+    "note": "Silme işlemi geri alınamaz. Yasal saklama zorunluluğu bulunan kayıtlar, süresi dolana kadar ayrı ve kısıtlı olarak tutulabilir.",
+    "loginCta": "Giriş yap ve hesabımı sil"
+  },
+  "accountDelete": {
+    "title": "Hesabı sil",
+    "warning": "Hesabınız ve işletmenize ait bütün veriler (randevular, müşteriler, finans kayıtları, sosyal medya ve WhatsApp bağlantıları, yapay zeka kayıtları) kalıcı olarak silinir. Bu işlem geri alınamaz.",
+    "confirmLabel": "Onaylamak için e-posta adresinizi yazın:",
+    "button": "Hesabımı kalıcı olarak sil",
+    "deleting": "Siliniyor...",
+    "adminBlocked": "Yönetici hesapları buradan silinemez.",
+    "error": "Hesap silinemedi. Lütfen tekrar deneyin.",
+    "privacy": "Gizlilik Politikası"
   }
 }

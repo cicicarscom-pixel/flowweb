@@ -590,7 +590,8 @@
       "signupButton": "Registrieren",
       "noAccountYet": "Noch kein Konto?",
       "alreadyHaveAccount": "Bereits ein Konto?",
-      "createFreeAccount": "Kostenloses Konto erstellen"
+      "createFreeAccount": "Kostenloses Konto erstellen",
+      "privacyLink": "Datenschutzerklärung"
     }
   },
   "analizPage": {
@@ -1168,5 +1169,119 @@
       "noteLabel": "Notiz (optional)",
       "notePlaceholder": "Kurze Notiz schreiben…"
     }
+  },
+  "privacyPage": {
+    "title": "Datenschutzerklärung",
+    "updated": "Zuletzt aktualisiert: 5. Oktober 2026",
+    "back": "Zurück zur Anmeldung",
+    "sections": [
+      {
+        "title": "1. Einleitung",
+        "body": [
+          "Workigom Flow (der \"Dienst\") ist eine mobile App und ein Web-Dashboard, mit dem Unternehmen Termine, Kunden, Finanzen und Social Media mit KI-Unterstützung verwalten. Diese Erklärung beschreibt, welche personenbezogenen Daten wir erheben, wofür wir sie nutzen, an wen wir sie weitergeben und welche Rechte Sie haben. Mit der Nutzung des Dienstes akzeptieren Sie diese Erklärung."
+        ]
+      },
+      {
+        "title": "2. Erhobene Daten",
+        "body": [
+          "Kontodaten: E-Mail-Adresse, Name, Telefonnummer, Firmenname und -kategorie, Adresse und (optional) steuerliche Angaben.",
+          "Geschäftsdaten: Termine, Leistungen, Kalender sowie Name, Telefonnummer und Notizen Ihrer Kunden.",
+          "Finanzdaten: hochgeladene Rechnungs-/Belegbilder und daraus gelesene Felder (Betrag, Datum, Lieferant); Einnahmen- und Ausgabenbuchungen.",
+          "Social-Media-Daten: Profilinformationen, Beiträge, Kommentare, Nachrichten und Statistiken der verbundenen Konten (Facebook, Instagram, YouTube usw.).",
+          "WhatsApp-Daten: Nachrichten mit Ihren Kunden über die verbundene WhatsApp-Sitzung.",
+          "KI-Interaktionen: Unterhaltungen mit Flow AI und dem Kundenassistenten sowie erzeugte Inhalte.",
+          "Technische Daten: App-Version, Gerätetyp und Fehlerprotokolle."
+        ]
+      },
+      {
+        "title": "3. Verwendung der Daten",
+        "body": [
+          "Zur Bereitstellung des Dienstes und Verwaltung Ihres Kontos; zur Bearbeitung von Terminen, Nachrichten und Social-Media-Antworten; zur Erzeugung von Inhalten und Antworten mit KI; für Sicherheit, Missbrauchsschutz und Fehlerbehebung; zur Erfüllung gesetzlicher Pflichten. Wir verkaufen Ihre Daten nicht zu Werbezwecken."
+        ]
+      },
+      {
+        "title": "4. Weitergabe von Daten",
+        "body": [
+          "Zur Bereitstellung des Dienstes arbeiten wir mit vertrauenswürdigen Anbietern: Datenbank, Authentifizierung und Dateispeicher (Supabase); Web-Hosting (Vercel); KI-Verarbeitung (Google Gemini); Verbindung und Veröffentlichung von Social-Media-Konten (Zernio und die jeweiligen Plattformen wie Meta/Facebook/Instagram/WhatsApp und Google/YouTube); WhatsApp-Anbindung (eine WhatsApp-Brücke auf unserem eigenen Server).",
+          "Diese Anbieter verarbeiten Daten nur in unserem Auftrag und nach unseren Weisungen. Eine Weitergabe an Dritte erfolgt nur, wenn wir gesetzlich dazu verpflichtet sind."
+        ]
+      },
+      {
+        "title": "5. Speicherdauer",
+        "body": [
+          "Wir speichern Ihre Daten, solange Ihr Konto aktiv ist. Wenn Sie Ihr Konto löschen, werden Ihr Profil, Ihr Unternehmen und alle zugehörigen Daten (Termine, Kunden, Finanzdaten, Social-Media-Verbindungen, Nachrichten, KI-Daten und hochgeladene Dateien) dauerhaft gelöscht. Unterliegen Daten gesetzlichen Aufbewahrungspflichten, können sie bis zum Ablauf der Frist getrennt und eingeschränkt aufbewahrt werden."
+        ]
+      },
+      {
+        "title": "6. Sicherheit",
+        "body": [
+          "Daten werden über verschlüsselte Verbindungen (HTTPS) übertragen; der Zugriff wird durch Berechtigungsregeln auf Benutzer- und Unternehmensebene beschränkt. Kein System ist vollständig sicher; melden Sie uns bitte Auffälligkeiten."
+        ]
+      },
+      {
+        "title": "7. Ihre Rechte",
+        "body": [
+          "Nach geltendem Recht (z. B. türkisches KVKK und DSGVO) haben Sie das Recht auf Auskunft, Berichtigung und Löschung, auf Widerspruch gegen die Verarbeitung und auf eine Kopie Ihrer Daten. Für die erforderlichen Hinweise und Einwilligungen bei der Erfassung Ihrer Kundendaten im Dienst sind Sie selbst verantwortlich."
+        ]
+      },
+      {
+        "title": "8. Konto- und Datenlöschung",
+        "body": [
+          "Sie können Ihr Konto jederzeit löschen: Nutzen Sie den Bereich \"Mein Konto löschen\" am Ende der Profilseite in der App oder im Web-Dashboard. Wenn Sie sich nicht anmelden können, folgen Sie den Schritten auf unserer Seite zur Kontolöschung. Die Löschung kann nicht rückgängig gemacht werden."
+        ]
+      },
+      {
+        "title": "9. Kinder",
+        "body": [
+          "Der Dienst richtet sich an Unternehmen und nicht an Personen unter 18 Jahren; wir erheben wissentlich keine Daten von Personen unter 18."
+        ]
+      },
+      {
+        "title": "10. Änderungen",
+        "body": [
+          "Wir können diese Erklärung aktualisieren. Wesentliche Änderungen geben wir in der App oder im Dashboard bekannt; die aktuelle Fassung finden Sie stets auf dieser Seite."
+        ]
+      },
+      {
+        "title": "11. Kontakt",
+        "body": [
+          "Für Datenschutzanfragen nutzen Sie den Bereich Profil in der Workigom-Flow-App oder flow.workigom.com."
+        ]
+      }
+    ]
+  },
+  "deleteAccountPage": {
+    "title": "Konto- und Datenlöschung",
+    "back": "Zurück zur Anmeldung",
+    "privacyLink": "Datenschutzerklärung",
+    "intro": "Sie können Ihr Workigom-Flow-Konto und alle damit verknüpften Daten jederzeit dauerhaft löschen.",
+    "stepsTitle": "Wie lösche ich es?",
+    "steps": [
+      "Melden Sie sich in der Workigom-Flow-App (oder auf flow.workigom.com) an.",
+      "Öffnen Sie am Ende der Profilseite den Bereich \"Mein Konto löschen\".",
+      "Geben Sie zur Bestätigung Ihre E-Mail-Adresse ein und tippen Sie auf \"Mein Konto dauerhaft löschen\".",
+      "Wenn Sie sich nicht anmelden können, nutzen Sie zuerst \"Passwort vergessen\" oder kontaktieren Sie uns."
+    ],
+    "deletedTitle": "Was wird gelöscht?",
+    "deleted": [
+      "Ihr Profil und Ihre Anmeldedaten",
+      "Ihr Unternehmen: Termine, Kunden, Leistungen und Kalender",
+      "Rechnungs-/Belegdaten und hochgeladene Dateien",
+      "Social-Media- und WhatsApp-Verbindungen, Nachrichten und Kommentare",
+      "KI-Einstellungen, Unterhaltungen und Protokolle"
+    ],
+    "noteTitle": "Wichtig",
+    "note": "Die Löschung kann nicht rückgängig gemacht werden. Daten, die gesetzlichen Aufbewahrungspflichten unterliegen, können bis zum Ablauf der Frist getrennt und eingeschränkt aufbewahrt werden.",
+    "loginCta": "Anmelden und mein Konto löschen"
+  },
+  "accountDelete": {
+    "title": "Konto löschen",
+    "warning": "Ihr Konto und alle Unternehmensdaten (Termine, Kunden, Finanzdaten, Social-Media- und WhatsApp-Verbindungen, KI-Daten) werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "confirmLabel": "Geben Sie zur Bestätigung Ihre E-Mail-Adresse ein:",
+    "button": "Mein Konto dauerhaft löschen",
+    "deleting": "Wird gelöscht...",
+    "adminBlocked": "Administratorkonten können hier nicht gelöscht werden.",
+    "error": "Das Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "privacy": "Datenschutzerklärung"
   }
 }

@@ -129,6 +129,9 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] Gizlilik politikası ve hesap silme (Google Play):** herkese açık `/gizlilik` (Gizlilik Politikası) ve `/hesap-sil` (hesap/veri silme bilgisi) sayfaları eklendi (tr/en/de, giriş gerektirmez; `proxy.ts` istisnası). Profil sayfasının altında "Hesabı sil" bölümü: kullanıcı e-postasını yazarak onaylar, `delete-account` Edge Function'ı hesabı ve bütün işletme verisini kalıcı siler. Giriş sayfasına Gizlilik Politikası bağlantısı. Play Console URL'leri: `https://flow.workigom.com/gizlilik`, `https://flow.workigom.com/hesap-sil`.
+## 📌 Son Güncellemeler
+
 - **[05.10.2026] Anasayfa "Tüm Hesaplar" kartı yenilendi:** toplam takipçi ve değişim, platform dağılım çubuğu, hesap başına takipçi/değişim satırları (avatar + platform rozeti) ve "Ayrıntılı analiz" bağlantısı. Bileşen: `src/components/dashboard/SocialSummaryCard.tsx`.
 ## 📌 Son Güncellemeler
 

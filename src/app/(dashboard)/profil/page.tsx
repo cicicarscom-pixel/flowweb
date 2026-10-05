@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
 import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
+import AccountDeletePanel from "@/components/settings/AccountDeletePanel";
 
 
 import { createClient } from "@/lib/supabase/client";
@@ -339,6 +340,7 @@ export default function ProfilPage() {
         </form>
       </div>
       <AiDataResetPanel />
+      <AccountDeletePanel email={email} />
     </div>
   );
 }

@@ -164,6 +164,7 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
 
   const removeRole = async (id: string) => {
     const role = customRoles.find((r) => r.id === id);
+    if (role && !window.confirm(t("personas.addRole.confirm", { name: role.label }))) return;
     const { error } = await supabase.from("custom_business_roles").delete().eq("id", id);
     if (error) return;
     setCustomRoles((r) => r.filter((x) => x.id !== id));

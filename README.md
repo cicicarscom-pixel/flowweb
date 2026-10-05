@@ -129,6 +129,9 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] Anasayfa "Tüm Hesaplar" kartı yenilendi:** toplam takipçi ve değişim, platform dağılım çubuğu, hesap başına takipçi/değişim satırları (avatar + platform rozeti) ve "Ayrıntılı analiz" bağlantısı. Bileşen: `src/components/dashboard/SocialSummaryCard.tsx`.
+## 📌 Son Güncellemeler
+
 - **[05.10.2026] Özel rol silme:** × ile silmeden önce "silmek istediğinden emin misin?" onayı sorulur.
 ## 📌 Son Güncellemeler
 

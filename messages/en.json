@@ -1016,7 +1016,12 @@
       "noAccounts": "No social media accounts connected yet",
       "connectAccount": "Connect account",
       "engagementTrend": "Engagement Trend",
-      "high": "High"
+      "high": "High",
+      "accountsConnected": "{n} accounts connected",
+      "change": "Change",
+      "noChange": "No change",
+      "followersShort": "followers",
+      "viewAnalysis": "View analytics"
     },
     "recentActivities": {
       "title": "Recent Activity",

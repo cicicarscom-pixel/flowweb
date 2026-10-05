@@ -9,6 +9,7 @@ import AppointmentNotifications from "@/components/dashboard/AppointmentNotifica
 import { useRouter } from "next/navigation";
 import { formatMoney } from '@/lib/money';
 import InvoiceCard from "@/components/dashboard/InvoiceCard";
+import SocialSummaryCard, { SocialAccountSummary } from "@/components/dashboard/SocialSummaryCard";
 import { todayInTimezone, addDaysYmd, monthRangeYmd } from "@/lib/dates";
 
 export default function DashboardHomePage() {
@@ -22,6 +23,7 @@ export default function DashboardHomePage() {
   const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
   const [latestInvoice, setLatestInvoice] = useState<any>(null);
   const [orgTimezone, setOrgTimezone] = useState('Europe/Istanbul');
+  const [socialAccounts, setSocialAccounts] = useState<SocialAccountSummary[]>([]);
   const [hasSocialAccounts, setHasSocialAccounts] = useState(true);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [dailyStats, setDailyStats] = useState({ messages: 0, comments: 0 });
@@ -133,6 +135,15 @@ export default function DashboardHomePage() {
         setSocialStats(prev => ({ ...prev, followers: totalFollowers, trend: finalTrend }));
         const hasAccounts = Array.isArray(actualFollow.accounts) && actualFollow.accounts.length > 0;
         setHasSocialAccounts(hasAccounts);
+        setSocialAccounts(hasAccounts ? (actualFollow.accounts as any[]).map((a: any) => ({
+          id: String(a._id || a.id || a.accountId || Math.random()),
+          platform: a.platform,
+          name: a.displayName || a.username || '',
+          username: a.username || '',
+          picture: a.profilePicture || null,
+          followers: Number(a.currentFollowers || a.followers || 0),
+          growth: Number(a.growthPercentage || a.followerGrowthPercentage || a.growth || 0),
+        })) : []);
 
 
         // Recent Activities (Messages & Comments)
@@ -454,44 +465,17 @@ export default function DashboardHomePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
         <InvoiceCard invoice={latestInvoice} locale={locale} todayYmd={todayInTimezone(orgTimezone)} onScan={() => router.push("/ai-muhasebe/veri-girisi")} />
         {/* Social Media Stats (Tüm Hesaplar) */}
-      <div className="glass neon-cyan" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: 24, position: "relative", overflow: "hidden", height: "100%" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "linear-gradient(135deg, rgba(255,122,89,0.05), transparent)", pointerEvents: "none" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 18, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>👥</div>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 600, letterSpacing: "0.07em" }}>{t('dashboardHome.social.allAccounts')}</p>
-          </div>
-          {hasSocialAccounts && (
-            <div style={{ padding: "4px 12px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.03)" }}>
-              <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.05em" }}>{t('dashboardHome.social.liveAnalysis')}</span>
-            </div>
-          )}
-        </div>
-
         {hasSocialAccounts ? (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-            <div>
-              <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t('dashboardHome.social.totalFollowers')}</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <p style={{ fontSize: 32, fontWeight: 800, color: "#FF7A59", fontFamily: "Outfit, sans-serif", letterSpacing: "-0.02em", textShadow: "0 0 10px rgba(255,122,89,0.3)" }}>
-                  {socialStats.followers.toLocaleString(locale)}
-                </p>
-                <div style={{ display: "flex", alignItems: "center", gap: 4, color: socialStats.trend > 0 ? "#22B573" : socialStats.trend < 0 ? "#EF4444" : "var(--text-secondary)" }}>
-                  <span style={{ fontSize: 14 }}>{socialStats.trend > 0 ? "↑" : socialStats.trend < 0 ? "↓" : "—"}</span>
-                  {socialStats.trend !== 0 && <span style={{ fontSize: 13, fontWeight: 700 }}>{Math.abs(socialStats.trend)}%</span>}
-                </div>
-              </div>
-            </div>
-          </div>
+          <SocialSummaryCard accounts={socialAccounts} totalFollowers={socialStats.followers} trend={socialStats.trend} locale={locale} />
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center", alignItems: "center", padding: "10px 0", textAlign: "center" }}>
+          <div className="glass neon-cyan" style={{ display: "flex", flexDirection: "column", borderRadius: 20, padding: 24, height: "100%", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 6 }}>
+            <p style={{ color: "#fff", fontSize: 15, fontWeight: 800 }}>{t('dashboardHome.social.allAccounts')}</p>
             <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{t('dashboardHome.social.noAccounts')}</p>
             <Link href="/sosyal-medya" style={{ color: "#00F2FE", fontSize: 13, fontWeight: 500, marginTop: 8, display: "inline-block" }}>
               {t('dashboardHome.social.connectAccount')}
             </Link>
           </div>
         )}
-      </div>
       </div>
       <AppointmentNotifications locale={locale as "tr" | "en" | "de"} />
       {recentActivities.length > 0 && (

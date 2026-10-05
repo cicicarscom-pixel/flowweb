@@ -1016,7 +1016,12 @@
       "noAccounts": "Henüz sosyal medya hesabı bağlanmadı",
       "connectAccount": "Hesap bağla",
       "engagementTrend": "Etkileşim Trendi",
-      "high": "Yüksek"
+      "high": "Yüksek",
+      "accountsConnected": "{n} hesap bağlı",
+      "change": "Değişim",
+      "noChange": "Değişim yok",
+      "followersShort": "takipçi",
+      "viewAnalysis": "Ayrıntılı analiz"
     },
     "recentActivities": {
       "title": "Son Aktiviteler",

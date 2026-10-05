@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[05.10.2026] İletişim e-postası:** Gizlilik Politikası (§11) ve Hesap Silme sayfasına `info@workigom.com` eklendi (tr/en/de).
 - **[05.10.2026] Hesap silme sonrası çıkış:** silinen kullanıcı için sunucuya global çıkış isteği 403 veriyordu; artık yalnız yerel oturum kapatılır (`signOut({ scope: "local" })`).
 - **[05.10.2026] Gizlilik ve hesap silme sayfaları yenilendi:** sayfa aşağı kaydırılamıyordu (kök `body` `overflow-hidden`); sayfalar artık kendi kaydırma alanında açılır. Yeni tasarım: sabit üst çubuk, hero, `/gizlilik` için bölüm içindekiler menüsü (mobilde gizli), kart bölümler; `/hesap-sil` için numaralı adımlar. Ortak iskelet: `src/components/legal/LegalShell.tsx`.
 - **[05.10.2026] Gizlilik politikası ve hesap silme (Google Play):** herkese açık `/gizlilik` (Gizlilik Politikası) ve `/hesap-sil` (hesap/veri silme bilgisi) sayfaları eklendi (tr/en/de, giriş gerektirmez; `proxy.ts` istisnası). Profil sayfasının altında "Hesabı sil" bölümü: kullanıcı e-postasını yazarak onaylar, `delete-account` Edge Function'ı hesabı ve bütün işletme verisini kalıcı siler. Giriş sayfasına Gizlilik Politikası bağlantısı. Play Console URL'leri: `https://flow.workigom.com/gizlilik`, `https://flow.workigom.com/hesap-sil`.

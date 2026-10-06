@@ -19,10 +19,12 @@ async function callWaha(body: Record<string, unknown>, fallbackKey: string): Pro
     if (error) {
       let code = ''
       try { code = (await (error as any).context?.json?.())?.error || '' } catch { /* gövde okunamadı */ }
+      if (code === 'BOT_NOT_SETUP' && body.action === 'status') return { success: true, data: null }
       if (code === 'ACCOUNT_NOT_ACTIVE') return { success: false, error: t('common.serverErrors.wahaAccountNotActive') }
       return { success: false, error: t(fallbackKey) }
     }
     if (data?.success === false) {
+      if (data.error === 'BOT_NOT_SETUP' && body.action === 'status') return { success: true, data: null }
       if (data.error === 'ACCOUNT_NOT_ACTIVE') return { success: false, error: t('common.serverErrors.wahaAccountNotActive') }
       return { success: false, error: t(fallbackKey) }
     }

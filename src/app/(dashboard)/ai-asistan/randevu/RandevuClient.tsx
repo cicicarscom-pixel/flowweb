@@ -80,15 +80,28 @@ function ScrollableContainer({ children, innerRef }: { children: React.ReactNode
 }
 
 export default function RandevuClient({ initialAppointments, services, orgId, today, initialCalendars, multiCalendarEnabled }: { initialAppointments: any[], services: any[], orgId: string | null, today: string, initialCalendars?: any[], multiCalendarEnabled?: boolean }) {
+  const [multiCalEnabled, setMultiCalEnabled] = useState(multiCalendarEnabled || false);
   const [activeCalendarId, setActiveCalendarId] = useState<string | null>(null);
   const [calendars, setCalendars] = useState(initialCalendars || []);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [promptConfig, setPromptConfig] = useState({ visible: false, title: "", placeholder: "", value: "", onSave: (val: string) => {} });
   const t = useTranslations();
   const supabase = createClient();
-    const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
 
-    const initialDateFromParam = () => {
+  useEffect(() => {
+    if (!orgId) return;
+    const sub = supabase.channel("org_changes_randevu")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "organizations", filter: `id=eq.${orgId}` }, (payload) => {
+        if (payload.new && typeof payload.new.multi_calendar_enabled === "boolean") {
+          setMultiCalEnabled(payload.new.multi_calendar_enabled);
+        }
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(sub); };
+  }, [supabase, orgId]);
+
+  const initialDateFromParam = () => {
     const p = searchParams.get("date");
     if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) {
       return p;
@@ -416,7 +429,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
       <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
         
         {/* Multi-Calendar Chip Bar (Phase 3) */}
-        {multiCalendarEnabled && (
+        {multiCalEnabled && (
           <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", paddingBottom: 8 }}>
             <button
               onClick={async () => {
@@ -714,7 +727,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                                   📝 {appt.customer_request_raw}
                                 </span>
                               )}
-                              {multiCalendarEnabled && appt.calendar_id && (
+                              {multiCalEnabled && appt.calendar_id && (
                               <span style={{ fontSize: 12, color: "#22B573", background: "rgba(34,181,115,0.1)", padding: "2px 8px", borderRadius: 99 }}>
                                 {calendars.find((c: any) => c.id === appt.calendar_id)?.name || "Takvim"}
                                 </span>

@@ -12,20 +12,44 @@ export default function MultiCalendarToggle() {
   const t = useTranslations();
 
   useEffect(() => {
+    let sub: ReturnType<typeof supabase.channel> | null = null;
+    let userId: string | null = null;
+    let active = true;
+
     async function load() {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
+      if (!session || !active) return;
+      userId = session.user.id;
       
       const { data } = await supabase
         .from("organizations")
         .select("multi_calendar_enabled")
-        .eq("owner_id", session.user.id)
+        .eq("owner_id", userId)
         .single();
         
+      if (!active) return;
       if (data) setIsEnabled(data.multi_calendar_enabled);
       setLoading(false);
+
+      sub = supabase.channel("org_changes")
+        .on("postgres_changes", {
+          event: "UPDATE",
+          schema: "public",
+          table: "organizations",
+          filter: `owner_id=eq.${userId}`
+        }, (payload) => {
+          if (payload.new && typeof payload.new.multi_calendar_enabled === "boolean") {
+            setIsEnabled(payload.new.multi_calendar_enabled);
+          }
+        })
+        .subscribe();
     }
     load();
+
+    return () => {
+      active = false;
+      if (sub) supabase.removeChannel(sub);
+    };
   }, [supabase]);
 
   const handleToggle = async () => {

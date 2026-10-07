@@ -58,6 +58,24 @@
         "cta": "Erklären",
         "prompt": "Meine {platform}-Follower haben sich in den letzten {days} Tagen um {change} geändert. Erkläre das und sag mir, was ich tun soll."
       }
+    },
+    "share": {
+      "attach": "Video anhängen",
+      "attachedLabel": "Angehängtes Video",
+      "removeAttachment": "Entfernen",
+      "cardTitle": "Teilen bereit",
+      "cardPlatforms": "Konten",
+      "cardSkipped": "Übersprungen",
+      "cardWhen": "Zeit",
+      "now": "Jetzt",
+      "confirm": "Bestätigen und teilen",
+      "cancel": "Abbrechen",
+      "notReady": "Seite wird vorbereitet, bitte warten...",
+      "sharing": "Wird geteilt...",
+      "done": "Geteilt",
+      "scheduled": "Geplant",
+      "failed": "Teilen fehlgeschlagen: {message}",
+      "unreadable": "Video nicht lesbar"
     }
   },
   "common": {

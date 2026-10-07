@@ -58,6 +58,24 @@
         "cta": "Yorumla",
         "prompt": "Son {days} günde {platform} takipçi sayım {change} değişti. Bunu yorumla ve ne yapmam gerektiğini söyle."
       }
+    },
+    "share": {
+      "attach": "Video ekle",
+      "attachedLabel": "Ekli video",
+      "removeAttachment": "Kaldır",
+      "cardTitle": "Paylaşım hazır",
+      "cardPlatforms": "Hesaplar",
+      "cardSkipped": "Atlananlar",
+      "cardWhen": "Zaman",
+      "now": "Hemen",
+      "confirm": "Onayla ve paylaş",
+      "cancel": "Vazgeç",
+      "notReady": "Sayfa hazırlanıyor, birkaç saniye bekleyin...",
+      "sharing": "Paylaşılıyor...",
+      "done": "Paylaşıldı",
+      "scheduled": "Planlandı",
+      "failed": "Paylaşılamadı: {message}",
+      "unreadable": "Video okunamadı"
     }
   },
   "common": {

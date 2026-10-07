@@ -131,6 +131,38 @@ export default function SharePage() {
           initialSelected[acc.platform.toLowerCase()] = true;
         });
         setSelectedPlatforms(initialSelected);
+
+        // Handoff check
+        const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
+        const job = flowAiShareHandoff.takeJob();
+        const file = flowAiShareHandoff.getFile();
+        if (job && file) {
+          loadMediaFile(file);
+          setLocalText(job.caption || '');
+          
+          const newSelected: Record<string, boolean> = {};
+          accounts.forEach((acc: any) => {
+            const p = acc.platform.toLowerCase();
+            newSelected[p] = job.platforms.includes(p);
+          });
+          setSelectedPlatforms(newSelected);
+
+          if (job.scheduledLocal) {
+            setPublishMode('schedule');
+            // convert YYYY-MM-DD HH:mm to DD.MM.YYYY HH:mm
+            const [dateStr, timeStr] = job.scheduledLocal.split(' ');
+            if (dateStr && timeStr) {
+              const [y, m, d] = dateStr.split('-');
+              setScheduleDate(`${d}.${m}.${y} ${timeStr}`);
+            }
+            if (job.timezone) {
+              setTimezone(job.timezone);
+            }
+          } else {
+            setPublishMode('now');
+          }
+        }
+
       } catch(e) {
         console.warn("Failed to fetch accounts", e);
       }
@@ -183,47 +215,52 @@ export default function SharePage() {
 
   const [mediaDurationSec, setMediaDurationSec] = useState(0);
 
+  const loadMediaFile = (file: File) => {
+    setIsImageCropped(false);
+    
+    const isVideo = file.type.startsWith('video/');
+    if (isVideo) {
+      const videoElement = document.createElement('video');
+      videoElement.preload = 'metadata';
+      videoElement.onloadedmetadata = () => {
+        URL.revokeObjectURL(videoElement.src);
+        const duration = videoElement.duration;
+        setMediaDurationSec(duration);
+        
+        const uncheckedPlatforms: string[] = [];
+        const updatedPlatforms = { ...selectedPlatforms };
+        for (const platform of Object.keys(updatedPlatforms)) {
+          if (updatedPlatforms[platform]) {
+            const rule = PLATFORM_MEDIA_RULES[platform.toLowerCase()];
+            if (rule && rule.maxDurationSec && duration > rule.maxDurationSec) {
+              updatedPlatforms[platform] = false;
+              uncheckedPlatforms.push(platform);
+            }
+          }
+        }
+        if (uncheckedPlatforms.length > 0) {
+          setSelectedPlatforms(updatedPlatforms);
+          // Handoff ise bu alert gereksiz ama mevcut akışı bozmamak için kalsın. (Talimatta "uygunsuz platform zaten elendiği için tetiklenmemeli" diyor, zaten handoff'ta updatedPlatforms baştan false ayarlanacağı için buraya girmez).
+          alert(`Yüklediğiniz video ${Math.round(duration)} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:\n\n` +
+            uncheckedPlatforms.map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} (Max: ${PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec} sn)`).join('\n'));
+        }
+      };
+      videoElement.src = URL.createObjectURL(file);
+    } else {
+      setMediaDurationSec(0);
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLocalImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setIsImageCropped(false);
-      
-      const isVideo = file.type.startsWith('video/');
-      if (isVideo) {
-        const videoElement = document.createElement('video');
-        videoElement.preload = 'metadata';
-        videoElement.onloadedmetadata = () => {
-          URL.revokeObjectURL(videoElement.src);
-          const duration = videoElement.duration;
-          setMediaDurationSec(duration);
-          
-          const uncheckedPlatforms: string[] = [];
-          const updatedPlatforms = { ...selectedPlatforms };
-          for (const platform of Object.keys(updatedPlatforms)) {
-            if (updatedPlatforms[platform]) {
-              const rule = PLATFORM_MEDIA_RULES[platform.toLowerCase()];
-              if (rule && rule.maxDurationSec && duration > rule.maxDurationSec) {
-                updatedPlatforms[platform] = false;
-                uncheckedPlatforms.push(platform);
-              }
-            }
-          }
-          if (uncheckedPlatforms.length > 0) {
-            setSelectedPlatforms(updatedPlatforms);
-            alert(`Yüklediğiniz video ${Math.round(duration)} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:\n\n` +
-              uncheckedPlatforms.map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} (Max: ${PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec} sn)`).join('\n'));
-          }
-        };
-        videoElement.src = URL.createObjectURL(file);
-      } else {
-        setMediaDurationSec(0);
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLocalImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      loadMediaFile(file);
     }
   };
   
@@ -409,6 +446,7 @@ export default function SharePage() {
       
       setTimeout(() => {
         alert(t("sharePage.success.published"));
+        window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: true, message: t("sharePage.success.published") } }));
         setIsSharing(false);
         setUploadProgress(0);
       }, 500);
@@ -418,8 +456,27 @@ export default function SharePage() {
       setIsSharing(false);
       setUploadProgress(0);
       alert(t("sharePage.errors.publishFailed", { message: e.message }));
+      window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message: e.message } }));
     }
   };
+
+  const shareRef = useRef(handleShare);
+  shareRef.current = handleShare;
+
+  useEffect(() => {
+    let active = true;
+    const register = async () => {
+      const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
+      if (!active) return;
+      const ready = !!localImage && !!localText && Object.values(selectedPlatforms).some(Boolean) && !isSharing;
+      flowAiShareHandoff.registerPage({ ready, share: () => shareRef.current() });
+    };
+    register();
+    return () => {
+      active = false;
+      import('@/lib/flowAiShareHandoff').then(({ flowAiShareHandoff }) => flowAiShareHandoff.unregisterPage());
+    };
+  }, [localImage, localText, selectedPlatforms, isSharing]);
 
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden text-on-surface">

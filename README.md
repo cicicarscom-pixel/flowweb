@@ -690,3 +690,9 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 
 9. **Flow & FlowWeb - İptal ve Kalıcı Silme Arayüzü:** Randevu listelerinde kullanılmak üzere iptal ve silme işlemleri RPC (cancel_appointment, delete_appointment) üzerinden backend ile tam entegre edildi. Web tarafında iptal nedenleri ve durum bildirimleri kartta soluk rozetler olarak gösterilirken, mobilde kart içine ActionSheet ('⋮') eklendi.
 10. **Flow (Mobil) - Gelen Kutusu Zil Yönlendirmesi:** DashboardScreen'deki bildirim çanının yanlışlıkla 'Sosyal Medya' sekmesine yönlendirmesi sorunu düzeltilip, doğrudan ana gezinme yığını (Stack) seviyesine taşınan 'Inbox > Bildirimler' sekmesine yönlendirildi. Tanımsız kalan eski load data (fetchAppointments) fonksiyonları temizlendi.
+
+### [07.10.2026] Flow AI Web Panel - Video Paylaşım Aracı (FA7)
+- Flow AI paneline video ekleme ve handoff yeteneği kazandırıldı.
+- Panel üzerinden AI destekli gönderi metni ve zamanlama onayı ile tam etkileşimli sosyal medya paylaşım akışı sağlandı.
+- \share/page.tsx\ üzerinden Flow AI job register ve share entegrasyonu tamamlandı.
+

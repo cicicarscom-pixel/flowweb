@@ -58,6 +58,24 @@
         "cta": "Explain",
         "prompt": "My {platform} followers changed by {change} in the last {days} days. Explain it and tell me what to do."
       }
+    },
+    "share": {
+      "attach": "Attach video",
+      "attachedLabel": "Attached video",
+      "removeAttachment": "Remove",
+      "cardTitle": "Share ready",
+      "cardPlatforms": "Accounts",
+      "cardSkipped": "Skipped",
+      "cardWhen": "Time",
+      "now": "Now",
+      "confirm": "Confirm and share",
+      "cancel": "Cancel",
+      "notReady": "Preparing page, please wait...",
+      "sharing": "Sharing...",
+      "done": "Shared",
+      "scheduled": "Scheduled",
+      "failed": "Failed to share: {message}",
+      "unreadable": "Video unreadable"
     }
   },
   "common": {

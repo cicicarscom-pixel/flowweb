@@ -36,9 +36,9 @@ export default function PersonaCard({
   title,
   compact = false,
 }: PersonaCardProps) {
-  const cardWidth = compact ? 96 : 168;
-  const avatarSize = compact ? 60 : 92;
-  const iconFontSize = compact ? 26 : 38;
+  const cardWidth = compact ? 72 : 118;
+  const avatarSize = compact ? 44 : 64;
+  const iconFontSize = compact ? 18 : 26;
 
   return (
     <button
@@ -50,11 +50,11 @@ export default function PersonaCard({
         alignItems: "center",
         width: cardWidth,
         flexShrink: 0,
-        padding: compact ? "14px 8px 12px" : "22px 14px 18px",
-        borderRadius: compact ? 18 : 22,
+        padding: compact ? "10px 6px 8px" : "15px 10px 12px",
+        borderRadius: compact ? 14 : 16,
         background: selected ? `${accentColor}1F` : "rgba(255,255,255,0.03)",
         border: `1.5px solid ${selected ? accentColor : "rgba(255,255,255,0.08)"}`,
-        boxShadow: selected ? `0 0 ${compact ? 16 : 24}px ${accentColor}66` : "none",
+        boxShadow: selected ? `0 0 ${compact ? 12 : 16}px ${accentColor}66` : "none",
         cursor: "pointer",
         transition: "all 0.2s ease",
         textAlign: "center",
@@ -65,14 +65,14 @@ export default function PersonaCard({
           width: avatarSize,
           height: avatarSize,
           borderRadius: "50%",
-          border: `2.5px solid ${accentColor}`,
-          boxShadow: `0 0 ${compact ? 10 : 18}px ${accentColor}80`,
+          border: `2px solid ${accentColor}`,
+          boxShadow: `0 0 ${compact ? 6 : 12}px ${accentColor}80`,
           overflow: "hidden",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(255,255,255,0.05)",
-          marginBottom: compact ? 8 : 14,
+          marginBottom: compact ? 6 : 10,
           flexShrink: 0,
         }}
       >
@@ -90,11 +90,11 @@ export default function PersonaCard({
 
       <span
         style={{
-          fontSize: compact ? 11.5 : 14,
+          fontSize: compact ? 10 : 12,
           fontWeight: 700,
           color: "#fff",
           lineHeight: 1.25,
-          marginBottom: description ? 6 : 0,
+          marginBottom: description ? 4 : 0,
         }}
       >
         {label}
@@ -103,7 +103,7 @@ export default function PersonaCard({
       {description && (
         <span
           style={{
-            fontSize: 11.5,
+            fontSize: 10,
             color: "var(--text-secondary)",
             lineHeight: 1.4,
             display: "-webkit-box",

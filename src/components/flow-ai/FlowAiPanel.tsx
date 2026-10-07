@@ -268,6 +268,10 @@ export default function FlowAiPanel() {
     video.preload = 'metadata';
     video.onloadedmetadata = () => {
       URL.revokeObjectURL(video.src);
+      if (!Number.isFinite(video.duration) || video.duration <= 0) {
+        push("error", t("share.unreadable"));
+        return;
+      }
       const meta = {
         kind: "video" as const,
         mimeType: file.type,

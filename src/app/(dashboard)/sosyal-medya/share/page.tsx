@@ -137,7 +137,7 @@ export default function SharePage() {
         const job = flowAiShareHandoff.takeJob();
         const file = flowAiShareHandoff.getFile();
         if (job && file) {
-          loadMediaFile(file);
+          loadMediaFile(file, { skipDurationFilter: true });
           setLocalText(job.caption || '');
           
           const newSelected: Record<string, boolean> = {};
@@ -215,7 +215,7 @@ export default function SharePage() {
 
   const [mediaDurationSec, setMediaDurationSec] = useState(0);
 
-  const loadMediaFile = (file: File) => {
+  const loadMediaFile = (file: File, options?: { skipDurationFilter?: boolean }) => {
     setIsImageCropped(false);
     
     const isVideo = file.type.startsWith('video/');
@@ -227,6 +227,8 @@ export default function SharePage() {
         const duration = videoElement.duration;
         setMediaDurationSec(duration);
         
+        if (options?.skipDurationFilter) return;
+
         const uncheckedPlatforms: string[] = [];
         const updatedPlatforms = { ...selectedPlatforms };
         for (const platform of Object.keys(updatedPlatforms)) {
@@ -240,7 +242,6 @@ export default function SharePage() {
         }
         if (uncheckedPlatforms.length > 0) {
           setSelectedPlatforms(updatedPlatforms);
-          // Handoff ise bu alert gereksiz ama mevcut akışı bozmamak için kalsın. (Talimatta "uygunsuz platform zaten elendiği için tetiklenmemeli" diyor, zaten handoff'ta updatedPlatforms baştan false ayarlanacağı için buraya girmez).
           alert(`Yüklediğiniz video ${Math.round(duration)} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:\n\n` +
             uncheckedPlatforms.map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} (Max: ${PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec} sn)`).join('\n'));
         }

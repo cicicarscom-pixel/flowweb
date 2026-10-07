@@ -75,7 +75,10 @@
       "done": "Shared",
       "scheduled": "Scheduled",
       "failed": "Failed to share: {message}",
-      "unreadable": "Video unreadable"
+      "unreadable": "Video unreadable",
+      "pickTitle": "Which accounts should we post to?",
+      "pickContinue": "Continue",
+      "pickedPrefix": "Selected accounts"
     }
   },
   "common": {

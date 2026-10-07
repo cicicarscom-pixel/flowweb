@@ -143,6 +143,8 @@ export default function FlowAiPanel() {
   const [attachmentMeta, setAttachmentMeta] = useState<{ kind: "video"; mimeType: string; durationSec: number; width: number; height: number; sizeBytes: number; fileName: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [shareConfirmState, setShareConfirmState] = useState<'IDLE' | 'NOT_READY' | 'STARTED'>('IDLE');
+  const [platformPick, setPlatformPick] = useState<null | { platform: string; handle: string; eligible: boolean; reason?: string }[]>(null);
+  const [pickSel, setPickSel] = useState<Record<string, boolean>>({});
 
   const push = useCallback((role: Msg["role"], text: string) => {
     setMessages((m) => [...m, { id: ++seq.current, role, text }]);
@@ -182,10 +184,16 @@ export default function FlowAiPanel() {
       flowAiShareHandoff.setJob(job);
       setShareJobPending(job);
       router.push(SCREEN_ROUTES.ai_uretim);
+    } else if (action?.type === "pick_platforms") {
+      const opts = Array.isArray(action.options) ? action.options.slice(0, 10).filter((o: any) => o && typeof o.platform === "string" && typeof o.eligible === "boolean") : [];
+      if (opts.length === 0) return;
+      setPlatformPick(opts.map((o: any) => ({ platform: o.platform, handle: typeof o.handle === "string" ? o.handle : "", eligible: o.eligible, reason: typeof o.reason === "string" ? o.reason : undefined })));
+      setPickSel(Object.fromEntries(opts.filter((o: any) => o.eligible).map((o: any) => [o.platform, true])));
     }
   }, [router]);
 
   const send = useCallback(async (override?: string) => {
+    setPlatformPick(null);
     const text = (typeof override === "string" ? override : input).trim();
     if (!text || busy) return;
     setInput("");
@@ -467,6 +475,67 @@ export default function FlowAiPanel() {
                 setShareConfirmState('IDLE');
                 flowAiShareHandoff.setJob(null as any);
               }} style={{ padding: "8px 12px", borderRadius: 8, border: "none", background: "rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, cursor: shareConfirmState === 'STARTED' ? "not-allowed" : "pointer" }}>
+                {t("share.cancel")}
+              </button>
+            </div>
+          </div>
+        )}
+        {platformPick && (
+          <div style={{ ...box, padding: 12, borderColor: "rgba(0,218,243,0.4)", marginTop: 8 }}>
+            <div style={{ color: "#00DAF3", fontWeight: 700, fontSize: 13, marginBottom: 12 }}>{t("share.pickTitle")}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+              {platformPick.map((o, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  disabled={!o.eligible}
+                  onClick={() => setPickSel((s) => ({ ...s, [o.platform]: !s[o.platform] }))}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    padding: "8px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)",
+                    background: pickSel[o.platform] ? "rgba(0,218,243,0.1)" : "rgba(255,255,255,0.03)",
+                    color: o.eligible ? "#fff" : "rgba(255,255,255,0.3)",
+                    cursor: o.eligible ? "pointer" : "not-allowed", textAlign: "left"
+                  }}
+                >
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <div style={{ fontWeight: 600, fontSize: 13 }}>
+                      {cap(o.platform)} {o.handle ? <span style={{ opacity: 0.6, fontWeight: 400 }}>@{o.handle}</span> : null}
+                    </div>
+                    {!o.eligible && o.reason && (
+                      <div style={{ fontSize: 11, color: "#FF7A59" }}>{o.reason}</div>
+                    )}
+                  </div>
+                  {pickSel[o.platform] && <div style={{ color: "#00DAF3" }}>✓</div>}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button
+                type="button"
+                disabled={!Object.values(pickSel).some(Boolean)}
+                onClick={() => {
+                  const names = Object.keys(pickSel).filter((k) => pickSel[k]);
+                  setPlatformPick(null);
+                  send(`${t("share.pickedPrefix")}: ${names.join(", ")}`);
+                }}
+                style={{
+                  flex: 1, padding: "8px 0", borderRadius: 8, border: "none",
+                  background: "#00DAF3", color: "#000", fontWeight: 700,
+                  cursor: Object.values(pickSel).some(Boolean) ? "pointer" : "not-allowed",
+                  opacity: Object.values(pickSel).some(Boolean) ? 1 : 0.5
+                }}
+              >
+                {t("share.pickContinue")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlatformPick(null)}
+                style={{
+                  padding: "8px 12px", borderRadius: 8, border: "none",
+                  background: "rgba(255,255,255,0.1)", color: "#fff", fontWeight: 600, cursor: "pointer"
+                }}
+              >
                 {t("share.cancel")}
               </button>
             </div>

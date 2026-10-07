@@ -445,9 +445,12 @@ export default function SharePage() {
       clearInterval(progressInterval);
       setUploadProgress(100);
       
-      setTimeout(() => {
+      setTimeout(async () => {
+        const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
         alert(t("sharePage.success.published"));
-        window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: true, message: t("sharePage.success.published") } }));
+        if (flowAiShareHandoff.takeConfirmedRun()) {
+          window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: true, message: t("sharePage.success.published") } }));
+        }
         setIsSharing(false);
         setUploadProgress(0);
       }, 500);
@@ -457,7 +460,10 @@ export default function SharePage() {
       setIsSharing(false);
       setUploadProgress(0);
       alert(t("sharePage.errors.publishFailed", { message: e.message }));
-      window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message: e.message } }));
+      const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
+      if (flowAiShareHandoff.takeConfirmedRun()) {
+        window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message: e.message } }));
+      }
     }
   };
 

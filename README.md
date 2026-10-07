@@ -694,5 +694,7 @@ Uzantı tahminine güvenmek yerine, gerçek içerik türünü (mediaType) doğru
 ### [07.10.2026] Flow AI Web Panel - Video Paylaşım Aracı (FA7)
 - Flow AI paneline video ekleme ve handoff yeteneği kazandırıldı.
 - Panel üzerinden AI destekli gönderi metni ve zamanlama onayı ile tam etkileşimli sosyal medya paylaşım akışı sağlandı.
+- Flow AI hesap seçici (picker) kartı eklendi. Flow AI "Hangi hesaplarda paylaşalım?" sorusunu doğrudan panel içinden etkileşimli butonlarla çözüyor.
+- `share/page.tsx`'teki `flowai:share-result` olayı sadece "onaylı koşu" (Flow AI tarafından tetiklenen) durumunda ateşleniyor, böylece normal manuel paylaşımlarda Flow AI paneli hatalı olarak "Paylaşıldı" demiyor.
 - `share/page.tsx` üzerinden Flow AI job register ve share entegrasyonu tamamlandı.
 

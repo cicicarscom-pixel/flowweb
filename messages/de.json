@@ -75,7 +75,10 @@
       "done": "Geteilt",
       "scheduled": "Geplant",
       "failed": "Teilen fehlgeschlagen: {message}",
-      "unreadable": "Video nicht lesbar"
+      "unreadable": "Video nicht lesbar",
+      "pickTitle": "Auf welchen Konten sollen wir posten?",
+      "pickContinue": "Weiter",
+      "pickedPrefix": "Ausgewählte Konten"
     }
   },
   "common": {

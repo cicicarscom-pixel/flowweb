@@ -16,6 +16,7 @@ class FlowAiShareHandoff {
   private job: ShareJob | null = null;
   private page: SharePageRegistration | null = null;
   private taken = false;
+  private confirmedRun = false;
 
   attach(file: File) {
     this.file = file;
@@ -26,6 +27,7 @@ class FlowAiShareHandoff {
     this.file = null;
     this.job = null;
     this.taken = false;
+    this.confirmedRun = false;
   }
 
   getFile(): File | null {
@@ -43,6 +45,12 @@ class FlowAiShareHandoff {
     return this.job;
   }
 
+  takeConfirmedRun(): boolean {
+    const v = this.confirmedRun;
+    this.confirmedRun = false;
+    return v;
+  }
+
   registerPage(page: SharePageRegistration) {
     this.page = page;
   }
@@ -55,6 +63,7 @@ class FlowAiShareHandoff {
     if (!this.page || !this.page.ready) {
       return 'NOT_READY';
     }
+    this.confirmedRun = true;
     this.page.share(); // Don't await here, it runs in background and signals via window event
     return 'STARTED';
   }

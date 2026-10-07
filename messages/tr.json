@@ -75,7 +75,10 @@
       "done": "Paylaşıldı",
       "scheduled": "Planlandı",
       "failed": "Paylaşılamadı: {message}",
-      "unreadable": "Video okunamadı"
+      "unreadable": "Video okunamadı",
+      "pickTitle": "Hangi hesaplarda paylaşalım?",
+      "pickContinue": "Devam",
+      "pickedPrefix": "Seçilen hesaplar"
     }
   },
   "common": {

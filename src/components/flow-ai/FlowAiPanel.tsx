@@ -253,14 +253,16 @@ export default function FlowAiPanel() {
       const detail = e.detail;
       if (detail?.ok) {
         push("assistant", shareJobPending?.scheduledLocal ? t("share.scheduled") : t("share.done"));
+        setShareJobPending(null);
+        setAttachmentMeta(null);
+        setShareConfirmState('IDLE');
+        flowAiShareHandoff.clear();
+        if (fileInputRef.current) fileInputRef.current.value = "";
       } else {
         push("error", t("share.failed", { message: detail?.message || "" }));
+        setShareJobPending(null);
+        setShareConfirmState('IDLE');
       }
-      setShareJobPending(null);
-      setAttachmentMeta(null);
-      setShareConfirmState('IDLE');
-      flowAiShareHandoff.clear();
-      if (fileInputRef.current) fileInputRef.current.value = "";
     };
     window.addEventListener("flowai:share-result", onShareResult);
     return () => window.removeEventListener("flowai:share-result", onShareResult);

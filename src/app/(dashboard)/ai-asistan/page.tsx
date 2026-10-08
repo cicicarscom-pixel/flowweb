@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
 import MultiCalendarToggle from "@/components/settings/MultiCalendarToggle";
+import ReminderToggle from "@/components/settings/ReminderToggle";
 import { createClient } from "@/lib/supabase/client";
 import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersonaSettings";
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
@@ -735,6 +736,7 @@ export default function BotScreen() {
       </div>
 
       <MultiCalendarToggle />
+      <ReminderToggle />
       <AiDataResetPanel />
       
       <style dangerouslySetInnerHTML={{__html: `

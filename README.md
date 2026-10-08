@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[08.10.2026] WhatsApp randevu hatırlatma:** AI Asistan sayfasına "WhatsApp randevu hatırlatma" düğmesi eklendi (yalnız işletme sahibi değiştirir; varsayılan kapalı). Açıkken onaylı randevulara 24 saat önce WhatsApp'tan otomatik hatırlatma gider.
 - **[06.10.2026] Sosyal Medya Gönderiler:** Gönderi listesinden beğeni, yorum, paylaşım vb. analiz sütunları kaldırıldı (tablo genişliği iyileştirildi ve gereksiz veriler temizlendi).
 - **[06.10.2026] WAHA Bot:** WhatsApp durum sorgusunda 'bot kurulmamış' durumu hata sayılmaz (yeni kullanıcı).
 - **[05.10.2026] İletişim e-postası:** Gizlilik Politikası (§11) ve Hesap Silme sayfasına `info@workigom.com` eklendi (tr/en/de).

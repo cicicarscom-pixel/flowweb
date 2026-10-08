@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[08.10.2026] WhatsApp hatırlatma metni:** AI Asistan sayfasında işletme kendi hatırlatma metnini yazar ve mesaj dilini seçer (tr/en/de/fr/es); yer tutucular ({name}, {business}, {date}, {time}, {doctor}, {service}) ve örnek önizleme vardır. Hitap (Sayın/Mr./Herr…) metne işletme tarafından yazılır, kodda sabit değildir.
 - **[08.10.2026] Profil:** "Profili Kaydet" düğmesi yalnız değişiklik varken etkin; kaydedince "Kaydedildi" yazıp pasif kalır, bir alan değişince yeniden etkinleşir. Profil kaydı artık hatayı sessizce yutmaz.
 - **[08.10.2026] WhatsApp randevu hatırlatma:** AI Asistan sayfasına "WhatsApp randevu hatırlatma" düğmesi eklendi (yalnız işletme sahibi değiştirir; varsayılan kapalı). Açıkken onaylı randevulara 24 saat önce WhatsApp'tan otomatik hatırlatma gider.
 - **[06.10.2026] Sosyal Medya Gönderiler:** Gönderi listesinden beğeni, yorum, paylaşım vb. analiz sütunları kaldırıldı (tablo genişliği iyileştirildi ve gereksiz veriler temizlendi).

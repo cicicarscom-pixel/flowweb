@@ -573,7 +573,8 @@
     },
     "actions": {
       "saving": "Saving...",
-      "save": "Save Profile"
+      "save": "Save Profile",
+      "saved": "Saved"
     }
   },
   "loginPage": {

@@ -28,6 +28,19 @@ export default function ProfilPage() {
   const [taxOffice, setTaxOffice] = useState("");
   const [organizationId, setOrganizationId] = useState("");
   const [isErrorMessage, setIsErrorMessage] = useState(false);
+
+  // Kaydet düğmesi: yalnız kaydedilmemiş değişiklik varken etkin; kaydedince "Kaydedildi" yazıp pasif kalır.
+  const [savedKey, setSavedKey] = useState<string | null>(null);
+  const [justSaved, setJustSaved] = useState(false);
+  const formKey = JSON.stringify([businessName, authorizedPerson, category, phone, addressObj, vkn, taxOffice]);
+  const isDirty = savedKey !== null && formKey !== savedKey;
+  useEffect(() => {
+    if (!loading && savedKey === null) setSavedKey(formKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
+  useEffect(() => {
+    if (isDirty) setJustSaved(false);
+  }, [isDirty]);
   
   const supabase = createClient();
 
@@ -161,6 +174,8 @@ export default function ProfilPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isDirty) return;
+    const keyAtSave = formKey;
     setSaving(true);
     setMessage("");
     
@@ -172,7 +187,7 @@ export default function ProfilPage() {
       // If the user types in text, we can just save it as text, or wrap it in { fullAddress: text }
       const addressToSave = addressObj;
 
-      await supabase
+      const { error: profileError } = await supabase
         .from("profiles")
         .update({
           business_name: businessName,
@@ -182,6 +197,7 @@ export default function ProfilPage() {
           address: addressToSave,
         })
         .eq("id", session.user.id);
+      if (profileError) throw profileError;
         
       if (organizationId) {
         await supabase
@@ -207,6 +223,8 @@ export default function ProfilPage() {
         }
       }
       
+      setSavedKey(keyAtSave);
+      setJustSaved(true);
       setIsErrorMessage(false);
       setMessage(t("profilPage.messages.profileUpdated"));
       setTimeout(() => setMessage(""), 3000);
@@ -333,8 +351,8 @@ export default function ProfilPage() {
           </div>
           
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 12 }}>
-            <button type="submit" disabled={saving} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #22B573)", color: "#000", fontWeight: 600, border: "none", cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-              {saving ? t("profilPage.actions.saving") : t("profilPage.actions.save")}
+            <button type="submit" disabled={saving || !isDirty} className="pill-btn" style={{ padding: "12px 32px", borderRadius: 12, background: "var(--accent-primary, #22B573)", color: "#000", fontWeight: 600, border: "none", cursor: saving || !isDirty ? "not-allowed" : "pointer", opacity: saving ? 0.7 : (!isDirty ? 0.5 : 1) }}>
+              {saving ? t("profilPage.actions.saving") : (justSaved && !isDirty ? t("profilPage.actions.saved") : t("profilPage.actions.save"))}
             </button>
           </div>
         </form>

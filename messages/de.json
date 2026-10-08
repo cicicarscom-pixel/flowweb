@@ -573,7 +573,8 @@
     },
     "actions": {
       "saving": "Wird gespeichert...",
-      "save": "Profil speichern"
+      "save": "Profil speichern",
+      "saved": "Gespeichert"
     }
   },
   "loginPage": {

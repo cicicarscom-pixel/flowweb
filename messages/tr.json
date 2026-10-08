@@ -573,7 +573,8 @@
     },
     "actions": {
       "saving": "Kaydediliyor...",
-      "save": "Profili Kaydet"
+      "save": "Profili Kaydet",
+      "saved": "Kaydedildi"
     }
   },
   "loginPage": {

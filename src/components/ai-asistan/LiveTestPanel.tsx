@@ -62,11 +62,6 @@ export default function LiveTestPanel({
           </div>
         </div>
 
-        <div data-testid="live_test_notice" style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: "10px 16px", background: "rgba(59,130,246,0.08)", borderBottom: "1px solid rgba(59,130,246,0.18)", color: "#9CC2FF", fontSize: 12, lineHeight: 1.5 }}>
-          <i className="fa-solid fa-circle-info" style={{ marginTop: 2 }}></i>
-          <span>{t("aiAsistanComponents.liveTestPanel.notice")}</span>
-        </div>
-
         <div style={{ flex: 1, background: "rgba(0,0,0,0.2)", display: "flex", flexDirection: "column", padding: "20px 16px", overflowY: "auto", gap: 16 }}>
           {!isSimulationActive && messages.length === 0 ? (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>

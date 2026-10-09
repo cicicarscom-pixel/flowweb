@@ -249,6 +249,7 @@
       "save": "Änderungen speichern"
     },
     "liveTest": {
+      "notice": "Dieser Testchat hat kein Gedächtnis: Jede Nachricht wird wie die erste Begegnung eines Kunden mit dem Assistenten behandelt. Frühere Nachrichten werden nicht gemerkt; er dient nur dazu, den ersten Eindruck des Assistenten zu testen. Es wird kein echter Termin angelegt und keine Nachricht verschickt.",
       "title": "Live-Test",
       "emptyState": "Beginnen Sie ein Gespräch mit dem Assistenten...",
       "simulationStarted": "SIMULATION GESTARTET",
@@ -393,7 +394,6 @@
   },
   "aiAsistanComponents": {
     "liveTestPanel": {
-      "notice": "Dieser Testchat hat kein Gedächtnis: Jede Nachricht wird wie die erste Begegnung eines Kunden mit dem Assistenten behandelt. Frühere Nachrichten werden nicht gemerkt; er dient nur dazu, den ersten Eindruck des Assistenten zu testen. Es wird kein echter Termin angelegt und keine Nachricht verschickt.",
       "title": "Live-Test",
       "emptyState": "Beginne das Gespräch mit dem Assistenten...",
       "simulationStarted": "SIMULATION GESTARTET",

@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Canlı Test bilgilendirmesi (düzeltme):** not, kullanılmayan `LiveTestPanel.tsx` yerine sayfada gerçekten gösterilen Canlı Test paneline (`ai-asistan/page.tsx`) taşındı; ölü bileşendeki kopya ve anahtar kaldırıldı.
 - **[09.10.2026] Canlı Test bilgilendirmesi:** AI Asistan sayfasındaki Canlı Test panelinin üstüne "hafızasızdır, her mesaj ilk karşılaşma gibi değerlendirilir; gerçek randevu açılmaz, mesaj gitmez" notu eklendi (tr/en/de).
 - **[09.10.2026] Flow AI web sesli sohbet:** yanıt beklenirken ("Düşünüyor…") de mikrofon dinlemeye devam eder; o sırada söylenenler hemen sohbette görünür ve yanıt gelince otomatik gönderilir. Yanıt okunurken mikrofon yankıyı duymasın diye kapalıdır; okuma bitince yeniden açılır. Yanıt beklerken sessizlik sayılıp sohbet kapanmaz.
 - **[09.10.2026] Flow AI → Paylaşım Merkezi devri:** video ve paylaşım işi artık Paylaşım Merkezi zaten açıkken de alınır (yalnız sayfa açılışında alınıyordu); panelde "Paylaş"a basınca sayfa hazır değilse Paylaşım Merkezi açılır ve hazır olunca paylaşım başlatılır. Paylaşım Merkezi'nde metin/platform eksikliği gibi erken çıkışlar panele hata olarak bildirilir (panel "paylaşılıyor"da takılı kalmaz).

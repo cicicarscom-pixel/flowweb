@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, KeyboardEvent } from "react";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 interface AiChatInputProps {

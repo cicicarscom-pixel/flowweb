@@ -3,9 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
 import { useUnreadAppointmentCount } from "@/components/dashboard/AppointmentNotifications";
-import { useProfile } from "@/providers/ProfileProvider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -14,8 +12,6 @@ export default function Header() {
   const locale = useLocale();
   const [dateStr, setDateStr] = useState("");
   const unreadCount = useUnreadAppointmentCount();
-  const supabase = createClient();
-  const { organization } = useProfile();
 
   useEffect(() => {
     // 'tr-TR' hardcode edilmişti — artık kullanıcının seçtiği/algılanan dile

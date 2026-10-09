@@ -46,7 +46,7 @@ export async function resolveLocale(): Promise<AppLocale> {
     if (isSupportedLocale(cookieLocale)) {
       return cookieLocale;
     }
-  } catch (e) {
+  } catch {
     // Next.js prerendering will throw on cookies(), ignore and fallback
   }
 
@@ -54,7 +54,7 @@ export async function resolveLocale(): Promise<AppLocale> {
     const headerStore = await headers();
     const detected = detectFromAcceptLanguage(headerStore.get("accept-language"));
     if (detected) return detected;
-  } catch (e) {
+  } catch {
     // Ignore and fallback
   }
   

@@ -54,7 +54,7 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
         timeZone: tz || 'Europe/Istanbul', 
         day: 'numeric', month: 'short', weekday: 'short', hour: '2-digit', minute: '2-digit' 
       }).format(d);
-    } catch(e) {
+    } catch {
       return new Date(isoStr).toLocaleString(locale);
     }
   };

@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useTranslations } from "next-intl";
 import { toggleMultiCalendarMode } from "@/actions/toggleCalendar";
 
 export default function MultiCalendarToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
-  const t = useTranslations();
 
   useEffect(() => {
     let sub: ReturnType<typeof supabase.channel> | null = null;

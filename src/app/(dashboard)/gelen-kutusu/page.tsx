@@ -190,8 +190,6 @@ function GelenKutusuContent() {
     if (!conv || !dmText.trim()) return;
     setIsSendingDM(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
           action: 'send-message',
@@ -244,7 +242,6 @@ function GelenKutusuContent() {
     if (!privateReplyModal || !privateReplyText.trim()) return;
     setIsSendingPrivateReply(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: {
           action: 'send-private-reply',
@@ -275,7 +272,7 @@ function GelenKutusuContent() {
                errorMsg = t("gelenKutusuPage.privateReply.alreadyRepliedError");
            }
         }
-      } catch (err) {}
+      } catch {}
       alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + errorMsg);
     } finally {
       setIsSendingPrivateReply(false);
@@ -438,7 +435,7 @@ function GelenKutusuContent() {
         const userId = sessionData?.session?.user?.id;
         
         if (organizationId || userId) {
-           const { data: picData, error: picError } = await supabase.functions.invoke('zernio-client', {
+           const { data: picData } = await supabase.functions.invoke('zernio-client', {
               body: { action: 'get-inbox-pictures', payload: { organizationId, userId } }
            });
            
@@ -505,7 +502,7 @@ function GelenKutusuContent() {
 
         setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
         window.dispatchEvent(new Event('appointment-notifications-changed'));
-      } catch (err: any) {
+      } catch {
         setNotifError(t('gelenKutusuPage.notifications.markAllError'));
       } finally {
         setMarkingAll(false);

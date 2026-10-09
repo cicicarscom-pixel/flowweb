@@ -19,7 +19,6 @@ export default function DashboardHomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [aiActive, setAiActive] = useState(true);
   const [financeStats, setFinanceStats] = useState({ income: 0, expense: 0 });
-  const [upcomingPayments, setUpcomingPayments] = useState<any[]>([]);
   const [socialStats, setSocialStats] = useState({ followers: 0, trend: 0 });
   const [latestInvoice, setLatestInvoice] = useState<any>(null);
   const [orgTimezone, setOrgTimezone] = useState('Europe/Istanbul');
@@ -30,7 +29,6 @@ export default function DashboardHomePage() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
   const [totalUpcomingAppointments, setTotalUpcomingAppointments] = useState(0);
-    const [platformStats, setPlatformStats] = useState<{ platform: string; count: number }[]>([]);
 
   const supabase = createClient();
 
@@ -50,7 +48,6 @@ export default function DashboardHomePage() {
         }
 
         // Finance Stats (Transactions + Finance Documents)
-        const upcoming: any[] = [];
         let timezone = 'Europe/Istanbul';
         if (merchantId) {
           const { data: org } = await supabase.from('organizations').select('timezone').eq('owner_id', merchantId).maybeSingle();
@@ -83,24 +80,8 @@ export default function DashboardHomePage() {
           setFinanceStats({ income: summaryData.income / 100, expense: summaryData.expense / 100 });
         }
 
-        const futureStr = addDaysYmd(today, 30);
-        const { data: calendarData } = await supabase.rpc('get_payment_calendar', { p_from: today, p_to: futureStr });
-        if (calendarData) {
-          const upcomingList = calendarData
-            .filter((d: any) => d.type === 'expense' && d.payment_status !== 'paid')
-            .slice(0, 5)
-            .map((d: any) => ({
-               id: d.id,
-               date: d.day,
-               amount: d.amount_minor / 100,
-               description: d.title || t('dashboardHome.defaults.payment'),
-               type: 'expense'
-            }));
-          setUpcomingPayments(upcomingList);
-        }
-
         // Social Stats (Zernio)
-        const { data: followRes, error: followErr } = await supabase.functions.invoke('zernio-client', {
+        const { data: followRes } = await supabase.functions.invoke('zernio-client', {
           body: { action: 'get-follower-stats', payload: {} }
         });
         
@@ -229,33 +210,6 @@ export default function DashboardHomePage() {
           setTodayAppointments((todayData || []).map(mapAppt));
           setAppointments((upcData || []).map(mapAppt));
 
-          // Platform bazlı toplam müşteri iletişim sayacı (Yorumlar + Mesajlar + WhatsApp AI sohbetleri)
-        const statsMap: Record<string, number> = {};
-        if (orgId) {
-          const { data: commentPlatforms } = await supabase.from('comments').select('platform').eq('profile_id', orgId);
-          (commentPlatforms || []).forEach((c: any) => {
-             const p = (c.platform || 'diğer').toLowerCase();
-             statsMap[p] = (statsMap[p] || 0) + 1;
-          });
-          
-          const { data: messagePlatforms } = await supabase.from('messages').select('conversation_id, conversations(platform)').eq('profile_id', orgId);
-          (messagePlatforms || []).forEach((m: any) => {
-             const p = (m.conversations?.platform || 'diğer').toLowerCase();
-             statsMap[p] = (statsMap[p] || 0) + 1;
-          });
-        }
-        
-        if (merchantId) {
-          const { count: waCount } = await supabase.from('ai_communication_logs').select('*', { count: 'exact', head: true });
-          if (waCount) statsMap['whatsapp'] = (statsMap['whatsapp'] || 0) + waCount;
-        }
-        
-        setPlatformStats(
-          Object.entries(statsMap)
-            .map(([platform, count]) => ({ platform, count }))
-            .sort((a, b) => b.count - a.count)
-        );
-
       } catch (error) {
         console.warn('Dashboard fetch error:', error);
       } finally {
@@ -290,29 +244,6 @@ export default function DashboardHomePage() {
     if (hrs < 24) return t('dashboardHome.relativeTime.hoursAgo', { count: hrs });
     return t('dashboardHome.relativeTime.daysAgo', { count: Math.floor(hrs / 24) });
   };
-
-  function PlatformIcon({ platform, size = 16 }: { platform: string; size?: number }) {
-    const icons: Record<string, { bg: string; label: string }> = {
-      instagram: { bg: "linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", label: "IG" },
-      tiktok: { bg: "#010101", label: "TK" },
-      facebook: { bg: "#1877F2", label: "FB" },
-      youtube: { bg: "#FF0000", label: "YT" },
-      linkedin: { bg: "#0A66C2", label: "LI" },
-      google: { bg: "#4285F4", label: "GB" },
-      whatsapp: { bg: "#25D366", label: "WA" },
-    };
-    const p = icons[platform.toLowerCase()] || { bg: "#444", label: "??" };
-    return (
-      <span style={{
-        display: "inline-flex", alignItems: "center", justifyContent: "center",
-        width: size, height: size, borderRadius: "50%", background: p.bg,
-        fontSize: size * 0.38, fontWeight: 700, color: "#fff", flexShrink: 0,
-        fontFamily: "Inter, sans-serif", letterSpacing: "-0.02em",
-      }}>
-        {p.label}
-      </span>
-    );
-  }
 
   if (isLoading) {
     return (

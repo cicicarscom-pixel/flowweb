@@ -329,7 +329,7 @@ export default function BotScreen() {
       } else {
         setMessages(prev => [...prev, { role: 'bot', content: data?.text || t("aiAsistanPage.alerts.noResponse") }]);
       }
-    } catch (e: any) {
+    } catch {
       setMessages(prev => [...prev, { role: 'bot', content: t("aiAsistanPage.alerts.systemError") }]);
     } finally {
       setIsTyping(false);

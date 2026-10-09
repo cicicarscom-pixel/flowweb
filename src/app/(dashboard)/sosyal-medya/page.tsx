@@ -135,7 +135,7 @@ export default function SosyalMedyaPage() {
       setSocialBotActive(data.social_bot_active !== false);
       setSystemBotActive(data.is_active !== false);
     });
-  }, []);
+  }, [supabase]);
 
   const handleToggleBot = async (value: boolean) => {
     setSocialBotActive(value);

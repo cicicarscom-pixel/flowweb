@@ -65,7 +65,7 @@ export default function MuhasebecimPage() {
         } else {
           alert(t("aiMuhasebePage.muhasebecim.actionError"));
         }
-      } catch (err) {
+      } catch {
         alert(t("aiMuhasebePage.muhasebecim.actionError"));
       } finally {
         setIsLoading(false);
@@ -91,7 +91,7 @@ export default function MuhasebecimPage() {
       } else {
         alert(t("aiMuhasebePage.muhasebecim.actionError"));
       }
-    } catch (err) {
+    } catch {
       alert(t("aiMuhasebePage.muhasebecim.actionError"));
     } finally {
       setIsLoading(false);
@@ -104,7 +104,7 @@ export default function MuhasebecimPage() {
       const { error } = await supabase.rpc('cancel_accountant_request');
       if (error) throw error;
       checkConnection();
-    } catch (err) {
+    } catch {
       alert(t("aiMuhasebePage.muhasebecim.actionError"));
       setIsLoading(false);
     }
@@ -117,7 +117,7 @@ export default function MuhasebecimPage() {
         const { error } = await supabase.rpc('disconnect_current_accountant', { p_reason: 'User request' });
         if (error) throw error;
         checkConnection();
-      } catch (err) {
+      } catch {
         alert(t("aiMuhasebePage.muhasebecim.actionError"));
         setIsLoading(false);
       }

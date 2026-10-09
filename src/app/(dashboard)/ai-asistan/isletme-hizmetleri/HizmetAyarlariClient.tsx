@@ -6,7 +6,7 @@ import { createBusinessService, updateBusinessService, deleteBusinessService } f
 
 export default function HizmetAyarlarıiClient({ initialServices }: { initialServices: any[] }) {
   const t = useTranslations();
-  const [services, setServices] = useState(initialServices);
+  const [services] = useState(initialServices);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
 

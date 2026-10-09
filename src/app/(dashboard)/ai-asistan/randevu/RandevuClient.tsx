@@ -7,17 +7,6 @@ import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment, cancelAppointment, deleteAppointment, getDaySchedule, createCalendarBlock, deleteCalendarBlock } from '@/actions/appointments';
 import { dateFromYmd } from '@/lib/dates';
 
-const TIME_SLOTS = (() => {
-  const slots = [];
-  for (let h = 8; h < 24; h++) {
-    ['00', '30'].forEach(m => {
-      slots.push({ time: `${String(h).padStart(2, '0')}:${m}` });
-    });
-  }
-  slots.push({ time: '00:00' });
-  return slots;
-})();
-
 const CARD_COLORS = [
   { bg: 'rgba(34,181,115,0.1)', border: 'rgba(34,181,115,0.3)', text: '#22B573', icon: '✂️' },
   { bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', text: '#F59E0B', icon: '✨' },
@@ -84,7 +73,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
   const [activeCalendarId, setActiveCalendarId] = useState<string | null>(null);
   const [calendars, setCalendars] = useState(initialCalendars || []);
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
-  const [promptConfig, setPromptConfig] = useState({ visible: false, title: "", placeholder: "", value: "", onSave: (val: string) => {} });
+  const [promptConfig, setPromptConfig] = useState<{ visible: boolean; title: string; placeholder: string; value: string; onSave: (val: string) => void }>({ visible: false, title: "", placeholder: "", value: "", onSave: () => {} });
   const t = useTranslations();
   const supabase = createClient();
   const searchParams = useSearchParams();
@@ -123,8 +112,6 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
   const [reserveNote, setReserveNote] = useState('');
   const [reserveError, setReserveError] = useState('');
   const [reserveConflicts, setReserveConflicts] = useState<any[]>([]);
-  const [popover, setPopover] = useState<any>(null);
-  const [popoverError, setPopoverError] = useState('');
 
   const add30Mins = (t: string) => {
     if (!t) return '';

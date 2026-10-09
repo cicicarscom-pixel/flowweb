@@ -83,7 +83,7 @@ export default function TumGonderilerPage() {
       if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [supabase]);
 
   const handleDeletePost = (id: string) => {
     setDeleteModal({ isOpen: true, postId: id, isBulk: false });

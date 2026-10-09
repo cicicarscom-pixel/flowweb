@@ -81,7 +81,7 @@ const STRINGS: Record<Locale, {
     clear: "Clear reports",
     clearConfirm: "Delete the appointment notification reports? This cannot be undone. (Your appointments and customer conversations are not deleted.)",
     clearFailed: "Couldn't clear the reports. Please try again shortly.",
-    sentence: (name, when, calendarName) => `Appointment booked for ${name} on ${when}`,
+    sentence: (name, when) => `Appointment booked for ${name} on ${when}`,
   },
   de: {
     title: "Terminbenachrichtigungen",
@@ -96,7 +96,7 @@ const STRINGS: Record<Locale, {
     clear: "Berichte löschen",
     clearConfirm: "Die Terminbenachrichtigungen löschen? Das kann nicht rückgängig gemacht werden. (Ihre Termine und Kundengespräche werden nicht gelöscht.)",
     clearFailed: "Die Berichte konnten nicht gelöscht werden. Bitte versuchen Sie es gleich noch einmal.",
-    sentence: (name, when, calendarName) => `Termin für ${name} am ${when} erstellt`,
+    sentence: (name, when) => `Termin für ${name} am ${when} erstellt`,
   },
 };
 
@@ -113,7 +113,7 @@ function formatAppointmentTime(meta: NotificationMetadata, locale: Locale): stri
       hour: "2-digit",
       minute: "2-digit",
     });
-  } catch (e) {
+  } catch {
     return "";
   }
 }
@@ -122,7 +122,7 @@ function formatAppointmentTime(meta: NotificationMetadata, locale: Locale): stri
 function localDateParam(meta: NotificationMetadata): string {
   try {
     return new Date(meta.starts_at).toLocaleDateString("en-CA", { timeZone: meta.timezone });
-  } catch(e) {
+  } catch {
     return "";
   }
 }

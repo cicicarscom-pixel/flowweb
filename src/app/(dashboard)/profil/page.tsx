@@ -150,7 +150,7 @@ export default function ProfilPage() {
       const compressedFile = await compressImage(file);
       const fileName = `${session.user.id}/avatar-${Date.now()}.jpg`;
       
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('avatars')
         .upload(fileName, compressedFile, { upsert: true, contentType: 'image/jpeg' });
         

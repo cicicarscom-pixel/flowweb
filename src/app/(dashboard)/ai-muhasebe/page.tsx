@@ -22,13 +22,11 @@ export default function AiMuhasebePage() {
         const { data: { session } } = await supabase.auth.getSession();
         const userId = session?.user?.id;
 
-        const now = new Date();
         let tz = 'Europe/Istanbul';
         if (userId) {
           const { data: org } = await supabase.from('organizations').select('timezone').eq('owner_id', userId).maybeSingle();
           if (org?.timezone) tz = org.timezone;
         }
-        const startOfMonth = `${todayInTimezone(tz).slice(0, 7)}-01`;
 
         let totalIncome = 0;
         let totalExpense = 0;
@@ -55,7 +53,7 @@ export default function AiMuhasebePage() {
     };
 
     fetchData();
-  }, []);
+  }, [supabase]);
 
   const formatCurrency = (amount: number) => formatAmount(amount, locale);
 

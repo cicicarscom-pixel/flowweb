@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Kalite Faz 3b:** ESLint uyarıları 86 → 38: kullanılmayan değişken/import/parametre uyarıları 45 → 1 (kalan: `muhasebecim` `handleDisconnect`, muhasebeci bağlantı yaşam döngüsü işiyle birlikte ele alınacak); Anasayfa'da sonucu hiçbir yerde kullanılmayan ödeme takvimi RPC'si ve 4 platform sayacı sorgusu kaldırıldı (her açılışta 5 gereksiz istek); 4 `useEffect` bağımlılığına `supabase` eklendi (tarayıcıda tek örnek olduğundan davranış değişmez). Tam `tsc` hatasız.
 - **[09.10.2026] Kalite Faz 3:** ESLint hataları 5 → 0 (`prefer-const`, `@ts-nocheck`); 8 `<img>` alt metni (süs avatarlar `alt=""`); `(dashboard)/page.tsx`'te kullanılmayan `inc/exp` kaldırıldı; `lib/dates.test.ts` artık gerçek `dates.ts` modülünü sınıyor (önceden fonksiyonların kopyasını sınıyordu); Deno testleri `tsconfig`/ESLint dışında. Tam `tsc --strict` ve `deno test` temiz.
 - **[09.10.2026] Temizlik (Kalite Faz 2):** hiçbir yerden çağrılmayan ve tablo izinleriyle zaten çalışmayan sunucu işlemleri (`actions/accounting.ts`, `actions/insights.ts`) ile derlenemeyen eski `docs/archive/test_appts.ts` silindi; tam `tsc` artık hatasız.
 - **[09.10.2026] Güvenlik (Kalite Faz 1A):** hiçbir yerden çağrılmayan `src/actions/zernio.ts` silindi (Zernio ile tüm iletişim Supabase `zernio-client` Edge Function'ı üzerinden; anahtar yalnız Supabase Secrets'ta). Dosya, tarayıcıya gömülen `NEXT_PUBLIC_ZERNIO_API_KEY` adını da okuyordu; bu risk kökünden kalktı. Vercel'de Zernio anahtarına gerek yoktur.

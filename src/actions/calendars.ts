@@ -62,7 +62,10 @@ export async function createCalendar(name: string, workingHours?: any): Promise<
 export async function updateCalendar(id: string, changes: Partial<Calendar>): Promise<{ success: boolean; error?: string }> {
   const supabase = await createClient();
   
-  const { id: _, merchant_id: __, services: ___, ...safeChanges } = changes;
+  const safeChanges = { ...changes };
+  delete safeChanges.id;
+  delete safeChanges.merchant_id;
+  delete safeChanges.services;
   
   const { error } = await supabase
     .from("calendars")

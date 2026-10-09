@@ -144,7 +144,7 @@ export default function SharePage() {
       }
     };
     fetchAccounts();
-  }, []);
+  }, [supabase]);
 
   const generateCaption = async () => {
     if (!aiPrompt.trim()) return;
@@ -393,7 +393,7 @@ export default function SharePage() {
         
         // Zernio schedule format: YYYY-MM-DDTHH:mm:00 
         finalScheduledFor = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts[0].padStart(2, '0')}:${timeParts[1].padStart(2, '0')}:00`;
-      } catch (err) {
+      } catch {
         return bail(t("sharePage.errors.invalidDateFormat"));
       }
     }

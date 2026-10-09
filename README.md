@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Kalite Faz 5 (CI kapıları):** CI artık `npm ci` + `tsc --noEmit` (hata olursa kırmızı) + ESLint çıtası çalıştırıyor. Çıta (`scripts/ci/eslint-ratchet.mjs`): hata/uyarı sayısı kayıtlı tabanı (0 hata, 38 uyarı) AŞAMAZ; temizlik yapıldıkça taban düşürülür. Yeni kod mevcut kaliteyi bozamaz.
 - **[09.10.2026] Kalite Faz 3b:** ESLint uyarıları 86 → 38: kullanılmayan değişken/import/parametre uyarıları 45 → 1 (kalan: `muhasebecim` `handleDisconnect`, muhasebeci bağlantı yaşam döngüsü işiyle birlikte ele alınacak); Anasayfa'da sonucu hiçbir yerde kullanılmayan ödeme takvimi RPC'si ve 4 platform sayacı sorgusu kaldırıldı (her açılışta 5 gereksiz istek); 4 `useEffect` bağımlılığına `supabase` eklendi (tarayıcıda tek örnek olduğundan davranış değişmez). Tam `tsc` hatasız.
 - **[09.10.2026] Kalite Faz 3:** ESLint hataları 5 → 0 (`prefer-const`, `@ts-nocheck`); 8 `<img>` alt metni (süs avatarlar `alt=""`); `(dashboard)/page.tsx`'te kullanılmayan `inc/exp` kaldırıldı; `lib/dates.test.ts` artık gerçek `dates.ts` modülünü sınıyor (önceden fonksiyonların kopyasını sınıyordu); Deno testleri `tsconfig`/ESLint dışında. Tam `tsc --strict` ve `deno test` temiz.
 - **[09.10.2026] Temizlik (Kalite Faz 2):** hiçbir yerden çağrılmayan ve tablo izinleriyle zaten çalışmayan sunucu işlemleri (`actions/accounting.ts`, `actions/insights.ts`) ile derlenemeyen eski `docs/archive/test_appts.ts` silindi; tam `tsc` artık hatasız.

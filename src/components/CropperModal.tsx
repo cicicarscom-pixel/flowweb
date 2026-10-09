@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { useTranslations } from 'next-intl';
 import { getCroppedImg } from '@/lib/cropImage';
+import { useDialog } from "@/components/ui/DialogProvider";
 
 interface CropperModalProps {
   imageSrc: string;
@@ -14,6 +15,7 @@ interface CropperModalProps {
 
 export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspectRatio }: CropperModalProps) {
   const t = useTranslations();
+  const dialog = useDialog();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
@@ -31,7 +33,7 @@ export default function CropperModal({ imageSrc, onCropComplete, onCancel, aspec
       onCropComplete(croppedImage);
     } catch (e) {
       console.error(e);
-      alert(t("cropperModal.errors.cropFailed"));
+      dialog.alert(t("cropperModal.errors.cropFailed"));
     } finally {
       setIsProcessing(false);
     }

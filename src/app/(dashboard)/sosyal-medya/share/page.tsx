@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import CropperModal from '@/components/CropperModal';
 import { PLATFORM_MEDIA_RULES } from '@/lib/platformRules';
+import { useDialog } from "@/components/ui/DialogProvider";
 
 const PLATFORMS_DATA = [
   { id: "instagram", name: "Instagram", color: "#E1306C", icon: "fa-instagram" },
@@ -22,6 +23,7 @@ const PLATFORMS_DATA = [
 
 export default function SharePage() {
   const t = useTranslations();
+  const dialog = useDialog();
   const [localImage, setLocalImage] = useState<string | null>(null);
   const [localText, setLocalText] = useState("");
   const [isEditingCaption, setIsEditingCaption] = useState(false);
@@ -172,7 +174,7 @@ export default function SharePage() {
           try { code = (await (error as any).context?.json?.())?.error; } catch { /* gövde okunamadı */ }
         }
         if (code === 'DAILY_LIMIT') {
-          alert(t("sharePage.errors.captionLimit"));
+          dialog.alert(t("sharePage.errors.captionLimit"));
           return;
         }
         throw new Error(error?.message || data?.error);
@@ -183,7 +185,7 @@ export default function SharePage() {
         setIsEditingCaption(true);
       }
     } catch (err: any) {
-      alert(t("sharePage.errors.captionGenerationFailed", { message: err.message }));
+      dialog.alert(t("sharePage.errors.captionGenerationFailed", { message: err.message }));
     } finally {
       setIsGeneratingText(false);
     }
@@ -218,7 +220,7 @@ export default function SharePage() {
         }
         if (uncheckedPlatforms.length > 0) {
           setSelectedPlatforms(updatedPlatforms);
-          alert(t("sharePage.errors.videoRemovedIntro", { seconds: Math.round(duration) }) + "\n\n" +
+          dialog.alert(t("sharePage.errors.videoRemovedIntro", { seconds: Math.round(duration) }) + "\n\n" +
             uncheckedPlatforms.map(p => t("sharePage.errors.videoRemovedItem", { platform: p.charAt(0).toUpperCase() + p.slice(1), max: PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec })).join('\n'));
         }
       };
@@ -294,7 +296,7 @@ export default function SharePage() {
     if (!isCurrentlySelected && localImage?.startsWith('data:video') && mediaDurationSec > 0) {
       const rule = PLATFORM_MEDIA_RULES[id.toLowerCase()];
       if (rule && rule.maxDurationSec && mediaDurationSec > rule.maxDurationSec) {
-        alert(t("sharePage.errors.platformMaxDuration", { platform: id.charAt(0).toUpperCase() + id.slice(1), max: rule.maxDurationSec, actual: Math.round(mediaDurationSec) }));
+        dialog.alert(t("sharePage.errors.platformMaxDuration", { platform: id.charAt(0).toUpperCase() + id.slice(1), max: rule.maxDurationSec, actual: Math.round(mediaDurationSec) }));
         return;
       }
     }
@@ -306,7 +308,7 @@ export default function SharePage() {
   const handleShare = async () => {
     // Erken çıkışlarda Flow AI panelinin "paylaşılıyor" durumunda takılı kalmaması için sonucu panele bildir.
     const bail = async (message: string) => {
-      alert(message);
+      dialog.alert(message);
       const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
       if (flowAiShareHandoff.takeConfirmedRun()) {
         window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message } }));
@@ -474,7 +476,7 @@ export default function SharePage() {
       
       setTimeout(async () => {
         const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
-        alert(t("sharePage.success.published"));
+        dialog.alert(t("sharePage.success.published"));
         if (flowAiShareHandoff.takeConfirmedRun()) {
           window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: true, message: t("sharePage.success.published") } }));
         }
@@ -486,7 +488,7 @@ export default function SharePage() {
       clearInterval(progressInterval);
       setIsSharing(false);
       setUploadProgress(0);
-      alert(t("sharePage.errors.publishFailed", { message: e.message }));
+      dialog.alert(t("sharePage.errors.publishFailed", { message: e.message }));
       const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
       if (flowAiShareHandoff.takeConfirmedRun()) {
         window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message: e.message } }));

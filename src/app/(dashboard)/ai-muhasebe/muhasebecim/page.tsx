@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { createClient } from "@/lib/supabase/client";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 export default function MuhasebecimPage() {
   const t = useTranslations();
+  const dialog = useDialog();
   const [step, setStep] = useState<'initial' | 'verified' | 'connected' | 'pending_confirmation'>('initial');
   const [accountantCode, setAccountantCode] = useState('');
   const [firm, setFirm] = useState<any>(null);
@@ -61,17 +63,17 @@ export default function MuhasebecimPage() {
           setFirm({ name: data.firm_name });
           setStep('verified');
         } else if (data?.status === 'CODE_NOT_FOUND') {
-          alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
+          dialog.alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
         } else {
-          alert(t("aiMuhasebePage.muhasebecim.actionError"));
+          dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
         }
       } catch {
-        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+        dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
       } finally {
         setIsLoading(false);
       }
     } else {
-      alert(t("aiMuhasebePage.muhasebecim.enterValidCodeAlert"));
+      dialog.alert(t("aiMuhasebePage.muhasebecim.enterValidCodeAlert"));
     }
   };
 
@@ -84,15 +86,15 @@ export default function MuhasebecimPage() {
       if (data?.status === 'SUCCESS' || data?.status === 'REQUEST_PENDING') {
         setStep('pending_confirmation');
       } else if (data?.status === 'ALREADY_CONNECTED') {
-        alert(t("aiMuhasebePage.muhasebecim.alreadyConnected"));
+        dialog.alert(t("aiMuhasebePage.muhasebecim.alreadyConnected"));
         checkConnection();
       } else if (data?.status === 'CODE_NOT_FOUND') {
-        alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
+        dialog.alert(t("aiMuhasebePage.muhasebecim.codeNotFound"));
       } else {
-        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+        dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
       }
     } catch {
-      alert(t("aiMuhasebePage.muhasebecim.actionError"));
+      dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
     } finally {
       setIsLoading(false);
     }
@@ -105,20 +107,20 @@ export default function MuhasebecimPage() {
       if (error) throw error;
       checkConnection();
     } catch {
-      alert(t("aiMuhasebePage.muhasebecim.actionError"));
+      dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
       setIsLoading(false);
     }
   };
 
   const handleDisconnect = async () => {
-    if (window.confirm(t("aiMuhasebePage.muhasebecim.disconnectConfirm", { firm: firm?.name }))) {
+    if ((await dialog.confirm(t("aiMuhasebePage.muhasebecim.disconnectConfirm", { firm: firm?.name }), { danger: true }))) {
       setIsLoading(true);
       try {
         const { error } = await supabase.rpc('disconnect_current_accountant', { p_reason: 'User request' });
         if (error) throw error;
         checkConnection();
       } catch {
-        alert(t("aiMuhasebePage.muhasebecim.actionError"));
+        dialog.alert(t("aiMuhasebePage.muhasebecim.actionError"));
         setIsLoading(false);
       }
     }

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { resetAiData } from '@/actions/resetAiData'
+import { useDialog } from "@/components/ui/DialogProvider";
 
 // Not: 'SIFIRLA' onay kelimesi iş mantığında (aşağıdaki === 'SIFIRLA' kontrolü)
 // sabit bir değer olarak kullanıldığından KASITLI OLARAK çevrilmez — teknik bir
@@ -36,15 +37,16 @@ function ConfirmModal({ title, warning, onConfirm, onClose }: { title: string; w
 
 export default function AiDataResetPanel() {
   const t = useTranslations()
+  const dialog = useDialog();
   const [modal, setModal] = useState<'soft' | 'hard' | null>(null)
 
   const handleReset = async (mode: 'soft' | 'hard') => {
     const res = await resetAiData(mode)
     if (res.success) {
-      alert(mode === 'soft' ? t('aiDataResetPanel.softReset.doneAlert') : t('aiDataResetPanel.hardReset.doneAlert'))
+      await dialog.alert(mode === 'soft' ? t('aiDataResetPanel.softReset.doneAlert') : t('aiDataResetPanel.hardReset.doneAlert'))
       window.location.reload()
     } else {
-      alert(t('aiDataResetPanel.alerts.errorPrefix', { error: res.error }))
+      await dialog.alert(t('aiDataResetPanel.alerts.errorPrefix', { error: res.error }))
     }
     setModal(null)
   }

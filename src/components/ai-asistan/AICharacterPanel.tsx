@@ -20,6 +20,7 @@ import ToneCarousel from "./ToneCarousel";
 import PersonaCarousel from "./PersonaCarousel";
 import PersonaSlider from "./PersonaSlider";
 import type { PublicPersona } from "@/actions/personas";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 // id/label ayrımı (i18n Faz 2): `id` değerleri organization_ai_settings.business_role
 // / .tone kayıtlarıyla birebir eşleştiği ve mobil (flow-repo) tarafında da aynen
@@ -124,6 +125,7 @@ interface AICharacterPanelProps {
 
 export default function AICharacterPanel(props: AICharacterPanelProps) {
   const t = useTranslations();
+  const dialog = useDialog();
   const showDials = props.selectedPersonaSlug !== null;
 
   // `id` sabit kalır (DB'ye yazılan değer); yalnızca render için çevrilmiş
@@ -164,7 +166,7 @@ export default function AICharacterPanel(props: AICharacterPanelProps) {
 
   const removeRole = async (id: string) => {
     const role = customRoles.find((r) => r.id === id);
-    if (role && !window.confirm(t("personas.addRole.confirm", { name: role.label }))) return;
+    if (role && !(await dialog.confirm(t("personas.addRole.confirm", { name: role.label })))) return;
     const { error } = await supabase.from("custom_business_roles").delete().eq("id", id);
     if (error) return;
     setCustomRoles((r) => r.filter((x) => x.id !== id));

@@ -11,6 +11,7 @@ import { saveAiPersonaSettings, getAiPersonaSettings } from "@/actions/aiPersona
 import { getWahaStatus, startWahaSession, getWahaQrCode, getWahaPairingCode } from "@/actions/waha";
 import { getPublishedPersonas, PublicPersona } from "@/actions/personas";
 import AICharacterPanel from "@/components/ai-asistan/AICharacterPanel";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 // Persona Engine (Phase 5): today's UI still shows a fixed 3-character list
 // Persona Engine Phase 6: Removed hardcoded CHARACTER_SLUGS.
@@ -41,6 +42,7 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
 
 export default function BotScreen() {
   const t = useTranslations();
+  const dialog = useDialog();
   const supabase = createClient();
   const [botConfig, setBotConfig] = useState({
     whatsapp: false,
@@ -155,14 +157,14 @@ export default function BotScreen() {
       });
 
       if (!result.success) {
-        alert(t("aiAsistanPage.alerts.saveFailed", { error: result.error ?? t("aiAsistanPage.alerts.unknownError") }));
+        dialog.alert(t("aiAsistanPage.alerts.saveFailed", { error: result.error ?? t("aiAsistanPage.alerts.unknownError") }));
         return;
       }
 
-      alert(t("aiAsistanPage.alerts.saveSuccess"));
+      dialog.alert(t("aiAsistanPage.alerts.saveSuccess"));
     } catch (error) {
       console.error(error);
-      alert(t("aiAsistanPage.alerts.saveError"));
+      dialog.alert(t("aiAsistanPage.alerts.saveError"));
     } finally {
       setIsSaving(false);
     }
@@ -225,7 +227,7 @@ export default function BotScreen() {
     
     const startRes = await startWahaSession();
     if (!startRes.success) {
-      alert(startRes.error);
+      dialog.alert(startRes.error);
       setWahaLoading(false);
       return;
     }
@@ -235,7 +237,7 @@ export default function BotScreen() {
       if (qrRes.success && qrRes.data) {
         setWahaQrCode(qrRes.data.data || qrRes.data);
       } else {
-        alert(t("aiAsistanPage.alerts.qrFailed", { error: qrRes.error || "" }));
+        dialog.alert(t("aiAsistanPage.alerts.qrFailed", { error: qrRes.error || "" }));
       }
       setWahaLoading(false);
     }, 2000);
@@ -243,7 +245,7 @@ export default function BotScreen() {
 
   const handleGetPairingCode = async () => {
     if (!wahaPhone.trim()) {
-      alert(t("aiAsistanPage.alerts.enterPhone"));
+      dialog.alert(t("aiAsistanPage.alerts.enterPhone"));
       return;
     }
     setWahaLoading(true);
@@ -253,7 +255,7 @@ export default function BotScreen() {
     if (pairingRes.success && pairingRes.data) {
       setWahaPairingCode(pairingRes.data.code);
     } else {
-      alert(t("aiAsistanPage.alerts.codeFailed", { error: pairingRes.error || "" }));
+      dialog.alert(t("aiAsistanPage.alerts.codeFailed", { error: pairingRes.error || "" }));
     }
     setWahaLoading(false);
   };

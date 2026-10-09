@@ -3,9 +3,11 @@
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { createBusinessService, updateBusinessService, deleteBusinessService } from '@/actions/businessServices';
+import { useDialog } from "@/components/ui/DialogProvider";
 
 export default function HizmetAyarlarıiClient({ initialServices }: { initialServices: any[] }) {
   const t = useTranslations();
+  const dialog = useDialog();
   const [services] = useState(initialServices);
   const [selectedService, setSelectedService] = useState<any>(null);
   const [isPending, startTransition] = useTransition();
@@ -23,7 +25,7 @@ export default function HizmetAyarlarıiClient({ initialServices }: { initialSer
         window.location.reload();
       } catch (err) {
         console.error(err);
-        alert(t("hizmetAyarlari.alerts.saveError"));
+        dialog.alert(t("hizmetAyarlari.alerts.saveError"));
       }
     });
   };
@@ -31,7 +33,7 @@ export default function HizmetAyarlarıiClient({ initialServices }: { initialSer
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm(t("hizmetAyarlari.alerts.confirmDelete"))) return;
+    if (!(await dialog.confirm(t("hizmetAyarlari.alerts.confirmDelete"), { danger: true }))) return;
 
     startTransition(async () => {
       try {
@@ -39,7 +41,7 @@ export default function HizmetAyarlarıiClient({ initialServices }: { initialSer
         window.location.reload();
       } catch (err) {
         console.error(err);
-        alert(t("hizmetAyarlari.alerts.deleteError"));
+        dialog.alert(t("hizmetAyarlari.alerts.deleteError"));
       }
     });
   };

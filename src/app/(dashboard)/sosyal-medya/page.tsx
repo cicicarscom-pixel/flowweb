@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 const PLATFORMS_DATA = [
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥" },
@@ -75,6 +76,7 @@ function ScrollableContainer({ children }: { children: React.ReactNode }) {
 
 export default function SosyalMedyaPage() {
   const t = useTranslations();
+  const dialog = useDialog();
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnecting, setIsConnecting] = useState<string | null>(null);
@@ -105,7 +107,7 @@ export default function SosyalMedyaPage() {
 
     if (errorParam || errorMessage) {
        const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
-       alert(t("sosyalMedyaPage.errors.connectError") + ": " + displayError);
+       dialog.alert(t("sosyalMedyaPage.errors.connectError") + ": " + displayError);
        window.history.replaceState({}, '', window.location.pathname);
     } else if (accountId) {
       fetchAccounts(true);
@@ -148,7 +150,7 @@ export default function SosyalMedyaPage() {
     } catch (err) {
       console.error('Bot ayarı güncellenemedi:', err);
       setSocialBotActive(!value);
-      alert(t("sosyalMedyaPage.assistant.updateError"));
+      dialog.alert(t("sosyalMedyaPage.assistant.updateError"));
     } finally {
       setIsUpdatingBot(false);
     }
@@ -190,7 +192,7 @@ export default function SosyalMedyaPage() {
           });
           if (newConflicts.length > 0) {
             const list = newConflicts.map((c: any) => `${c.platform}: ${c.username}`).join('\n');
-            setTimeout(() => alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list), 50);
+            setTimeout(() => dialog.alert(t("sosyalMedyaPage.errors.accountAlreadyLinkedElsewhere") + "\n\n" + list), 50);
           }
         }
       }
@@ -236,14 +238,14 @@ export default function SosyalMedyaPage() {
       }
     } catch (err: any) {
       console.warn("Error connecting account:", err);
-      alert(`${t("sosyalMedyaPage.errors.connectLinkError")}: ${err.message || err}`);
+      dialog.alert(`${t("sosyalMedyaPage.errors.connectLinkError")}: ${err.message || err}`);
     } finally {
       setIsConnecting(null);
     }
   };
 
   const handleDisconnect = async (accountId: string) => {
-    if (!confirm(t("sosyalMedyaPage.confirmDisconnect"))) return;
+    if (!(await dialog.confirm(t("sosyalMedyaPage.confirmDisconnect"), { danger: true }))) return;
     
     // Zernio tarafındaki bağlantı gerçekten kesilene kadar hesabı iyimser
     // (optimistic) şekilde listeden kaldırmıyoruz — aksi halde Zernio'da hâlâ
@@ -256,7 +258,7 @@ export default function SosyalMedyaPage() {
       if (invokeError || data?.success === false) {
         const message = data?.error || invokeError?.message || 'Unknown error';
         console.error("Zernio disconnect error:", message);
-        alert(t("sosyalMedyaPage.errors.disconnectError") + (message ? `: ${message}` : ''));
+        dialog.alert(t("sosyalMedyaPage.errors.disconnectError") + (message ? `: ${message}` : ''));
         return;
       }
 
@@ -273,7 +275,7 @@ export default function SosyalMedyaPage() {
       fetchAccounts();
     } catch (err) {
       console.warn("Error disconnecting account:", err);
-      alert(t("sosyalMedyaPage.errors.disconnectError"));
+      dialog.alert(t("sosyalMedyaPage.errors.disconnectError"));
     }
   };
 

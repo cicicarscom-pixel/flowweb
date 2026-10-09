@@ -4,9 +4,11 @@ import { useActionState, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { authenticate } from '@/actions/auth'
 import { createClient } from '@/lib/supabase/client'
+import { useDialog } from "@/components/ui/DialogProvider";
 
 export default function LoginPage() {
   const t = useTranslations()
+  const dialog = useDialog();
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [googleLoading, setGoogleLoading] = useState(false)
   
@@ -34,7 +36,7 @@ export default function LoginPage() {
       if (error) throw error
     } catch (error: any) {
       console.error('Google login error:', error)
-      alert(t('loginPage.alerts.googleLoginError', { error: error.message || t('loginPage.alerts.unknownError') }))
+      dialog.alert(t('loginPage.alerts.googleLoginError', { error: error.message || t('loginPage.alerts.unknownError') }))
       setGoogleLoading(false)
     }
   }

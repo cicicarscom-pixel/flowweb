@@ -1531,5 +1531,10 @@
   },
   "sidebar": {
     "profileAlt": "User profile"
+  },
+  "dialog": {
+    "ok": "OK",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

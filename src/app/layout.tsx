@@ -1,5 +1,6 @@
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
+import { DialogProvider } from "@/components/ui/DialogProvider";
 import { getLocale, getMessages } from "next-intl/server";
 
 export const dynamic = 'force-dynamic';
@@ -53,7 +54,7 @@ export default async function RootLayout({
       </head>
       <body className="font-body-md text-body-md min-h-screen w-full flex bg-background text-on-background overflow-hidden">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <DialogProvider>{children}</DialogProvider>
         </NextIntlClientProvider>
       </body>
     </html>

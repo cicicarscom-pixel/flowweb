@@ -1525,5 +1525,10 @@
   },
   "sidebar": {
     "profileAlt": "Kullanıcı profili"
+  },
+  "dialog": {
+    "ok": "Tamam",
+    "confirm": "Onayla",
+    "cancel": "İptal"
   }
 }

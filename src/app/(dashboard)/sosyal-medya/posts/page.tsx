@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 const FILTER_IDS = ['all', 'scheduled', 'published', 'failed'] as const;
 
@@ -17,6 +18,7 @@ const UNPUBLISH_SUPPORTED_PLATFORMS = new Set([
 ]);
 export default function TumGonderilerPage() {
   const t = useTranslations();
+  const dialog = useDialog();
   const FILTERS = FILTER_IDS.map((id) => ({ id, label: t(`postsPage.filters.${id}`) }));
   const [activeFilter, setActiveFilter] = useState('all');
   const [posts, setPosts] = useState<any[]>([]);
@@ -173,7 +175,7 @@ export default function TumGonderilerPage() {
 
           if (error) {
             console.error("Bulk delete error:", error);
-            alert(t("postsPage.errors.bulkDeleteFailed", { message: error.message }));
+            dialog.alert(t("postsPage.errors.bulkDeleteFailed", { message: error.message }));
           } else {
             setPosts(prev => prev.map(p => idsToMarkDeleted.includes(p.id) ? { ...p, status: 'deleted' } : p));
           }
@@ -182,9 +184,9 @@ export default function TumGonderilerPage() {
         setSelectedPostIds(prev => prev.filter(id => failedIds.has(id)));
 
         if (failedIds.size > 0) {
-          alert(t("postsPage.errors.bulkDeleteFailed", { message: failedMessages.join('\n') }));
+          dialog.alert(t("postsPage.errors.bulkDeleteFailed", { message: failedMessages.join('\n') }));
         } else if (warnings.length > 0) {
-          alert(warnings.join('\n'));
+          dialog.alert(warnings.join('\n'));
         }
       } else if (deleteModal.postId) {
         const post = posts.find(p => p.id === deleteModal.postId);
@@ -198,7 +200,7 @@ export default function TumGonderilerPage() {
         }
 
         if (!zernioResult.removed) {
-          alert(t("postsPage.errors.deleteFailed", { message: zernioResult.warning || 'Unknown error' }));
+          dialog.alert(t("postsPage.errors.deleteFailed", { message: zernioResult.warning || 'Unknown error' }));
         } else {
           const { error } = await supabase
             .from('posts')
@@ -207,19 +209,19 @@ export default function TumGonderilerPage() {
 
           if (error) {
             console.error("Delete error:", error);
-            alert(t("postsPage.errors.deleteFailed", { message: error.message }));
+            dialog.alert(t("postsPage.errors.deleteFailed", { message: error.message }));
           } else {
             setPosts(prev => prev.map(p => p.id === deleteModal.postId ? { ...p, status: 'deleted' } : p));
             setSelectedPostIds(prev => prev.filter(pId => pId !== deleteModal.postId));
             if (zernioResult.warning) {
-              alert(zernioResult.warning);
+              dialog.alert(zernioResult.warning);
             }
           }
         }
       }
     } catch (err) {
       console.error("Delete exception:", err);
-      alert(t("postsPage.errors.genericError"));
+      dialog.alert(t("postsPage.errors.genericError"));
     } finally {
       setIsDeleting(false);
       setDeleteModal({ isOpen: false, postId: null, isBulk: false });

@@ -4,11 +4,13 @@ import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { toggleMultiCalendarMode } from "@/actions/toggleCalendar";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 export default function MultiCalendarToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
   const t = useTranslations("multiCalendarToggle");
+  const dialog = useDialog();
   const supabase = createClient();
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export default function MultiCalendarToggle() {
     
     const res = await toggleMultiCalendarMode(newVal);
     if (res.error) {
-      alert(t("errorPrefix", { message: res.error }));
+      dialog.alert(t("errorPrefix", { message: res.error }));
       setIsEnabled(!newVal); // Revert
     }
   };

@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { getAppointmentsByDate, getAvailableSlots, createAppointment, cancelAppointment, deleteAppointment, getDaySchedule, createCalendarBlock, deleteCalendarBlock } from '@/actions/appointments';
 import { dateFromYmd } from '@/lib/dates';
+import { useDialog } from "@/components/ui/DialogProvider";
 
 const CARD_COLORS = [
   { bg: 'rgba(34,181,115,0.1)', border: 'rgba(34,181,115,0.3)', text: '#22B573', icon: '✂️' },
@@ -75,6 +76,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
   const [isManageModalOpen, setIsManageModalOpen] = useState(false);
   const [promptConfig, setPromptConfig] = useState<{ visible: boolean; title: string; placeholder: string; value: string; onSave: (val: string) => void }>({ visible: false, title: "", placeholder: "", value: "", onSave: () => {} });
   const t = useTranslations();
+  const dialog = useDialog();
   const supabase = createClient();
   const searchParams = useSearchParams();
 
@@ -191,16 +193,16 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
     setIsActionLoading(false);
     
     if (error || data?.status === 'UNAUTHORIZED') {
-      alert(t('randevuPage.actions.genericError'));
+      dialog.alert(t('randevuPage.actions.genericError'));
     } else if (data?.status === 'ALREADY_CANCELLED') {
-      alert(t('randevuPage.actions.alreadyCancelled'));
+      dialog.alert(t('randevuPage.actions.alreadyCancelled'));
     } else if (data?.status === 'NOT_FOUND') {
-      alert(t('randevuPage.actions.notFound'));
+      dialog.alert(t('randevuPage.actions.notFound'));
     }
     
     setCancelModalId(null);
     setCancelReason("");
-    if (data?.status === 'SUCCESS') alert(t('randevuPage.actions.cancelSuccess'));
+    if (data?.status === 'SUCCESS') dialog.alert(t('randevuPage.actions.cancelSuccess'));
     
     const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
     setAppointments(refresh.data);
@@ -212,13 +214,13 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
     setIsActionLoading(false);
     
     if (error || data?.status === 'UNAUTHORIZED') {
-      alert(t('randevuPage.actions.genericError'));
+      dialog.alert(t('randevuPage.actions.genericError'));
     } else if (data?.status === 'NOT_FOUND') {
-      alert(t('randevuPage.actions.notFound'));
+      dialog.alert(t('randevuPage.actions.notFound'));
     }
     
     setDeleteModalId(null);
-    if (data?.status === 'SUCCESS') alert(t('randevuPage.actions.deleteSuccess'));
+    if (data?.status === 'SUCCESS') dialog.alert(t('randevuPage.actions.deleteSuccess'));
     
     const refresh = await getAppointmentsByDate(selectedDate, activeCalendarId || undefined);
     setAppointments(refresh.data);
@@ -323,7 +325,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
 
   const handleSave = async () => {
     if (!newAppt.time || !newAppt.phone) {
-      alert(t('randevuPage.alerts.missingFields'));
+      dialog.alert(t('randevuPage.alerts.missingFields'));
       return;
     }
     setIsSaving(true);
@@ -337,7 +339,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
     });
     
     if (res.error) {
-      alert(t('randevuPage.alerts.saveFailed', { error: res.error }));
+      dialog.alert(t('randevuPage.alerts.saveFailed', { error: res.error }));
       setIsSaving(false);
       return;
     }
@@ -590,7 +592,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                                       { label: `${bReason}${bNote ? ' - ' + bNote : ''}`, onClick: () => {} },
                                       { label: t('randevu.block.removeReservation'), onClick: async () => {
                                           const res = await deleteCalendarBlock(bId);
-                                            if (res.error || res.data?.status !== 'SUCCESS') alert(t('musteriler.error'));
+                                            if (res.error || res.data?.status !== 'SUCCESS') dialog.alert(t('musteriler.error'));
                                             else {
                                               const refreshed = await getDaySchedule(selectedDate, activeCalendarId || undefined);
                                               setDaySchedule(refreshed.data || []);
@@ -1054,11 +1056,11 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                     <button 
                       style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: 16, color: "#EF4444" }}
                       onClick={async () => {
-                        if (confirm(t("randevuPage.extra.confirmDelete", { name: cal.name }))) {
+                        if ((await dialog.confirm(t("randevuPage.extra.confirmDelete", { name: cal.name }), { danger: true }))) {
                           const { createClient } = await import("@/lib/supabase/client");
                           const client = createClient();
                           const { data } = await client.from("calendars").update({ is_active: false }).eq("id", cal.id).select();
-                          if (!data || data.length === 0) alert(t("randevuPage.extra.noDeletePermission"));
+                          if (!data || data.length === 0) dialog.alert(t("randevuPage.extra.noDeletePermission"));
                           const { getCalendars } = await import("@/actions/calendars");
                           const updated = await getCalendars();
                           setCalendars(updated);

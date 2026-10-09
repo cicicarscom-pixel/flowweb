@@ -5,10 +5,12 @@ import { useTranslations, useLocale } from "next-intl";
 import { appointmentSentence } from '@/lib/appointmentSentence';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { useDialog } from "@/components/ui/DialogProvider";
 
 function GelenKutusuContent() {
   const router = useRouter();
   const t = useTranslations();
+  const dialog = useDialog();
   const locale = useLocale();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
@@ -259,7 +261,7 @@ function GelenKutusuContent() {
       
       setPrivateReplyModal(null);
       setPrivateReplyText("");
-      alert(t("gelenKutusuPage.privateReply.successAlert"));
+      dialog.alert(t("gelenKutusuPage.privateReply.successAlert"));
     } catch (e: any) {
       console.error(e);
       let errorMsg = e.message;
@@ -273,7 +275,7 @@ function GelenKutusuContent() {
            }
         }
       } catch {}
-      alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + errorMsg);
+      dialog.alert(t("gelenKutusuPage.privateReply.errorAlertPrefix") + errorMsg);
     } finally {
       setIsSendingPrivateReply(false);
     }
@@ -339,9 +341,9 @@ function GelenKutusuContent() {
     } catch (err: any) {
       console.error(err);
       if (err.message?.includes('Missing accountId for reply-comment')) {
-        alert(t("gelenKutusuPage.alerts.replyNoAccount", { platform: comment.platform }));
+        dialog.alert(t("gelenKutusuPage.alerts.replyNoAccount", { platform: comment.platform }));
       } else {
-        alert(t("gelenKutusuPage.alerts.replyFailed", { message: err.message }));
+        dialog.alert(t("gelenKutusuPage.alerts.replyFailed", { message: err.message }));
       }
     } finally {
       setIsSendingReply(false);
@@ -634,7 +636,7 @@ function GelenKutusuContent() {
 
   const handleDeleteSelected = async () => {
     if (selectedItems.length === 0) return;
-    if (confirm(t("gelenKutusuPage.messages.confirmDeleteSelected", { count: selectedItems.length }))) {
+    if ((await dialog.confirm(t("gelenKutusuPage.messages.confirmDeleteSelected", { count: selectedItems.length }), { danger: true }))) {
       try {
         if (activeTab === 'mesajlar') {
           const uuids = selectedItems.filter(id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));

@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { appointmentSentence } from "@/lib/appointmentSentence";
 import { createClient } from "@/lib/supabase/client";
+import { useDialog } from "@/components/ui/DialogProvider";
 
 type Locale = "tr" | "en" | "de";
 
@@ -236,6 +237,7 @@ export function useUnreadAppointmentCount() {
 /* ------------------------------------------------------------------ */
 
 export default function AppointmentNotifications({ locale = "tr", limit = 5 }: { locale?: Locale; limit?: number }) {
+  const dialog = useDialog();
   const s = STRINGS[locale];
   const router = useRouter();
   const { items, loading, error, refresh, markRead, clearAll } = useAppointmentNotifications(limit);
@@ -247,8 +249,8 @@ export default function AppointmentNotifications({ locale = "tr", limit = 5 }: {
   };
 
   const clear = async () => {
-    if (!window.confirm(s.clearConfirm)) return;
-    if (!(await clearAll())) alert(s.clearFailed);
+    if (!(await dialog.confirm(s.clearConfirm, { danger: true }))) return;
+    if (!(await clearAll())) dialog.alert(s.clearFailed);
   };
 
   return (

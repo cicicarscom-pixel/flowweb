@@ -59,6 +59,15 @@
         "prompt": "Son {days} günde {platform} takipçi sayım {change} değişti. Bunu yorumla ve ne yapmam gerektiğini söyle."
       }
     },
+    "voice": {
+      "start": "Sesli sohbeti başlat",
+      "stop": "Sesli sohbeti bitir",
+      "listening": "Dinliyorum… (bitirmek için \"bitir\" de)",
+      "thinking": "Düşünüyorum…",
+      "speaking": "Yanıtlıyorum…",
+      "denied": "Mikrofon izni verilmedi. Tarayıcı adres çubuğundaki kilit simgesinden mikrofona izin ver.",
+      "error": "Sesli sohbet başlatılamadı. Biraz sonra tekrar dene."
+    },
     "share": {
       "attach": "Video ekle",
       "attachedLabel": "Ekli video",

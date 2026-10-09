@@ -59,6 +59,15 @@
         "prompt": "My {platform} followers changed by {change} in the last {days} days. Explain it and tell me what to do."
       }
     },
+    "voice": {
+      "start": "Start voice chat",
+      "stop": "End voice chat",
+      "listening": "Listening… (say \"stop\" to end)",
+      "thinking": "Thinking…",
+      "speaking": "Answering…",
+      "denied": "Microphone permission was denied. Allow the microphone from the lock icon in the address bar.",
+      "error": "Voice chat could not start. Try again in a moment."
+    },
     "share": {
       "attach": "Attach video",
       "attachedLabel": "Attached video",

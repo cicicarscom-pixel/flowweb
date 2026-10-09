@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { flowAiShareHandoff } from "@/lib/flowAiShareHandoff";
+import { useWebVoice, type VoiceExit } from "@/lib/useWebVoice";
 
 // Flow AI web paneli (FA-W). Sunucu tarafı mobille AYNI (flow-ai-agent); istemci `client: "web"` gönderir.
 // Kimlik JWT'den çözülür, istemci org/kullanıcı kimliği GÖNDERMEZ. Onay gerektiren işlemler sohbette kart olarak çıkar.
@@ -40,6 +41,9 @@ const PUBLISH_ERRORS: Record<string, string> = {
   DRAFT_ALREADY_USED: "publish.used",
   SCHEDULE_IN_PAST: "publish.past",
 };
+
+const VOICE_LANG: Record<string, string> = { tr: "tr-TR", en: "en-US", de: "de-DE" };
+const VOICE_END_WORDS = ["bitir", "kapat", "sohbeti bitir", "tamam bitir", "stop", "beenden", "ende", "end"];
 
 const CHIPS = ["chipAppointments", "chipPost", "chipAccounts"] as const;
 
@@ -145,6 +149,7 @@ export default function FlowAiPanel() {
   const [shareConfirmState, setShareConfirmState] = useState<'IDLE' | 'NOT_READY' | 'STARTED'>('IDLE');
   const [platformPick, setPlatformPick] = useState<null | { platform: string; handle: string; eligible: boolean; reason?: string }[]>(null);
   const [pickSel, setPickSel] = useState<Record<string, boolean>>({});
+  const voiceRef = useRef<ReturnType<typeof useWebVoice> | null>(null);
 
   const push = useCallback((role: Msg["role"], text: string) => {
     setMessages((m) => [...m, { id: ++seq.current, role, text }]);
@@ -205,8 +210,10 @@ export default function FlowAiPanel() {
       push("assistant", res.reply);
       setPending(res.pendingActions || []);
       (res.clientActions || []).forEach(dispatch);
+      voiceRef.current?.speak(res.reply);
     } catch (e: any) {
       push("error", e.code === "DAILY_LIMIT" ? t("dailyLimit", { limit: e.limit ?? "" }) : t("error"));
+      if (e.code === "DAILY_LIMIT") voiceRef.current?.stop(); else voiceRef.current?.resume();
     } finally {
       setBusy(false);
     }
@@ -234,6 +241,25 @@ export default function FlowAiPanel() {
       setBusy(false);
     }
   }, [call, push, t]);
+
+  // Sesli sohbet (Web Speech API): mikrofon düğmesiyle açılır; tarayıcı desteklemiyorsa düğme görünmez.
+  const voice = useWebVoice({
+    lang: VOICE_LANG[locale] || "en-US",
+    onPartial: (txt) => setInput(txt),
+    onFinal: (txt) => {
+      setInput("");
+      const words = txt.toLocaleLowerCase(locale).replace(/[.,!?]/g, "").trim();
+      if (words.split(/\s+/).length <= 4 && VOICE_END_WORDS.some((w) => words.includes(w))) { voiceRef.current?.stop(); return; }
+      if (busy) { voiceRef.current?.resume(); return; }
+      send(txt);
+    },
+    onExit: (reason: VoiceExit) => {
+      setInput("");
+      if (reason === "permission") push("error", t("voice.denied"));
+      else if (reason === "error") push("error", t("voice.error"));
+    },
+  });
+  voiceRef.current = voice;
 
   // Öneri kartları: panel açılınca (en fazla dakikada bir) yüklenir; kendiliğinden hiçbir şey yapmaz.
   useEffect(() => {
@@ -356,7 +382,7 @@ export default function FlowAiPanel() {
           <div style={{ color: "#fff", fontWeight: 600, fontSize: 14 }}>{t("title")}</div>
           <div style={{ color: "#3FB950", fontSize: 12 }}>{t("online")}</div>
         </div>
-        <button type="button" onClick={() => setOpen(false)} aria-label={t("close")} style={{ background: "none", border: "none", color: "#8B949E", cursor: "pointer", fontSize: 16, padding: 6 }}>
+        <button type="button" onClick={() => { voice.stop(); setOpen(false); }} aria-label={t("close")} style={{ background: "none", border: "none", color: "#8B949E", cursor: "pointer", fontSize: 16, padding: 6 }}>
           <i className="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -565,12 +591,25 @@ export default function FlowAiPanel() {
         <button type="button" onClick={() => fileInputRef.current?.click()} aria-label={t("share.attach")} style={{ width: 42, height: 42, borderRadius: 12, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.035)", color: "#8B949E", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <i className="fa-solid fa-paperclip"></i>
         </button>
+        {voice.supported && (
+          <button
+            type="button"
+            data-testid="flow_ai_mic"
+            onClick={() => (voice.active ? voice.stop() : voice.start())}
+            aria-label={t(voice.active ? "voice.stop" : "voice.start")}
+            aria-pressed={voice.active}
+            title={t(voice.active ? "voice.stop" : "voice.start")}
+            style={{ width: 42, height: 42, borderRadius: 12, border: `1px solid ${voice.active ? "rgba(248,81,73,0.6)" : "rgba(255,255,255,0.08)"}`, background: voice.active ? "rgba(248,81,73,0.18)" : "rgba(255,255,255,0.035)", color: voice.active ? "#FF7A70" : "#8B949E", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            <i className={voice.active ? "fa-solid fa-microphone-lines" : "fa-solid fa-microphone"}></i>
+          </button>
+        )}
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          disabled={busy}
+          disabled={busy || voice.active}
           maxLength={4000}
-          placeholder={t("placeholder")}
+          placeholder={voice.active ? t(`voice.${voice.phase.toLowerCase()}` as any) : t("placeholder")}
           style={{ flex: 1, color: "#fff", background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "10px 12px", outline: "none" }}
         />
         <button type="submit" disabled={busy || !input.trim()} aria-label={t("title")} style={{ width: 42, height: 42, borderRadius: 12, border: "none", background: "linear-gradient(135deg,#3B82F6,#9D5CFF)", color: "#fff", cursor: "pointer", opacity: busy || !input.trim() ? 0.5 : 1 }}>

@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Flow AI web — sesli sohbet:** panelde mikrofon düğmesi eklendi (tarayıcının Web Speech API'si; ek paket yok). Basınca eller serbest döngü: dinle → cümle bitince gönder → yanıtı sesli oku → yeniden dinle. "bitir/kapat/stop" ya da düğme ile kapanır; 3 sessiz tur sonra kendiliğinden durur. Desteklemeyen tarayıcıda (ör. Firefox) düğme görünmez. tr/en/de.
 - **[08.10.2026] WhatsApp hatırlatma metni:** AI Asistan sayfasında işletme kendi hatırlatma metnini yazar ve mesaj dilini seçer (tr/en/de/fr/es); yer tutucular ({name}, {business}, {date}, {time}, {doctor}, {service}) ve örnek önizleme vardır. Hitap (Sayın/Mr./Herr…) metne işletme tarafından yazılır, kodda sabit değildir.
 - **[08.10.2026] Profil:** "Profili Kaydet" düğmesi yalnız değişiklik varken etkin; kaydedince "Kaydedildi" yazıp pasif kalır, bir alan değişince yeniden etkinleşir. Profil kaydı artık hatayı sessizce yutmaz.
 - **[08.10.2026] WhatsApp randevu hatırlatma:** AI Asistan sayfasına "WhatsApp randevu hatırlatma" düğmesi eklendi (yalnız işletme sahibi değiştirir; varsayılan kapalı). Açıkken onaylı randevulara 24 saat önce WhatsApp'tan otomatik hatırlatma gider.

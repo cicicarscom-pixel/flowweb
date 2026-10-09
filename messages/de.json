@@ -59,6 +59,15 @@
         "prompt": "Meine {platform}-Follower haben sich in den letzten {days} Tagen um {change} geändert. Erkläre das und sag mir, was ich tun soll."
       }
     },
+    "voice": {
+      "start": "Sprachchat starten",
+      "stop": "Sprachchat beenden",
+      "listening": "Ich höre zu… (zum Beenden „beenden“ sagen)",
+      "thinking": "Ich denke nach…",
+      "speaking": "Ich antworte…",
+      "denied": "Mikrofonzugriff wurde verweigert. Erlaube das Mikrofon über das Schloss-Symbol in der Adressleiste.",
+      "error": "Sprachchat konnte nicht gestartet werden. Versuche es gleich noch einmal."
+    },
     "share": {
       "attach": "Video anhängen",
       "attachedLabel": "Angehängtes Video",

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useDialog } from "@/components/ui/DialogProvider";
+import { useLatest } from "@/lib/useLatest";
 
 const PLATFORMS_DATA = [
   { id: "facebook", name: "Facebook", color: "#1877F2", glow: "rgba(24,119,242,0.3)", icon: "👥" },
@@ -86,49 +87,6 @@ export default function SosyalMedyaPage() {
   const isSyncingRef = useRef(false);
   const shownConflictsRef = useRef<Set<string>>(new Set());
   const supabase = createClient();
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
-    
-    const accountId = searchParams.get('accountId') || hashParams.get('accountId');
-    const errorParam = searchParams.get('error') || hashParams.get('error');
-    const errorMessage = searchParams.get('error_message') || hashParams.get('error_message') || searchParams.get('error_description') || hashParams.get('error_description');
-
-    // Önce Zernio'ya hiç gitmeden, yerelde zaten bilinen hesapları anında göster —
-    // aksi halde sayfaya her girişte hesaplar bir anlığına boşalıp Zernio
-    // senkronizasyonu bitene kadar "dönüp duruyor" gibi görünüyordu (16.09.2026,
-    // kullanıcı bildirdi). fetchAccounts(false) senkron olmayan hızlı bir yerel DB
-    // okuması, Zernio'ya istek atmıyor. Ardından aşağıdaki gerçek Zernio
-    // senkronizasyonu (fetchAccounts(true)) arka planda tetiklenmeye devam ediyor;
-    // liste zaten doluyken bu ikinci çağrı sadece "Senkronize Et" butonundaki
-    // ikonu döndürür, kartları boşaltmaz.
-    fetchAccounts(false);
-
-    if (errorParam || errorMessage) {
-       const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
-       dialog.alert(t("sosyalMedyaPage.errors.connectError") + ": " + displayError);
-       window.history.replaceState({}, '', window.location.pathname);
-    } else if (accountId) {
-      fetchAccounts(true);
-      window.history.replaceState({}, '', window.location.pathname);
-    } else {
-      // OAUTH geri dönüşlerinde URL'de parametre olmasa bile yeni eklenen hesabı çekmek için her zaman senkronize et
-      fetchAccounts(true);
-    }
-
-    // Web Focus Radar: Kullanıcı tarayıcı sekmesine döndüğünde Zernio hesaplarını anlık sync et
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        fetchAccounts(true);
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
 
   useEffect(() => {
     // RLS yalnız oturumdaki işletmenin satırını döndürür; kimlik istemciden gönderilmez.
@@ -214,6 +172,53 @@ export default function SosyalMedyaPage() {
       setIsLoading(false);
     }
   };
+
+  // Sayfa açılışında bir kez çalışan senkronizasyon/OAuth dönüş efekti; her zaman en güncel
+  // fetchAccounts/dialog/t çağrılır, ama bu işlevlerin kimliği değişince efekt yeniden çalışmaz.
+  const latest = useLatest({ fetchAccounts, dialog, t });
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'));
+    
+    const accountId = searchParams.get('accountId') || hashParams.get('accountId');
+    const errorParam = searchParams.get('error') || hashParams.get('error');
+    const errorMessage = searchParams.get('error_message') || hashParams.get('error_message') || searchParams.get('error_description') || hashParams.get('error_description');
+
+    // Önce Zernio'ya hiç gitmeden, yerelde zaten bilinen hesapları anında göster —
+    // aksi halde sayfaya her girişte hesaplar bir anlığına boşalıp Zernio
+    // senkronizasyonu bitene kadar "dönüp duruyor" gibi görünüyordu (16.09.2026,
+    // kullanıcı bildirdi). fetchAccounts(false) senkron olmayan hızlı bir yerel DB
+    // okuması, Zernio'ya istek atmıyor. Ardından aşağıdaki gerçek Zernio
+    // senkronizasyonu (fetchAccounts(true)) arka planda tetiklenmeye devam ediyor;
+    // liste zaten doluyken bu ikinci çağrı sadece "Senkronize Et" butonundaki
+    // ikonu döndürür, kartları boşaltmaz.
+    latest.current.fetchAccounts(false);
+
+    if (errorParam || errorMessage) {
+       const displayError = errorMessage ? decodeURIComponent(errorMessage.replace(/\+/g, ' ')) : errorParam;
+       latest.current.dialog.alert(latest.current.t("sosyalMedyaPage.errors.connectError") + ": " + displayError);
+       window.history.replaceState({}, '', window.location.pathname);
+    } else if (accountId) {
+      latest.current.fetchAccounts(true);
+      window.history.replaceState({}, '', window.location.pathname);
+    } else {
+      // OAUTH geri dönüşlerinde URL'de parametre olmasa bile yeni eklenen hesabı çekmek için her zaman senkronize et
+      latest.current.fetchAccounts(true);
+    }
+
+    // Web Focus Radar: Kullanıcı tarayıcı sekmesine döndüğünde Zernio hesaplarını anlık sync et
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        latest.current.fetchAccounts(true);
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [latest]);
 
   const handleConnectZernio = async (platformId: string) => {
     setIsConnecting(platformId);

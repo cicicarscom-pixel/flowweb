@@ -218,7 +218,7 @@ export default function DashboardHomePage() {
     };
     
     fetchData();
-  }, []);
+  }, [locale, supabase, t]);
 
   const toggleAiStatus = async () => {
     const newStatus = !aiActive;

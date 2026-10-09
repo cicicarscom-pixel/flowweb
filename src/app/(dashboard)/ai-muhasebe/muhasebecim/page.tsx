@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { createClient } from "@/lib/supabase/client";
@@ -15,22 +15,7 @@ export default function MuhasebecimPage() {
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
 
-  useEffect(() => {
-    checkConnection();
-    // Müşavir isteği kabul/ret ettiğinde ya da bağlantıyı kestiğinde sayfa kendiliğinden güncellenir.
-    // RLS: işletme yalnız kendi bağlantı olaylarını alır.
-    const channel = supabase
-      .channel('my-accountant-connection')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'accountant_taxpayer_links' }, () => {
-        checkConnection();
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const checkConnection = async () => {
+  const checkConnection = useCallback(async () => {
     try {
       const { data, error } = await supabase.rpc('get_my_accountant_connection');
       if (error) throw error;
@@ -50,7 +35,22 @@ export default function MuhasebecimPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+    checkConnection();
+    // Müşavir isteği kabul/ret ettiğinde ya da bağlantıyı kestiğinde sayfa kendiliğinden güncellenir.
+    // RLS: işletme yalnız kendi bağlantı olaylarını alır.
+    const channel = supabase
+      .channel('my-accountant-connection')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'accountant_taxpayer_links' }, () => {
+        checkConnection();
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [checkConnection, supabase]);
 
   const handleVerify = async () => {
     if (accountantCode.trim().length > 0) {

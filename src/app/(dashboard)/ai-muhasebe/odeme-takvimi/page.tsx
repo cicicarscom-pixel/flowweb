@@ -1,7 +1,7 @@
 "use client";
 import { formatMoney } from '@/lib/money';
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -42,7 +42,7 @@ export default function OdemeTakvimiScreen() {
 
   const todayRowRef = useRef<HTMLDivElement>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setIsLoading(true);
     const y = currentDate.getFullYear();
     const m = currentDate.getMonth();
@@ -56,11 +56,11 @@ export default function OdemeTakvimiScreen() {
       setTransactions([]);
     }
     setIsLoading(false);
-  };
+  }, [currentDate, supabase]);
 
   useEffect(() => {
     loadData();
-  }, [currentDate]);
+  }, [loadData]);
 
   useEffect(() => {
     if (!isLoading && todayRowRef.current) {

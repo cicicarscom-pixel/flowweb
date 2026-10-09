@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -115,7 +115,7 @@ export default function AnalyticsScreen() {
   const [postTimelineMetrics, setPostTimelineMetrics] = useState<string[]>(['views', 'likes', 'comments']);
   const requestRef = useRef(0);
 
-  const fetchInternalStats = async () => {
+  const fetchInternalStats = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id;
@@ -178,9 +178,9 @@ export default function AnalyticsScreen() {
     } catch (err) {
       console.warn('Error fetching internal stats:', err);
     }
-  };
+  }, [selectedPlatform.id, supabase]);
 
-  const fetchZernioAnalytics = async () => {
+  const fetchZernioAnalytics = useCallback(async () => {
     const currentRequestId = ++requestRef.current;
     setIsLoading(true);
 
@@ -450,17 +450,17 @@ export default function AnalyticsScreen() {
         setIsLoading(false);
       }
     }
-  };
+  }, [selectedPlatform.id, selectedTimeRange.days, socialAccounts, supabase]);
 
   useEffect(() => {
     fetchInternalStats();
-  }, [selectedPlatform]);
+  }, [fetchInternalStats]);
 
   useEffect(() => {
     if (socialAccounts.length > 0) {
       fetchZernioAnalytics();
     }
-  }, [selectedPlatform, selectedTimeRange, socialAccounts]);
+  }, [fetchZernioAnalytics, socialAccounts.length]);
 
   const renderPostingAnalytics = () => (
     <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingBottom: 60 }}>

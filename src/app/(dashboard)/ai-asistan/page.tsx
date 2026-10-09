@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import AiDataResetPanel from "@/components/settings/AiDataResetPanel";
@@ -61,11 +61,7 @@ export default function BotScreen() {
   const [wahaPairingCode, setWahaPairingCode] = useState<string | null>(null);
   const [wahaLoading, setWahaLoading] = useState(false);
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-    const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -113,7 +109,11 @@ export default function BotScreen() {
     } finally {
       setPersonasLoading(false);
     }
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
 
     const handleAppointmentToggle = async () => {
     const newValue = !appointmentModuleEnabled;

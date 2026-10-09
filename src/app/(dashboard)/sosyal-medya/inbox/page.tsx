@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import AiChatInput from "@/components/chat/AiChatInput";
@@ -41,31 +41,7 @@ export default function GelenKutusuPage() {
 
   const supabase = createClient();
 
-  useEffect(() => {
-    fetchConversations();
-    fetchComments();
-
-    const convChannel = supabase
-      .channel("realtime_conversations")
-      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
-        fetchConversations();
-      })
-      .subscribe();
-
-    const commentsChannel = supabase
-      .channel("realtime_comments")
-      .on("postgres_changes", { event: "*", schema: "public", table: "comments" }, () => {
-        fetchComments();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(convChannel);
-      supabase.removeChannel(commentsChannel);
-    };
-  }, []);
-
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     const { data, error } = await supabase
       .from("conversations")
       .select(`
@@ -91,9 +67,9 @@ export default function GelenKutusuPage() {
       setConversations(enhancedData);
     }
     setIsLoading(false);
-  };
+  }, [supabase, t]);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     const { data, error } = await supabase
       .from("comments")
       .select("*")
@@ -102,9 +78,9 @@ export default function GelenKutusuPage() {
     if (!error && data) {
       setComments(data);
     }
-  };
+  }, [supabase]);
 
-  const fetchMessagesForConversation = async (zernioConvId: string) => {
+  const fetchMessagesForConversation = useCallback(async (zernioConvId: string) => {
     const { data, error } = await supabase
       .from("messages")
       .select("*")
@@ -114,16 +90,43 @@ export default function GelenKutusuPage() {
     if (!error && data) {
       setActiveMessages(data);
     }
-  };
+  }, [supabase]);
 
   useEffect(() => {
-    if (selectedConvId && activeTab === "mesajlar") {
-      const conv = conversations.find((c) => c.id === selectedConvId);
-      if (conv) {
-        fetchMessagesForConversation(conv.zernio_conversation_id);
-      }
+    fetchConversations();
+    fetchComments();
+
+    const convChannel = supabase
+      .channel("realtime_conversations")
+      .on("postgres_changes", { event: "*", schema: "public", table: "conversations" }, () => {
+        fetchConversations();
+      })
+      .subscribe();
+
+    const commentsChannel = supabase
+      .channel("realtime_comments")
+      .on("postgres_changes", { event: "*", schema: "public", table: "comments" }, () => {
+        fetchComments();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(convChannel);
+      supabase.removeChannel(commentsChannel);
+    };
+  }, [fetchConversations, fetchComments, supabase]);
+
+  // Seçili sohbetin Zernio kimliği: efekt yalnızca bu kimlik (ya da sekme) değişince çalışır;
+  // `conversations` listesi her güncellendiğinde mesajlar yeniden çekilmez.
+  const selectedZernioConvId = selectedConvId
+    ? conversations.find((c) => c.id === selectedConvId)?.zernio_conversation_id
+    : undefined;
+
+  useEffect(() => {
+    if (selectedZernioConvId && activeTab === "mesajlar") {
+      fetchMessagesForConversation(selectedZernioConvId);
     }
-  }, [selectedConvId, activeTab]);
+  }, [selectedZernioConvId, activeTab, fetchMessagesForConversation]);
 
   const handleSendMessage = (text: string, file: File | null) => {
     // API logic for sending message goes here

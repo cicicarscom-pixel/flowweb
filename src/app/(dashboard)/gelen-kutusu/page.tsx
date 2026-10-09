@@ -6,12 +6,14 @@ import { appointmentSentence } from '@/lib/appointmentSentence';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { useDialog } from "@/components/ui/DialogProvider";
+import { useLatest } from "@/lib/useLatest";
 
 function GelenKutusuContent() {
   const router = useRouter();
   const t = useTranslations();
   const dialog = useDialog();
   const locale = useLocale();
+  const supabase = createClient();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const [activeTab, setActiveTab] = useState<'mesajlar' | 'yorumlar' | 'degerlendirmeler' | 'bildirimler'>('mesajlar');
@@ -52,7 +54,7 @@ function GelenKutusuContent() {
         }
      };
      initOrg();
-  }, []);
+  }, [supabase]);
 
   const [connectedPlatforms, setConnectedPlatforms] = useState<Set<string>>(new Set());
 
@@ -69,7 +71,7 @@ function GelenKutusuContent() {
         setConnectedPlatforms(new Set((data || []).map((r: any) => r.platform?.toLowerCase())));
      };
      fetchConnectedPlatforms();
-  }, [organizationId]);
+  }, [organizationId, supabase]);
 
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
@@ -176,15 +178,13 @@ function GelenKutusuContent() {
     });
     
     return Array.from(postMap.values()).sort((a, b) => new Date(b.latestCommentAt).getTime() - new Date(a.latestCommentAt).getTime());
-  }, [comments, connectedPlatforms]);
+  }, [visibleComments, t]);
 
   useEffect(() => {
     if (activeTab === 'yorumlar' && postsWithComments.length > 0 && !selectedPostId) {
       setSelectedPostId(postsWithComments[0].postId);
     }
   }, [activeTab, postsWithComments, selectedPostId]);
-
-  const supabase = createClient();
 
   // Fetch Data
   
@@ -564,12 +564,17 @@ function GelenKutusuContent() {
     }
   };
 
+  const fetchConversationsRef = useLatest(fetchConversations);
+  const fetchCommentsRef = useLatest(fetchComments);
+  const fetchNotificationsRef = useLatest(fetchNotifications);
+  const fetchReviewsRef = useLatest(fetchReviews);
+
   useEffect(() => {
     const loadAll = async () => {
       setIsLoading(true);
-      const promises = [fetchNotifications()];
+      const promises = [fetchNotificationsRef.current()];
       if (organizationId) {
-        promises.push(fetchConversations(), fetchComments(1), fetchReviews());
+        promises.push(fetchConversationsRef.current(), fetchCommentsRef.current(1), fetchReviewsRef.current());
       }
       await Promise.all(promises);
       setIsLoading(false);
@@ -581,7 +586,7 @@ function GelenKutusuContent() {
     // Realtime Subscriptions (Döngü Korumalı)
     if (organizationId) {
       const convChannel = supabase.channel('web_realtime_conversations')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, fetchConversations)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'conversations' }, () => fetchConversationsRef.current())
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'conversations' }, (payload) => {
            setConversations(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
         })
@@ -589,12 +594,12 @@ function GelenKutusuContent() {
       channels.push(convChannel);
 
       const msgChannel = supabase.channel('web_realtime_messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, fetchConversations)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => fetchConversationsRef.current())
         .subscribe();
       channels.push(msgChannel);
 
       const commentChannel = supabase.channel('web_realtime_comments')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => fetchComments(1))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => fetchCommentsRef.current(1))
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'comments' }, (payload) => {
            setComments(prev => prev.map(c => c.id === payload.new.id ? { ...c, ...payload.new } : c));
         })
@@ -605,7 +610,7 @@ function GelenKutusuContent() {
       channels.push(commentChannel);
 
       const reviewChannel = supabase.channel('web_realtime_reviews')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, fetchReviews)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reviews' }, () => fetchReviewsRef.current())
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reviews' }, (payload) => {
            setReviews(prev => prev.map(r => r.id === payload.new.id ? { ...r, ...payload.new } : r));
         })
@@ -614,15 +619,15 @@ function GelenKutusuContent() {
     }
 
     const notifChannel = supabase.channel('web_realtime_notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, fetchNotifications)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, fetchNotifications)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => fetchNotificationsRef.current())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'broadcast_notifications' }, () => fetchNotificationsRef.current())
       .subscribe();
     channels.push(notifChannel);
 
     return () => {
       channels.forEach(ch => supabase.removeChannel(ch));
     };
-  }, [organizationId]);
+  }, [organizationId, supabase, fetchCommentsRef, fetchConversationsRef, fetchNotificationsRef, fetchReviewsRef]);
 
   useEffect(() => {
     // Auto-read removed as per requirement

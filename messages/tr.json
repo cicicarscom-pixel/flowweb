@@ -393,6 +393,7 @@
   },
   "aiAsistanComponents": {
     "liveTestPanel": {
+      "notice": "Bu test sohbeti hafızasızdır: her mesaj, müşterinin asistanla ilk karşılaşması gibi değerlendirilir. Önceki mesajlar hatırlanmaz; yalnızca asistanın ilk izlenimini denemek içindir. Gerçek randevu açılmaz, kimseye mesaj gitmez.",
       "title": "Canlı Test",
       "emptyState": "Asistan ile konuşmaya başlayın...",
       "simulationStarted": "SİMÜLASYON BAŞLADI",

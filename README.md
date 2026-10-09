@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Anasayfa Randevu Bildirimleri:** "Raporları Temizle" düğmesi eklendi (onay sorar; yalnız randevu bildirimlerini siler, randevular ve müşteri konuşmaları silinmez; tr/en/de). Veritabanı: `clear_appointment_notifications()`.
 - **[09.10.2026] Randevu sayfası:** "🧹 Hafızayı Sil" düğmesi ve `clearChatMemory` işlemi kaldırıldı (işletmenin tüm konuşma kayıtlarını geri alınamaz şekilde siliyordu). Konuşma geçmişi silmek gerekirse yönetici tarafından veritabanından yapılır.
 - **[09.10.2026] Canlı Test:** panelden "🧹 Hafızayı Sil" düğmesi kaldırıldı (işletmenin gerçek WhatsApp konuşma kayıtlarını `ai_communication_logs`'tan siliyordu; test paneli bu tabloyu kullanmaz). Yalnız "↻ Ekranı Temizle" kaldı. (Randevu sayfasındaki ayrı "Hafızayı Sil" düğmesine dokunulmadı.)
 - **[09.10.2026] Canlı Test bilgilendirmesi (düzeltme):** not, kullanılmayan `LiveTestPanel.tsx` yerine sayfada gerçekten gösterilen Canlı Test paneline (`ai-asistan/page.tsx`) taşındı; ölü bileşendeki kopya ve anahtar kaldırıldı.

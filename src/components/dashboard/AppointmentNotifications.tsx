@@ -49,6 +49,9 @@ const STRINGS: Record<Locale, {
   error: string;
   retry: string;
   unknownCustomer: string;
+  clear: string;
+  clearConfirm: string;
+  clearFailed: string;
   sentence: (name: string, when: string, calendarName?: string) => string;
 }> = {
   tr: {
@@ -61,6 +64,9 @@ const STRINGS: Record<Locale, {
     error: "Bildirimler yüklenemedi.",
     retry: "Tekrar dene",
     unknownCustomer: "Bir müşteri",
+    clear: "Raporları Temizle",
+    clearConfirm: "Randevu bildirim raporları silinsin mi? Bu işlem geri alınamaz. (Randevularınız ve müşteri konuşmalarınız silinmez.)",
+    clearFailed: "Raporlar temizlenemedi. Biraz sonra tekrar deneyin.",
     sentence: (name, when, calendarName) => appointmentSentence(name, when, calendarName),
   },
   en: {
@@ -73,6 +79,9 @@ const STRINGS: Record<Locale, {
     error: "Couldn't load notifications.",
     retry: "Try again",
     unknownCustomer: "A customer",
+    clear: "Clear reports",
+    clearConfirm: "Delete the appointment notification reports? This cannot be undone. (Your appointments and customer conversations are not deleted.)",
+    clearFailed: "Couldn't clear the reports. Please try again shortly.",
     sentence: (name, when, calendarName) => `Appointment booked for ${name} on ${when}`,
   },
   de: {
@@ -85,6 +94,9 @@ const STRINGS: Record<Locale, {
     error: "Benachrichtigungen konnten nicht geladen werden.",
     retry: "Erneut versuchen",
     unknownCustomer: "Ein Kunde",
+    clear: "Berichte löschen",
+    clearConfirm: "Die Terminbenachrichtigungen löschen? Das kann nicht rückgängig gemacht werden. (Ihre Termine und Kundengespräche werden nicht gelöscht.)",
+    clearFailed: "Die Berichte konnten nicht gelöscht werden. Bitte versuchen Sie es gleich noch einmal.",
     sentence: (name, when, calendarName) => `Termin für ${name} am ${when} erstellt`,
   },
 };
@@ -161,6 +173,18 @@ export function useAppointmentNotifications(limit = 5) {
     window.dispatchEvent(new Event('appointment-notifications-changed'));
   }, [supabase]);
 
+  /** Bu işletmenin randevu bildirimlerini siler (yalnız `notifications`; randevular ve konuşmalar silinmez). Sunucu RPC'si kimliği kendisi çözer. */
+  const clearAll = useCallback(async (): Promise<boolean> => {
+    const { data, error } = await supabase.rpc("clear_appointment_notifications");
+    if (error || data?.status !== "SUCCESS") {
+      console.error("[AppointmentNotifications] clear failed:", error ?? data);
+      return false;
+    }
+    setItems([]);
+    window.dispatchEvent(new Event('appointment-notifications-changed'));
+    return true;
+  }, [supabase]);
+
   useEffect(() => {
     refresh();
     const timer = setInterval(refresh, REFRESH_MS);
@@ -174,7 +198,7 @@ export function useAppointmentNotifications(limit = 5) {
     };
   }, [refresh]);
 
-  return { items, loading, error, refresh, markRead };
+  return { items, loading, error, refresh, markRead, clearAll };
 }
 
 /** Zil ikonu için: okunmamış randevu bildirimi sayısı. */
@@ -219,12 +243,17 @@ export function useUnreadAppointmentCount() {
 export default function AppointmentNotifications({ locale = "tr", limit = 5 }: { locale?: Locale; limit?: number }) {
   const s = STRINGS[locale];
   const router = useRouter();
-  const { items, loading, error, refresh, markRead } = useAppointmentNotifications(limit);
+  const { items, loading, error, refresh, markRead, clearAll } = useAppointmentNotifications(limit);
 
   const open = async (n: AppointmentNotification) => {
     if (!n.is_read) await markRead(n.id);
     const date = n.metadata ? localDateParam(n.metadata) : null;
     router.push(date ? `/ai-asistan/randevu?date=${date}` : "/ai-asistan/randevu");
+  };
+
+  const clear = async () => {
+    if (!window.confirm(s.clearConfirm)) return;
+    if (!(await clearAll())) alert(s.clearFailed);
   };
 
   return (
@@ -278,6 +307,14 @@ export default function AppointmentNotifications({ locale = "tr", limit = 5 }: {
             </button>
           );
         })}
+
+        {!loading && !error && items.length > 0 && (
+          <div className="an-foot">
+            <button type="button" className="an-clear" onClick={clear}>
+              <i className="fa-solid fa-trash-can" aria-hidden="true"></i> {s.clear}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -331,6 +368,9 @@ const CSS = `
 .an-right { text-align: right; }
 .an-action { font-size: 13px; font-weight: 600; color: #FF7A59; }
 .an-state { padding: 24px 20px; font-size: 14px; color: var(--text-secondary, rgba(255,255,255,0.55)); }
+.an-foot { display: flex; justify-content: flex-end; padding: 12px 20px; border-top: 1px solid rgba(255,255,255,0.06); }
+.an-clear { background: rgba(248,81,73,0.1); border: 1px solid rgba(248,81,73,0.35); color: #FF7A70; border-radius: 10px; padding: 8px 14px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.an-clear:hover { background: rgba(248,81,73,0.18); }
 .an-link { background: none; border: 0; padding: 0; color: #22B573; font: inherit; cursor: pointer; text-decoration: underline; }
 @media (max-width: 640px) {
   .an-head { display: none; }

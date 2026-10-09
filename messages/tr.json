@@ -272,7 +272,8 @@
       "unknownErrorChat": "Bilinmeyen Hata",
       "noResponse": "Cevap alınamadı.",
       "systemError": "Sistem hatası oluştu."
-    }
+    },
+    "clearScreen": "Ekranı Temizle"
   },
   "hizmetAyarlari": {
     "sessionNotFound": "Oturum bulunamadı.",
@@ -390,6 +391,30 @@
       "genericError": "Bir hata oluştu.",
       "cancelSuccess": "Randevu başarıyla iptal edildi.",
       "deleteSuccess": "Randevu başarıyla silindi."
+    },
+    "extra": {
+      "newCalendarTitle": "Yeni Takvim",
+      "newCalendarPlaceholder": "Yeni takvim/personel adını girin",
+      "date": "Tarih",
+      "selectCalendar": "Takvim Seçiniz",
+      "choose": "Seçiniz",
+      "noteLabel": "Açıklama / Not",
+      "notePlaceholder": "AI asistana verilen notlar gibi... (Örn: Dolgum düştü dolgu yaptırmak istiyorum)",
+      "scope": "Kapsam",
+      "selectedDoctor": "Seçili doktor",
+      "wholeClinic": "Tüm klinik",
+      "duration": "Süre",
+      "singleSlot": "Tek slot",
+      "startEnd": "Başlangıç-bitiş",
+      "start": "Başlangıç",
+      "end": "Bitiş",
+      "manageTitle": "Takvim / Personel Yönetimi",
+      "manageSub": "Personellerinizi düzenleyin veya silin.",
+      "noCalendars": "Henüz takvim eklenmemiş.",
+      "editCalendarTitle": "Takvimi Düzenle",
+      "editCalendarPlaceholder": "Yeni takvim adı",
+      "confirmDelete": "'{name}' silinecek. Emin misiniz?",
+      "noDeletePermission": "Bu takvimi silme yetkiniz yok (eski kayıt olduğu için). Lütfen Supabase panelinden silin."
     }
   },
   "aiAsistanComponents": {
@@ -893,6 +918,12 @@
       "successAlert": "Mesaj başarıyla gönderildi!",
       "errorAlertPrefix": "Mesaj gönderilirken hata: ",
       "alreadyRepliedError": "Bu yoruma zaten bir DM gönderilmiş. Sosyal medya platformları bir yoruma sadece 1 kez DM atılmasına izin verir."
+    },
+    "alerts": {
+      "noSession": "Oturum bulunamadı",
+      "replyNoAccount": "Bu yoruma yanıt gönderilemedi: Organizasyonunuzun '{platform}' hesabı bağlı değil veya Zernio panelinde yetkilendirilmemiş.",
+      "replyFailed": "Yanıt gönderilemedi: {message}",
+      "customerFallback": "Müşteri"
     }
   },
   "sosyalMedyaPage": {
@@ -996,6 +1027,14 @@
       "genericError": "İşlem sırasında hata oluştu.",
       "manualPlatformRemoval": "Şu platformlar API üzerinden silmeyi desteklemiyor, içeriği ilgili hesabınız üzerinden manuel olarak silmeniz gerekmektedir: {platforms}",
       "platformRemovalFailed": "Şu platformlardan kaldırma işlemi başarısız oldu: {platforms}"
+    },
+    "table": {
+      "content": "İçerik",
+      "platforms": "Platformlar",
+      "date": "Tarih",
+      "status": "Durum",
+      "actions": "İşlemler",
+      "tempStorage": "Geçici Depoda"
     }
   },
   "sharePage": {
@@ -1057,7 +1096,11 @@
     },
     "youtube": {
       "titlePlaceholder": "Video başlığı...",
-      "descriptionLabel": "Video Açıklaması (Opsiyonel)"
+      "descriptionLabel": "Video Açıklaması (Opsiyonel)",
+      "privacyPublic": "Herkese açık",
+      "privacyUnlisted": "Liste dışı",
+      "privacyPrivate": "Özel",
+      "titleLabel": "Başlık"
     },
     "publishing": {
       "label": "yayıncılık",
@@ -1078,7 +1121,10 @@
       "invalidDateFormat": "Tarih formatı hatalı. Lütfen 'GÜN.AY.YIL SAAT:DAKİKA' (örn: 16.08.2026 16:26) şeklinde girin.",
       "publishFailed": "Gönderi paylaşılırken bir hata oluştu: {message}",
       "captionGenerationFailed": "Hata: {message}",
-      "captionLimit": "Bugünlük gönderi metni üretim sınırına ulaştın. Yarın tekrar dene."
+      "captionLimit": "Bugünlük gönderi metni üretim sınırına ulaştın. Yarın tekrar dene.",
+      "videoRemovedIntro": "Yüklediğiniz video {seconds} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:",
+      "videoRemovedItem": "- {platform} (Maks: {max} sn)",
+      "platformMaxDuration": "{platform} platformunda en fazla {max} saniyelik video paylaşabilirsiniz (Yüklenen: {actual} sn)."
     },
     "success": {
       "published": "Gönderi başarıyla paylaşıldı!"
@@ -1122,7 +1168,8 @@
         "viewReceipt": "Belgeyi görüntüle",
         "close": "Kapat",
         "noPreview": "Önizleme yok",
-        "latest": "SON FATURA"
+        "latest": "SON FATURA",
+        "noInvoice": "Henüz fatura taranmadı"
       }
     },
     "appointments": {
@@ -1257,7 +1304,27 @@
     },
     "notes": "Notlar",
     "saved": "Kaydedildi",
-    "notesPlaceholder": "Müşteri için not ekleyin..."
+    "notesPlaceholder": "Müşteri için not ekleyin...",
+    "stats": {
+      "appointments": "Randevu",
+      "upcoming": "Yaklaşan",
+      "cancelled": "İptal",
+      "total": "Toplam",
+      "completed": "Tamamlanan"
+    },
+    "actions": {
+      "call": "Ara",
+      "book": "Randevu ver"
+    },
+    "history": {
+      "title": "Randevu Geçmişi"
+    },
+    "addDialog": {
+      "title": "Yeni Müşteri Ekle",
+      "name": "İsim Soyisim",
+      "phone": "Telefon (+90 5XX ...)",
+      "cancel": "İptal"
+    }
   },
   "randevu": {
     "block": {
@@ -1424,5 +1491,38 @@
       "doctor": "uzman",
       "service": "işlem"
     }
+  },
+  "onboardingPage": {
+    "title": "Hoş Geldiniz",
+    "subtitle": "Lütfen işletme hesabınızı kurmak için aşağıdaki bilgileri eksiksiz doldurun.",
+    "googleNotice": "Bilgileriniz Google hesabınızdan otomatik alındı. Lütfen gerçek bilgilerinizi kontrol edip onaylayın.",
+    "email": "E-posta",
+    "fullName": "Ad Soyad",
+    "fullNamePlaceholder": "Adınız ve Soyadınız",
+    "phone": "Telefon",
+    "businessName": "İşletme Adı",
+    "businessNamePlaceholder": "İşletmenizin Adı",
+    "saveError": "Kaydedilirken bir hata oluştu: {message}",
+    "saving": "Kaydediliyor...",
+    "submit": "Kurulumu Tamamla"
+  },
+  "verifyEmailPage": {
+    "title": "E-postanızı Doğrulayın",
+    "sent": "E-posta adresinize bir doğrulama linki gönderdik. Devam etmek için lütfen e-postanızı onaylayın.",
+    "resend": "Tekrar Gönder",
+    "resending": "Gönderiliyor...",
+    "resendIn": "Tekrar gönder ({seconds} sn)",
+    "resent": "Doğrulama bekleyen bir hesap varsa yeni bağlantı gönderildi. Spam klasörünüze de bakın. E-posta zaten doğrulanmışsa giriş yapmayı deneyin.",
+    "resendError": "Bağlantı gönderilirken bir hata oluştu: {message}",
+    "rateLimited": "Çok sık denediniz. Lütfen biraz bekleyip tekrar deneyin.",
+    "backToLogin": "Giriş sayfasına dön"
+  },
+  "multiCalendarToggle": {
+    "title": "Çoklu Takvim / Personel Modu",
+    "description": "Aynı saatte birden fazla personelin randevu alabilmesini sağlar.",
+    "errorPrefix": "Hata: {message}"
+  },
+  "sidebar": {
+    "profileAlt": "Kullanıcı profili"
   }
 }

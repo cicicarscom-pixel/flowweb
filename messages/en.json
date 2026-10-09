@@ -272,7 +272,8 @@
       "unknownErrorChat": "Unknown Error",
       "noResponse": "No response received.",
       "systemError": "A system error occurred."
-    }
+    },
+    "clearScreen": "Clear screen"
   },
   "hizmetAyarlari": {
     "sessionNotFound": "Session not found.",
@@ -390,6 +391,30 @@
       "genericError": "An error occurred.",
       "cancelSuccess": "Appointment cancelled successfully.",
       "deleteSuccess": "Appointment deleted successfully."
+    },
+    "extra": {
+      "newCalendarTitle": "New Calendar",
+      "newCalendarPlaceholder": "Enter the new calendar/staff name",
+      "date": "Date",
+      "selectCalendar": "Select calendar",
+      "choose": "Select",
+      "noteLabel": "Description / Note",
+      "notePlaceholder": "Like the notes given to the AI assistant... (e.g. My filling fell out, I want a new one)",
+      "scope": "Scope",
+      "selectedDoctor": "Selected doctor",
+      "wholeClinic": "Whole clinic",
+      "duration": "Duration",
+      "singleSlot": "Single slot",
+      "startEnd": "Start-end",
+      "start": "Start",
+      "end": "End",
+      "manageTitle": "Calendar / Staff Management",
+      "manageSub": "Edit or delete your staff.",
+      "noCalendars": "No calendars added yet.",
+      "editCalendarTitle": "Edit Calendar",
+      "editCalendarPlaceholder": "New calendar name",
+      "confirmDelete": "'{name}' will be deleted. Are you sure?",
+      "noDeletePermission": "You are not allowed to delete this calendar (legacy record). Please delete it from the Supabase panel."
     }
   },
   "aiAsistanComponents": {
@@ -893,6 +918,12 @@
       "successAlert": "Message sent successfully!",
       "errorAlertPrefix": "Error sending message: ",
       "alreadyRepliedError": "A DM has already been sent to this comment. Social media platforms only allow sending 1 DM per comment."
+    },
+    "alerts": {
+      "noSession": "Session not found",
+      "replyNoAccount": "Could not reply to this comment: your organization's '{platform}' account is not connected or not authorized in the Zernio panel.",
+      "replyFailed": "Reply could not be sent: {message}",
+      "customerFallback": "Customer"
     }
   },
   "sosyalMedyaPage": {
@@ -996,6 +1027,14 @@
       "genericError": "An error occurred while processing your request.",
       "manualPlatformRemoval": "These platforms do not support removal via API. You will need to delete the content directly from your account: {platforms}",
       "platformRemovalFailed": "Removal failed on these platforms: {platforms}"
+    },
+    "table": {
+      "content": "Content",
+      "platforms": "Platforms",
+      "date": "Date",
+      "status": "Status",
+      "actions": "Actions",
+      "tempStorage": "In temporary storage"
     }
   },
   "sharePage": {
@@ -1057,7 +1096,11 @@
     },
     "youtube": {
       "titlePlaceholder": "Video title...",
-      "descriptionLabel": "Video Description (Optional)"
+      "descriptionLabel": "Video Description (Optional)",
+      "privacyPublic": "Public",
+      "privacyUnlisted": "Unlisted",
+      "privacyPrivate": "Private",
+      "titleLabel": "Title"
     },
     "publishing": {
       "label": "publishing",
@@ -1078,7 +1121,10 @@
       "invalidDateFormat": "Invalid date format. Please enter it as 'DAY.MONTH.YEAR HOUR:MINUTE' (e.g. 16.08.2026 16:26).",
       "publishFailed": "An error occurred while sharing the post: {message}",
       "captionGenerationFailed": "Error: {message}",
-      "captionLimit": "You've reached today's caption generation limit. Try again tomorrow."
+      "captionLimit": "You've reached today's caption generation limit. Try again tomorrow.",
+      "videoRemovedIntro": "The video you uploaded is {seconds} seconds long. These platforms were removed automatically because it exceeds their limits:",
+      "videoRemovedItem": "- {platform} (Max: {max} sec)",
+      "platformMaxDuration": "On {platform} you can share videos of at most {max} seconds (uploaded: {actual} sec)."
     },
     "success": {
       "published": "Post shared successfully!"
@@ -1122,7 +1168,8 @@
         "viewReceipt": "View document",
         "close": "Close",
         "noPreview": "No preview",
-        "latest": "LATEST INVOICE"
+        "latest": "LATEST INVOICE",
+        "noInvoice": "No invoice scanned yet"
       }
     },
     "appointments": {
@@ -1263,7 +1310,27 @@
     },
     "notes": "Notes",
     "saved": "Saved",
-    "notesPlaceholder": "Add a note for this customer..."
+    "notesPlaceholder": "Add a note for this customer...",
+    "stats": {
+      "appointments": "Appointments",
+      "upcoming": "Upcoming",
+      "cancelled": "Cancelled",
+      "total": "Total",
+      "completed": "Completed"
+    },
+    "actions": {
+      "call": "Call",
+      "book": "Book appointment"
+    },
+    "history": {
+      "title": "Appointment History"
+    },
+    "addDialog": {
+      "title": "Add New Customer",
+      "name": "Full name",
+      "phone": "Phone (+90 5XX ...)",
+      "cancel": "Cancel"
+    }
   },
   "randevu": {
     "block": {
@@ -1430,5 +1497,38 @@
       "doctor": "staff",
       "service": "service"
     }
+  },
+  "onboardingPage": {
+    "title": "Welcome",
+    "subtitle": "Please fill in the information below completely to set up your business account.",
+    "googleNotice": "Your details were taken from your Google account. Please check them and confirm they are correct.",
+    "email": "Email",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your first and last name",
+    "phone": "Phone",
+    "businessName": "Business name",
+    "businessNamePlaceholder": "Your business name",
+    "saveError": "An error occurred while saving: {message}",
+    "saving": "Saving...",
+    "submit": "Complete setup"
+  },
+  "verifyEmailPage": {
+    "title": "Verify your email",
+    "sent": "We sent a verification link to your email address. Please confirm your email to continue.",
+    "resend": "Resend",
+    "resending": "Sending...",
+    "resendIn": "Resend ({seconds}s)",
+    "resent": "If this account is waiting for verification, a new link has been sent. Also check your spam folder. If the email is already verified, try signing in.",
+    "resendError": "An error occurred while sending the link: {message}",
+    "rateLimited": "You tried too often. Please wait a moment and try again.",
+    "backToLogin": "Back to sign in"
+  },
+  "multiCalendarToggle": {
+    "title": "Multi-Calendar / Staff Mode",
+    "description": "Lets several staff members take appointments at the same time.",
+    "errorPrefix": "Error: {message}"
+  },
+  "sidebar": {
+    "profileAlt": "User profile"
   }
 }

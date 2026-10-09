@@ -4,8 +4,10 @@ import { getBusinessServices } from '@/actions/businessServices'
 import RandevuClient from './RandevuClient'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 
 export default async function RandevuPage() {
+  const t = await getTranslations()
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
   
@@ -33,7 +35,7 @@ export default async function RandevuPage() {
   const appointmentsRes = await getAppointmentsByDate(today)
 
   return (
-    <Suspense fallback={<div style={{ padding: 40, color: '#fff' }}>Yükleniyor...</div>}>
+    <Suspense fallback={<div style={{ padding: 40, color: '#fff' }}>{t('veriGirisiPage.loading')}</div>}>
       <RandevuClient 
       initialAppointments={appointmentsRes.data} 
       services={businessServices} 

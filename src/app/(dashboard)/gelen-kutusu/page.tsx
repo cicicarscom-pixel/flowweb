@@ -284,7 +284,7 @@ function GelenKutusuContent() {
     setIsSendingReply(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.id) throw new Error("Oturum bulunamadı");
+      if (!session?.user?.id) throw new Error(t("gelenKutusuPage.alerts.noSession"));
       
       const { data, error } = await supabase.functions.invoke('zernio-client', {
         body: { 
@@ -339,9 +339,9 @@ function GelenKutusuContent() {
     } catch (err: any) {
       console.error(err);
       if (err.message?.includes('Missing accountId for reply-comment')) {
-        alert(`Bu yoruma yanıt gönderilemedi: Organizasyonunuzun '${comment.platform}' hesabı bağlı değil veya Zernio panelinde yetkilendirilmemiş.`);
+        alert(t("gelenKutusuPage.alerts.replyNoAccount", { platform: comment.platform }));
       } else {
-        alert("Yanıt gönderilemedi: " + err.message);
+        alert(t("gelenKutusuPage.alerts.replyFailed", { message: err.message }));
       }
     } finally {
       setIsSendingReply(false);
@@ -1290,7 +1290,7 @@ function GelenKutusuContent() {
                  } else if (locale === 'de') {
                    title = m.calendar_name ? `${m.customer_name} hat einen Termin bei ${m.calendar_name} am ${when} gebucht` : `${m.customer_name} hat einen Termin am ${when} gebucht`;
                  } else {
-                   title = appointmentSentence(m.customer_name || 'Müşteri', when, m.calendar_name);
+                   title = appointmentSentence(m.customer_name || t("gelenKutusuPage.alerts.customerFallback"), when, m.calendar_name);
                  }
                  subtext = '';
                  targetDate = m.starts_at ? new Intl.DateTimeFormat('en-CA', { timeZone: m.timezone || 'Europe/Istanbul' }).format(new Date(m.starts_at)) : null;

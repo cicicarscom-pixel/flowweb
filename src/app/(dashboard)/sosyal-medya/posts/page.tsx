@@ -342,11 +342,11 @@ export default function TumGonderilerPage() {
                 {selectedPostIds.length === filteredPosts.length && filteredPosts.length > 0 && <i className="fa-solid fa-check text-[#17151A] text-[10px]"></i>}
               </button>
             </div>
-            <div style={{ width: 250 }} className="text-[#A79E96] text-[12px] font-semibold">Content</div>
-            <div style={{ width: 100 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Platforms</div>
-            <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Date</div>
-            <div style={{ width: 120 }} className="text-[#A79E96] text-[12px] font-semibold text-center">Status</div>
-            <div style={{ width: 70 }} className="text-[#A79E96] text-[10px] font-semibold text-center">Actions</div>
+            <div style={{ width: 250 }} className="text-[#A79E96] text-[12px] font-semibold">{t("postsPage.table.content")}</div>
+            <div style={{ width: 100 }} className="text-[#A79E96] text-[12px] font-semibold text-center">{t("postsPage.table.platforms")}</div>
+            <div style={{ width: 150 }} className="text-[#A79E96] text-[12px] font-semibold text-center">{t("postsPage.table.date")}</div>
+            <div style={{ width: 120 }} className="text-[#A79E96] text-[12px] font-semibold text-center">{t("postsPage.table.status")}</div>
+            <div style={{ width: 70 }} className="text-[#A79E96] text-[10px] font-semibold text-center">{t("postsPage.table.actions")}</div>
           </div>
 
           {/* Table Rows */}
@@ -434,7 +434,7 @@ export default function TumGonderilerPage() {
                     </div>
                     {item.media_storage_source === 'supabase' && (
                       <div className="px-1.5 py-0.5 rounded bg-[#F2994A]/20 border border-[#F2994A]/40">
-                         <span className="text-[#F2994A] text-[9px] font-bold">Geçici Depoda</span>
+                         <span className="text-[#F2994A] text-[9px] font-bold">{t("postsPage.table.tempStorage")}</span>
                       </div>
                     )}
                   </div>

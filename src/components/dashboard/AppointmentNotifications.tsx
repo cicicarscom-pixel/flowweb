@@ -51,6 +51,7 @@ const STRINGS: Record<Locale, {
   clear: string;
   clearConfirm: string;
   clearFailed: string;
+  unread: string;
   sentence: (name: string, when: string, calendarName?: string) => string;
 }> = {
   tr: {
@@ -66,6 +67,7 @@ const STRINGS: Record<Locale, {
     clear: "Raporları Temizle",
     clearConfirm: "Randevu bildirim raporları silinsin mi? Bu işlem geri alınamaz. (Randevularınız ve müşteri konuşmalarınız silinmez.)",
     clearFailed: "Raporlar temizlenemedi. Biraz sonra tekrar deneyin.",
+    unread: "okunmadı",
     sentence: (name, when, calendarName) => appointmentSentence(name, when, calendarName),
   },
   en: {
@@ -81,6 +83,7 @@ const STRINGS: Record<Locale, {
     clear: "Clear reports",
     clearConfirm: "Delete the appointment notification reports? This cannot be undone. (Your appointments and customer conversations are not deleted.)",
     clearFailed: "Couldn't clear the reports. Please try again shortly.",
+    unread: "unread",
     sentence: (name, when) => `Appointment booked for ${name} on ${when}`,
   },
   de: {
@@ -96,6 +99,7 @@ const STRINGS: Record<Locale, {
     clear: "Berichte löschen",
     clearConfirm: "Die Terminbenachrichtigungen löschen? Das kann nicht rückgängig gemacht werden. (Ihre Termine und Kundengespräche werden nicht gelöscht.)",
     clearFailed: "Die Berichte konnten nicht gelöscht werden. Bitte versuchen Sie es gleich noch einmal.",
+    unread: "ungelesen",
     sentence: (name, when) => `Termin für ${name} am ${when} erstellt`,
   },
 };
@@ -284,7 +288,7 @@ export default function AppointmentNotifications({ locale = "tr", limit = 5 }: {
               <span className="an-time">{formatCreatedAt(n.created_at, locale)}</span>
               <span className="an-body">
                 <span className="an-sentence">
-                  {!n.is_read && <span className="an-dot" aria-label="okunmadı" />}
+                  {!n.is_read && <span className="an-dot" aria-label={s.unread} />}
                   {m ? s.sentence(name, when) : s.sentence(name, "—")}
                 </span>
                 {(m?.calendar_name || m?.customer_request_raw) && (

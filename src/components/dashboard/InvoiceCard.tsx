@@ -94,7 +94,7 @@ export default function InvoiceCard({ invoice, locale, todayYmd, onScan }: { inv
           <div style={{ width: 56, height: 56, borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(245,158,11,0.1)", border: `1px dashed ${AMBER}66`, color: AMBER, fontSize: 22 }}>
             <i className="fa-solid fa-file-invoice"></i>
           </div>
-          <p style={{ fontSize: 13 }}>Henüz fatura taranmadı</p>
+          <p style={{ fontSize: 13 }}>{c("noInvoice")}</p>
         </div>
         {cta}
       </div>

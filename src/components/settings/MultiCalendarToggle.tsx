@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { toggleMultiCalendarMode } from "@/actions/toggleCalendar";
 
 export default function MultiCalendarToggle() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("multiCalendarToggle");
   const supabase = createClient();
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function MultiCalendarToggle() {
     
     const res = await toggleMultiCalendarMode(newVal);
     if (res.error) {
-      alert("Hata: " + res.error);
+      alert(t("errorPrefix", { message: res.error }));
       setIsEnabled(!newVal); // Revert
     }
   };
@@ -71,10 +73,10 @@ export default function MultiCalendarToggle() {
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 4 }}>
           <span style={{ fontSize: 20 }}>📅</span>
-          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff" }}>Çoklu Takvim / Personel Modu</h3>
+          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#fff" }}>{t("title")}</h3>
         </div>
         <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.6)" }}>
-          Aynı saatte birden fazla personelin randevu alabilmesini sağlar.
+          {t("description")}
         </p>
       </div>
 

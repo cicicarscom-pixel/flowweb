@@ -411,7 +411,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                 border: activeCalendarId === null ? "none" : "1px solid rgba(255,255,255,0.1)"
               }}
             >
-              {t("common.all") || "Tümü"}
+              {t("common.all")}
             </button>
             {calendars.map((cal: any) => (
               <button
@@ -445,8 +445,8 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                 onClick={() => {
                   setPromptConfig({
                     visible: true,
-                    title: "Yeni Takvim",
-                    placeholder: "Yeni takvim/personel adını girin",
+                    title: t("randevuPage.extra.newCalendarTitle"),
+                    placeholder: t("randevuPage.extra.newCalendarPlaceholder"),
                     value: "",
                     onSave: async (name: string) => {
                       if (name && name.trim()) {
@@ -812,7 +812,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div>
-                <div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Tarih</label><input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, marginBottom: 16 }} /></div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.customerNameLabel')}</label>
+                <div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t("randevuPage.extra.date")}</label><input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, marginBottom: 16 }} /></div><label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t('randevuPage.modal.customerNameLabel')}</label>
                 <input
                   type="text"
                   value={newAppt.name}
@@ -835,13 +835,13 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
 
               
                 <div>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Takvim Seçiniz</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t("randevuPage.extra.selectCalendar")}</label>
                   <select
                     value={newAppt.calendar_id}
                     onChange={e => setNewAppt({...newAppt, calendar_id: e.target.value})}
                     style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, marginBottom: 16 }}
                   >
-                    <option value="">Seçiniz</option>
+                    <option value="">{t("randevuPage.extra.choose")}</option>
                     {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
@@ -873,11 +873,11 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                 </div>
               </div>
               <div style={{ marginTop: 16 }}>
-                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>Açıklama / Not</label>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, paddingLeft: 4 }}>{t("randevuPage.extra.noteLabel")}</label>
                   <textarea
                     value={newAppt.note}
                     onChange={e => setNewAppt({...newAppt, note: e.target.value})}
-                    placeholder="AI asistana verilen notlar gibi... (Örn: Dolgum düştü dolgu yaptırmak istiyorum)"
+                    placeholder={t("randevuPage.extra.notePlaceholder")}
                     style={{ width: "100%", padding: "14px 16px", borderRadius: 16, background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", outline: "none", fontSize: 14, minHeight: 80, resize: "vertical" }}
                   />
               </div>
@@ -923,16 +923,16 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Kapsam</span>
+                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.scope")}</span>
                 {activeCalendarId ? (
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <button onClick={() => setReserveScope('doctor')} style={{ flex: 1, padding: 8, background: reserveScope === 'doctor' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{activeCalendarId ? calendars.find(c => c.id === activeCalendarId)?.name || 'Seçili doktor' : 'Seçili doktor'}</button>
-                    <button onClick={() => setReserveScope('clinic')} style={{ flex: 1, padding: 8, background: reserveScope === 'clinic' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Tüm klinik</button>
+                    <button onClick={() => setReserveScope('doctor')} style={{ flex: 1, padding: 8, background: reserveScope === 'doctor' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{activeCalendarId ? calendars.find(c => c.id === activeCalendarId)?.name || t("randevuPage.extra.selectedDoctor") : t("randevuPage.extra.selectedDoctor")}</button>
+                    <button onClick={() => setReserveScope('clinic')} style={{ flex: 1, padding: 8, background: reserveScope === 'clinic' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t("randevuPage.extra.wholeClinic")}</button>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', gap: 8 }}>
                     <select value={reserveScope} onChange={e => setReserveScope(e.target.value)} style={{ flex: 1, padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }}>
-                      <option value="clinic">Tüm klinik</option>
+                      <option value="clinic">{t("randevuPage.extra.wholeClinic")}</option>
                       {calendars.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
@@ -940,21 +940,21 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Süre</span>
+                <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.duration")}</span>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => { setReserveDurationType('single'); setReserveModal((p: any) => ({...p, endTime: add30Mins(p.time)})); }} style={{ flex: 1, padding: 8, background: reserveDurationType === 'single' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Tek slot</button>
-                  <button onClick={() => setReserveDurationType('range')} style={{ flex: 1, padding: 8, background: reserveDurationType === 'range' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>Başlangıç-bitiş</button>
+                  <button onClick={() => { setReserveDurationType('single'); setReserveModal((p: any) => ({...p, endTime: add30Mins(p.time)})); }} style={{ flex: 1, padding: 8, background: reserveDurationType === 'single' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t("randevuPage.extra.singleSlot")}</button>
+                  <button onClick={() => setReserveDurationType('range')} style={{ flex: 1, padding: 8, background: reserveDurationType === 'range' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t("randevuPage.extra.startEnd")}</button>
                 </div>
               </div>
 
               {reserveDurationType === 'range' && (
                 <div style={{ display: 'flex', gap: 12 }}>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Başlangıç</span>
+                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.start")}</span>
                     <input type="time" step="1800" value={reserveModal.time} onChange={e => { const v = e.target.value; setReserveModal((p: any) => ({...p, time: v, endTime: add30Mins(v)})); }} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
                   </div>
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>Bitiş</span>
+                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.end")}</span>
                     <input type="time" step="1800" value={reserveModal.endTime} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
                   </div>
                 </div>
@@ -1019,12 +1019,12 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
               ✕
             </button>
             <div style={{ marginBottom: 24 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>Takvim / Personel Yönetimi</h2>
-              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>Personellerinizi düzenleyin veya silin.</p>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>{t("randevuPage.extra.manageTitle")}</h2>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>{t("randevuPage.extra.manageSub")}</p>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 300, overflowY: "auto" }}>
               {calendars.length === 0 && (
-                <div style={{ color: "#756D66", fontSize: 14, textAlign: "center", padding: "20px 0" }}>Henüz takvim eklenmemiş.</div>
+                <div style={{ color: "#756D66", fontSize: 14, textAlign: "center", padding: "20px 0" }}>{t("randevuPage.extra.noCalendars")}</div>
               )}
               {calendars.map((cal: any) => (
                 <div key={cal.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: 16, border: "1px solid rgba(255,255,255,0.05)" }}>
@@ -1035,8 +1035,8 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                       onClick={() => {
                         setPromptConfig({
                           visible: true,
-                          title: "Takvimi Düzenle",
-                          placeholder: "Yeni takvim adı",
+                          title: t("randevuPage.extra.editCalendarTitle"),
+                          placeholder: t("randevuPage.extra.editCalendarPlaceholder"),
                           value: cal.name,
                           onSave: async (newName: string) => {
                             if (newName && newName.trim()) {
@@ -1054,11 +1054,11 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                     <button 
                       style={{ background: "transparent", border: "none", cursor: "pointer", fontSize: 16, color: "#EF4444" }}
                       onClick={async () => {
-                        if (confirm(`'${cal.name}' silinecek. Emin misiniz?`)) {
+                        if (confirm(t("randevuPage.extra.confirmDelete", { name: cal.name }))) {
                           const { createClient } = await import("@/lib/supabase/client");
                           const client = createClient();
                           const { data } = await client.from("calendars").update({ is_active: false }).eq("id", cal.id).select();
-                          if (!data || data.length === 0) alert("Bu takvimi silme yetkiniz yok (eski kayıt olduğu için). Lütfen Supabase panelinden silin.");
+                          if (!data || data.length === 0) alert(t("randevuPage.extra.noDeletePermission"));
                           const { getCalendars } = await import("@/actions/calendars");
                           const updated = await getCalendars();
                           setCalendars(updated);

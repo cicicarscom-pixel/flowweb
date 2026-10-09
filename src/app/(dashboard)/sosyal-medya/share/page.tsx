@@ -218,8 +218,8 @@ export default function SharePage() {
         }
         if (uncheckedPlatforms.length > 0) {
           setSelectedPlatforms(updatedPlatforms);
-          alert(`Yüklediğiniz video ${Math.round(duration)} saniye uzunluğunda. Şu platformların sınırlarını aştığı için otomatik olarak kaldırıldılar:\n\n` +
-            uncheckedPlatforms.map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} (Max: ${PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec} sn)`).join('\n'));
+          alert(t("sharePage.errors.videoRemovedIntro", { seconds: Math.round(duration) }) + "\n\n" +
+            uncheckedPlatforms.map(p => t("sharePage.errors.videoRemovedItem", { platform: p.charAt(0).toUpperCase() + p.slice(1), max: PLATFORM_MEDIA_RULES[p.toLowerCase()].maxDurationSec })).join('\n'));
         }
       };
       videoElement.src = URL.createObjectURL(file);
@@ -294,7 +294,7 @@ export default function SharePage() {
     if (!isCurrentlySelected && localImage?.startsWith('data:video') && mediaDurationSec > 0) {
       const rule = PLATFORM_MEDIA_RULES[id.toLowerCase()];
       if (rule && rule.maxDurationSec && mediaDurationSec > rule.maxDurationSec) {
-        alert(`${id.charAt(0).toUpperCase() + id.slice(1)} platformunda en fazla ${rule.maxDurationSec} saniyelik video paylaşabilirsiniz (Yüklenen: ${Math.round(mediaDurationSec)} sn).`);
+        alert(t("sharePage.errors.platformMaxDuration", { platform: id.charAt(0).toUpperCase() + id.slice(1), max: rule.maxDurationSec, actual: Math.round(mediaDurationSec) }));
         return;
       }
     }
@@ -935,13 +935,13 @@ export default function SharePage() {
                       <span className="text-[#F6F1EC] font-semibold text-sm">YouTube</span>
                     </div>
                     <select value={ytPrivacy} onChange={e => setYtPrivacy(e.target.value)} className="bg-[#201D24]/50 border border-white/5 rounded text-[#F6F1EC] text-[11px] px-2 py-1 outline-none">
-                      <option value="public">Public</option>
-                      <option value="unlisted">Unlisted</option>
-                      <option value="private">Private</option>
+                      <option value="public">{t("sharePage.youtube.privacyPublic")}</option>
+                      <option value="unlisted">{t("sharePage.youtube.privacyUnlisted")}</option>
+                      <option value="private">{t("sharePage.youtube.privacyPrivate")}</option>
                     </select>
                   </div>
 
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">title</label>
+                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.titleLabel")}</label>
                   <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder={t("sharePage.youtube.titlePlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
 
                   <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.descriptionLabel")}</label>

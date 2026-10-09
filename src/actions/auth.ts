@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
 
 export async function authenticate(formData: FormData) {
   const supabase = await createClient()
@@ -22,7 +23,8 @@ export async function authenticate(formData: FormData) {
         data: {
           authorized_person: fullName,
           full_name: fullName,
-          user_type: 'business'
+          user_type: 'business',
+          locale: await getLocale()
         }
       }
     })

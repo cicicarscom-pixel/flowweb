@@ -272,7 +272,8 @@
       "unknownErrorChat": "Unbekannter Fehler",
       "noResponse": "Keine Antwort erhalten.",
       "systemError": "Ein Systemfehler ist aufgetreten."
-    }
+    },
+    "clearScreen": "Bildschirm leeren"
   },
   "hizmetAyarlari": {
     "sessionNotFound": "Sitzung nicht gefunden.",
@@ -390,6 +391,30 @@
       "genericError": "Ein Fehler ist aufgetreten.",
       "cancelSuccess": "Termin erfolgreich abgesagt.",
       "deleteSuccess": "Termin erfolgreich gelöscht."
+    },
+    "extra": {
+      "newCalendarTitle": "Neuer Kalender",
+      "newCalendarPlaceholder": "Name des neuen Kalenders/Mitarbeiters eingeben",
+      "date": "Datum",
+      "selectCalendar": "Kalender auswählen",
+      "choose": "Auswählen",
+      "noteLabel": "Beschreibung / Notiz",
+      "notePlaceholder": "Wie die Notizen an den KI-Assistenten... (z. B. Meine Füllung ist ausgefallen, ich möchte eine neue)",
+      "scope": "Umfang",
+      "selectedDoctor": "Ausgewählter Arzt",
+      "wholeClinic": "Gesamte Praxis",
+      "duration": "Dauer",
+      "singleSlot": "Einzelner Slot",
+      "startEnd": "Start-Ende",
+      "start": "Beginn",
+      "end": "Ende",
+      "manageTitle": "Kalender-/Mitarbeiterverwaltung",
+      "manageSub": "Bearbeiten oder löschen Sie Ihre Mitarbeiter.",
+      "noCalendars": "Noch keine Kalender hinzugefügt.",
+      "editCalendarTitle": "Kalender bearbeiten",
+      "editCalendarPlaceholder": "Neuer Kalendername",
+      "confirmDelete": "'{name}' wird gelöscht. Sind Sie sicher?",
+      "noDeletePermission": "Sie dürfen diesen Kalender nicht löschen (Altdatensatz). Bitte löschen Sie ihn im Supabase-Panel."
     }
   },
   "aiAsistanComponents": {
@@ -893,6 +918,12 @@
       "successAlert": "Nachricht erfolgreich gesendet!",
       "errorAlertPrefix": "Fehler beim Senden der Nachricht: ",
       "alreadyRepliedError": "An diesen Kommentar wurde bereits eine DM gesendet. Social-Media-Plattformen erlauben nur eine DM pro Kommentar."
+    },
+    "alerts": {
+      "noSession": "Sitzung nicht gefunden",
+      "replyNoAccount": "Auf diesen Kommentar konnte nicht geantwortet werden: Das '{platform}'-Konto Ihrer Organisation ist nicht verbunden oder im Zernio-Panel nicht autorisiert.",
+      "replyFailed": "Antwort konnte nicht gesendet werden: {message}",
+      "customerFallback": "Kunde"
     }
   },
   "sosyalMedyaPage": {
@@ -996,6 +1027,14 @@
       "genericError": "Bei der Verarbeitung ist ein Fehler aufgetreten.",
       "manualPlatformRemoval": "Diese Plattformen unterstützen die Entfernung über die API nicht. Sie müssen den Inhalt direkt in Ihrem Konto löschen: {platforms}",
       "platformRemovalFailed": "Die Entfernung ist auf folgenden Plattformen fehlgeschlagen: {platforms}"
+    },
+    "table": {
+      "content": "Inhalt",
+      "platforms": "Plattformen",
+      "date": "Datum",
+      "status": "Status",
+      "actions": "Aktionen",
+      "tempStorage": "Im Zwischenspeicher"
     }
   },
   "sharePage": {
@@ -1057,7 +1096,11 @@
     },
     "youtube": {
       "titlePlaceholder": "Videotitel...",
-      "descriptionLabel": "Videobeschreibung (Optional)"
+      "descriptionLabel": "Videobeschreibung (Optional)",
+      "privacyPublic": "Öffentlich",
+      "privacyUnlisted": "Nicht gelistet",
+      "privacyPrivate": "Privat",
+      "titleLabel": "Titel"
     },
     "publishing": {
       "label": "Veröffentlichung",
@@ -1078,7 +1121,10 @@
       "invalidDateFormat": "Ungültiges Datumsformat. Bitte im Format 'TAG.MONAT.JAHR STUNDE:MINUTE' eingeben (z. B. 16.08.2026 16:26).",
       "publishFailed": "Beim Teilen des Beitrags ist ein Fehler aufgetreten: {message}",
       "captionGenerationFailed": "Fehler: {message}",
-      "captionLimit": "Du hast das heutige Limit für Beitragstexte erreicht. Versuche es morgen erneut."
+      "captionLimit": "Du hast das heutige Limit für Beitragstexte erreicht. Versuche es morgen erneut.",
+      "videoRemovedIntro": "Das hochgeladene Video ist {seconds} Sekunden lang. Diese Plattformen wurden automatisch entfernt, da das Video ihre Limits überschreitet:",
+      "videoRemovedItem": "- {platform} (Max.: {max} Sek.)",
+      "platformMaxDuration": "Auf {platform} können Videos von maximal {max} Sekunden geteilt werden (hochgeladen: {actual} Sek.)."
     },
     "success": {
       "published": "Beitrag erfolgreich geteilt!"
@@ -1122,7 +1168,8 @@
         "viewReceipt": "Beleg ansehen",
         "close": "Schließen",
         "noPreview": "Keine Vorschau",
-        "latest": "LETZTE RECHNUNG"
+        "latest": "LETZTE RECHNUNG",
+        "noInvoice": "Noch keine Rechnung gescannt"
       }
     },
     "appointments": {
@@ -1263,7 +1310,27 @@
     },
     "notes": "Notizen",
     "saved": "Gespeichert",
-    "notesPlaceholder": "Notiz zum Kunden hinzufügen..."
+    "notesPlaceholder": "Notiz zum Kunden hinzufügen...",
+    "stats": {
+      "appointments": "Termine",
+      "upcoming": "Bevorstehend",
+      "cancelled": "Storniert",
+      "total": "Gesamt",
+      "completed": "Abgeschlossen"
+    },
+    "actions": {
+      "call": "Anrufen",
+      "book": "Termin vereinbaren"
+    },
+    "history": {
+      "title": "Terminverlauf"
+    },
+    "addDialog": {
+      "title": "Neuen Kunden hinzufügen",
+      "name": "Vor- und Nachname",
+      "phone": "Telefon (+90 5XX ...)",
+      "cancel": "Abbrechen"
+    }
   },
   "randevu": {
     "block": {
@@ -1430,5 +1497,38 @@
       "doctor": "Mitarbeiter",
       "service": "Leistung"
     }
+  },
+  "onboardingPage": {
+    "title": "Willkommen",
+    "subtitle": "Bitte füllen Sie die folgenden Angaben vollständig aus, um Ihr Geschäftskonto einzurichten.",
+    "googleNotice": "Ihre Angaben wurden aus Ihrem Google-Konto übernommen. Bitte prüfen und bestätigen Sie sie.",
+    "email": "E-Mail",
+    "fullName": "Vor- und Nachname",
+    "fullNamePlaceholder": "Ihr Vor- und Nachname",
+    "phone": "Telefon",
+    "businessName": "Name des Unternehmens",
+    "businessNamePlaceholder": "Name Ihres Unternehmens",
+    "saveError": "Beim Speichern ist ein Fehler aufgetreten: {message}",
+    "saving": "Wird gespeichert...",
+    "submit": "Einrichtung abschließen"
+  },
+  "verifyEmailPage": {
+    "title": "Bestätigen Sie Ihre E-Mail",
+    "sent": "Wir haben einen Bestätigungslink an Ihre E-Mail-Adresse gesendet. Bitte bestätigen Sie Ihre E-Mail, um fortzufahren.",
+    "resend": "Erneut senden",
+    "resending": "Wird gesendet...",
+    "resendIn": "Erneut senden ({seconds} Sek.)",
+    "resent": "Wenn dieses Konto auf die Bestätigung wartet, wurde ein neuer Link gesendet. Prüfen Sie auch Ihren Spam-Ordner. Wenn die E-Mail bereits bestätigt ist, versuchen Sie sich anzumelden.",
+    "resendError": "Beim Senden des Links ist ein Fehler aufgetreten: {message}",
+    "rateLimited": "Zu viele Versuche. Bitte warten Sie einen Moment und versuchen Sie es erneut.",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "multiCalendarToggle": {
+    "title": "Mehrfachkalender-/Mitarbeitermodus",
+    "description": "Ermöglicht mehreren Mitarbeitern, zur gleichen Zeit Termine anzunehmen.",
+    "errorPrefix": "Fehler: {message}"
+  },
+  "sidebar": {
+    "profileAlt": "Benutzerprofil"
   }
 }

@@ -222,9 +222,9 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
 
                 {/* 3 Stats */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-300)' }}>
-                  <div>Randevu: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.total}</span></div>
-                  <div>Yaklaşan: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.upcoming}</span></div>
-                  <div>İptal: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.cancelled}</span></div>
+                  <div>{t('musteriler.stats.appointments')}: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.total}</span></div>
+                  <div>{t('musteriler.stats.upcoming')}: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.upcoming}</span></div>
+                  <div>{t('musteriler.stats.cancelled')}: <span style={{ fontFamily: 'JetBrains Mono', color: 'var(--text-100)' }}>{customer.cancelled}</span></div>
                 </div>
 
                 {/* Button */}
@@ -264,17 +264,17 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             {/* 3 Buttons */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
               <button onClick={() => window.open(`https://wa.me/${selectedCustomer.phone_display?.replace(/\D/g, '')}`, '_blank')} style={{ flex: 1, padding: 8, background: '#22c55e', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>WhatsApp</button>
-              <button onClick={() => window.location.href = `tel:+${selectedCustomer.phone_display?.replace(/\D/g, '')}`} style={{ flex: 1, padding: 8, background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Ara</button>
-              <button onClick={() => router.push('/ai-asistan/randevu')} style={{ flex: 1, padding: 8, background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Randevu ver</button>
+              <button onClick={() => window.location.href = `tel:+${selectedCustomer.phone_display?.replace(/\D/g, '')}`} style={{ flex: 1, padding: 8, background: 'rgba(255,255,255,0.1)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>{t('musteriler.actions.call')}</button>
+              <button onClick={() => router.push('/ai-asistan/randevu')} style={{ flex: 1, padding: 8, background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>{t('musteriler.actions.book')}</button>
             </div>
 
             {/* 4 Stats */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
               {[
-                { label: 'Toplam', val: selectedCustomer.total },
-                { label: 'Yaklaşan', val: selectedCustomer.upcoming },
-                { label: 'Tamamlanan', val: selectedCustomer.past },
-                { label: 'İptal', val: selectedCustomer.cancelled },
+                { label: t('musteriler.stats.total'), val: selectedCustomer.total },
+                { label: t('musteriler.stats.upcoming'), val: selectedCustomer.upcoming },
+                { label: t('musteriler.stats.completed'), val: selectedCustomer.past },
+                { label: t('musteriler.stats.cancelled'), val: selectedCustomer.cancelled },
               ].map(s => (
                 <div key={s.label} style={{ flex: 1, background: 'rgba(0,0,0,0.2)', padding: '8px 4px', borderRadius: 8, textAlign: 'center' }}>
                   <div style={{ fontSize: 10, color: 'var(--text-300)', marginBottom: 4 }}>{s.label}</div>
@@ -299,10 +299,10 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
             </div>
             {/* Appointments */}
             <div>
-              <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-100)' }}>Randevu Geçmişi</h4>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: 14, color: 'var(--text-100)' }}>{t('musteriler.history.title')}</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxHeight: 300, overflowY: 'auto', paddingRight: 4 }}>
                 {appointments.length === 0 ? (
-                  <div style={{ fontSize: 13, color: 'var(--text-400)' }}>Randevu bulunamadı.</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-400)' }}>{t('randevuPage.actions.notFound')}</div>
                 ) : (
                   appointments.map(appt => (
                     <div key={appt.id} style={{ background: 'rgba(255,255,255,0.03)', padding: 12, borderRadius: 8, borderLeft: `3px solid ${appt.status === 'Approved' ? '#22c55e' : appt.status === 'Pending' ? '#eab308' : '#6b7280'}` }}>
@@ -325,13 +325,13 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
       {isAddOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <div className="glass-strong" style={{ width: 400, padding: 24, borderRadius: 16 }}>
-            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-100)' }}>Yeni Müşteri Ekle</h3>
+            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-100)' }}>{t('musteriler.addDialog.title')}</h3>
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-300)', marginBottom: 4 }}>İsim Soyisim</label>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-300)', marginBottom: 4 }}>{t('musteriler.addDialog.name')}</label>
               <input value={addName} onChange={e => setAddName(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', padding: 10, borderRadius: 8, color: '#fff' }} />
             </div>
             <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-300)', marginBottom: 4 }}>Telefon (+90 5XX ...)</label>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--text-300)', marginBottom: 4 }}>{t('musteriler.addDialog.phone')}</label>
               <input value={addPhone} onChange={e => setAddPhone(e.target.value)} style={{ width: '100%', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', padding: 10, borderRadius: 8, color: '#fff' }} />
             </div>
                         {addError && (
@@ -353,8 +353,8 @@ export default function MusterilerClient({ initialCustomers }: { initialCustomer
               </div>
             )}
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-              <button onClick={() => setIsAddOpen(false)} style={{ padding: '8px 16px', background: 'transparent', color: 'var(--text-200)', border: 'none', cursor: 'pointer' }}>İptal</button>
-              <button onClick={handleAdd} style={{ padding: '8px 16px', background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Ekle</button>
+              <button onClick={() => setIsAddOpen(false)} style={{ padding: '8px 16px', background: 'transparent', color: 'var(--text-200)', border: 'none', cursor: 'pointer' }}>{t('musteriler.addDialog.cancel')}</button>
+              <button onClick={handleAdd} style={{ padding: '8px 16px', background: 'var(--accent-blue)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>{t('musteriler.add')}</button>
             </div>
           </div>
         </div>

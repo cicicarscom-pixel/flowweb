@@ -588,7 +588,7 @@ export default function BotScreen() {
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div 
                   onClick={() => { setIsSimulationActive(!isSimulationActive); setMessages([]); }}
-                  title="Ekranı Temizle"
+                  title={t("aiAsistanPage.clearScreen")}
                   style={{ cursor: "pointer", opacity: 0.6, transition: "opacity 0.2s" }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}

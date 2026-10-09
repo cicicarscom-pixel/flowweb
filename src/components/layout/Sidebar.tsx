@@ -20,12 +20,12 @@ export default function Sidebar() {
     router.push("/login");
     router.refresh();
   };
-  const [userName, setUserName] = useState("Kullanıcı");
+  const [userName, setUserName] = useState(t("dashboardHome.defaults.user"));
   const [avatar, setAvatar] = useState("https://images.unsplash.com/photo-1758520145147-c30bc656f314?w=36&h=36&fit=crop&auto=format");
 
   useEffect(() => {
     if (profile) {
-      setUserName(profile.authorized_person || profile.business_name || "Kullanıcı");
+      setUserName(profile.authorized_person || profile.business_name || t("dashboardHome.defaults.user"));
       
       let av = profile.avatar_url;
       if (av && av.startsWith('file://')) {
@@ -42,7 +42,7 @@ export default function Sidebar() {
         setAvatar('https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.business_name || profile.authorized_person || 'Esnaf') + '&background=00daf3&color=fff');
       }
     }
-  }, [profile]);
+  }, [profile, t]);
 
   const navItems = [
     { href: "/", label: t("nav.home"), icon: "⬡", color: "#FF7A59" },
@@ -107,7 +107,7 @@ export default function Sidebar() {
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, cursor: "pointer" }}>
             <img
               src={avatar}
-              alt="Kullanıcı profili"
+              alt={t("sidebar.profileAlt")}
               style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", border: "1.5px solid rgba(255,122,89,0.2)" }}
             />
             <div style={{ flex: 1, minWidth: 0 }}>

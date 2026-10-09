@@ -113,7 +113,8 @@
       "wahaPairingCodeFailed": "Could not retrieve pairing code",
       "wahaAccountNotActive": "WhatsApp cannot be connected because your account is not active. Please contact support."
     },
-    "all": "All"
+    "all": "All",
+    "cancel": "Cancel"
   },
   "nav": {
     "home": "Home",

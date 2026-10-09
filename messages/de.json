@@ -113,7 +113,8 @@
       "wahaPairingCodeFailed": "Kopplungscode konnte nicht abgerufen werden",
       "wahaAccountNotActive": "WhatsApp kann nicht verbunden werden, weil Ihr Konto nicht aktiv ist. Bitte kontaktieren Sie den Support."
     },
-    "all": "Alle"
+    "all": "Alle",
+    "cancel": "Abbrechen"
   },
   "nav": {
     "home": "Startseite",

@@ -113,7 +113,8 @@
       "wahaPairingCodeFailed": "Eşleşme kodu alınamadı",
       "wahaAccountNotActive": "Hesabınız etkin olmadığı için WhatsApp bağlantısı kurulamıyor. Lütfen destekle iletişime geçin."
     },
-    "all": "Tümü"
+    "all": "Tümü",
+    "cancel": "İptal"
   },
   "nav": {
     "home": "Anasayfa",

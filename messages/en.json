@@ -414,7 +414,7 @@
       "noCalendars": "No calendars added yet.",
       "editCalendarTitle": "Edit Calendar",
       "editCalendarPlaceholder": "New calendar name",
-      "confirmDelete": "'{name}' will be deleted. Are you sure?",
+      "confirmDelete": "''{name}'' will be deleted. Are you sure?",
       "noDeletePermission": "You are not allowed to delete this calendar (legacy record). Please delete it from the Supabase panel."
     }
   },
@@ -922,7 +922,7 @@
     },
     "alerts": {
       "noSession": "Session not found",
-      "replyNoAccount": "Could not reply to this comment: your organization's '{platform}' account is not connected or not authorized in the Zernio panel.",
+      "replyNoAccount": "Could not reply to this comment: your organization's ''{platform}'' account is not connected or not authorized in the Zernio panel.",
       "replyFailed": "Reply could not be sent: {message}",
       "customerFallback": "Customer"
     }

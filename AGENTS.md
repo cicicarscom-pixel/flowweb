@@ -104,6 +104,7 @@ Ortak biçimler:
 bash scripts/ci/check-bom.sh
 bash scripts/ci/check-names.sh src
 node scripts/ci/i18n-parity.mjs messages scripts/ci/i18n-parity-ignore.json tr en de
+node scripts/ci/check-icu.mjs messages tr en de
 node scripts/ci/check-root-map.mjs
 npx tsc --noEmit -p .
 node scripts/ci/eslint-ratchet.mjs scripts/ci/eslint-baseline.json src

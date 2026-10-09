@@ -17,6 +17,8 @@ jobs:
         run: bash scripts/ci/check-names.sh src
       - name: Çeviri anahtarları (tr/en/de)
         run: node scripts/ci/i18n-parity.mjs messages scripts/ci/i18n-parity-ignore.json tr en de
+      - name: ICU mesaj kaçışı (kesme işareti + parametre)
+        run: node scripts/ci/check-icu.mjs messages tr en de
       - name: JSON geçerli
         run: for f in messages/*.json package.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1; done
       - name: Bağımlılıklar (npm ci)

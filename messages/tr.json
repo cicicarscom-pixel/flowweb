@@ -414,7 +414,7 @@
       "noCalendars": "Henüz takvim eklenmemiş.",
       "editCalendarTitle": "Takvimi Düzenle",
       "editCalendarPlaceholder": "Yeni takvim adı",
-      "confirmDelete": "'{name}' silinecek. Emin misiniz?",
+      "confirmDelete": "''{name}'' silinecek. Emin misiniz?",
       "noDeletePermission": "Bu takvimi silme yetkiniz yok (eski kayıt olduğu için). Lütfen Supabase panelinden silin."
     }
   },
@@ -922,7 +922,7 @@
     },
     "alerts": {
       "noSession": "Oturum bulunamadı",
-      "replyNoAccount": "Bu yoruma yanıt gönderilemedi: Organizasyonunuzun '{platform}' hesabı bağlı değil veya Zernio panelinde yetkilendirilmemiş.",
+      "replyNoAccount": "Bu yoruma yanıt gönderilemedi: Organizasyonunuzun ''{platform}'' hesabı bağlı değil veya Zernio panelinde yetkilendirilmemiş.",
       "replyFailed": "Yanıt gönderilemedi: {message}",
       "customerFallback": "Müşteri"
     }

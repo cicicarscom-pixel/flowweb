@@ -46,7 +46,7 @@ export default function AiDataResetPanel() {
       await dialog.alert(mode === 'soft' ? t('aiDataResetPanel.softReset.doneAlert') : t('aiDataResetPanel.hardReset.doneAlert'))
       window.location.reload()
     } else {
-      await dialog.alert(t('aiDataResetPanel.alerts.errorPrefix', { error: res.error }))
+      await dialog.alert(t('aiDataResetPanel.alerts.errorPrefix', { error: res.error ?? '' }))
     }
     setModal(null)
   }

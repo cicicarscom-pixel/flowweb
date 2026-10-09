@@ -414,7 +414,7 @@
       "noCalendars": "Noch keine Kalender hinzugefügt.",
       "editCalendarTitle": "Kalender bearbeiten",
       "editCalendarPlaceholder": "Neuer Kalendername",
-      "confirmDelete": "'{name}' wird gelöscht. Sind Sie sicher?",
+      "confirmDelete": "''{name}'' wird gelöscht. Sind Sie sicher?",
       "noDeletePermission": "Sie dürfen diesen Kalender nicht löschen (Altdatensatz). Bitte löschen Sie ihn im Supabase-Panel."
     }
   },
@@ -922,7 +922,7 @@
     },
     "alerts": {
       "noSession": "Sitzung nicht gefunden",
-      "replyNoAccount": "Auf diesen Kommentar konnte nicht geantwortet werden: Das '{platform}'-Konto Ihrer Organisation ist nicht verbunden oder im Zernio-Panel nicht autorisiert.",
+      "replyNoAccount": "Auf diesen Kommentar konnte nicht geantwortet werden: Das ''{platform}''-Konto Ihrer Organisation ist nicht verbunden oder im Zernio-Panel nicht autorisiert.",
       "replyFailed": "Antwort konnte nicht gesendet werden: {message}",
       "customerFallback": "Kunde"
     }

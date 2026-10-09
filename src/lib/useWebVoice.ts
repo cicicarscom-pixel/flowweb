@@ -27,7 +27,7 @@ function chunkText(text: string): string[] {
   return out;
 }
 
-export function useWebVoice(opts: { lang: string; onFinal: (text: string) => void; onPartial?: (text: string) => void; onExit?: (reason: VoiceExit) => void }) {
+export function useWebVoice(opts: { lang: string; onFinal: (text: string) => void; onPartial?: (text: string) => void; onExit?: (reason: VoiceExit) => void; isBusy?: () => boolean }) {
   const [supported, setSupported] = useState(false);
   const [phase, setPhase] = useState<VoicePhase>("OFF");
   const optsRef = useRef(opts);
@@ -35,6 +35,7 @@ export function useWebVoice(opts: { lang: string; onFinal: (text: string) => voi
   const activeRef = useRef(false);
   const recRef = useRef<any>(null);
   const silentRef = useRef(0);
+  const genRef = useRef(0); // her dinleme turu bir nesil; eski turun geç gelen olayları yok sayılır
 
   useEffect(() => {
     const w = window as any;
@@ -56,6 +57,8 @@ export function useWebVoice(opts: { lang: string; onFinal: (text: string) => voi
     const w = window as any;
     const Ctor = w.SpeechRecognition || w.webkitSpeechRecognition;
     if (!Ctor) return;
+    const gen = ++genRef.current;
+    try { recRef.current?.abort(); } catch { /* zaten durmuş */ }
     const rec = new Ctor();
     rec.lang = optsRef.current.lang;
     rec.interimResults = true;
@@ -70,20 +73,25 @@ export function useWebVoice(opts: { lang: string; onFinal: (text: string) => voi
       optsRef.current.onFinal(txt);
     };
     rec.onresult = (e: any) => {
+      if (gen !== genRef.current) return;
       const r = e.results[e.results.length - 1];
       const txt = String(r?.[0]?.transcript || "");
       last = txt;
       if (r.isFinal) { if (!delivered && txt.trim()) deliver(txt.trim()); } else { optsRef.current.onPartial?.(txt); }
     };
     rec.onerror = (e: any) => {
+      if (gen !== genRef.current) return;
       if (e.error === "no-speech" || e.error === "aborted") return;
       if (e.error === "not-allowed" || e.error === "service-not-allowed") { halt("permission"); return; }
       halt("error");
     };
     rec.onend = () => {
+      if (gen !== genRef.current) return;
       if (recRef.current === rec) recRef.current = null;
       if (!activeRef.current || delivered) return;
       if (last.trim()) { deliver(last.trim()); return; }
+      // Yanıt beklenirken (düşünüyor) sessizlik sayılmaz; dinleme sürer, söylenenler kuyruğa girer.
+      if (optsRef.current.isBusy?.()) { listen(); return; }
       silentRef.current += 1;
       if (silentRef.current >= MAX_SILENT_ROUNDS) { halt("silence"); return; }
       listen();
@@ -109,6 +117,9 @@ export function useWebVoice(opts: { lang: string; onFinal: (text: string) => voi
     const synth = window.speechSynthesis;
     if (!clean || !synth) { listen(); return; }
     const chunks = chunkText(clean);
+    genRef.current += 1; // okurken mikrofon kapalı: yankıyı dinlemeyelim
+    try { recRef.current?.abort(); } catch { /* */ }
+    recRef.current = null;
     const voices = synth.getVoices();
     const base = optsRef.current.lang.split("-")[0];
     const voice = voices.find((v) => v.lang === optsRef.current.lang) || voices.find((v) => v.lang.startsWith(base));

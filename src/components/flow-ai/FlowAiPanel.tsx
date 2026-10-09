@@ -152,6 +152,9 @@ export default function FlowAiPanel() {
   const [platformPick, setPlatformPick] = useState<null | { platform: string; handle: string; eligible: boolean; reason?: string }[]>(null);
   const [pickSel, setPickSel] = useState<Record<string, boolean>>({});
   const voiceRef = useRef<ReturnType<typeof useWebVoice> | null>(null);
+  const busyRef = useRef(false);
+  const queuedRef = useRef<string | null>(null); // yanıt beklenirken söylenen (sesli) cümleler
+  const sendRef = useRef<((override?: string, opts?: { shown?: boolean }) => Promise<void>) | null>(null);
 
   const push = useCallback((role: Msg["role"], text: string) => {
     setMessages((m) => [...m, { id: ++seq.current, role, text }]);
@@ -199,12 +202,13 @@ export default function FlowAiPanel() {
     }
   }, [router]);
 
-  const send = useCallback(async (override?: string) => {
+  const send = useCallback(async (override?: string, opts?: { shown?: boolean }) => {
     setPlatformPick(null);
     const text = (typeof override === "string" ? override : input).trim();
-    if (!text || busy) return;
+    if (!text || busyRef.current) return;
     setInput("");
-    push("user", text);
+    if (!opts?.shown) push("user", text);
+    busyRef.current = true;
     setBusy(true);
     try {
       const res = await call({ action: "chat", message: text, conversationId: conversationId.current || undefined, attachment: attachmentMeta || undefined });
@@ -212,14 +216,19 @@ export default function FlowAiPanel() {
       push("assistant", res.reply);
       setPending(res.pendingActions || []);
       (res.clientActions || []).forEach(dispatch);
-      voiceRef.current?.speak(res.reply);
+      if (!queuedRef.current) voiceRef.current?.speak(res.reply); // sırada söylenmiş cümle varsa yanıtı okumadan ona geç
     } catch (e: any) {
       push("error", e.code === "DAILY_LIMIT" ? t("dailyLimit", { limit: e.limit ?? "" }) : t("error"));
-      if (e.code === "DAILY_LIMIT") voiceRef.current?.stop(); else voiceRef.current?.resume();
+      if (e.code === "DAILY_LIMIT") { queuedRef.current = null; voiceRef.current?.stop(); } else if (!queuedRef.current) voiceRef.current?.resume();
     } finally {
+      busyRef.current = false;
       setBusy(false);
+      const q = queuedRef.current;
+      if (q) { queuedRef.current = null; sendRef.current?.(q, { shown: true }); }
     }
-  }, [input, busy, call, dispatch, push, t, attachmentMeta]);
+  }, [input, call, dispatch, push, t, attachmentMeta]);
+
+  sendRef.current = send;
 
   const decide = useCallback(async (action: Pending, approve: boolean) => {
     setBusy(true);
@@ -252,11 +261,19 @@ export default function FlowAiPanel() {
       setInput("");
       const words = txt.toLocaleLowerCase(locale).replace(/[.,!?]/g, "").trim();
       if (words.split(/\s+/).length <= 4 && VOICE_END_WORDS.some((w) => words.includes(w))) { voiceRef.current?.stop(); return; }
-      if (busy) { voiceRef.current?.resume(); return; }
-      send(txt);
+      if (busyRef.current) {
+        // Yanıt beklenirken söylenen: hemen sohbette göster, yanıt gelince gönderilir.
+        push("user", txt);
+        queuedRef.current = queuedRef.current ? `${queuedRef.current} ${txt}` : txt;
+      } else {
+        send(txt);
+      }
+      voiceRef.current?.resume(); // yanıt beklerken de dinlemeye devam
     },
+    isBusy: () => busyRef.current,
     onExit: (reason: VoiceExit) => {
       setInput("");
+      queuedRef.current = null;
       if (reason === "permission") push("error", t("voice.denied"));
       else if (reason === "error") push("error", t("voice.error"));
     },
@@ -620,7 +637,7 @@ export default function FlowAiPanel() {
           onChange={(e) => setInput(e.target.value)}
           disabled={busy || voice.active}
           maxLength={4000}
-          placeholder={voice.active ? t(`voice.${voice.phase.toLowerCase()}` as any) : t("placeholder")}
+          placeholder={voice.active ? t(`voice.${busy && voice.phase !== "SPEAKING" ? "thinking" : voice.phase.toLowerCase()}` as any) : t("placeholder")}
           style={{ flex: 1, color: "#fff", background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "10px 12px", outline: "none" }}
         />
         <button type="submit" disabled={busy || !input.trim()} aria-label={t("title")} style={{ width: 42, height: 42, borderRadius: 12, border: "none", background: "linear-gradient(135deg,#3B82F6,#9D5CFF)", color: "#fff", cursor: "pointer", opacity: busy || !input.trim() ? 0.5 : 1 }}>

@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Flow AI web sesli sohbet:** yanıt beklenirken ("Düşünüyor…") de mikrofon dinlemeye devam eder; o sırada söylenenler hemen sohbette görünür ve yanıt gelince otomatik gönderilir. Yanıt okunurken mikrofon yankıyı duymasın diye kapalıdır; okuma bitince yeniden açılır. Yanıt beklerken sessizlik sayılıp sohbet kapanmaz.
 - **[09.10.2026] Flow AI → Paylaşım Merkezi devri:** video ve paylaşım işi artık Paylaşım Merkezi zaten açıkken de alınır (yalnız sayfa açılışında alınıyordu); panelde "Paylaş"a basınca sayfa hazır değilse Paylaşım Merkezi açılır ve hazır olunca paylaşım başlatılır. Paylaşım Merkezi'nde metin/platform eksikliği gibi erken çıkışlar panele hata olarak bildirilir (panel "paylaşılıyor"da takılı kalmaz).
 - **[09.10.2026] Flow AI web — sesli sohbet:** panelde mikrofon düğmesi eklendi (tarayıcının Web Speech API'si; ek paket yok). Basınca eller serbest döngü: dinle → cümle bitince gönder → yanıtı sesli oku → yeniden dinle. "bitir/kapat/stop" ya da düğme ile kapanır; 3 sessiz tur sonra kendiliğinden durur. Desteklemeyen tarayıcıda (ör. Firefox) düğme görünmez. tr/en/de.
 - **[08.10.2026] WhatsApp hatırlatma metni:** AI Asistan sayfasında işletme kendi hatırlatma metnini yazar ve mesaj dilini seçer (tr/en/de/fr/es); yer tutucular ({name}, {business}, {date}, {time}, {doctor}, {service}) ve örnek önizleme vardır. Hitap (Sayın/Mr./Herr…) metne işletme tarafından yazılır, kodda sabit değildir.

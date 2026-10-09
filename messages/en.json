@@ -676,6 +676,94 @@
         "subtitle": "How quickly you first reply to messages is critical for customer satisfaction.",
         "greatSpeed": "GREAT SPEED"
       }
+    },
+    "metrics": {
+      "reach": "Reach",
+      "engagementRate": "Eng. Rate",
+      "followers": "Followers",
+      "platform": "Platform",
+      "post": "Post",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares",
+      "saves": "Saves",
+      "clicks": "Clicks",
+      "views": "Views",
+      "impressionsShort": "Impr.",
+      "erShort": "ER%",
+      "impressions": "Impressions",
+      "postCount": "Post Count",
+      "likeCount": "Like Count",
+      "engagementPct": "Engagement Percentage",
+      "postsPerWeek": "Posts per Week",
+      "engagementRatePct": "Engagement Rate (%)",
+      "weeksCount": "Number of Weeks"
+    },
+    "cards": {
+      "bestPost": "Best Post",
+      "followerEvolution": "Follower Evolution",
+      "followerEvolutionSub": "Followers over time by platform",
+      "platformBreakdown": "Platform Breakdown",
+      "engagementOverTime": "Engagement Over Time",
+      "weeklyLast30": "Weekly - last 30 days",
+      "postsPerPlatform": "Posts per Platform",
+      "likesPerPlatform": "Likes per Platform",
+      "bestTimes": "Best Times to Post",
+      "bestTimesSub": "Average engagement by day of week and hour",
+      "contentDecay": "Content Lifespan (Content Decay)",
+      "contentDecaySub": "Share of total engagement reached over time",
+      "contentDecayNote": "Half of the engagement happens in the first 6 hours, 80% within 12 hours.",
+      "frequencyVsER": "Posting Frequency vs Engagement Rate",
+      "frequencyVsERSub": "Effect of weekly post count on average engagement rate",
+      "topPosts": "Top Performing Posts",
+      "view": "View ↗"
+    },
+    "common": {
+      "noData": "No data",
+      "noDataFound": "No data found."
+    },
+    "inbox2": {
+      "received": "Received",
+      "sent": "Sent",
+      "read": "Read",
+      "failed": "Failed",
+      "conversations": "Conversations",
+      "medianResponse": "Median response",
+      "messagesOverTime": "Messages over time",
+      "messagesOverTimeSub": "Received vs sent vs read per day",
+      "messagesPerPlatform": "Messages per platform",
+      "messagesPerPlatformSub": "Received + sent volume by platform in this window",
+      "responseTime": "Response time",
+      "median": "median",
+      "within5": "≤ 5 min",
+      "target50": "target 50%",
+      "within15": "≤ 15 min",
+      "target80": "target 80%",
+      "within60": "≤ 1 hour",
+      "target95": "target 95%",
+      "topAccounts": "Top accounts by volume",
+      "topAccountsSub": "Connected accounts ranked by total messages in this window",
+      "account": "Account",
+      "response": "Response",
+      "outboundBySource": "Outbound by source",
+      "outboundBySourceSub": "Which integration sent each outbound message - hover for platform breakdown",
+      "whenMessagesLand": "When messages land",
+      "whenMessagesLandSub": "Volume by day of week × hour of day (your local browser time)",
+      "hour": "Hour",
+      "day": "Day"
+    },
+    "heatmap": {
+      "tooltip": "Hour: {hour}:00\nEngagement: {engagement}\nPosts: {posts}",
+      "bestTimes": "Best times: {times}"
+    },
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     }
   },
   "analizDetay": {
@@ -1333,6 +1421,14 @@
     "resetDefault": "Reset to default message",
     "unknownPlaceholder": "Unknown field: {list}. Use only the listed fields.",
     "tooLong": "The message can be at most 700 characters.",
-    "ph": {"name": "full name", "first_name": "first name", "business": "business", "date": "date", "time": "time", "doctor": "staff", "service": "service"}
+    "ph": {
+      "name": "full name",
+      "first_name": "first name",
+      "business": "business",
+      "date": "date",
+      "time": "time",
+      "doctor": "staff",
+      "service": "service"
+    }
   }
 }

@@ -63,6 +63,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function AnalyticsScreen() {
   const t = useTranslations();
+  const dayShort = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map(d => t(`analizPage.days.${d}`));
   const getPlatformLabel = (p: typeof PLATFORMS[number]) =>
     p.id === 'all' ? t('analizPage.platforms.all') : p.name;
   const getTimeRangeLabel = (tr: typeof TIME_RANGES[number]) =>
@@ -500,7 +501,7 @@ export default function AnalyticsScreen() {
             <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 14, opacity: 0.6 }}>📡</span>
-                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>Erişim</p>
+                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.metrics.reach")}</p>
               </div>
               <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
             </div>
@@ -508,13 +509,13 @@ export default function AnalyticsScreen() {
             <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(34,181,115,0.3)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 14, opacity: 0.6 }}>🔥</span>
-                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>Eng. Rate</p>
+                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.metrics.engagementRate")}</p>
               </div>
               <p style={{ fontSize: 24, fontWeight: 700, color: "#22B573" }}>%{overallER}</p>
             </div>
 
             <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-              <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>Best Post</p>
+              <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>{t("analizPage.cards.bestPost")}</p>
               {topPost ? (
                 <a href={topPost.permalink || topPost.url || topPost.platform_url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
                   {(() => {
@@ -539,10 +540,10 @@ export default function AnalyticsScreen() {
                       </div>
                     );
                   })()}
-                  <span style={{ color: "#F6F1EC", fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{topPost.content || topPost.title ? (topPost.content || topPost.title).substring(0, 15) + "..." : "Görüntüle ↗"}</span>
+                  <span style={{ color: "#F6F1EC", fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{topPost.content || topPost.title ? (topPost.content || topPost.title).substring(0, 15) + "..." : t("analizPage.cards.view")}</span>
                 </a>
               ) : (
-                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>Veri yok</span>
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.common.noData")}</span>
               )}
             </div>
           </div>
@@ -603,9 +604,9 @@ export default function AnalyticsScreen() {
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
             <span style={{ color: "#22B573", fontSize: 20 }}>📈</span>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>Follower Evolution</h3>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>{t("analizPage.cards.followerEvolution")}</h3>
           </div>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Platform bazında zaman içinde takipçi sayısı</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.followerEvolutionSub")}</p>
 
           <div style={{ height: 300, width: "100%" }}>
             {(() => {
@@ -632,14 +633,14 @@ export default function AnalyticsScreen() {
                       <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                       <YAxis stroke="rgba(255,255,255,0.3)" domain={['dataMin', 'dataMax']} tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Line type="monotone" dataKey="followers" name="Takipçi" stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="followers" name={t("analizPage.metrics.followers")} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 );
               }
               return (
                 <div className="flex h-full items-center justify-center">
-                   <p className="text-[#A79E96] text-sm">Veri bulunamadı.</p>
+                   <p className="text-[#A79E96] text-sm">{t("analizPage.common.noDataFound")}</p>
                 </div>
               );
             })()}
@@ -690,21 +691,21 @@ export default function AnalyticsScreen() {
       {/* Platform Breakdown Table */}
       {zernioData.platformBreakdown.length > 0 && (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", overflowX: "auto", marginTop: 24 }}>
-           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Platform Kırılımı</h3>
+           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.platformBreakdown")}</h3>
            <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                   <tr>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>Platform</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Gönderi</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Yorum</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Impr.</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>Erişim</th>
-                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>ER%</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>{t("analizPage.metrics.platform")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.post")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.likes")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.comments")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.shares")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.saves")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.clicks")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.views")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.impressionsShort")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.reach")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.erShort")}</th>
                  </tr>
               </thead>
               <tbody>
@@ -770,8 +771,8 @@ export default function AnalyticsScreen() {
       {zernioData.engagementOverTime && zernioData.engagementOverTime.length > 0 ? (
         <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
           <div style={{ marginBottom: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Zaman İçinde Katılım</h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Haftalık - son 30 gün</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.engagementOverTime")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.cards.weeklyLast30")}</p>
           </div>
 
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
@@ -786,14 +787,14 @@ export default function AnalyticsScreen() {
                        <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                        <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
                        <Tooltip content={<CustomTooltip />} />
-                       {postTimelineMetrics.includes('likes') && <Line type="monotone" dataKey="likes" name="Likes" stroke="#F472B6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('comments') && <Line type="monotone" dataKey="comments" name="Comments" stroke="#3B82F6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('shares') && <Line type="monotone" dataKey="shares" name="Shares" stroke="#10B981" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('saves') && <Line type="monotone" dataKey="saves" name="Saves" stroke="#D946EF" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('views') && <Line type="monotone" dataKey="views" name="Views" stroke="#8B5CF6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('impressions') && <Line type="monotone" dataKey="impressions" name="Impressions" stroke="#0F766E" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('reach') && <Line type="monotone" dataKey="reach" name="Reach" stroke="#F59E0B" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
-                       {postTimelineMetrics.includes('clicks') && <Line type="monotone" dataKey="clicks" name="Clicks" stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('likes') && <Line type="monotone" dataKey="likes" name={t("analizPage.metrics.likes")} stroke="#F472B6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('comments') && <Line type="monotone" dataKey="comments" name={t("analizPage.metrics.comments")} stroke="#3B82F6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('shares') && <Line type="monotone" dataKey="shares" name={t("analizPage.metrics.shares")} stroke="#10B981" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('saves') && <Line type="monotone" dataKey="saves" name={t("analizPage.metrics.saves")} stroke="#D946EF" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('views') && <Line type="monotone" dataKey="views" name={t("analizPage.metrics.views")} stroke="#8B5CF6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('impressions') && <Line type="monotone" dataKey="impressions" name={t("analizPage.metrics.impressions")} stroke="#0F766E" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('reach') && <Line type="monotone" dataKey="reach" name={t("analizPage.metrics.reach")} stroke="#F59E0B" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('clicks') && <Line type="monotone" dataKey="clicks" name={t("analizPage.metrics.clicks")} stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
                      </LineChart>
                    );
                  })()}
@@ -853,19 +854,19 @@ export default function AnalyticsScreen() {
 
                    return (
                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px 8px" }}>
-                       <MetricItem id="likes" label="Likes" icon="fa-regular fa-heart" color="#F472B6" value={totalMetrics.likes || 0} />
-                       <MetricItem id="comments" label="Comments" icon="fa-regular fa-comment" color="#3B82F6" value={totalMetrics.comments || 0} />
-                       <MetricItem id="shares" label="Shares" icon="fa-solid fa-share-nodes" color="#10B981" value={totalMetrics.shares || 0} />
+                       <MetricItem id="likes" label={t("analizPage.metrics.likes")} icon="fa-regular fa-heart" color="#F472B6" value={totalMetrics.likes || 0} />
+                       <MetricItem id="comments" label={t("analizPage.metrics.comments")} icon="fa-regular fa-comment" color="#3B82F6" value={totalMetrics.comments || 0} />
+                       <MetricItem id="shares" label={t("analizPage.metrics.shares")} icon="fa-solid fa-share-nodes" color="#10B981" value={totalMetrics.shares || 0} />
                        
-                       <MetricItem id="saves" label="Saves" icon="fa-regular fa-bookmark" color="#D946EF" value={totalMetrics.saves || 0} />
-                       <MetricItem id="views" label="Views" icon="fa-regular fa-eye" color="#8B5CF6" value={totalMetrics.views || 0} />
-                       <MetricItem id="impressions" label="Impress." icon="fa-solid fa-arrow-trend-up" color="#0F766E" value={totalMetrics.impressions || 0} />
+                       <MetricItem id="saves" label={t("analizPage.metrics.saves")} icon="fa-regular fa-bookmark" color="#D946EF" value={totalMetrics.saves || 0} />
+                       <MetricItem id="views" label={t("analizPage.metrics.views")} icon="fa-regular fa-eye" color="#8B5CF6" value={totalMetrics.views || 0} />
+                       <MetricItem id="impressions" label={t("analizPage.metrics.impressionsShort")} icon="fa-solid fa-arrow-trend-up" color="#0F766E" value={totalMetrics.impressions || 0} />
                        
-                       <MetricItem id="reach" label="Reach" icon="fa-solid fa-users" color="#F59E0B" value={totalMetrics.reach || 0} />
-                       <MetricItem id="clicks" label="Clicks" icon="fa-solid fa-arrow-pointer" color="#60A5FA" value={totalMetrics.clicks || 0} />
+                       <MetricItem id="reach" label={t("analizPage.metrics.reach")} icon="fa-solid fa-users" color="#F59E0B" value={totalMetrics.reach || 0} />
+                       <MetricItem id="clicks" label={t("analizPage.metrics.clicks")} icon="fa-solid fa-arrow-pointer" color="#60A5FA" value={totalMetrics.clicks || 0} />
                        
                        <div style={{ padding: "8px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
-                          <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Eng. Rate</div>
+                          <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("analizPage.metrics.engagementRate")}</div>
                           <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "#22B573", paddingLeft: 2 }}>
                             <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: 13, width: 16, textAlign: "center" }} />
                             {er}%
@@ -883,7 +884,7 @@ export default function AnalyticsScreen() {
       {zernioData.platformBreakdown.length > 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 24 }}>
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Gönderi / Platform</h3>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.postsPerPlatform")}</h3>
              <div style={{ height: 250, width: "100%" }}>
                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={zernioData.platformBreakdown}>
@@ -891,13 +892,13 @@ export default function AnalyticsScreen() {
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
-                     <Bar dataKey="postCount" name="Gönderi Sayısı" fill="#FF7A59" radius={[4,4,0,0]} barSize={40} />
+                     <Bar dataKey="postCount" name={t("analizPage.metrics.postCount")} fill="#FF7A59" radius={[4,4,0,0]} barSize={40} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
           </div>
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>Beğeni / Platform</h3>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.likesPerPlatform")}</h3>
              <div style={{ height: 250, width: "100%" }}>
                <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={zernioData.platformBreakdown}>
@@ -905,7 +906,7 @@ export default function AnalyticsScreen() {
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
-                     <Bar dataKey="likes" name="Beğeni Sayısı" fill="#C2478D" radius={[4,4,0,0]} barSize={40} />
+                     <Bar dataKey="likes" name={t("analizPage.metrics.likeCount")} fill="#C2478D" radius={[4,4,0,0]} barSize={40} />
                   </BarChart>
                </ResponsiveContainer>
              </div>
@@ -916,11 +917,11 @@ export default function AnalyticsScreen() {
         {/* 1. Best Times Heatmap */}
         {zernioData.bestTimes.length > 0 ? (
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>En İyi Paylaşım Zamanları</h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftanın günleri ve saatlere göre ortalama etkileşim yoğunluğu</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.bestTimes")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.bestTimesSub")}</p>
             <div style={{ display: "flex" }}>
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 8, marginTop: 20 }}>
-                {["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map(day => (
+                {dayShort.map(day => (
                   <div key={day} style={{ height: 28, display: "flex", alignItems: "center", color: "var(--text-secondary)", fontSize: 12 }}>{day}</div>
                 ))}
               </div>
@@ -941,7 +942,7 @@ export default function AnalyticsScreen() {
                           return (
                           <div 
                             key={hourIdx} 
-                            title={slot ? `Saat: ${hourIdx}:00\nEtkileşim: ${slot.avg_engagement}\nGönderi: ${slot.post_count}` : ''}
+                            title={slot ? t("analizPage.heatmap.tooltip", { hour: hourIdx, engagement: slot.avg_engagement, posts: slot.post_count }) : ''}
                             style={{
                               flex: 1,
                               minWidth: 20,
@@ -966,9 +967,9 @@ export default function AnalyticsScreen() {
                   // Mon/Tue/... kullanılıyordu; mobil tarafta da (flow-repo,
                   // AnalyticsScreen.js) aynı düzeltme eşzamanlı olarak yapıldı).
                   const sorted = [...zernioData.bestTimes].sort((a,b) => (b.avg_engagement || 0) - (a.avg_engagement || 0)).slice(0, 2);
-                  const days = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
-                  const texts = sorted.map(s => `${days[s.day_of_week]} ${s.hour}${s.hour < 12 ? 'am' : 'pm'} · ${s.avg_engagement}`);
-                  return texts.length > 0 ? `Best times: ${texts.join(' · ')}` : '';
+                  const days = dayShort;
+                  const texts = sorted.map(s => `${days[s.day_of_week]} ${s.hour}:00 · ${s.avg_engagement}`);
+                  return texts.length > 0 ? t("analizPage.heatmap.bestTimes", { times: texts.join(' · ') }) : '';
                })()}
             </div>
           </div>
@@ -977,9 +978,9 @@ export default function AnalyticsScreen() {
         {/* 2. Content Decay Area Chart */}
         {zernioData.contentDecay.length > 0 ? (
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>İçerik Ömrü (Content Decay)</h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>Zaman içinde toplam etkileşimin yüzde kaçına ulaşıldığı</p>
-            <p style={{ color: "#F6F1EC", fontSize: 13, marginBottom: 24, opacity: 0.9 }}>Etkileşimin yarısı ilk 6 saatte, %80'i 12 saat içinde.</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.contentDecay")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t("analizPage.cards.contentDecaySub")}</p>
+            <p style={{ color: "#F6F1EC", fontSize: 13, marginBottom: 24, opacity: 0.9 }}>{t("analizPage.cards.contentDecayNote")}</p>
             <div style={{ height: 250, width: "100%" }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={[...zernioData.contentDecay].sort((a: any, b: any) => a.bucket_order - b.bucket_order)}>
@@ -993,7 +994,7 @@ export default function AnalyticsScreen() {
                   <XAxis dataKey="bucket_label" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `%${val}`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="avg_pct_of_final" name="Etkileşim Yüzdesi" stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
+                  <Area type="monotone" dataKey="avg_pct_of_final" name={t("analizPage.metrics.engagementPct")} stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -1004,15 +1005,15 @@ export default function AnalyticsScreen() {
         {/* 3. Posting Frequency Scatter */}
         {zernioData.postingFrequency.length > 0 ? (
           <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Paylaşım Sıklığı vs Etkileşim Oranı</h3>
-            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Haftalık gönderi sayısının ortalama etkileşim oranına etkisi</p>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.frequencyVsER")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.frequencyVsERSub")}</p>
             <div style={{ height: 300, width: "100%" }}>
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                  <XAxis type="number" dataKey="posts_per_week" name="Haftalık Gönderi" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
-                  <YAxis type="number" dataKey="avg_engagement_rate" name="Etkileşim Oranı (%)" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
-                  <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name="Hafta Sayısı" />
+                  <XAxis type="number" dataKey="posts_per_week" name={t("analizPage.metrics.postsPerWeek")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                  <YAxis type="number" dataKey="avg_engagement_rate" name={t("analizPage.metrics.engagementRatePct")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                  <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name={t("analizPage.metrics.weeksCount")} />
                   <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
                   <Legend iconType="circle" />
                   {Array.from(new Set(zernioData.postingFrequency.map((f: any) => f.platform))).map((platform: string) => {
@@ -1033,22 +1034,22 @@ export default function AnalyticsScreen() {
       {/* Top Performing Posts Table */}
       {zernioData.postAnalytics && zernioData.postAnalytics.length > 0 && (
         <div className="glass" style={{ borderRadius: 16, padding: "24px", border: "1px solid rgba(255,255,255,0.06)", marginTop: 24 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 600, color: "#F6F1EC", marginBottom: 20 }}>Top Performing Posts</h3>
+          <h3 style={{ fontSize: 18, fontWeight: 600, color: "#F6F1EC", marginBottom: 20 }}>{t("analizPage.cards.topPosts")}</h3>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}>
-                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>Gönderi</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Beğeni</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Yorum</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Paylaşım</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Kaydetme</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Tıklama</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Görüntülenme</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Takipçi</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Impr.</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>Erişim</th>
-                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>ER%</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>{t("analizPage.metrics.post")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.likes")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.comments")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.shares")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.saves")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.clicks")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.views")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.followers")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.impressionsShort")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.reach")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.erShort")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -1156,7 +1157,7 @@ export default function AnalyticsScreen() {
         {/* Top KPIs */}
         <div className="glass" style={{ borderRadius: 8, padding: "16px 24px", border: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Received</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.received")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-solid fa-inbox" style={{ color: "#22B573" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.received || 0}</span>
@@ -1164,7 +1165,7 @@ export default function AnalyticsScreen() {
            </div>
            <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Sent</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.sent")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-regular fa-paper-plane" style={{ color: "#3B82F6" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.sent || 0}</span>
@@ -1172,7 +1173,7 @@ export default function AnalyticsScreen() {
            </div>
            <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Read</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.read")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-regular fa-eye" style={{ color: "#8B5CF6" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.read || 0}</span>
@@ -1180,7 +1181,7 @@ export default function AnalyticsScreen() {
            </div>
            <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Failed</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.failed")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-solid fa-triangle-exclamation" style={{ color: "#F59E0B" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.failed || 0}</span>
@@ -1188,7 +1189,7 @@ export default function AnalyticsScreen() {
            </div>
            <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Conversations</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.conversations")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-regular fa-comments" style={{ color: "#C2478D" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{sumVol.uniqueConversations || 0}</span>
@@ -1196,7 +1197,7 @@ export default function AnalyticsScreen() {
            </div>
            <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
            <div style={{ flex: 1, minWidth: 100 }}>
-              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Median response</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("analizPage.inbox2.medianResponse")}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <i className="fa-regular fa-clock" style={{ color: "#F59E0B" }} />
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#F6F1EC" }}>{formatTime(medianResp)}</span>
@@ -1207,8 +1208,8 @@ export default function AnalyticsScreen() {
         {/* Row 1: Messages over time & Messages per platform */}
         <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 24 }}>
           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Messages over time</h3>
-             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Received vs sent vs read per day</p>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.messagesOverTime")}</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.inbox2.messagesOverTimeSub")}</p>
              <div style={{ height: 300, width: "100%" }}>
                 <ResponsiveContainer width="100%" height="100%">
                    <LineChart data={vol.timeseries || []}>
@@ -1216,17 +1217,17 @@ export default function AnalyticsScreen() {
                      <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => val ? val.substring(5,10) : ''} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} />
-                     <Line type="monotone" dataKey="received" name="Received" stroke="#22B573" strokeWidth={2} dot={false} />
-                     <Line type="monotone" dataKey="sent" name="Sent" stroke="#3B82F6" strokeWidth={2} dot={false} />
-                     <Line type="monotone" dataKey="read" name="Read" stroke="#8B5CF6" strokeWidth={2} dot={false} />
+                     <Line type="monotone" dataKey="received" name={t("analizPage.inbox2.received")} stroke="#22B573" strokeWidth={2} dot={false} />
+                     <Line type="monotone" dataKey="sent" name={t("analizPage.inbox2.sent")} stroke="#3B82F6" strokeWidth={2} dot={false} />
+                     <Line type="monotone" dataKey="read" name={t("analizPage.inbox2.read")} stroke="#8B5CF6" strokeWidth={2} dot={false} />
                    </LineChart>
                 </ResponsiveContainer>
              </div>
           </div>
 
           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Messages per platform</h3>
-             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Received + sent volume by platform in this window</p>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.messagesPerPlatform")}</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.inbox2.messagesPerPlatformSub")}</p>
              <div style={{ height: 300, width: "100%" }}>
                 <ResponsiveContainer width="100%" height="100%">
                    <BarChart data={vol.byPlatform || []}>
@@ -1234,8 +1235,8 @@ export default function AnalyticsScreen() {
                      <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
                      <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
-                     <Bar dataKey="received" name="Received" stackId="a" fill="#22B573" barSize={30} />
-                     <Bar dataKey="sent" name="Sent" stackId="a" fill="#3B82F6" barSize={30} radius={[4,4,0,0]} />
+                     <Bar dataKey="received" name={t("analizPage.inbox2.received")} stackId="a" fill="#22B573" barSize={30} />
+                     <Bar dataKey="sent" name={t("analizPage.inbox2.sent")} stackId="a" fill="#3B82F6" barSize={30} radius={[4,4,0,0]} />
                    </BarChart>
                 </ResponsiveContainer>
              </div>
@@ -1247,30 +1248,30 @@ export default function AnalyticsScreen() {
           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
                <div>
-                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Response time</h3>
+                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.responseTime")}</h3>
                  <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>How long it takes to send the first reply after a customer message - {perf.repliedCount || 0} replied · {perf.waitingCount || 0} still waiting</p>
                </div>
                <div style={{ textAlign: "right" }}>
                  <div style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>{formatTime(medianResp)}</div>
-                 <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>median</div>
+                 <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>{t("analizPage.inbox2.median")}</div>
                </div>
              </div>
              
              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 24 }}>
                 <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
-                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 5 min <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>{t("analizPage.inbox2.within5")} <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
                    <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder5m || 0}%</div>
-                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 50%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>{t("analizPage.inbox2.target50")}</div>
                 </div>
                 <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
-                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 15 min <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>{t("analizPage.inbox2.within15")} <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
                    <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder15m || 0}%</div>
-                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 80%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>{t("analizPage.inbox2.target80")}</div>
                 </div>
                 <div style={{ border: "1px solid rgba(244,114,182,0.3)", borderRadius: 6, padding: "12px" }}>
-                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>≤ 1 hour <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
+                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>{t("analizPage.inbox2.within60")} <span style={{ float: "right", color: "#F472B6" }}>●</span></div>
                    <div style={{ fontSize: 20, fontWeight: 700, color: "#F472B6" }}>{perf.percentUnder1h || 0}%</div>
-                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>target 95%</div>
+                   <div style={{ fontSize: 10, color: "var(--text-secondary)" }}>{t("analizPage.inbox2.target95")}</div>
                 </div>
              </div>
 
@@ -1302,33 +1303,33 @@ export default function AnalyticsScreen() {
           </div>
 
           <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Top accounts by volume</h3>
-             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Connected accounts ranked by total messages in this window</p>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.topAccounts")}</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.inbox2.topAccountsSub")}</p>
              <div style={{ overflowX: "auto" }}>
                <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                      <tr>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
-                         <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>Account <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} /></div>
+                         <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>{t("analizPage.inbox2.account")} <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} /></div>
                        </th>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
                          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
-                           <i className="fa-solid fa-inbox" style={{color: "#22B573", fontSize: 12}}/> Received <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                           <i className="fa-solid fa-inbox" style={{color: "#22B573", fontSize: 12}}/> {t("analizPage.inbox2.received")} <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
                          </div>
                        </th>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
                          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
-                           <i className="fa-solid fa-paper-plane" style={{color: "#3B82F6", fontSize: 12}}/> Sent <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                           <i className="fa-solid fa-paper-plane" style={{color: "#3B82F6", fontSize: 12}}/> {t("analizPage.inbox2.sent")} <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
                          </div>
                        </th>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
                          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
-                           <i className="fa-solid fa-comments" style={{color: "#F59E0B", fontSize: 12}}/> Conversations <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                           <i className="fa-solid fa-comments" style={{color: "#F59E0B", fontSize: 12}}/> {t("analizPage.inbox2.conversations")} <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
                          </div>
                        </th>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
                          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 6 }}>
-                           <i className="fa-solid fa-clock" style={{color: "#F472B6", fontSize: 12}}/> Response <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
+                           <i className="fa-solid fa-clock" style={{color: "#F472B6", fontSize: 12}}/> {t("analizPage.inbox2.response")} <i className="fa-solid fa-sort" style={{ opacity: 0.4, fontSize: 10 }} />
                          </div>
                        </th>
                        <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>
@@ -1371,8 +1372,8 @@ export default function AnalyticsScreen() {
         {/* Row 3: Outbound by source & When messages land */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
            <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>Outbound by source</h3>
-             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Which integration sent each outbound message - hover for platform breakdown</p>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.outboundBySource")}</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.inbox2.outboundBySourceSub")}</p>
              <div style={{ height: 250, width: "100%" }}>
                 <ResponsiveContainer width="100%" height="100%">
                    <BarChart data={vol.outboundBySource || [
@@ -1396,13 +1397,13 @@ export default function AnalyticsScreen() {
            </div>
 
            <div className="glass" style={{ borderRadius: 8, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
-             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>When messages land</h3>
-             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>Volume by day of week × hour of day (your local browser time)</p>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.inbox2.whenMessagesLand")}</h3>
+             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.inbox2.whenMessagesLandSub")}</p>
              <div style={{ height: 250, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-                    <XAxis type="category" dataKey="hour" name="Hour" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis type="category" dataKey="day" name="Day" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <XAxis type="category" dataKey="hour" name={t("analizPage.inbox2.hour")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis type="category" dataKey="day" name={t("analizPage.inbox2.day")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
                     <ZAxis type="number" dataKey="value" range={[20, 400]} />
                     <Tooltip cursor={{strokeDasharray: '3 3'}} content={<CustomTooltip />} />
                     <Scatter data={vol.heatmap || []} fill="#8B5CF6" shape="square" />

@@ -676,6 +676,94 @@
         "subtitle": "Mesajlara ilk dönüş hızı, müşteri memnuniyeti için kritiktir.",
         "greatSpeed": "HARİKA HIZ"
       }
+    },
+    "metrics": {
+      "reach": "Erişim",
+      "engagementRate": "Etkileşim Oranı",
+      "followers": "Takipçi",
+      "platform": "Platform",
+      "post": "Gönderi",
+      "likes": "Beğeni",
+      "comments": "Yorum",
+      "shares": "Paylaşım",
+      "saves": "Kaydetme",
+      "clicks": "Tıklama",
+      "views": "Görüntülenme",
+      "impressionsShort": "Göst.",
+      "erShort": "EO%",
+      "impressions": "Gösterim",
+      "postCount": "Gönderi Sayısı",
+      "likeCount": "Beğeni Sayısı",
+      "engagementPct": "Etkileşim Yüzdesi",
+      "postsPerWeek": "Haftalık Gönderi",
+      "engagementRatePct": "Etkileşim Oranı (%)",
+      "weeksCount": "Hafta Sayısı"
+    },
+    "cards": {
+      "bestPost": "En İyi Gönderi",
+      "followerEvolution": "Takipçi Gelişimi",
+      "followerEvolutionSub": "Platform bazında zaman içinde takipçi sayısı",
+      "platformBreakdown": "Platform Kırılımı",
+      "engagementOverTime": "Zaman İçinde Katılım",
+      "weeklyLast30": "Haftalık - son 30 gün",
+      "postsPerPlatform": "Gönderi / Platform",
+      "likesPerPlatform": "Beğeni / Platform",
+      "bestTimes": "En İyi Paylaşım Zamanları",
+      "bestTimesSub": "Haftanın günleri ve saatlere göre ortalama etkileşim yoğunluğu",
+      "contentDecay": "İçerik Ömrü (Content Decay)",
+      "contentDecaySub": "Zaman içinde toplam etkileşimin yüzde kaçına ulaşıldığı",
+      "contentDecayNote": "Etkileşimin yarısı ilk 6 saatte, %80'i 12 saat içinde.",
+      "frequencyVsER": "Paylaşım Sıklığı vs Etkileşim Oranı",
+      "frequencyVsERSub": "Haftalık gönderi sayısının ortalama etkileşim oranına etkisi",
+      "topPosts": "En İyi Performanslı Gönderiler",
+      "view": "Görüntüle ↗"
+    },
+    "common": {
+      "noData": "Veri yok",
+      "noDataFound": "Veri bulunamadı."
+    },
+    "inbox2": {
+      "received": "Alınan",
+      "sent": "Gönderilen",
+      "read": "Okunan",
+      "failed": "Başarısız",
+      "conversations": "Sohbetler",
+      "medianResponse": "Ortanca yanıt",
+      "messagesOverTime": "Zaman İçinde Mesajlar",
+      "messagesOverTimeSub": "Günlük alınan, gönderilen ve okunan",
+      "messagesPerPlatform": "Platform Başına Mesajlar",
+      "messagesPerPlatformSub": "Bu aralıkta platforma göre alınan + gönderilen hacim",
+      "responseTime": "Yanıt Süresi",
+      "median": "ortanca",
+      "within5": "≤ 5 dk",
+      "target50": "hedef %50",
+      "within15": "≤ 15 dk",
+      "target80": "hedef %80",
+      "within60": "≤ 1 saat",
+      "target95": "hedef %95",
+      "topAccounts": "Hacme Göre En Çok Kullanılan Hesaplar",
+      "topAccountsSub": "Bu aralıkta toplam mesaja göre sıralanan bağlı hesaplar",
+      "account": "Hesap",
+      "response": "Yanıt",
+      "outboundBySource": "Kaynağa Göre Giden",
+      "outboundBySourceSub": "Her giden mesajı hangi entegrasyon gönderdi - platform dağılımı için üzerine gelin",
+      "whenMessagesLand": "Mesajlar Ne Zaman Geliyor",
+      "whenMessagesLandSub": "Haftanın gününe × saate göre hacim (tarayıcınızın yerel saati)",
+      "hour": "Saat",
+      "day": "Gün"
+    },
+    "heatmap": {
+      "tooltip": "Saat: {hour}:00\nEtkileşim: {engagement}\nGönderi: {posts}",
+      "bestTimes": "En iyi zamanlar: {times}"
+    },
+    "days": {
+      "mon": "Pzt",
+      "tue": "Sal",
+      "wed": "Çar",
+      "thu": "Per",
+      "fri": "Cum",
+      "sat": "Cmt",
+      "sun": "Paz"
     }
   },
   "analizDetay": {
@@ -1327,6 +1415,14 @@
     "resetDefault": "Varsayılan metne dön",
     "unknownPlaceholder": "Bilinmeyen alan: {list}. Yalnızca listedeki alanları kullanın.",
     "tooLong": "Metin en fazla 700 karakter olabilir.",
-    "ph": {"name": "ad soyad", "first_name": "ilk ad", "business": "işletme", "date": "tarih", "time": "saat", "doctor": "uzman", "service": "işlem"}
+    "ph": {
+      "name": "ad soyad",
+      "first_name": "ilk ad",
+      "business": "işletme",
+      "date": "tarih",
+      "time": "saat",
+      "doctor": "uzman",
+      "service": "işlem"
+    }
   }
 }

@@ -587,26 +587,6 @@ export default function BotScreen() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div 
-                  onClick={async () => {
-                    if (window.confirm('AI Hafızası (son konuşmalar) silinsin mi? Sadece sizin işletmenizin kayıtları silinir.')) {
-                      const { clearChatMemory } = await import('@/actions/clearChatMemory');
-                      const res = await clearChatMemory();
-                      if (res.success) {
-                        alert('AI Hafızası başarıyla silindi!');
-                        setMessages([]); // clear local UI too
-                      } else {
-                        alert('Hata oluştu: ' + res.error);
-                      }
-                    }
-                  }}
-                  title="Hafızayı Sil (Veritabanından)"
-                  style={{ cursor: "pointer", opacity: 0.6, transition: "opacity 0.2s", display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, borderRadius: "50%", background: "rgba(255, 59, 48, 0.15)", color: "#ff3b30", border: "1px solid rgba(255, 59, 48, 0.3)" }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
-                >
-                  <span style={{ fontSize: 12 }}>🧹</span>
-                </div>
-                <div 
                   onClick={() => { setIsSimulationActive(!isSimulationActive); setMessages([]); }}
                   title="Ekranı Temizle"
                   style={{ cursor: "pointer", opacity: 0.6, transition: "opacity 0.2s" }}

@@ -36,7 +36,6 @@ type AppointmentNotification = {
   metadata: NotificationMetadata | null;
 };
 
-const NOTIFICATION_TYPE = "appointment_created";
 const REFRESH_MS = 30_000;
 
 const STRINGS: Record<Locale, {
@@ -149,12 +148,8 @@ export function useAppointmentNotifications(limit = 5) {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("notifications")
-      .select("id, created_at, is_read, metadata")
-      .eq("type", NOTIFICATION_TYPE)
-      .order("created_at", { ascending: false })
-      .limit(limit);
+    // Tek doğru kaynak: silinen/iptal edilen randevuların bildirimleri gelmez (sunucu RPC'si).
+    const { data, error } = await supabase.rpc("get_appointment_notifications", { p_limit: limit });
 
     if (error) {
       console.error("[AppointmentNotifications] fetch failed:", error);
@@ -207,17 +202,13 @@ export function useUnreadAppointmentCount() {
   const [count, setCount] = useState(0);
 
   const refresh = useCallback(async () => {
-    const { count, error } = await supabase
-      .from("notifications")
-      .select("id", { count: "exact", head: true })
-      .eq("type", NOTIFICATION_TYPE)
-      .eq("is_read", false);
+    const { data: count, error } = await supabase.rpc("count_unread_appointment_notifications");
 
     if (error) {
       console.error("[useUnreadAppointmentCount] failed:", error);
       return;
     }
-    setCount(count ?? 0);
+    setCount(Number(count) || 0);
   }, [supabase]);
 
   useEffect(() => {

@@ -433,7 +433,7 @@ export default function DashboardHomePage() {
                 </div>
               )}) : (
                 <div style={{ textAlign: "center", width: "100%" }}>
-                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.todayEmpty')}</span>
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t('dashboardAppointments.appointments.upcomingEmpty')}</span>
                 </div>
               )}
               {totalUpcomingAppointments > appointments.length && (

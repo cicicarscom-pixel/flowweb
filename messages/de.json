@@ -1143,6 +1143,7 @@
       "todayTitle": "Heutige Termine",
       "todayEmpty": "Heute sind keine Termine geplant.",
       "upcomingTitle": "Anstehende Termine",
+      "upcomingEmpty": "Keine anstehenden Termine oder Reservierungen.",
       "viewAll": "Alle ansehen"
     }
   },

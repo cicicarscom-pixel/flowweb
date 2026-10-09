@@ -1143,6 +1143,7 @@
       "todayTitle": "Today's Appointments",
       "todayEmpty": "No appointments planned for today.",
       "upcomingTitle": "Upcoming Appointments",
+      "upcomingEmpty": "No upcoming appointments or reservations.",
       "viewAll": "View All"
     }
   },

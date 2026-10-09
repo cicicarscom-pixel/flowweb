@@ -1143,6 +1143,7 @@
       "todayTitle": "Bugünkü Randevular",
       "todayEmpty": "Bugün için planlı randevu yok.",
       "upcomingTitle": "Yaklaşan Randevular",
+      "upcomingEmpty": "Yaklaşan randevu veya rezervasyon bulunmuyor.",
       "viewAll": "Tümünü gör"
     }
   },

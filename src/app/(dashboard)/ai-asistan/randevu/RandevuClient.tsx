@@ -555,7 +555,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
                           
                           const slots = daySchedule.filter(s => s.local_time === slotTime);
                           let status = 'free';
-                          let badge = null;
+                          const badge: string | null = null;
                           let bId = '', bReason = '', bNote = '';
 
                           if (activeCalendarId) {

@@ -50,7 +50,6 @@ export default function DashboardHomePage() {
         }
 
         // Finance Stats (Transactions + Finance Documents)
-        let inc = 0, exp = 0;
         const upcoming: any[] = [];
         let timezone = 'Europe/Istanbul';
         if (merchantId) {
@@ -189,7 +188,7 @@ export default function DashboardHomePage() {
 
                   const nextDateStr = addDaysYmd(today, 1);
 
-          let calsMap: Record<string, string> = {};
+          const calsMap: Record<string, string> = {};
           if (merchantId) {
             const { data: cals } = await supabase.from('calendars').select('id, name');
             if (cals) cals.forEach((c: any) => calsMap[c.id] = c.name);
@@ -488,7 +487,7 @@ export default function DashboardHomePage() {
           {recentActivities.map(act => (
             <div key={act.id} className="glass" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", borderRadius: 16, borderLeft: `3px solid ${act.color}` }}>
               <div style={{ width: 44, height: 44, borderRadius: 22, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, overflow: "hidden" }}>
-                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(act.name)}&background=random&color=fff`} style={{ width: "100%", height: "100%" }} />
+                <img alt="" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(act.name)}&background=random&color=fff`} style={{ width: "100%", height: "100%" }} />
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>

@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[09.10.2026] Kalite Faz 3:** ESLint hataları 5 → 0 (`prefer-const`, `@ts-nocheck`); 8 `<img>` alt metni (süs avatarlar `alt=""`); `(dashboard)/page.tsx`'te kullanılmayan `inc/exp` kaldırıldı; `lib/dates.test.ts` artık gerçek `dates.ts` modülünü sınıyor (önceden fonksiyonların kopyasını sınıyordu); Deno testleri `tsconfig`/ESLint dışında. Tam `tsc --strict` ve `deno test` temiz.
 - **[09.10.2026] Temizlik (Kalite Faz 2):** hiçbir yerden çağrılmayan ve tablo izinleriyle zaten çalışmayan sunucu işlemleri (`actions/accounting.ts`, `actions/insights.ts`) ile derlenemeyen eski `docs/archive/test_appts.ts` silindi; tam `tsc` artık hatasız.
 - **[09.10.2026] Güvenlik (Kalite Faz 1A):** hiçbir yerden çağrılmayan `src/actions/zernio.ts` silindi (Zernio ile tüm iletişim Supabase `zernio-client` Edge Function'ı üzerinden; anahtar yalnız Supabase Secrets'ta). Dosya, tarayıcıya gömülen `NEXT_PUBLIC_ZERNIO_API_KEY` adını da okuyordu; bu risk kökünden kalktı. Vercel'de Zernio anahtarına gerek yoktur.
 - **[09.10.2026] Anasayfa "Yaklaşan Randevular":** boş durumda "Bugün için planlı randevu yok" yazıyordu (Bugünkü Randevular ile çelişiyordu); artık "Yaklaşan randevu veya rezervasyon bulunmuyor" (tr/en/de). Mobil zaten doğruydu.

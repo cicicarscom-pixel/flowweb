@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Deno testleri (Next derlemesinin parçası değil; `deno test` ile çalışır)
+    "src/**/*.test.ts",
   ]),
   {
     rules: {

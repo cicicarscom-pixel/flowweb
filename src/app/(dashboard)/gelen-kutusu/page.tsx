@@ -836,11 +836,11 @@ function GelenKutusuContent() {
                     <div className="relative w-12 h-12 flex-shrink-0">
                       <div className="w-full h-full bg-white/5 rounded-full flex items-center justify-center overflow-hidden">
                         {conv.participant_picture ? (
-                          <img src={conv.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                          <img alt="" src={conv.participant_picture} className="w-full h-full object-cover" onError={(e) => {
                             e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`;
                           }} />
                         ) : (
-                          <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                          <img alt="" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conv.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                         )}
                       </div>
                       <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-dark-surface border border-dark-border flex items-center justify-center text-xs">
@@ -884,11 +884,11 @@ function GelenKutusuContent() {
                    <div className="p-4 border-b border-dark-border flex items-center gap-3">
                      <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
                         {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
-                           <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                           <img alt="" src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
                              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`;
                            }} />
                         ) : (
-                           <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                           <img alt="" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                         )}
                      </div>
                      <span className="font-bold text-on-surface">
@@ -907,11 +907,11 @@ function GelenKutusuContent() {
                            {!isOutbound && (
                              <div className="w-7 h-7 rounded-full bg-white/5 flex-shrink-0 overflow-hidden flex items-center justify-center mb-1 border border-white/10">
                                 {conversations.find(c => c.id === selectedConvId)?.participant_picture ? (
-                                  <img src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
+                                  <img alt="" src={conversations.find(c => c.id === selectedConvId)?.participant_picture} className="w-full h-full object-cover" onError={(e) => {
                              e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`;
                            }} />
                                 ) : (
-                                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
+                                  <img alt="" src={`https://ui-avatars.com/api/?name=${encodeURIComponent(conversations.find(c => c.id === selectedConvId)?.participant_name || 'U')}&background=random`} className="w-full h-full object-cover" />
                                 )}
                              </div>
                            )}
@@ -1025,7 +1025,7 @@ function GelenKutusuContent() {
                           </div>
                         </>
                       ) : (
-                        <img src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
+                        <img alt="" src={postsWithComments.find(p => p.postId === selectedPostId)?.postPicture} className="w-full h-full object-cover" onError={(e) => {
                           e.currentTarget.style.display = 'none';
                           e.currentTarget.parentElement!.innerHTML = '<i class="fa-regular fa-image text-dark-muted"></i>';
                         }} />

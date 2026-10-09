@@ -1,21 +1,8 @@
-// @ts-nocheck
 import { assertEquals } from "https://deno.land/std@0.220.0/testing/asserts.ts";
+import { addDaysYmd, dateFromYmd, todayInTimezone } from "./dates.ts";
 
-export function addDaysYmd(ymd: string, n: number): string {
-  const [y, m, d] = ymd.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
-}
-
-/** İşletmenin saat diliminde bugünün tarihi: "2026-09-27" */
-export function todayInTimezone(timeZone: string, now: Date = new Date()): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
-}
-
-/** "YYYY-MM-DD" metninden, saat dilimi kaymasına dayanıklı yerel Date (gün ortası) */
-export function dateFromYmd(ymd: string): Date {
-  const [y, m, d] = ymd.split('-').map(Number);
-  return new Date(y, m - 1, d, 12, 0, 0);
-}
+// Deno testi: GERÇEK `dates.ts` modülünü sınar (önceden fonksiyonların kopyasını sınıyordu).
+// Çalıştırma: deno test src/lib/dates.test.ts
 
 Deno.test("todayInTimezone - Istanbul edge case (next day locally)", () => {
   // Istanbul is UTC+3. At 22:30 UTC, it's 01:30 the next day locally.

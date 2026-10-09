@@ -104,6 +104,9 @@ export default function SharePage() {
   const [isCropperOpen, setIsCropperOpen] = useState(false);
   const [isImageCropped, setIsImageCropped] = useState(false);
   
+  const accountsRef = useRef<any[] | null>(null);
+  const applyHandoffRef = useRef<(() => Promise<void>) | null>(null);
+
   const needsInstagramCrop = !!(localImage && !localImage.startsWith('data:video') && selectedPlatforms['instagram'] && !isImageCropped);
 
   useEffect(() => {
@@ -132,36 +135,9 @@ export default function SharePage() {
         });
         setSelectedPlatforms(initialSelected);
 
-        // Handoff check
-        const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
-        const job = flowAiShareHandoff.takeJob();
-        const file = flowAiShareHandoff.getFile();
-        if (job && file) {
-          loadMediaFile(file, { skipDurationFilter: true });
-          setLocalText(job.caption || '');
-          
-          const newSelected: Record<string, boolean> = {};
-          accounts.forEach((acc: any) => {
-            const p = acc.platform.toLowerCase();
-            newSelected[p] = job.platforms.includes(p);
-          });
-          setSelectedPlatforms(newSelected);
-
-          if (job.scheduledLocal) {
-            setPublishMode('schedule');
-            // convert YYYY-MM-DD HH:mm to DD.MM.YYYY HH:mm
-            const [dateStr, timeStr] = job.scheduledLocal.split(' ');
-            if (dateStr && timeStr) {
-              const [y, m, d] = dateStr.split('-');
-              setScheduleDate(`${d}.${m}.${y} ${timeStr}`);
-            }
-            if (job.timezone) {
-              setTimezone(job.timezone);
-            }
-          } else {
-            setPublishMode('now');
-          }
-        }
+        // Flow AI'dan gelen video/paylaşım işi varsa uygula (hesaplar yüklendikten sonra)
+        accountsRef.current = accounts;
+        await applyHandoffRef.current?.();
 
       } catch(e) {
         console.warn("Failed to fetch accounts", e);
@@ -258,6 +234,49 @@ export default function SharePage() {
     reader.readAsDataURL(file);
   };
 
+  // Flow AI → Paylaşım Merkezi devri: sayfa açılırken VE sayfa açıkken yeni iş gelirse çalışır.
+  applyHandoffRef.current = async () => {
+    const accounts = accountsRef.current;
+    if (!accounts) return; // hesaplar yüklenince fetchAccounts tekrar çağırır
+    const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
+    const job = flowAiShareHandoff.takeJob();
+    const file = flowAiShareHandoff.getFile();
+    if (!job || !file) return;
+    loadMediaFile(file, { skipDurationFilter: true });
+    setLocalText(job.caption || '');
+
+    const newSelected: Record<string, boolean> = {};
+    accounts.forEach((acc: any) => {
+      const p = acc.platform.toLowerCase();
+      newSelected[p] = job.platforms.includes(p);
+    });
+    setSelectedPlatforms(newSelected);
+
+    if (job.scheduledLocal) {
+      setPublishMode('schedule');
+      // convert YYYY-MM-DD HH:mm to DD.MM.YYYY HH:mm
+      const [dateStr, timeStr] = job.scheduledLocal.split(' ');
+      if (dateStr && timeStr) {
+        const [y, m, d] = dateStr.split('-');
+        setScheduleDate(`${d}.${m}.${y} ${timeStr}`);
+      }
+      if (job.timezone) {
+        setTimezone(job.timezone);
+      }
+    } else {
+      setPublishMode('now');
+    }
+  };
+
+  useEffect(() => {
+    let off: (() => void) | null = null;
+    let alive = true;
+    import('@/lib/flowAiShareHandoff').then(({ flowAiShareHandoff }) => {
+      if (alive) off = flowAiShareHandoff.subscribe(() => { applyHandoffRef.current?.(); });
+    });
+    return () => { alive = false; off?.(); };
+  }, []);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -285,11 +304,19 @@ export default function SharePage() {
 
 
   const handleShare = async () => {
+    // Erken çıkışlarda Flow AI panelinin "paylaşılıyor" durumunda takılı kalmaması için sonucu panele bildir.
+    const bail = async (message: string) => {
+      alert(message);
+      const { flowAiShareHandoff } = await import('@/lib/flowAiShareHandoff');
+      if (flowAiShareHandoff.takeConfirmedRun()) {
+        window.dispatchEvent(new CustomEvent('flowai:share-result', { detail: { ok: false, message } }));
+      }
+    };
     if (needsInstagramCrop) {
-      return alert(t("sharePage.imageContainer.cropWarning"));
+      return bail(t("sharePage.imageContainer.cropWarning"));
     }
     if (!localText.trim()) {
-      return alert(t("sharePage.errors.noText"));
+      return bail(t("sharePage.errors.noText"));
     }
     
     const platformsToShare = Object.keys(selectedPlatforms).filter(p => selectedPlatforms[p]).map(p => {
@@ -353,7 +380,7 @@ export default function SharePage() {
     }).filter(Boolean);
 
     if (platformsToShare.length === 0) {
-      return alert(t("sharePage.errors.noPlatform"));
+      return bail(t("sharePage.errors.noPlatform"));
     }
 
     let finalScheduledFor: string | undefined = undefined;
@@ -367,7 +394,7 @@ export default function SharePage() {
         // Zernio schedule format: YYYY-MM-DDTHH:mm:00 
         finalScheduledFor = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}T${timeParts[0].padStart(2, '0')}:${timeParts[1].padStart(2, '0')}:00`;
       } catch (err) {
-        return alert(t("sharePage.errors.invalidDateFormat"));
+        return bail(t("sharePage.errors.invalidDateFormat"));
       }
     }
 

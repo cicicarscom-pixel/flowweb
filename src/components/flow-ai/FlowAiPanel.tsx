@@ -146,7 +146,9 @@ export default function FlowAiPanel() {
   const [shareJobPending, setShareJobPending] = useState<any | null>(null);
   const [attachmentMeta, setAttachmentMeta] = useState<{ kind: "video"; mimeType: string; durationSec: number; width: number; height: number; sizeBytes: number; fileName: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sharePendingRef = useRef<any>(null);
   const [shareConfirmState, setShareConfirmState] = useState<'IDLE' | 'NOT_READY' | 'STARTED'>('IDLE');
+  sharePendingRef.current = shareJobPending;
   const [platformPick, setPlatformPick] = useState<null | { platform: string; handle: string; eligible: boolean; reason?: string }[]>(null);
   const [pickSel, setPickSel] = useState<Record<string, boolean>>({});
   const voiceRef = useRef<ReturnType<typeof useWebVoice> | null>(null);
@@ -495,6 +497,15 @@ export default function FlowAiPanel() {
               <button type="button" disabled={shareConfirmState === 'STARTED'} onClick={async () => {
                 const state = await flowAiShareHandoff.confirm();
                 setShareConfirmState(state);
+                if (state === 'NOT_READY') {
+                  // Paylaşım Merkezi açık değilse aç; sayfa videoyu alıp hazır olunca (en çok ~10 sn) paylaşımı kendimiz başlat.
+                  router.push(SCREEN_ROUTES.ai_uretim);
+                  for (let i = 0; i < 20 && sharePendingRef.current; i++) {
+                    await new Promise((r) => setTimeout(r, 500));
+                    if (!sharePendingRef.current) break;
+                    if ((await flowAiShareHandoff.confirm()) === 'STARTED') { setShareConfirmState('STARTED'); break; }
+                  }
+                }
               }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", background: "#22B573", color: "#000", fontWeight: 700, cursor: shareConfirmState === 'STARTED' ? "not-allowed" : "pointer", opacity: shareConfirmState === 'STARTED' ? 0.6 : 1 }}>
                 {shareConfirmState === 'STARTED' ? t("share.sharing") : t("share.confirm")}
               </button>

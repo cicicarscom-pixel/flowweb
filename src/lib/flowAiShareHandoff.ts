@@ -17,6 +17,7 @@ class FlowAiShareHandoff {
   private page: SharePageRegistration | null = null;
   private taken = false;
   private confirmedRun = false;
+  private listeners = new Set<() => void>();
 
   attach(file: File) {
     this.file = file;
@@ -37,6 +38,13 @@ class FlowAiShareHandoff {
   setJob(job: ShareJob) {
     this.job = job;
     this.taken = false;
+    // Paylaşım sayfası zaten açıksa (yeniden bağlanmaz) işi hemen alsın.
+    this.listeners.forEach((cb) => { try { cb(); } catch { /* dinleyici hatası akışı bozmaz */ } });
+  }
+
+  subscribe(cb: () => void): () => void {
+    this.listeners.add(cb);
+    return () => { this.listeners.delete(cb); };
   }
 
   takeJob(): ShareJob | null {

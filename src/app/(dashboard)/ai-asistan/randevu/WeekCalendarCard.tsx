@@ -38,6 +38,22 @@ export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dia
             </div>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            const firstFree = daySchedule.find(s => s.status === 'free');
+            const start = firstFree?.local_time || '09:00';
+            setReserveModal({ visible: true, time: start, endTime: add30Mins(start) });
+            setReserveError('');
+            setReserveConflicts([]);
+            setReserveDurationType('range');
+            setReserveScope(activeCalendarId ? 'doctor' : 'clinic');
+          }}
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+        >
+          {t('randevu.block.reserveButton')}
+        </button>
     
         
         {/* Heatmap Grid */}
@@ -94,16 +110,9 @@ export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dia
                           key={row}
                           onClick={(e) => {
                             if (status === 'free' || (status === 'booked' && !activeCalendarId)) {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setMenuConfig({
-                                visible: true,
-                                x: rect.left,
-                                y: rect.bottom,
-                                options: [
-                                  { label: t('randevu.block.createAppointment'), onClick: () => { setNewAppt(prev => ({ ...prev, time: slotTime, calendar_id: activeCalendarId || prev.calendar_id })); setIsModalOpen(true); } },
-                                  { label: t('randevu.block.reserve'), onClick: () => { setReserveModal({ visible: true, time: slotTime, endTime: add30Mins(slotTime) }); setReserveError(''); setReserveConflicts([]); setReserveDurationType('single'); setReserveScope(activeCalendarId ? 'doctor' : 'clinic'); } }
-                                ]
-                              });
+                              // Boş saate tıklamak doğrudan "Yeni Randevu" formunu açar (saat seçili gelir).
+                              setNewAppt(prev => ({ ...prev, time: slotTime, calendar_id: activeCalendarId || prev.calendar_id }));
+                              setIsModalOpen(true);
                             } else if (status === 'blocked') {
                               const rect = e.currentTarget.getBoundingClientRect();
                               setMenuConfig({

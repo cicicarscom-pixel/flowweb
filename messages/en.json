@@ -1339,6 +1339,7 @@
       "reserve": "Reserve",
       "createAppointment": "Create appointment",
       "removeReservation": "Remove reservation",
+      "reserveButton": "Reserve a Time",
       "slotPast": "This time has passed. Pick a later time for a new appointment.",
       "title": "Reserve time",
       "scopeClinic": "Whole clinic",

@@ -12,18 +12,6 @@ export default async function IsletmemPage() {
  <p className="text-on-surface-variant text-sm mt-1">{t("aiMuhasebePage.isletmem.subtitle")}</p>
  </div>
  <div className="flex items-center gap-4">
- {/* Notifications */}
- <button className="relative p-2.5 rounded-xl bg-[#2A2631] border border-[#3A3540] text-on-surface-variant hover:text-[#F6F1EC] transition-colors">
- <i className="fa-regular fa-bell"></i>
- <span className="absolute -top-1 -right-1 bg-[#22B573] text-[#0F1115] text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-[#0F1115]">3</span>
- </button>
- 
- {/* Date Picker */}
- <div className="flex items-center gap-3 bg-[#2A2631] border border-[#3A3540] rounded-xl px-4 py-2.5 cursor-pointer hover:bg-[#23262D] transition-colors">
- <span className="text-sm text-[#F6F1EC] font-medium">{t("aiMuhasebePage.isletmem.todayDate")}</span>
- <i className="fa-regular fa-calendar text-on-surface-variant"></i>
- </div>
- 
  {/* Settings */}
  <button className="p-2.5 rounded-xl bg-[#2A2631] border border-[#3A3540] text-on-surface-variant hover:text-[#F6F1EC] transition-colors">
  <i className="fa-solid fa-gear"></i>

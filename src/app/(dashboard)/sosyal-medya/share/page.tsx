@@ -7,6 +7,18 @@ import { createClient } from "@/lib/supabase/client";
 import CropperModal from '@/components/CropperModal';
 import { PLATFORM_MEDIA_RULES } from '@/lib/platformRules';
 import { useDialog } from "@/components/ui/DialogProvider";
+import { MediaPickerSection } from './MediaPickerSection';
+import { CaptionSection } from './CaptionSection';
+import { AccountSelectorSection } from './AccountSelectorSection';
+import { FacebookSettings } from './FacebookSettings';
+import { InstagramSettings } from './InstagramSettings';
+import { LinkedinSettings } from './LinkedinSettings';
+import { TwitterSettings } from './TwitterSettings';
+import { TiktokSettings } from './TiktokSettings';
+import { PinterestSettings } from './PinterestSettings';
+import { YoutubeSettings } from './YoutubeSettings';
+import { BlueskySettings } from './BlueskySettings';
+import { PublishBar } from './PublishBar';
 
 const PLATFORMS_DATA = [
   { id: "instagram", name: "Instagram", color: "#E1306C", icon: "fa-instagram" },
@@ -532,448 +544,40 @@ export default function SharePage() {
         <div className="max-w-2xl mx-auto space-y-6">
           
           {/* Central Feature: Image Container */}
-          <div className="flex flex-col items-center w-full relative gap-2">
-            <div className="w-full aspect-square max-w-[350px] p-[3px] rounded-[24px] relative group overflow-hidden bg-white/5">
-              {/* Fake Animated Border */}
-              <div className="absolute inset-[-100%] animate-[spin_4s_linear_infinite]" style={{
-                background: 'linear-gradient(to bottom right, transparent 0%, transparent 40%, #FF7A59 90%, #ffffff 100%)'
-              }}></div>
-              
-              <div 
-                className="absolute inset-[3px] bg-[#131314] rounded-[21px] flex items-center justify-center bg-[#2a2a2b]/50 overflow-hidden z-10 cursor-pointer hover:bg-[#2a2a2b]/70 transition-colors"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  hidden 
-                  accept="image/*,video/*" 
-                  onChange={handleFileSelect} 
-                />
-                {localImage ? (
-                  <div className="relative w-full h-full group/image">
-                    {localImage.startsWith('data:video') ? (
-                      <video src={localImage} controls className="w-full h-full object-contain" />
-                    ) : (
-                      <img src={localImage} alt="uploaded" className="w-full h-full object-contain" />
-                    )}
-                    {selectedPlatforms['instagram'] && !localImage.startsWith('data:video') && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setIsCropperOpen(true); }}
-                        className="absolute bottom-4 right-4 bg-gradient-to-r from-[#E1306C] to-[#C13584] text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-[0_4px_12px_rgba(225,48,108,0.4)] opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center gap-2"
-                      >
-                        <i className="fa-solid fa-crop-simple"></i> {t("sharePage.imageContainer.cropButton")}
-                      </button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <div className="mb-4 bg-[#FF7A59]/10 rounded-full p-4 border border-[#FF7A59]/30 border-dashed">
-                      <i className="fa-regular fa-image text-4xl text-[#FF7A59]"></i>
-                    </div>
-                    <span className="text-[#A79E96] text-base text-center px-4 font-medium mb-1">
-                      {t("sharePage.imageContainer.selectTitle")}
-                    </span>
-                    <span className="text-[#A79E96]/60 text-xs text-center px-8">
-                      {t("sharePage.imageContainer.selectSubtitle")}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {needsInstagramCrop && (
-              <div className="mt-2 flex items-center gap-2 bg-[#E1306C]/10 border border-[#E1306C]/30 rounded-lg px-3 py-2 max-w-[350px] w-full">
-                <i className="fa-solid fa-triangle-exclamation text-[#E1306C] shrink-0"></i>
-                <span className="text-[#E1306C] text-xs font-medium flex-1">
-                  {t("sharePage.imageContainer.cropWarning")}
-                </span>
-                <button
-                  onClick={() => setIsCropperOpen(true)}
-                  className="bg-[#E1306C] text-white text-xs font-semibold px-3 py-1.5 rounded-md hover:bg-[#c72a5f] transition-colors shrink-0"
-                >
-                  {t("sharePage.imageContainer.cropNow")}
-                </button>
-              </div>
-            )}
-          </div>
+          <MediaPickerSection fileInputRef={fileInputRef} handleFileSelect={handleFileSelect} localImage={localImage} needsInstagramCrop={needsInstagramCrop} selectedPlatforms={selectedPlatforms} setIsCropperOpen={setIsCropperOpen} t={t} />
 
           {/* Caption Editor */}
-          <div className="w-full p-[3px] rounded-[20px] relative overflow-hidden bg-white/5">
-            <div className="absolute inset-[-100%] animate-[spin_4s_linear_infinite]" style={{
-              background: 'linear-gradient(to bottom right, transparent 0%, transparent 40%, #C2478D 90%, #ffffff 100%)'
-            }}></div>
-            <div className="relative bg-[#131314] rounded-[17px] p-5 z-10">
-              
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-[#F6F1EC] text-lg font-semibold">{t("sharePage.captionEditor.title")}</h2>
-                <button 
-                  onClick={() => setIsEditingCaption(!isEditingCaption)}
-                  className="p-1 hover:bg-white/10 rounded"
-                >
-                  <i className={`fa-solid ${isEditingCaption ? 'fa-check text-[#C2478D]' : 'fa-pen text-[#FF7A59]'}`}></i>
-                </button>
-              </div>
-
-              <div className={`bg-[#201D24]/50 rounded-lg p-3 border ${isEditingCaption ? 'border-[#C2478D]' : 'border-white/5'} min-h-[200px] mb-4`}>
-                {isEditingCaption ? (
-                  <textarea
-                    value={localText}
-                    onChange={(e) => setLocalText(e.target.value)}
-                    placeholder={t("sharePage.captionEditor.editPlaceholder")}
-                    className="w-full h-full bg-transparent text-[#F6F1EC] text-sm leading-5 resize-none focus:outline-none min-h-[180px]"
-                  ></textarea>
-                ) : (
-                  <p className="text-[#A79E96]/80 text-sm leading-5 whitespace-pre-wrap">
-                    {localText || t("sharePage.captionEditor.emptyPreview")}
-                  </p>
-                )}
-              </div>
-
-              {/* AI Chat Input for Caption */}
-              <div className="flex items-center mb-4 gap-2">
-                <input
-                  type="text"
-                  value={aiPrompt}
-                  onChange={(e) => setAiPrompt(e.target.value)}
-                  placeholder={t("sharePage.captionEditor.aiPromptPlaceholder")}
-                  className="flex-1 bg-[#201D24] rounded-full px-4 py-2 text-[#F6F1EC] border border-[#3b494b] focus:outline-none focus:border-[#C2478D] text-sm"
-                />
-                <button 
-                  onClick={generateCaption}
-                  disabled={isGeneratingText}
-                  className={`w-10 h-10 rounded-full ${isGeneratingText ? 'bg-[#C2478D]/50' : 'bg-[#C2478D] hover:bg-[#a10ce0]'} flex items-center justify-center shrink-0 transition-colors`}
-                >
-                  {isGeneratingText ? (
-                    <i className="fa-solid fa-circle-notch fa-spin text-white"></i>
-                  ) : (
-                    <i className="fa-solid fa-wand-magic-sparkles text-white"></i>
-                  )}
-                </button>
-              </div>
-              <p
-                data-testid="ai-caption-note"
-                className={`text-[11px] leading-4 mb-4 ${localImage?.startsWith('data:video') ? 'text-[#F5A524] font-semibold' : 'text-[#A79E96]/80'}`}
-              >
-                {t("sharePage.captionEditor.aiCaptionNote")}
-              </p>
-
-              <div className="flex flex-wrap gap-2 items-center mt-2">
-                {tags.map(tag => (
-                  <button 
-                    key={tag} 
-                    onClick={() => setLocalText(prev => prev + (prev && !prev.endsWith(' ') && !prev.endsWith('\n') ? ' ' : '') + '#' + tag)} 
-                    className="bg-[#FF7A59]/10 px-3 py-1 rounded-full border border-[#FF7A59]/20 text-[#FF7A59] text-xs font-medium hover:bg-[#FF7A59]/20 transition-colors"
-                  >
-                    #{tag}
-                  </button>
-                ))}
-                
-                {isAddingTag ? (
-                  <div className="flex items-center bg-[#201D24] rounded-full px-2 py-1 border border-[#22B573]/50 shadow-[0_0_8px_rgba(34,181,115,0.2)]">
-                    <span className="text-[#22B573] text-xs mr-1 font-medium">#</span>
-                    <input 
-                      type="text" 
-                      value={newTagText}
-                      onChange={e => setNewTagText(e.target.value.replace(/[^a-zA-Z0-9_ğüşıöçĞÜŞİÖÇ]/g, ''))}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          if (newTagText.trim() && !tags.includes(newTagText.trim())) {
-                            setTags(prev => [...prev, newTagText.trim()]);
-                            setNewTagText("");
-                            setIsAddingTag(false);
-                          }
-                        } else if (e.key === 'Escape') {
-                          setIsAddingTag(false);
-                          setNewTagText("");
-                        }
-                      }}
-                      onBlur={() => {
-                        if (newTagText.trim() && !tags.includes(newTagText.trim())) {
-                          setTags(prev => [...prev, newTagText.trim()]);
-                        }
-                        setNewTagText("");
-                        setIsAddingTag(false);
-                      }}
-                      autoFocus
-                      className="bg-transparent text-[#F6F1EC] text-xs font-medium outline-none w-20"
-                      placeholder="yaz"
-                    />
-                  </div>
-                ) : (
-                  <button onClick={() => setIsAddingTag(true)} className="px-3 py-1 flex items-center gap-1 hover:bg-white/5 rounded-full transition-colors text-[#A79E96]">
-                    <i className="fa-solid fa-plus text-xs"></i>
-                    <span className="text-xs font-medium">{t("sharePage.captionEditor.addTagButton")}</span>
-                  </button>
-                )}
-              </div>
-
-            </div>
-          </div>
+          <CaptionSection aiPrompt={aiPrompt} generateCaption={generateCaption} isAddingTag={isAddingTag} isEditingCaption={isEditingCaption} isGeneratingText={isGeneratingText} localImage={localImage} localText={localText} newTagText={newTagText} setAiPrompt={setAiPrompt} setIsAddingTag={setIsAddingTag} setIsEditingCaption={setIsEditingCaption} setLocalText={setLocalText} setNewTagText={setNewTagText} setTags={setTags} t={t} tags={tags} />
 
           {/* Profiles Section */}
-          <div className="mt-6">
-            <label className="block text-[#A79E96] text-xs font-medium mb-3">{t("sharePage.accounts.label")}</label>
-
-            {zernioAccounts.length === 0 ? (
-              <div className="text-center p-4 bg-[#201D24]/30 rounded-lg border border-white/5">
-                <p className="text-[#A79E96]/70 text-xs mb-2">{t("sharePage.accounts.noneConnected")}</p>
-                <Link href="/sosyal-medya" className="text-[#22B573] text-xs font-medium">{t("sharePage.accounts.connectLink")}</Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {zernioAccounts.map((acc, i) => {
-                  const platformKey = acc.platform.toLowerCase();
-                  const platformConfig = PLATFORMS_DATA.find(p => p.id === platformKey) || {
-                    id: platformKey,
-                    name: acc.platform,
-                    color: "#F6F1EC",
-                    icon: "fa-globe"
-                  };
-                  const isSelected = selectedPlatforms[platformKey];
-                  return (
-                    <button 
-                      key={acc.id || i}
-                      onClick={() => togglePlatform(platformKey)}
-                      className={`flex items-center justify-between rounded-lg border p-3 transition-all ${
-                        isSelected ? 'bg-[#22B573]/10 border-[#22B573]/50 shadow-[0_0_10px_rgba(34,181,115,0.15)]' : 'bg-[#201D24]/50 border-white/5 hover:border-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 overflow-hidden">
-                        {platformConfig.icon && !platformConfig.icon.startsWith('fa-') ? (
-                          <span className="text-xl shrink-0 leading-none">{platformConfig.icon}</span>
-                        ) : (
-                          <i className={`fa-brands ${platformConfig.icon} text-xl shrink-0`} style={{ color: platformKey === 'twitter' && !isSelected ? '#A79E96' : platformConfig.color }}></i>
-                        )}
-                        <div className="flex flex-col items-start overflow-hidden text-left">
-                          <span className="text-[#F6F1EC] text-[12px] font-semibold truncate w-full">{platformConfig.name}</span>
-                          <span className="text-[#A79E96]/60 text-[10px] truncate w-full">@{acc.username || platformKey}</span>
-                        </div>
-                      </div>
-                      {isSelected && (
-                        <div className="w-4 h-4 rounded-full bg-[#22B573] flex items-center justify-center shrink-0 ml-1">
-                          <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>
-                        </div>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+          <AccountSelectorSection PLATFORMS_DATA={PLATFORMS_DATA} selectedPlatforms={selectedPlatforms} t={t} togglePlatform={togglePlatform} zernioAccounts={zernioAccounts} />
 
           {/* Platform Specific Settings */}
           <div className="mt-6 flex flex-col gap-4">
             
             {/* Facebook */}
-            {selectedPlatforms['facebook'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#1877F2]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#1877F2] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <i className="fa-brands fa-facebook text-[#1877F2]"></i>
-                      <span className="text-[#F6F1EC] font-semibold text-sm">Facebook</span>
-                    </div>
-                    <div className="flex bg-[#201D24]/50 p-1 rounded-lg border border-white/5">
-                      {['Feed', 'Story', 'Reel'].map(fmt => (
-                        <button key={fmt} onClick={() => setFbFormat(fmt)} className={`px-3 py-1 rounded-md text-[10px] font-medium transition-colors ${fbFormat === fmt ? 'bg-[#1877F2] text-white' : 'text-[#A79E96]'}`}>{fmt}</button>
-                      ))}
-                    </div>
-                  </div>
-                  {fbFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">{t("sharePage.platforms.storyWarning")}</p>}
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
-                  <textarea value={fbFirstComment} onChange={e => setFbFirstComment(e.target.value)} placeholder={t("sharePage.platforms.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{fbFirstComment.length}/8000</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={fbCustomCaption} onChange={e => setFbCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#1877F2]/50"></textarea>
-                </div>
-              </div>
-            )}
+            <FacebookSettings fbCustomCaption={fbCustomCaption} fbFirstComment={fbFirstComment} fbFormat={fbFormat} selectedPlatforms={selectedPlatforms} setFbCustomCaption={setFbCustomCaption} setFbFirstComment={setFbFirstComment} setFbFormat={setFbFormat} t={t} />
 
             {/* Instagram */}
-            {selectedPlatforms['instagram'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#C2478D]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#C2478D] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
-                    <div className="flex items-center gap-2">
-                      <i className="fa-brands fa-instagram text-[#C2478D]"></i>
-                      <span className="text-[#F6F1EC] font-semibold text-sm">Instagram</span>
-                    </div>
-                    <div className="flex bg-[#201D24]/50 p-1 rounded-lg border border-white/5">
-                      {['Feed', 'Story', 'Reel', 'Carousel'].map(fmt => (
-                        <button key={fmt} onClick={() => setIgFormat(fmt)} className={`px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${igFormat === fmt ? 'bg-[#C2478D] text-white' : 'text-[#A79E96]'}`}>{fmt}</button>
-                      ))}
-                    </div>
-                  </div>
-                  {igFormat === 'Story' && <p className="text-[#A79E96]/70 text-[11px] mb-4">{t("sharePage.platforms.storyWarning")}</p>}
-                  <button onClick={() => setIgAiLabel(!igAiLabel)} className="flex items-start gap-2 mb-4 group text-left">
-                    <div className={`mt-0.5 w-4 h-4 rounded-sm border flex items-center justify-center shrink-0 transition-colors ${igAiLabel ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
-                      {igAiLabel && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
-                    </div>
-                    <div>
-                      <p className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.instagram.aiLabelTitle")}</p>
-                      <p className="text-[#A79E96]/60 text-[10px] mt-0.5 leading-tight">{t("sharePage.instagram.aiLabelDescription")}</p>
-                    </div>
-                  </button>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
-                  <textarea value={igFirstComment} onChange={e => setIgFirstComment(e.target.value)} placeholder={t("sharePage.platforms.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{igFirstComment.length}/2200</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={igCustomCaption} onChange={e => setIgCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#C2478D]/50"></textarea>
-                </div>
-              </div>
-            )}
+            <InstagramSettings igAiLabel={igAiLabel} igCustomCaption={igCustomCaption} igFirstComment={igFirstComment} igFormat={igFormat} selectedPlatforms={selectedPlatforms} setIgAiLabel={setIgAiLabel} setIgCustomCaption={setIgCustomCaption} setIgFirstComment={setIgFirstComment} setIgFormat={setIgFormat} t={t} />
 
             {/* LinkedIn */}
-            {selectedPlatforms['linkedin'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#0A66C2]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0A66C2] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <i className="fa-brands fa-linkedin text-[#0A66C2]"></i>
-                    <span className="text-[#F6F1EC] font-semibold text-sm">LinkedIn</span>
-                  </div>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.firstCommentLabel")}</label>
-                  <textarea value={liFirstComment} onChange={e => setLiFirstComment(e.target.value)} placeholder={t("sharePage.linkedin.firstCommentPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mb-4">{liFirstComment.length}/1250</p>
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={liCustomCaption} onChange={e => setLiCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0A66C2]/50"></textarea>
-                </div>
-              </div>
-            )}
+            <LinkedinSettings liCustomCaption={liCustomCaption} liFirstComment={liFirstComment} selectedPlatforms={selectedPlatforms} setLiCustomCaption={setLiCustomCaption} setLiFirstComment={setLiFirstComment} t={t} />
 
             {/* Twitter/X */}
-            {selectedPlatforms['twitter'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-white/10 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-30"></div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <i className="fa-brands fa-x-twitter text-white"></i>
-                    <span className="text-[#F6F1EC] font-semibold text-sm">X (Twitter)</span>
-                  </div>
-                  <button onClick={() => setTwIsThread(!twIsThread)} className="flex items-center gap-2 mb-4 group">
-                    <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${twIsThread ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
-                      {twIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
-                    </div>
-                    <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.twitter.threadToggle")}</span>
-                  </button>
-                  {twIsThread && <p className="text-[#A79E96]/70 text-[10px] mb-4">{t("sharePage.twitter.threadDescription")}</p>}
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={twCustomCaption} onChange={e => setTwCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-white/30"></textarea>
-                </div>
-              </div>
-            )}
+            <TwitterSettings selectedPlatforms={selectedPlatforms} setTwCustomCaption={setTwCustomCaption} setTwIsThread={setTwIsThread} t={t} twCustomCaption={twCustomCaption} twIsThread={twIsThread} />
 
             {/* TikTok */}
-            {selectedPlatforms['tiktok'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#FF7A59]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF7A59] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <i className="fa-brands fa-tiktok text-[#FF7A59]"></i>
-                    <span className="text-[#F6F1EC] font-semibold text-sm">TikTok</span>
-                  </div>
-                  
-                  <label className="flex items-start gap-3 cursor-pointer mb-4 p-3 rounded-lg border border-white/5 bg-[#201D24]/50 hover:bg-[#201D24]/80 transition-colors">
-                    <div className="mt-0.5">
-                      <input 
-                        type="checkbox" 
-                        checked={ttSaveToInbox} 
-                        onChange={(e) => setTtSaveToInbox(e.target.checked)}
-                        className="w-4 h-4 rounded border-white/20 bg-transparent text-[#FF7A59] focus:ring-0 focus:ring-offset-0"
-                      />
-                    </div>
-                    <div>
-                      <span className="block text-[#F6F1EC] text-xs font-semibold mb-1">{t("sharePage.tiktok.saveToInboxTitle")}</span>
-                      <span className="block text-[#A79E96]/70 text-[10px] leading-relaxed">
-                        {t("sharePage.tiktok.saveToInboxDescription")}
-                      </span>
-                    </div>
-                  </label>
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={ttCustomCaption} onChange={e => setTtCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF7A59]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{ttCustomCaption.length}/2200</p>
-                </div>
-              </div>
-            )}
+            <TiktokSettings selectedPlatforms={selectedPlatforms} setTtCustomCaption={setTtCustomCaption} setTtSaveToInbox={setTtSaveToInbox} t={t} ttCustomCaption={ttCustomCaption} ttSaveToInbox={ttSaveToInbox} />
 
             {/* Pinterest */}
-            {selectedPlatforms['pinterest'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#E60023]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#E60023] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <i className="fa-brands fa-pinterest text-[#E60023]"></i>
-                    <span className="text-[#F6F1EC] font-semibold text-sm">Pinterest</span>
-                  </div>
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.pinterest.titleLabel")}</label>
-                  <input type="text" value={pinTitle} onChange={e => setPinTitle(e.target.value)} placeholder={t("sharePage.pinterest.titlePlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#A79E96]/50 text-[10px] mb-4">{t("sharePage.pinterest.titleHint")}</p>
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.pinterest.linkLabel")}</label>
-                  <input type="url" value={pinLink} onChange={e => setPinLink(e.target.value)} placeholder="https://example.com" className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-1 focus:outline-none focus:border-[#E60023]/50" />
-                  <p className="text-[#A79E96]/50 text-[10px] mb-4">{t("sharePage.pinterest.linkHint")}</p>
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={pinCustomCaption} onChange={e => setPinCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#E60023]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{pinCustomCaption.length}/500</p>
-                </div>
-              </div>
-            )}
+            <PinterestSettings pinCustomCaption={pinCustomCaption} pinLink={pinLink} pinTitle={pinTitle} selectedPlatforms={selectedPlatforms} setPinCustomCaption={setPinCustomCaption} setPinLink={setPinLink} setPinTitle={setPinTitle} t={t} />
 
             {/* YouTube */}
-            {selectedPlatforms['youtube'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#FF0000]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF0000] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <i className="fa-brands fa-youtube text-[#FF0000]"></i>
-                      <span className="text-[#F6F1EC] font-semibold text-sm">YouTube</span>
-                    </div>
-                    <select value={ytPrivacy} onChange={e => setYtPrivacy(e.target.value)} className="bg-[#201D24]/50 border border-white/5 rounded text-[#F6F1EC] text-[11px] px-2 py-1 outline-none">
-                      <option value="public">{t("sharePage.youtube.privacyPublic")}</option>
-                      <option value="unlisted">{t("sharePage.youtube.privacyUnlisted")}</option>
-                      <option value="private">{t("sharePage.youtube.privacyPrivate")}</option>
-                    </select>
-                  </div>
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.titleLabel")}</label>
-                  <input type="text" value={ytTitle} onChange={e => setYtTitle(e.target.value)} placeholder={t("sharePage.youtube.titlePlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 mb-4 focus:outline-none focus:border-[#FF0000]/50" />
-
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.youtube.descriptionLabel")}</label>
-                  <textarea value={ytCustomCaption} onChange={e => setYtCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#FF0000]/50"></textarea>
-                </div>
-              </div>
-            )}
+            <YoutubeSettings selectedPlatforms={selectedPlatforms} setYtCustomCaption={setYtCustomCaption} setYtPrivacy={setYtPrivacy} setYtTitle={setYtTitle} t={t} ytCustomCaption={ytCustomCaption} ytPrivacy={ytPrivacy} ytTitle={ytTitle} />
 
             {/* Bluesky */}
-            {selectedPlatforms['bluesky'] && (
-              <div className="bg-[#201D24]/30 rounded-[14px] border border-[#0085ff]/20 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0085ff] to-transparent opacity-50"></div>
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-lg leading-none">☁️</span>
-                    <span className="text-[#F6F1EC] font-semibold text-sm">Bluesky</span>
-                  </div>
-                  <button onClick={() => setBskyIsThread(!bskyIsThread)} className="flex items-center gap-2 mb-4 group">
-                    <div className={`w-4 h-4 rounded-sm border flex items-center justify-center transition-colors ${bskyIsThread ? 'bg-[#22B573] border-[#22B573]' : 'border-white/20 group-hover:border-white/40'}`}>
-                      {bskyIsThread && <i className="fa-solid fa-check text-[10px] text-[#003824]"></i>}
-                    </div>
-                    <span className="text-[#F6F1EC] text-xs font-medium">{t("sharePage.bluesky.threadToggle")}</span>
-                  </button>
-                  {bskyIsThread && <p className="text-[#A79E96]/70 text-[10px] mb-4">{t("sharePage.bluesky.threadDescription")}</p>}
-                  <label className="block text-[#A79E96] text-xs font-medium mb-1">{t("sharePage.platforms.customCaptionLabel")}</label>
-                  <textarea value={bskyCustomCaption} onChange={e => setBskyCustomCaption(e.target.value)} placeholder={t("sharePage.platforms.customCaptionPlaceholder")} className="w-full bg-[#201D24]/50 border border-white/5 rounded-lg text-[#F6F1EC] text-sm px-3 py-2 min-h-[60px] resize-none focus:outline-none focus:border-[#0085ff]/50"></textarea>
-                  <p className="text-[#A79E96]/50 text-[10px] text-right mt-1">{bskyCustomCaption.length}/300</p>
-                </div>
-              </div>
-            )}
+            <BlueskySettings bskyCustomCaption={bskyCustomCaption} bskyIsThread={bskyIsThread} selectedPlatforms={selectedPlatforms} setBskyCustomCaption={setBskyCustomCaption} setBskyIsThread={setBskyIsThread} t={t} />
 
             {/* Publishing Settings */}
             <div className="mt-2 bg-[#201D24]/50 rounded-[14px] border border-white/5 p-4 mb-20">
@@ -1015,35 +619,7 @@ export default function SharePage() {
           </div>
 
           {/* Publish Button Bar */}
-          <div className="fixed bottom-0 left-0 lg:left-64 right-0 p-5 bg-gradient-to-t from-[#17151A] to-transparent pointer-events-none flex justify-center z-50">
-            <button 
-              onClick={handleShare}
-              disabled={isSharing || needsInstagramCrop}
-              className={`relative overflow-hidden w-full max-w-sm py-3.5 rounded-full ${isSharing || needsInstagramCrop ? 'bg-[#2A2631] opacity-50 cursor-not-allowed' : 'bg-gradient-to-r from-[#22B573] to-[#FF7A59] hover:opacity-90'} text-[#17151A] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(34,181,115,0.3)] transition-opacity pointer-events-auto`}
-            >
-              {(isSharing || needsInstagramCrop) && (
-                <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#22B573] to-[#FF7A59] opacity-40 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
-              )}
-              <div className={`relative flex items-center gap-2 z-10 ${(isSharing || needsInstagramCrop) ? 'text-white' : 'text-[#17151A]'}`}>
-                {isSharing ? (
-                  <>
-                    <i className="fa-solid fa-spinner fa-spin"></i>
-                    <span>{t("sharePage.publishButton.loading", { progress: uploadProgress })}</span>
-                  </>
-                ) : needsInstagramCrop ? (
-                  <>
-                    <i className="fa-solid fa-triangle-exclamation"></i>
-                    <span>{t("sharePage.publishButton.cropRequiredPublishButton")}</span>
-                  </>
-                ) : (
-                  <>
-                    <i className="fa-solid fa-paper-plane"></i>
-                    <span>{t("sharePage.publishButton.now")}</span>
-                  </>
-                )}
-              </div>
-            </button>
-          </div>
+          <PublishBar handleShare={handleShare} isSharing={isSharing} needsInstagramCrop={needsInstagramCrop} t={t} uploadProgress={uploadProgress} />
           
         </div>
       </div>

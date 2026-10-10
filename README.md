@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[10.10.2026] Muhasebeci bağlantı kodu sertleştirme (Faz E2, web tarafı):** Muhasebecim sayfası yeni `RATE_LIMITED` yanıtını gösterir (çok fazla hatalı kod → "15 dakika sonra tekrar deneyin"; `aiMuhasebePage.muhasebecim.rateLimited`, tr/en/de). Veritabanı tarafı (deneme sınırı, sahipsiz firma kodlarının kullanılamaması, harf duyarsız kod) canlıda; ayrıntı: ledger `docs/FAZ_E_PLAN.md`.
 - **[10.10.2026] Analiz (YouTube):** `get-youtube-daily-views` çağrısı kaldırıldı. Zernio'nun bu uç noktası tek bir videoya aittir (`videoId` zorunlu); sayfa videoId vermediği için her YouTube seçiminde konsola "Invalid input: expected string, received undefined" uyarısı düşüyordu ve dönen veri hiç kullanılamıyordu. Kanal zaman serisi `get-daily-metrics`'ten gelmeye devam ediyor (görünüm değişmedi).
 - **[10.10.2026] Belgeler:** `AGENTS.md` §3 gerçek duruma getirildi — veritabanında tek tenant kimliği `organizations.id` (eski "sahibin kullanıcı kimliği" modeli Faz F ile bitti); Faz D ve F kapalı.
 - **[10.10.2026] Ölü kod temizliği (web):** `src/actions/social.ts` silindi. Hiçbir yerden çağrılmıyordu ve veritabanında bulunmayan `inbox_messages` tablosuna başvuruyordu (`getPosts`, `createPost`, `deletePost`, `getMessages`, `replyToMessage`, `getSocialAccounts`). Bu işlemlerin gerçek karşılıkları ilgili sayfaların kendi sorgularında.

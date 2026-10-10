@@ -14,8 +14,6 @@
 | `tsconfig.json` | TypeScript ayarı | **Evet** | Dokunma |
 | `package.json` | Bağımlılıklar ve betikler | **Evet** | Talimatla |
 | `package-lock.json` | Bağımlılık kilidi (npm) | **Evet** | Dokunma |
-| `pnpm-lock.yaml` | Bağımlılık kilidi (pnpm) — npm kilidiyle birlikte duruyor; hangisinin geçerli olduğu netleştirilecek | Belirsiz | Dokunma |
-| `pnpm-workspace.yaml` | pnpm ayarı | Belirsiz | Dokunma |
 | `.npmrc` | npm ayarı | **Evet** | Dokunma |
 | `deno.lock` | Deno kilidi (Next uygulamasında kullanılmıyor gibi; netleştirilecek) | Belirsiz | Dokunma |
 | `scripts/` | CI kontrolleri (`scripts/ci/`) | Hayır (CI) | Dokunma |

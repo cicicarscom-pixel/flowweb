@@ -109,6 +109,7 @@ node scripts/ci/check-root-map.mjs
 npx tsc --noEmit -p .
 node scripts/ci/eslint-ratchet.mjs scripts/ci/eslint-baseline.json src
 ```
+**Tek kilit dosyası `package-lock.json`'dur (npm).** `pnpm-lock.yaml` / `pnpm-workspace.yaml` EKLENMEZ: Vercel kilit dosyasına göre paket yöneticisini seçer ve eski `pnpm-lock.yaml` `package.json` ile uyumsuz kalınca `pnpm install` çöküp üretim dağıtımını durdurmuştu (10.10.2026). `package.json` değişirse `package-lock.json` da `npm install` ile güncellenir.
 `tsc` çıktısı boş olmalı. ESLint çıtası: hata/uyarı sayısı `scripts/ci/eslint-baseline.json` tabanını AŞAMAZ; sayı düşerse taban düşürülür (yükseltmek yasak). Yerel çalıştırma için önce `npm ci`.
 
 ## 6. Açık işler (özet)

@@ -73,7 +73,7 @@ export function ReserveModal({ activeCalendarId, add30Mins, calendars, isSaving,
       </div>
     </div>
     
-    {reserveDurationType === 'range' && (
+    {(
       <div style={{ display: 'flex', gap: 12 }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.start")}</span>
@@ -81,7 +81,7 @@ export function ReserveModal({ activeCalendarId, add30Mins, calendars, isSaving,
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.end")}</span>
-          <input type="time" step="1800" value={reserveModal.endTime} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
+          <input type="time" step="1800" value={reserveModal.endTime} readOnly={reserveDurationType !== 'range'} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6, opacity: reserveDurationType === 'range' ? 1 : 0.5 }} />
         </div>
       </div>
     )}

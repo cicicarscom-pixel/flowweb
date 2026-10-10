@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[10.10.2026] Saati Rezerve Et: saat artık görünür ve ayarlanır (web):** "Tek slot" modunda da Başlangıç saati görünür ve değiştirilebilir; Bitiş otomatik +30 dk gösterilir (soluk). "Başlangıç-bitiş" modunda ikisi de düzenlenir.
 - **[10.10.2026] Randevu: sadeleşen akış (web):** Boş saat hücresine tıklamak artık menü açmak yerine doğrudan "Yeni Randevu" formunu açar (saat seçili gelir). Saati kapatma (mola/izin/toplantı) ayrı bir **"Saati Rezerve Et"** düğmesine taşındı (ilk boş saat ve aralık seçimiyle açılır); rezerveli (kesikli) saate tıklayınca "Rezervasyonu kaldır" aynen çıkar. Metin: `randevu.block.reserveButton` (tr/en/de).
 - **[10.10.2026] Randevu: geçmiş saat bildirimi:** Saati geçmiş (soluk) saat hücresine dokunulunca artık sessiz kalmıyor; "Bu saat geçti. Yeni randevu için ileri bir saat seçin." uyarısı çıkıyor (`randevu.block.slotPast`, tr/en/de). Geçmiş saatlere yeni randevu/rezervasyon açılmaz (kural değişmedi).
 - **[10.10.2026] Bağımlılık güvenliği (Faz 10, web):** Next.js'in içinde gömülü eski `postcss` (güvenlik bulguları: sourceMappingURL ile dosya okuma, `</style>` XSS) `package.json` `overrides` ile `^8.5.23`'e sabitlendi; `npm audit` bulguları 11 → 9. Kalan 9 bulgu yalnızca geliştirme/derleme aracı bağımlılıkları (Tailwind 3 ve `eslint-config-next` içindeki `braces`/`chokidar`/`micromatch`/`fast-glob`) ve çözümleri büyük sürüm geçişi (Tailwind 4, Next 16) gerektiriyor; üretimde işlenmiyorlar, ayrı bir iş olarak planlanır.

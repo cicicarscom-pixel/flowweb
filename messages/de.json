@@ -1339,6 +1339,7 @@
       "reserve": "Reservieren",
       "createAppointment": "Termin erstellen",
       "removeReservation": "Reservierung entfernen",
+      "slotPast": "Diese Zeit ist vorbei. Wählen Sie für einen neuen Termin eine spätere Zeit.",
       "title": "Zeit reservieren",
       "scopeClinic": "Gesamte Praxis",
       "singleSlot": "Einzelner Slot",

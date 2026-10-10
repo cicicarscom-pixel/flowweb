@@ -1333,6 +1333,7 @@
       "reserve": "Rezerve et",
       "createAppointment": "Randevu oluştur",
       "removeReservation": "Rezervasyonu kaldır",
+      "slotPast": "Bu saat geçti. Yeni randevu için ileri bir saat seçin.",
       "title": "Saati rezerve et",
       "scopeClinic": "Tüm klinik",
       "singleSlot": "Tek slot",

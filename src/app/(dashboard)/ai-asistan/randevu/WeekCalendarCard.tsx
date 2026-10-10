@@ -122,6 +122,8 @@ export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dia
                                   }, destructive: true }
                                 ]
                               });
+                            } else if (status === 'past') {
+                              dialog.alert(t('randevu.block.slotPast'));
                             }
                           }}
                           onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}

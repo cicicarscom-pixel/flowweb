@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[11.10.2026] Rezerve kapsamı etiketleri nötr (web):** "Tüm klinik / Seçili doktor" yerine "Tüm takvimler / Seçili takvim" (tr/en/de); her işletme türüne uygun.
 - **[10.10.2026] Saati Rezerve Et: saat artık görünür ve ayarlanır (web):** "Tek slot" modunda da Başlangıç saati görünür ve değiştirilebilir; Bitiş otomatik +30 dk gösterilir (soluk). "Başlangıç-bitiş" modunda ikisi de düzenlenir.
 - **[10.10.2026] Randevu: sadeleşen akış (web):** Boş saat hücresine tıklamak artık menü açmak yerine doğrudan "Yeni Randevu" formunu açar (saat seçili gelir). Saati kapatma (mola/izin/toplantı) ayrı bir **"Saati Rezerve Et"** düğmesine taşındı (ilk boş saat ve aralık seçimiyle açılır); rezerveli (kesikli) saate tıklayınca "Rezervasyonu kaldır" aynen çıkar. Metin: `randevu.block.reserveButton` (tr/en/de).
 - **[10.10.2026] Randevu: geçmiş saat bildirimi:** Saati geçmiş (soluk) saat hücresine dokunulunca artık sessiz kalmıyor; "Bu saat geçti. Yeni randevu için ileri bir saat seçin." uyarısı çıkıyor (`randevu.block.slotPast`, tr/en/de). Geçmiş saatlere yeni randevu/rezervasyon açılmaz (kural değişmedi).

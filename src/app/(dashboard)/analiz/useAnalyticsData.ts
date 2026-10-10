@@ -231,7 +231,6 @@ export function useAnalyticsData(selectedPlatform: Platform, selectedTimeRange: 
       type PlatformResult =
         | { kind: 'all'; follow: any }
         | { kind: 'instagram'; demo: any; follow: any }
-        | { kind: 'youtube'; yt: any }
         | { kind: 'tiktok'; tk: any }
         | { kind: 'none' };
 
@@ -245,9 +244,9 @@ export function useAnalyticsData(selectedPlatform: Platform, selectedTimeRange: 
             invokeZernio('get-instagram-follower-history', accountPayload)
           ]).then(([demo, follow]) => ({ kind: 'instagram' as const, demo, follow }));
         }
-        if (selectedPlatform.id === 'youtube' && singleAccountId) {
-          return invokeZernio('get-youtube-daily-views', accountPayload).then(yt => ({ kind: 'youtube' as const, yt }));
-        }
+        // YouTube: Zernio'nun getYouTubeDailyViews uç noktası VİDEO bazlıdır (videoId zorunlu); kanal geneli için
+        // kullanılamaz ve eskiden her seferinde "Invalid input: expected string" uyarısı veriyordu. Kanal zaman serisi
+        // zaten get-daily-metrics'ten geliyor; bu çağrı kaldırıldı.
         if (selectedPlatform.id === 'tiktok' && singleAccountId) {
           return invokeZernio('get-tiktok-insights', accountPayload).then(tk => ({ kind: 'tiktok' as const, tk }));
         }
@@ -382,14 +381,6 @@ export function useAnalyticsData(selectedPlatform: Platform, selectedTimeRange: 
             date: v.end_time ? v.end_time.substring(5,10) : ''
           }));
           newZernioData.totalFollowers = newZernioData.followerStats[newZernioData.followerStats.length-1]?.followers || 0;
-        }
-      } else if (platformResult.kind === 'youtube') {
-        if (platformResult.yt.rows) {
-           newZernioData.timelineData = platformResult.yt.rows.map((r: any) => ({
-             views: parseInt(r[1]),
-             likes: 0,
-             date: r[0]
-           }));
         }
       } else if (platformResult.kind === 'tiktok') {
         if (platformResult.tk.data?.stats) {

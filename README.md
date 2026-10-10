@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[10.10.2026] Analiz (YouTube):** `get-youtube-daily-views` çağrısı kaldırıldı. Zernio'nun bu uç noktası tek bir videoya aittir (`videoId` zorunlu); sayfa videoId vermediği için her YouTube seçiminde konsola "Invalid input: expected string, received undefined" uyarısı düşüyordu ve dönen veri hiç kullanılamıyordu. Kanal zaman serisi `get-daily-metrics`'ten gelmeye devam ediyor (görünüm değişmedi).
 - **[10.10.2026] Belgeler:** `AGENTS.md` §3 gerçek duruma getirildi — veritabanında tek tenant kimliği `organizations.id` (eski "sahibin kullanıcı kimliği" modeli Faz F ile bitti); Faz D ve F kapalı.
 - **[10.10.2026] Ölü kod temizliği (web):** `src/actions/social.ts` silindi. Hiçbir yerden çağrılmıyordu ve veritabanında bulunmayan `inbox_messages` tablosuna başvuruyordu (`getPosts`, `createPost`, `deletePost`, `getMessages`, `replyToMessage`, `getSocialAccounts`). Bu işlemlerin gerçek karşılıkları ilgili sayfaların kendi sorgularında.
 - **[10.10.2026] Analiz: bağlantısı kopmuş hesap artık sorgulanmıyor:** Analiz sayfası hesap listesini `is_active`/`needs_reconnection` süzmeden okuyordu; bağlantısı kopmuş (`is_active=false`, `needs_reconnection=true`) Instagram kaydı için Instagram seçilince `get-instagram-demographics` / `get-instagram-follower-history` istekleri "Forbidden: Account not owned by this organization" uyarısı veriyordu. Diğer sayfalarla (Gelen Kutusu, Paylaşım, Sosyal Medya) aynı süzgeç eklendi.

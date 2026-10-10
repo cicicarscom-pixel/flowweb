@@ -1,0 +1,699 @@
+"use client";
+
+import React from "react";
+import {
+  LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  BarChart, Bar, ScatterChart, Scatter, ZAxis, Legend
+} from "recharts";
+import type { useTranslations } from "next-intl";
+import { CustomTooltip } from "./CustomTooltip";
+import { PLATFORMS, type Platform } from "./analizConfig";
+import type { ZernioData, InternalStats } from "./useAnalyticsData";
+
+type T = ReturnType<typeof useTranslations>;
+
+export type PostingAnalyticsProps = {
+  t: T;
+  dayShort: string[];
+  zernioData: ZernioData;
+  stats: InternalStats;
+  isLoading: boolean;
+  selectedPlatform: Platform;
+  chartMetric: string;
+  setChartMetric: (m: string) => void;
+  postTimelineMetrics: string[];
+  setPostTimelineMetrics: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+export function PostingAnalytics({
+  t, dayShort, zernioData, stats, isLoading, selectedPlatform,
+  chartMetric, setChartMetric, postTimelineMetrics, setPostTimelineMetrics,
+}: PostingAnalyticsProps) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingBottom: 60 }}>
+      {/* Key Metrics Grid */}
+      {(() => {
+        const totalViews = zernioData.timelineData.reduce((acc: any, d: any) => acc + (d.views || 0), 0);
+        const totalEng = zernioData.timelineData.reduce((acc: any, d: any) => acc + (d.likes || 0) + (d.comments || 0) + (d.shares || 0) + (d.saves || 0), 0);
+        const overallER = totalViews > 0 ? ((totalEng / totalViews) * 100).toFixed(2) : '0.00';
+
+        const topPost = zernioData.postAnalytics && zernioData.postAnalytics.length > 0 ? [...zernioData.postAnalytics].sort((a: any, b: any) => {
+          const mA = a.analytics || a.metrics || a || {};
+          const mB = b.analytics || b.metrics || b || {};
+          const engA = (mA.likes || 0) + (mA.comments || 0) + (mA.shares || 0) + (mA.impressions || mA.views || 0);
+          const engB = (mB.likes || 0) + (mB.comments || 0) + (mB.shares || 0) + (mB.impressions || mB.views || 0);
+          return engB - engA;
+        })[0] : null;
+
+        return (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 16 }}>
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,122,89,0.3)" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>{t("analizPage.posting.totalPosts")}</p>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "#FF7A59", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalPosts || stats.totalPosts || 0}</p>
+            </div>
+            
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(194,71,141,0.3)" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>{t("analizPage.posting.totalComments")}</p>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "#E8A8CD", fontFamily: "Outfit, sans-serif" }}>{zernioData.totalComments || stats.totalComments || 0}</p>
+            </div>
+
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 14, opacity: 0.6 }}>👥</span>
+                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t("analizPage.posting.totalFollowers")}</p>
+              </div>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalFollowers}</p>
+            </div>
+
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 14, opacity: 0.6 }}>📡</span>
+                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.metrics.reach")}</p>
+              </div>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "#F6F1EC" }}>{zernioData.totalReach}</p>
+            </div>
+
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(34,181,115,0.3)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span style={{ fontSize: 14, opacity: 0.6 }}>🔥</span>
+                <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em" }}>{t("analizPage.metrics.engagementRate")}</p>
+              </div>
+              <p style={{ fontSize: 24, fontWeight: 700, color: "#22B573" }}>%{overallER}</p>
+            </div>
+
+            <div className="glass" style={{ borderRadius: 16, padding: "16px", border: "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <p style={{ color: "var(--text-secondary)", fontSize: 11, fontWeight: 600, letterSpacing: "0.06em", marginBottom: 8 }}>{t("analizPage.cards.bestPost")}</p>
+              {topPost ? (
+                <a href={topPost.permalink || topPost.url || topPost.platform_url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
+                  {(() => {
+                    const mediaUrls = topPost.media_urls || [topPost.thumbnail_url, topPost.image_url, topPost.media_url].filter(Boolean);
+                    if (mediaUrls && mediaUrls.length > 0) {
+                      const firstMedia = mediaUrls[0];
+                      const isVideo = firstMedia.match(/\.(mp4|webm|ogg|mov|blob)(\?.*)?$/i) || firstMedia.includes('blob');
+                      if (isVideo) {
+                        return (
+                          <div style={{ width: 32, height: 32, borderRadius: 6, overflow: "hidden", flexShrink: 0, background: "#2a2a2a" }}>
+                            <video src={firstMedia} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted playsInline />
+                          </div>
+                        );
+                      }
+                      return (
+                        <div style={{ width: 32, height: 32, borderRadius: 6, flexShrink: 0, background: "#2a2a2a", backgroundImage: `url(${firstMedia})`, backgroundSize: "cover", backgroundPosition: "center" }} />
+                      );
+                    }
+                    return (
+                      <div style={{ width: 32, height: 32, borderRadius: 6, background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <i className="fa-solid fa-image text-[10px] text-gray-500"></i>
+                      </div>
+                    );
+                  })()}
+                  <span style={{ color: "#F6F1EC", fontSize: 12, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{topPost.content || topPost.title ? (topPost.content || topPost.title).substring(0, 15) + "..." : t("analizPage.cards.view")}</span>
+                </a>
+              ) : (
+                <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.common.noData")}</span>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        {/* Line Chart: Engagement / Impressions */}
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24, flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.posting.engagement.title")}</h3>
+              <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.posting.engagement.subtitle")}</p>
+            </div>
+            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+               {['views', 'likes', 'comments'].map(metric => (
+                  <button
+                     key={metric}
+                     onClick={() => setChartMetric(metric)}
+                     style={{
+                       padding: "6px 10px", borderRadius: 8, fontSize: 11, cursor: "pointer", fontWeight: 600,
+                       background: chartMetric === metric ? "rgba(255,122,89,0.15)" : "transparent",
+                       border: chartMetric === metric ? "1px solid #FF7A59" : "1px solid rgba(255,255,255,0.1)",
+                       color: chartMetric === metric ? "#FF7A59" : "var(--text-secondary)",
+                       transition: "all 0.2s"
+                     }}
+                  >
+                    {metric.toUpperCase()}
+                  </button>
+               ))}
+            </div>
+          </div>
+
+          <div style={{ height: 300, width: "100%" }}>
+            {isLoading ? (
+              <div className="flex h-full items-center justify-center">
+                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF7A59]"></div>
+              </div>
+            ) : zernioData.timelineData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={zernioData.timelineData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                  <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey={chartMetric} name={chartMetric.toUpperCase()} stroke="#FF7A59" strokeWidth={3} dot={{ r: 4, fill: "#FF7A59", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex h-full items-center justify-center">
+                 <p className="text-[#A79E96] text-sm">{t("analizPage.posting.engagement.noData")}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Line Chart: Follower Evolution */}
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(34,181,115,0.3)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+            <span style={{ color: "#22B573", fontSize: 20 }}>📈</span>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC" }}>{t("analizPage.cards.followerEvolution")}</h3>
+          </div>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.followerEvolutionSub")}</p>
+
+          <div style={{ height: 300, width: "100%" }}>
+            {(() => {
+              let chartData = [];
+              if (zernioData.followerStats && zernioData.followerStats.length > 0) {
+                 chartData = zernioData.followerStats;
+              } else if (zernioData.timelineData && zernioData.timelineData.length > 0) {
+                 let running = zernioData.totalFollowers || 0;
+                 for (let i = zernioData.timelineData.length - 1; i >= 0; i--) {
+                   const day = zernioData.timelineData[i];
+                   chartData.unshift({
+                     date: day.date,
+                     followers: running
+                   });
+                   running -= (day.follows || 0);
+                 }
+              }
+              
+              if (chartData.length > 0) {
+                return (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                      <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                      <YAxis stroke="rgba(255,255,255,0.3)" domain={['dataMin', 'dataMax']} tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Line type="monotone" dataKey="followers" name={t("analizPage.metrics.followers")} stroke="#22B573" strokeWidth={3} dot={{ r: 4, fill: "#22B573", strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                );
+              }
+              return (
+                <div className="flex h-full items-center justify-center">
+                   <p className="text-[#A79E96] text-sm">{t("analizPage.common.noDataFound")}</p>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      </div>
+
+      {/* Pie Chart: Demographics */}
+      {selectedPlatform.id === 'instagram' && zernioData.demographics.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.posting.demographics.title")}</h3>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "center" }}>
+            <div style={{ height: 250 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={zernioData.demographics}
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {zernioData.demographics.map((entry: any, index: number) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {zernioData.demographics.map((d: any, i: number) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div style={{ width: 12, height: 12, borderRadius: "50%", background: d.color }} />
+                    <span style={{ color: "#F6F1EC", fontSize: 14 }}>{d.name}</span>
+                  </div>
+                  <span style={{ color: "#fff", fontWeight: 700, fontSize: 14 }}>{d.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Platform Breakdown Table */}
+      {zernioData.platformBreakdown.length > 0 && (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", overflowX: "auto", marginTop: 24 }}>
+           <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.platformBreakdown")}</h3>
+           <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                  <tr>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600 }}>{t("analizPage.metrics.platform")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.post")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.likes")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.comments")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.shares")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.saves")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.clicks")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.views")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.impressionsShort")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.reach")}</th>
+                   <th style={{ padding: "8px", borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.erShort")}</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 {zernioData.platformBreakdown.map((p: any, i: number) => {
+                   const platId = p.platform ? (p.platform.toLowerCase() === 'google' ? 'googlebusiness' : p.platform.toLowerCase()) : '';
+                   const platDef = PLATFORMS.find(pl => pl.id === platId);
+                   const platColor = platDef ? platDef.color : "#888";
+                   const platName = platDef ? platDef.name : p.platform;
+                   const getPlatformIcon = (id: string) => {
+                     switch (id) {
+                       case 'instagram': return 'fa-brands fa-instagram';
+                       case 'facebook': return 'fa-brands fa-facebook';
+                       case 'youtube': return 'fa-brands fa-youtube';
+                       case 'tiktok': return 'fa-brands fa-tiktok';
+                       case 'linkedin': return 'fa-brands fa-linkedin';
+                       case 'googlebusiness': return 'fa-brands fa-google';
+                       default: return 'fa-solid fa-hashtag';
+                     }
+                   };
+                   
+                   const posts = p.postCount || p.posts || 0;
+                   const likes = p.likes || 0;
+                   const comments = p.comments || 0;
+                   const shares = p.shares || 0;
+                   const saves = p.saves || 0;
+                   const clicks = p.clicks || 0;
+                   const views = p.views || 0;
+                   const impressions = p.impressions || 0;
+                   const reach = p.reach || 0;
+                   const totalEng = likes + comments + shares + saves + clicks;
+                   const divBy = impressions > 0 ? impressions : views;
+                   const er = p.engagementRate || p.er || (divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00');
+
+                   return (
+                     <tr key={i}>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <i className={getPlatformIcon(platId)} style={{ color: platColor, fontSize: 14 }} />
+                            <span>{platName}</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{posts}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#E8A8CD", textAlign: "right" }}>{comments.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{shares.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{saves.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{clicks.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{impressions.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
+                        <td style={{ padding: "12px 8px", borderBottom: "1px solid rgba(255,255,255,0.05)", textAlign: "right" }}>
+                          <span style={{ background: "rgba(34,181,115,0.15)", color: "#22B573", borderRadius: "999px", padding: "4px 10px", fontSize: 12, fontWeight: 600 }}>{er}%</span>
+                        </td>
+                     </tr>
+                   );
+                 })}
+              </tbody>
+           </table>
+        </div>
+      )}
+      
+      {/* 4. Engagement over time (Hesap Geneli, Zernio ile aynı attribution:'received' mantığı — bkz. 18.09.2026 README notu) */}
+      {zernioData.engagementOverTime && zernioData.engagementOverTime.length > 0 ? (
+        <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+          <div style={{ marginBottom: 24 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.engagementOverTime")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>{t("analizPage.cards.weeklyLast30")}</p>
+          </div>
+
+          <div style={{ display: "flex", gap: 32, flexWrap: "wrap", alignItems: "center" }}>
+             <div style={{ flex: "1 1 500px", height: 350 }}>
+               <ResponsiveContainer width="100%" height="100%">
+                 {(() => {
+                   const aggTimeline = [...zernioData.engagementOverTime].sort((a: any, b: any) => String(a.date).localeCompare(String(b.date)));
+
+                   return (
+                     <LineChart data={aggTimeline}>
+                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                       <XAxis dataKey="date" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                       <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12, fontFamily: "JetBrains Mono, monospace" }} axisLine={false} tickLine={false} />
+                       <Tooltip content={<CustomTooltip />} />
+                       {postTimelineMetrics.includes('likes') && <Line type="monotone" dataKey="likes" name={t("analizPage.metrics.likes")} stroke="#F472B6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('comments') && <Line type="monotone" dataKey="comments" name={t("analizPage.metrics.comments")} stroke="#3B82F6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('shares') && <Line type="monotone" dataKey="shares" name={t("analizPage.metrics.shares")} stroke="#10B981" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('saves') && <Line type="monotone" dataKey="saves" name={t("analizPage.metrics.saves")} stroke="#D946EF" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('views') && <Line type="monotone" dataKey="views" name={t("analizPage.metrics.views")} stroke="#8B5CF6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('impressions') && <Line type="monotone" dataKey="impressions" name={t("analizPage.metrics.impressions")} stroke="#0F766E" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('reach') && <Line type="monotone" dataKey="reach" name={t("analizPage.metrics.reach")} stroke="#F59E0B" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                       {postTimelineMetrics.includes('clicks') && <Line type="monotone" dataKey="clicks" name={t("analizPage.metrics.clicks")} stroke="#60A5FA" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />}
+                     </LineChart>
+                   );
+                 })()}
+               </ResponsiveContainer>
+             </div>
+
+             {/* Legend Grid */}
+             <div style={{ width: "350px", minWidth: "300px" }}>
+                {(() => {
+                   const totalMetrics = zernioData.engagementOverTime.reduce((acc: any, curr: any) => {
+                       ['views', 'likes', 'comments', 'shares', 'saves', 'clicks', 'reach', 'impressions'].forEach(m => {
+                         acc[m] = (acc[m] || 0) + (curr[m] || 0);
+                       });
+                       return acc;
+                   }, {});
+
+                   const toggleMetric = (m: string) => {
+                     setPostTimelineMetrics(prev => 
+                       prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]
+                     );
+                   };
+
+                   const MetricItem = ({ id, label, icon, value, color }: any) => {
+                     const isChecked = postTimelineMetrics.includes(id);
+                     return (
+                       <div 
+                         onClick={() => toggleMetric(id)}
+                         style={{ 
+                           display: "flex", flexDirection: "column", gap: 8, cursor: "pointer", 
+                           padding: "8px 4px", borderRadius: 6,
+                           transition: "background 0.2s"
+                         }}
+                         className="hover:bg-white/5"
+                       >
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--text-secondary)" }}>
+                               <div style={{ 
+                                 width: 14, height: 14, borderRadius: 3, 
+                                 border: `1px solid ${isChecked ? color : "rgba(255,255,255,0.2)"}`,
+                                 background: isChecked ? color : "transparent",
+                                 display: "flex", alignItems: "center", justifyContent: "center"
+                               }}>
+                                 {isChecked && <i className="fa-solid fa-check" style={{ color: "#fff", fontSize: 9 }} />}
+                               </div>
+                               {label}
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 600, color: "#F6F1EC", paddingLeft: 2 }}>
+                               <i className={icon} style={{ color, fontSize: 13, width: 16, textAlign: "center" }} />
+                               {value.toLocaleString()}
+                            </div>
+                       </div>
+                     );
+                   };
+
+                   const totalEng = (totalMetrics.likes||0) + (totalMetrics.comments||0) + (totalMetrics.shares||0) + (totalMetrics.saves||0) + (totalMetrics.clicks||0);
+                   const divBy = totalMetrics.impressions > 0 ? totalMetrics.impressions : totalMetrics.views;
+                   const er = divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00';
+
+                   return (
+                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px 8px" }}>
+                       <MetricItem id="likes" label={t("analizPage.metrics.likes")} icon="fa-regular fa-heart" color="#F472B6" value={totalMetrics.likes || 0} />
+                       <MetricItem id="comments" label={t("analizPage.metrics.comments")} icon="fa-regular fa-comment" color="#3B82F6" value={totalMetrics.comments || 0} />
+                       <MetricItem id="shares" label={t("analizPage.metrics.shares")} icon="fa-solid fa-share-nodes" color="#10B981" value={totalMetrics.shares || 0} />
+                       
+                       <MetricItem id="saves" label={t("analizPage.metrics.saves")} icon="fa-regular fa-bookmark" color="#D946EF" value={totalMetrics.saves || 0} />
+                       <MetricItem id="views" label={t("analizPage.metrics.views")} icon="fa-regular fa-eye" color="#8B5CF6" value={totalMetrics.views || 0} />
+                       <MetricItem id="impressions" label={t("analizPage.metrics.impressionsShort")} icon="fa-solid fa-arrow-trend-up" color="#0F766E" value={totalMetrics.impressions || 0} />
+                       
+                       <MetricItem id="reach" label={t("analizPage.metrics.reach")} icon="fa-solid fa-users" color="#F59E0B" value={totalMetrics.reach || 0} />
+                       <MetricItem id="clicks" label={t("analizPage.metrics.clicks")} icon="fa-solid fa-arrow-pointer" color="#60A5FA" value={totalMetrics.clicks || 0} />
+                       
+                       <div style={{ padding: "8px 4px", display: "flex", flexDirection: "column", gap: 8 }}>
+                          <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("analizPage.metrics.engagementRate")}</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "#22B573", paddingLeft: 2 }}>
+                            <i className="fa-solid fa-arrow-trend-up" style={{ fontSize: 13, width: 16, textAlign: "center" }} />
+                            {er}%
+                          </div>
+                       </div>
+                     </div>
+                   );
+                })()}
+             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Platform Performance Bar Charts */}
+      {zernioData.platformBreakdown.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 24 }}>
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.postsPerPlatform")}</h3>
+             <div style={{ height: 250, width: "100%" }}>
+               <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={zernioData.platformBreakdown}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                     <Bar dataKey="postCount" name={t("analizPage.metrics.postCount")} fill="#FF7A59" radius={[4,4,0,0]} barSize={40} />
+                  </BarChart>
+               </ResponsiveContainer>
+             </div>
+          </div>
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+             <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 24 }}>{t("analizPage.cards.likesPerPlatform")}</h3>
+             <div style={{ height: 250, width: "100%" }}>
+               <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={zernioData.platformBreakdown}>
+                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                     <XAxis dataKey="platform" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} tickFormatter={(val) => val ? val.charAt(0).toUpperCase() + val.slice(1) : ''} axisLine={false} tickLine={false} />
+                     <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                     <Tooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.05)'}} />
+                     <Bar dataKey="likes" name={t("analizPage.metrics.likeCount")} fill="#C2478D" radius={[4,4,0,0]} barSize={40} />
+                  </BarChart>
+               </ResponsiveContainer>
+             </div>
+          </div>
+        </div>
+      )}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginTop: 24 }}>
+        {/* 1. Best Times Heatmap */}
+        {zernioData.bestTimes.length > 0 ? (
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.bestTimes")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.bestTimesSub")}</p>
+            <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", paddingRight: 8, marginTop: 20 }}>
+                {dayShort.map(day => (
+                  <div key={day} style={{ height: 28, display: "flex", alignItems: "center", color: "var(--text-secondary)", fontSize: 12 }}>{day}</div>
+                ))}
+              </div>
+              <div style={{ flex: 1, overflowX: "auto" }}>
+                <div style={{ display: "flex", marginBottom: 4 }}>
+                  {Array.from({length: 24}).map((_, i) => (
+                    <div key={i} style={{ flex: 1, textAlign: "center", color: "var(--text-secondary)", fontSize: 10, minWidth: 20 }}>{i}</div>
+                  ))}
+                </div>
+                <div style={{ display: "grid", gridTemplateRows: "repeat(7, 28px)", gap: 2 }}>
+                  {(() => {
+                    const maxEngagement = Math.max(...zernioData.bestTimes.map((s: any) => s.avg_engagement || 0), 1);
+                    return Array.from({length: 7}).map((_, dayIdx) => (
+                      <div key={dayIdx} style={{ display: "flex", gap: 2 }}>
+                        {Array.from({length: 24}).map((_, hourIdx) => {
+                          const slot = zernioData.bestTimes.find((s: any) => s.day_of_week === dayIdx && s.hour === hourIdx);
+                          const intensity = slot ? Math.max(0.1, (slot.avg_engagement || 0) / maxEngagement) : 0;
+                          return (
+                          <div 
+                            key={hourIdx} 
+                            title={slot ? t("analizPage.heatmap.tooltip", { hour: hourIdx, engagement: slot.avg_engagement, posts: slot.post_count }) : ''}
+                            style={{
+                              flex: 1,
+                              minWidth: 20,
+                              borderRadius: 4,
+                              backgroundColor: slot ? `rgba(255, 122, 89, ${intensity})` : "rgba(255,255,255,0.02)",
+                              border: "1px solid rgba(255,255,255,0.02)",
+                              cursor: slot ? "pointer" : "default"
+                            }} 
+                          />
+                        )
+                      })}
+                    </div>
+                  ));
+                  })()}
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop: 16, color: "var(--text-secondary)", fontSize: 12, fontWeight: 500 }}>
+               {(() => {
+                  // 17.09.2026: Gün kısaltmaları üstteki grid'le tutarlı olması
+                  // için Türkçeye çevrildi (bkz. README — eskiden İngilizce
+                  // Mon/Tue/... kullanılıyordu; mobil tarafta da (flow-repo,
+                  // AnalyticsScreen.js) aynı düzeltme eşzamanlı olarak yapıldı).
+                  const sorted = [...zernioData.bestTimes].sort((a,b) => (b.avg_engagement || 0) - (a.avg_engagement || 0)).slice(0, 2);
+                  const days = dayShort;
+                  const texts = sorted.map(s => `${days[s.day_of_week]} ${s.hour}:00 · ${s.avg_engagement}`);
+                  return texts.length > 0 ? t("analizPage.heatmap.bestTimes", { times: texts.join(' · ') }) : '';
+               })()}
+            </div>
+          </div>
+        ) : <div />}
+
+        {/* 2. Content Decay Area Chart */}
+        {zernioData.contentDecay.length > 0 ? (
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.contentDecay")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{t("analizPage.cards.contentDecaySub")}</p>
+            <p style={{ color: "#F6F1EC", fontSize: 13, marginBottom: 24, opacity: 0.9 }}>{t("analizPage.cards.contentDecayNote")}</p>
+            <div style={{ height: 250, width: "100%" }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={[...zernioData.contentDecay].sort((a: any, b: any) => a.bucket_order - b.bucket_order)}>
+                  <defs>
+                    <linearGradient id="colorDecay" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#C2478D" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#C2478D" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                  <XAxis dataKey="bucket_label" stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                  <YAxis stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} tickFormatter={(val) => `%${val}`} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="avg_pct_of_final" name={t("analizPage.metrics.engagementPct")} stroke="#C2478D" strokeWidth={3} fillOpacity={1} fill="url(#colorDecay)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        ) : <div />}
+      </div>
+
+        {/* 3. Posting Frequency Scatter */}
+        {zernioData.postingFrequency.length > 0 ? (
+          <div className="glass" style={{ borderRadius: 20, padding: "24px", border: "1px solid rgba(255,255,255,0.08)", marginTop: 24 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#F6F1EC", marginBottom: 4 }}>{t("analizPage.cards.frequencyVsER")}</h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 24 }}>{t("analizPage.cards.frequencyVsERSub")}</p>
+            <div style={{ height: 300, width: "100%" }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+                  <XAxis type="number" dataKey="posts_per_week" name={t("analizPage.metrics.postsPerWeek")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                  <YAxis type="number" dataKey="avg_engagement_rate" name={t("analizPage.metrics.engagementRatePct")} stroke="rgba(255,255,255,0.3)" tick={{ fontSize: 12 }} />
+                  <ZAxis type="number" dataKey="weeks_count" range={[60, 400]} name={t("analizPage.metrics.weeksCount")} />
+                  <Tooltip cursor={{ strokeDasharray: '3 3' }} content={<CustomTooltip />} />
+                  <Legend iconType="circle" />
+                  {Array.from(new Set(zernioData.postingFrequency.map((f: any) => f.platform))).map((platform: string) => {
+                    const platId = platform.toLowerCase() === 'google' ? 'googlebusiness' : platform.toLowerCase();
+                    const platDef = PLATFORMS.find(p => p.id === platId);
+                    const color = platDef ? platDef.color : "#FF7A59";
+                    const data = zernioData.postingFrequency.filter((f: any) => f.platform === platform);
+                    return (
+                      <Scatter key={platform} name={platDef ? platDef.name : platform} data={data} fill={color} />
+                    );
+                  })}
+                </ScatterChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        ) : <div />}
+
+      {/* Top Performing Posts Table */}
+      {zernioData.postAnalytics && zernioData.postAnalytics.length > 0 && (
+        <div className="glass" style={{ borderRadius: 16, padding: "24px", border: "1px solid rgba(255,255,255,0.06)", marginTop: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 600, color: "#F6F1EC", marginBottom: 20 }}>{t("analizPage.cards.topPosts")}</h3>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", color: "var(--text-secondary)" }}>
+                  <th style={{ padding: "12px 8px", fontWeight: 600 }}>{t("analizPage.metrics.post")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.likes")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.comments")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.shares")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.saves")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.clicks")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.views")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.followers")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.impressionsShort")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.reach")}</th>
+                  <th style={{ padding: "12px 8px", fontWeight: 600, textAlign: "right" }}>{t("analizPage.metrics.erShort")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...zernioData.postAnalytics].sort((a: any, b: any) => {
+                  const mA = a.analytics || a.metrics || a || {};
+                  const mB = b.analytics || b.metrics || b || {};
+                  const engA = (mA.likes || 0) + (mA.comments || 0) + (mA.shares || 0) + (mA.impressions || mA.views || 0);
+                  const engB = (mB.likes || 0) + (mB.comments || 0) + (mB.shares || 0) + (mB.impressions || mB.views || 0);
+                  return engB - engA;
+                }).slice(0, 10).map((post: any, idx: number) => {
+                  const metrics = post.analytics || post.metrics || post || {};
+                  const views = metrics.views || 0;
+                  const impressions = metrics.impressions || 0;
+                  const follows = metrics.follows || 0;
+                  const reach = metrics.reach || 0;
+                  const likes = metrics.likes || 0;
+                  const comments = metrics.comments || 0;
+                  const shares = metrics.shares || 0;
+                  const saves = metrics.saves || 0;
+                  const clicks = metrics.clicks || 0;
+                  const totalEng = likes + comments + shares + saves + clicks;
+                  const divBy = impressions > 0 ? impressions : views;
+                  const er = metrics.engagementRate || metrics.er || (divBy > 0 ? ((totalEng / divBy) * 100).toFixed(2) : '0.00');
+                  const postName = post.content ? (post.content.substring(0, 40) + (post.content.length > 40 ? '...' : '')) : (post.title || post.id || `Post #${idx + 1}`);
+                  
+                  const dateStr = post.publishedAt || post.date || post.created_at;
+                  const formattedDate = dateStr ? new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                  const platId = post.platform ? (post.platform.toLowerCase() === 'google' ? 'googlebusiness' : post.platform.toLowerCase()) : '';
+                  const platDef = PLATFORMS.find(p => p.id === platId);
+                  const platColor = platDef ? platDef.color : (post.platform ? "#888" : null);
+                  const platName = platDef ? platDef.name : post.platform;
+                  
+                  const getPlatformIcon = (id: string) => {
+                    switch (id) {
+                      case 'instagram': return 'fa-brands fa-instagram';
+                      case 'facebook': return 'fa-brands fa-facebook';
+                      case 'youtube': return 'fa-brands fa-youtube';
+                      case 'tiktok': return 'fa-brands fa-tiktok';
+                      case 'linkedin': return 'fa-brands fa-linkedin';
+                      case 'googlebusiness': return 'fa-brands fa-google';
+                      default: return 'fa-solid fa-hashtag';
+                    }
+                  };
+                  
+                  return (
+                    <tr key={post.id || idx} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC" }}>
+                        <div style={{ lineHeight: 1.4 }}>{postName}</div>
+                        {(platColor || formattedDate) && (
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4, fontSize: 11, color: "var(--text-secondary)" }}>
+                            {platColor && <i className={getPlatformIcon(platId)} style={{ color: platColor }} title={platName} />}
+                            {formattedDate && <span>{formattedDate}</span>}
+                          </div>
+                        )}
+                      </td>
+                      <td style={{ padding: "12px 8px", color: "#FF7A59", textAlign: "right" }}>{likes.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#E8A8CD", textAlign: "right" }}>{comments.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{shares.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{saves.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{clicks.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{views.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#E8A8CD", textAlign: "right" }}>{follows.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{impressions.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", color: "#F6F1EC", textAlign: "right" }}>{reach.toLocaleString()}</td>
+                      <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                        <span style={{ background: "rgba(34,181,115,0.15)", color: "#22B573", borderRadius: "999px", padding: "4px 10px", fontSize: 12, fontWeight: 600 }}>{er}%</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}

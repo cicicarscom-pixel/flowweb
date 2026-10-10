@@ -409,7 +409,7 @@ function GelenKutusuContent() {
 
   const fetchComments = async (phase: number = 1) => {
     try {
-      if (phase === 1) {
+      if (phase === 1 || phase === 3) {
         // Faz 1: Local DB + Önbellekteki Resimler
         const { data, error } = await supabase
           .from('comments')
@@ -432,8 +432,8 @@ function GelenKutusuContent() {
           }));
           setComments(enhancedData);
           
-          // Faz 1.5'i tetikle
-          setTimeout(() => fetchComments(1.5), 500);
+          // Faz 1.5'i tetikle (Faz 3 yalniz yeniden yukleme yapar, zinciri tekrar baslatmaz)
+          if (phase === 1) setTimeout(() => fetchComments(1.5), 500);
         }
       } else if (phase === 1.5) {
         // Faz 1.5: Eksik resimleri Edge Function'dan çek ve önbellekle
@@ -471,6 +471,8 @@ function GelenKutusuContent() {
             await supabase.functions.invoke('zernio-client', {
               body: { action: 'sync-comments', payload: { organizationId } }
             });
+            // sync-comments eksik gonderi kayitlarini (baslik/gorsel) olusturur; yorumlari tekrar yukle.
+            await fetchComments(3);
          }
       }
     } catch (err) {

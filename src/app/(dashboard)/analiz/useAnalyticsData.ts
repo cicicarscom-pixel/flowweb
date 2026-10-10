@@ -93,7 +93,8 @@ export function useAnalyticsData(selectedPlatform: Platform, selectedTimeRange: 
       
       if (selectedPlatform.id !== 'all') {
          const pName = selectedPlatform.id === 'googlebusiness' ? 'google' : selectedPlatform.id;
-         qPosts = qPosts.eq('platform', pName);
+         // posts tablosunda tekil 'platform' sütunu yok; 'platforms' dizi sütunu var (400 hatası veriyordu)
+         qPosts = qPosts.contains('platforms', [selectedPlatform.id]);
          qComments = qComments.eq('platform', pName);
          qReviews = qReviews.eq('platform', pName);
       }

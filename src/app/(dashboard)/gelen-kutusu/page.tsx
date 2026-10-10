@@ -184,11 +184,36 @@ function GelenKutusuContent() {
     return Array.from(postMap.values()).sort((a, b) => new Date(b.latestCommentAt).getTime() - new Date(a.latestCommentAt).getTime());
   }, [visibleComments, t]);
 
+  // Açılan gönderinin yorumlarını okundu işaretle (sekme sayacı yalnız okunmamışları sayar).
+  const openPost = (postId: string) => {
+    setSelectedPostId(postId);
+    const ids = comments
+      .filter(c => (c.zernio_post_id || c.post_id || 'unknown') === postId && c.is_read === false)
+      .map(c => c.id);
+    if (ids.length === 0) return;
+    setComments(prev => prev.map(c => ids.includes(c.id) ? { ...c, is_read: true } : c));
+    supabase.from('comments').update({ is_read: true }).in('id', ids).then(({ error }) => {
+      if (error) console.warn('comments read mark failed:', error.message);
+    });
+  };
+
+  // Açılan sohbetin okunmamış sayacını sıfırla.
+  const openConversation = (convId: string) => {
+    setSelectedConvId(convId);
+    const conv = conversations.find(c => c.id === convId);
+    if (!conv || !(conv.unread_count > 0)) return;
+    setConversations(prev => prev.map(c => c.id === convId ? { ...c, unread_count: 0 } : c));
+    supabase.from('conversations').update({ unread_count: 0 }).eq('id', convId).then(({ error }) => {
+      if (error) console.warn('conversation read mark failed:', error.message);
+    });
+  };
+  const openPostRef = useLatest(openPost);
+
   useEffect(() => {
     if (activeTab === 'yorumlar' && postsWithComments.length > 0 && !selectedPostId) {
-      setSelectedPostId(postsWithComments[0].postId);
+      openPostRef.current(postsWithComments[0].postId);
     }
-  }, [activeTab, postsWithComments, selectedPostId]);
+  }, [activeTab, postsWithComments, selectedPostId, openPostRef]);
 
   // Fetch Data
   
@@ -751,11 +776,11 @@ function GelenKutusuContent() {
 
         
         {/* --- MESAJLAR TAB --- */}
-        <MessagesTab activeTab={activeTab} conversations={conversations} dmText={dmText} getPlatformIcon={getPlatformIcon} handleSendDM={handleSendDM} isLoading={isLoading} isSelectionMode={isSelectionMode} isSendingDM={isSendingDM} locale={locale} selectedConvId={selectedConvId} selectedItems={selectedItems} setDmText={setDmText} setSelectedConvId={setSelectedConvId} t={t} toggleSelection={toggleSelection} />
+        <MessagesTab activeTab={activeTab} conversations={conversations} dmText={dmText} getPlatformIcon={getPlatformIcon} handleSendDM={handleSendDM} isLoading={isLoading} isSelectionMode={isSelectionMode} isSendingDM={isSendingDM} locale={locale} selectedConvId={selectedConvId} selectedItems={selectedItems} setDmText={setDmText} setSelectedConvId={openConversation} t={t} toggleSelection={toggleSelection} />
         
 
         {/* --- YORUMLAR TAB --- */}
-        <CommentsTab activeTab={activeTab} getPlatformIcon={getPlatformIcon} handleDMClick={handleDMClick} handleHideComment={handleHideComment} handleSendReply={handleSendReply} isLoading={isLoading} isSelectionMode={isSelectionMode} isSendingReply={isSendingReply} locale={locale} postsWithComments={postsWithComments} replyText={replyText} replyingTo={replyingTo} selectedItems={selectedItems} selectedPostId={selectedPostId} setReplyText={setReplyText} setReplyingTo={setReplyingTo} setSelectedPostId={setSelectedPostId} t={t} toggleSelection={toggleSelection} />
+        <CommentsTab activeTab={activeTab} getPlatformIcon={getPlatformIcon} handleDMClick={handleDMClick} handleHideComment={handleHideComment} handleSendReply={handleSendReply} isLoading={isLoading} isSelectionMode={isSelectionMode} isSendingReply={isSendingReply} locale={locale} postsWithComments={postsWithComments} replyText={replyText} replyingTo={replyingTo} selectedItems={selectedItems} selectedPostId={selectedPostId} setReplyText={setReplyText} setReplyingTo={setReplyingTo} setSelectedPostId={openPost} t={t} toggleSelection={toggleSelection} />
 
         {/* --- DEĞERLENDİRMELER TAB --- */}
         <ReviewsTab activeTab={activeTab} isLoading={isLoading} isSelectionMode={isSelectionMode} locale={locale} reviews={reviews} selectedItems={selectedItems} toggleSelection={toggleSelection} />

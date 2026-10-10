@@ -24,9 +24,9 @@ export function InboxHeader({ activeTab, conversations, handleDeleteSelected, ha
       {/* Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
         {[
-          { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.length },
-          { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: visibleComments.length },
-          { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.length },
+          { id: 'mesajlar', label: t("gelenKutusuPage.tabs.messages"), count: conversations.filter(c => c.unread_count > 0).length },
+          { id: 'yorumlar', label: t("gelenKutusuPage.tabs.comments"), count: visibleComments.filter(c => c.is_read === false).length },
+          { id: 'degerlendirmeler', label: t("gelenKutusuPage.tabs.reviews"), count: reviews.filter(r => !r.reply).length },
           { id: 'bildirimler', label: t("gelenKutusuPage.tabs.notifications"), count: notifications.filter(n => !n.is_read).length },
         ].map(tab => {
           const isActive = activeTab === tab.id;

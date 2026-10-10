@@ -14,7 +14,7 @@ type MessagesTabProps = {
   selectedConvId: string | null;
   selectedItems: string[];
   setDmText: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedConvId: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedConvId: (convId: string) => void;
   t: ReturnType<typeof useTranslations>;
   toggleSelection: (id: string) => void;
 };

@@ -18,7 +18,7 @@ type CommentsTabProps = {
   selectedPostId: string | null;
   setReplyText: React.Dispatch<React.SetStateAction<string>>;
   setReplyingTo: React.Dispatch<React.SetStateAction<string | null>>;
-  setSelectedPostId: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedPostId: (postId: string) => void;
   t: ReturnType<typeof useTranslations>;
   toggleSelection: (id: string) => void;
 };

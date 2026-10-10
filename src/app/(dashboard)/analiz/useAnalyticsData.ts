@@ -105,7 +105,7 @@ export function useAnalyticsData(selectedPlatform: Platform, selectedTimeRange: 
         qReviews,
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'incoming'),
         supabase.from('messages').select('*', { count: 'exact', head: true }).eq('profile_id', orgId).eq('direction', 'outgoing'),
-        supabase.schema('integration').from('social_accounts').select('zernio_account_id, platform').eq('organization_id', orgId)
+        supabase.schema('integration').from('social_accounts').select('zernio_account_id, platform').eq('organization_id', orgId).eq('is_active', true).eq('needs_reconnection', false)
       ]);
 
       let videoCount = 0;

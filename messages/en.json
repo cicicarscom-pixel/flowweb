@@ -456,11 +456,9 @@
     "isletmem": {
       "title": "My Business",
       "subtitle": "Track your business's financial situation.",
-      "todayDate": "Today: July 3, 2026",
-      "periodJune2026": "June 2026",
-      "periodSep2022": "September 2022",
       "totalBalance": "TOTAL BALANCE",
-      "decreaseFromLastMonth": "4.2% decrease compared to last month",
+      "trendUp": "{pct}% increase compared to last month",
+      "trendDown": "{pct}% decrease compared to last month",
       "incomes": "Income",
       "expenses": "Expenses",
       "invoices": "Invoices",
@@ -470,6 +468,12 @@
       "emptyState": "No records found for this category.",
       "smartAnalysis": "Smart Analysis",
       "analysisUnavailable": "Analysis could not be retrieved.",
+      "statusPaid": "Paid",
+      "statusOverdue": "Overdue",
+      "statusPartial": "Partial",
+      "statusPending": "Pending",
+      "analysisHint": "Press Generate analysis to get an analysis for the selected month.",
+      "loading": "Loading...",
       "generateAnalysis": "Generate Analysis"
     },
     "muhasebecim": {

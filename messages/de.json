@@ -456,11 +456,9 @@
     "isletmem": {
       "title": "Mein Unternehmen",
       "subtitle": "Verfolgen Sie die Finanzlage Ihres Unternehmens.",
-      "todayDate": "Heute: 3. Juli 2026",
-      "periodJune2026": "Juni 2026",
-      "periodSep2022": "September 2022",
       "totalBalance": "GESAMTSALDO",
-      "decreaseFromLastMonth": "4,2 % Rückgang im Vergleich zum Vormonat",
+      "trendUp": "{pct} % Anstieg im Vergleich zum Vormonat",
+      "trendDown": "{pct} % Rückgang im Vergleich zum Vormonat",
       "incomes": "Einnahmen",
       "expenses": "Ausgaben",
       "invoices": "Rechnungen",
@@ -470,6 +468,12 @@
       "emptyState": "Für diese Kategorie wurden keine Einträge gefunden.",
       "smartAnalysis": "Intelligente Analyse",
       "analysisUnavailable": "Analyse konnte nicht abgerufen werden.",
+      "statusPaid": "Bezahlt",
+      "statusOverdue": "Überfällig",
+      "statusPartial": "Teilweise",
+      "statusPending": "Ausstehend",
+      "analysisHint": "Drücken Sie auf Analyse erstellen, um eine Analyse für den gewählten Monat zu erhalten.",
+      "loading": "Wird geladen...",
       "generateAnalysis": "Analyse erstellen"
     },
     "muhasebecim": {

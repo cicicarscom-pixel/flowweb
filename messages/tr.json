@@ -456,11 +456,9 @@
     "isletmem": {
       "title": "İşletmem",
       "subtitle": "İşletmenizin finansal durumunu takip edin.",
-      "todayDate": "Bugün: 03 Temmuz 2026",
-      "periodJune2026": "Haziran 2026",
-      "periodSep2022": "Eylül 2022",
       "totalBalance": "TOPLAM BAKİYE",
-      "decreaseFromLastMonth": "Geçen aya göre %4.2 düşüş",
+      "trendUp": "Geçen aya göre %{pct} artış",
+      "trendDown": "Geçen aya göre %{pct} düşüş",
       "incomes": "Gelirler",
       "expenses": "Giderler",
       "invoices": "Faturalar",
@@ -470,6 +468,12 @@
       "emptyState": "Bu kategori için kayıt bulunamadı.",
       "smartAnalysis": "Akıllı Analiz",
       "analysisUnavailable": "Analiz alınamadı.",
+      "statusPaid": "Ödendi",
+      "statusOverdue": "Gecikmiş",
+      "statusPartial": "Kısmi",
+      "statusPending": "Bekliyor",
+      "analysisHint": "Seçili ay için analiz almak üzere Analiz Oluştur düğmesine basın.",
+      "loading": "Yükleniyor...",
       "generateAnalysis": "Analiz Oluştur"
     },
     "muhasebecim": {

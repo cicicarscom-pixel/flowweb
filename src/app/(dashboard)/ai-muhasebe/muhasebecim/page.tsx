@@ -291,6 +291,16 @@ export default function MuhasebecimPage() {
               <i className="fa-solid fa-arrow-left"></i> {t("aiMuhasebePage.muhasebecim.backToAccountingPanel")}
             </Link>
 
+            <div className="mt-4">
+              <button
+                onClick={handleDisconnect}
+                disabled={isLoading}
+                className="inline-flex items-center gap-2 text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors px-6 py-3 rounded-xl font-medium disabled:opacity-50"
+              >
+                <i className="fa-solid fa-link-slash"></i> {t("aiMuhasebePage.muhasebecim.disconnect")}
+              </button>
+            </div>
+
           </div>
         )}
       </div>

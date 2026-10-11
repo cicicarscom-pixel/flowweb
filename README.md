@@ -129,6 +129,7 @@ Yeni sayfa ekleneceği zaman uyulması gereken temel kurallar:
 
 ## 📌 Son Güncellemeler
 
+- **[11.10.2026] Muhasebecim: bağlantıyı kes (web):** Bağlı müşavir kartında, kodda hazır olan ama ekranda hiç görünmeyen "Bağlantıyı kes" düğmesi eklendi (onay penceresi + `disconnect_current_accountant`; mobille aynı). Kullanılmayan işleyici uyarısı (ESLint 24 → 23) giderildi.
 - **[11.10.2026] Saati Rezerve Et sadeleşti (web):** Kafa karıştıran "Tek slot / Başlangıç-bitiş" seçimi kaldırıldı; pencere her zaman Başlangıç ve Bitiş saatini gösterir ve ikisi de düzenlenir (Bitiş varsayılan +30 dk).
 - **[11.10.2026] İşletmem gerçek veriye bağlandı (web):** Sayfa sahte sabit rakamlar (₺-5.900, "Haziran 2026/Eylül 2022", %4,2 düşüş, çizim grafik) yerine artık `get_payment_calendar` (kayıt listesi + ay listesi) ve `get_finance_summary` (gelir/gider/bakiye, kuruştan) ile çalışır; ay seçici, önceki aya göre gerçek değişim yüzdesi, Gelirler/Giderler/Faturalar sekmeleri, arama, durum rozetleri, "Yeni Ekle" → Veri Girişi, "Analiz Oluştur" (`generate-insights`). Mobil İşletmem ile aynı kaynak.
 - **[11.10.2026] İşletmem (web):** Üst köşedeki işlevsiz bildirim çanı ve sabit yazılı "Bugün: 03 Temmuz 2026" tarih kutusu kaldırıldı.

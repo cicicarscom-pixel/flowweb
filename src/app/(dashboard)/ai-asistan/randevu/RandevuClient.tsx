@@ -118,7 +118,6 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
   const [daySchedule, setDaySchedule] = useState<any[]>([]);
   const [reserveModal, setReserveModal] = useState<any>({ visible: false, time: '', endTime: '' });
   const [reserveScope, setReserveScope] = useState<any>('clinic');
-  const [reserveDurationType, setReserveDurationType] = useState<any>('single');
   const [reserveReason, setReserveReason] = useState('meeting');
   const [reserveNote, setReserveNote] = useState('');
   const [reserveError, setReserveError] = useState('');
@@ -407,7 +406,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
           </div>
 
           {/* Right Column (Heatmap) */}
-        <WeekCalendarCard activeCalendarId={activeCalendarId} add30Mins={add30Mins} daySchedule={daySchedule} dialog={dialog} selectedDate={selectedDate} setDaySchedule={setDaySchedule} setIsModalOpen={setIsModalOpen} setMenuConfig={setMenuConfig} setNewAppt={setNewAppt} setReserveConflicts={setReserveConflicts} setReserveDurationType={setReserveDurationType} setReserveError={setReserveError} setReserveModal={setReserveModal} setReserveScope={setReserveScope} t={t} />
+        <WeekCalendarCard activeCalendarId={activeCalendarId} add30Mins={add30Mins} daySchedule={daySchedule} dialog={dialog} selectedDate={selectedDate} setDaySchedule={setDaySchedule} setIsModalOpen={setIsModalOpen} setMenuConfig={setMenuConfig} setNewAppt={setNewAppt} setReserveConflicts={setReserveConflicts} setReserveError={setReserveError} setReserveModal={setReserveModal} setReserveScope={setReserveScope} t={t} />
 
         {/* Timeline */}
           <AppointmentTimeline CARD_COLORS={CARD_COLORS} actionMenuId={actionMenuId} appointments={appointments} calendars={calendars} getServiceName={getServiceName} multiCalEnabled={multiCalEnabled} selectedDate={selectedDate} setActionMenuId={setActionMenuId} setCancelModalId={setCancelModalId} setDeleteModalId={setDeleteModalId} t={t} />
@@ -459,7 +458,7 @@ export default function RandevuClient({ initialAppointments, services, orgId, to
 
       
 
-              <ReserveModal activeCalendarId={activeCalendarId} add30Mins={add30Mins} calendars={calendars} isSaving={isSaving} reserveConflicts={reserveConflicts} reserveDurationType={reserveDurationType} reserveError={reserveError} reserveModal={reserveModal} reserveNote={reserveNote} reserveReason={reserveReason} reserveScope={reserveScope} selectedDate={selectedDate} setDaySchedule={setDaySchedule} setIsSaving={setIsSaving} setReserveConflicts={setReserveConflicts} setReserveDurationType={setReserveDurationType} setReserveError={setReserveError} setReserveModal={setReserveModal} setReserveNote={setReserveNote} setReserveReason={setReserveReason} setReserveScope={setReserveScope} t={t} />
+              <ReserveModal activeCalendarId={activeCalendarId} add30Mins={add30Mins} calendars={calendars} isSaving={isSaving} reserveConflicts={reserveConflicts} reserveError={reserveError} reserveModal={reserveModal} reserveNote={reserveNote} reserveReason={reserveReason} reserveScope={reserveScope} selectedDate={selectedDate} setDaySchedule={setDaySchedule} setIsSaving={setIsSaving} setReserveConflicts={setReserveConflicts} setReserveError={setReserveError} setReserveModal={setReserveModal} setReserveNote={setReserveNote} setReserveReason={setReserveReason} setReserveScope={setReserveScope} t={t} />
 
 {/* Manage Calendars Modal */}
       <ManageCalendarsModal calendars={calendars} dialog={dialog} isManageModalOpen={isManageModalOpen} setCalendars={setCalendars} setIsManageModalOpen={setIsManageModalOpen} setPromptConfig={setPromptConfig} t={t} />

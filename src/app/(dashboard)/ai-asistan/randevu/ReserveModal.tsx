@@ -8,7 +8,6 @@ type ReserveModalProps = {
   calendars: any[];
   isSaving: boolean;
   reserveConflicts: any[];
-  reserveDurationType: any;
   reserveError: string;
   reserveModal: any;
   reserveNote: string;
@@ -18,7 +17,6 @@ type ReserveModalProps = {
   setDaySchedule: React.Dispatch<React.SetStateAction<any[]>>;
   setIsSaving: React.Dispatch<React.SetStateAction<boolean>>;
   setReserveConflicts: React.Dispatch<React.SetStateAction<any[]>>;
-  setReserveDurationType: React.Dispatch<any>;
   setReserveError: React.Dispatch<React.SetStateAction<string>>;
   setReserveModal: React.Dispatch<any>;
   setReserveNote: React.Dispatch<React.SetStateAction<string>>;
@@ -27,7 +25,7 @@ type ReserveModalProps = {
   t: ReturnType<typeof useTranslations>;
 };
 
-export function ReserveModal({ activeCalendarId, add30Mins, calendars, isSaving, reserveConflicts, reserveDurationType, reserveError, reserveModal, reserveNote, reserveReason, reserveScope, selectedDate, setDaySchedule, setIsSaving, setReserveConflicts, setReserveDurationType, setReserveError, setReserveModal, setReserveNote, setReserveReason, setReserveScope, t }: ReserveModalProps) {
+export function ReserveModal({ activeCalendarId, add30Mins, calendars, isSaving, reserveConflicts, reserveError, reserveModal, reserveNote, reserveReason, reserveScope, selectedDate, setDaySchedule, setIsSaving, setReserveConflicts, setReserveError, setReserveModal, setReserveNote, setReserveReason, setReserveScope, t }: ReserveModalProps) {
   return (
     reserveModal.visible && (
     <div style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
@@ -65,26 +63,16 @@ export function ReserveModal({ activeCalendarId, add30Mins, calendars, isSaving,
       )}
     </div>
     
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.duration")}</span>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={() => { setReserveDurationType('single'); setReserveModal((p: any) => ({...p, endTime: add30Mins(p.time)})); }} style={{ flex: 1, padding: 8, background: reserveDurationType === 'single' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t("randevuPage.extra.singleSlot")}</button>
-        <button onClick={() => setReserveDurationType('range')} style={{ flex: 1, padding: 8, background: reserveDurationType === 'range' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t("randevuPage.extra.startEnd")}</button>
-      </div>
-    </div>
-    
-    {(
-      <div style={{ display: 'flex', gap: 12 }}>
+    <div style={{ display: 'flex', gap: 12 }}>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.start")}</span>
-          <input type="time" step="1800" value={reserveModal.time} onChange={e => { const v = e.target.value; setReserveModal((p: any) => ({...p, time: v, endTime: add30Mins(v)})); }} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
+          <input type="time" step="1800" value={reserveModal.time} onChange={e => { const v = e.target.value; setReserveModal((p: any) => ({...p, time: v, endTime: p.endTime > v ? p.endTime : add30Mins(v)})); }} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
           <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>{t("randevuPage.extra.end")}</span>
-          <input type="time" step="1800" value={reserveModal.endTime} readOnly={reserveDurationType !== 'range'} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6, opacity: reserveDurationType === 'range' ? 1 : 0.5 }} />
+          <input type="time" step="1800" value={reserveModal.endTime} onChange={e => setReserveModal((p: any) => ({...p, endTime: e.target.value}))} style={{ padding: 8, background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: 6 }} />
         </div>
-      </div>
-    )}
+    </div>
     
     <div style={{ display: 'flex', gap: 8 }}>
       <button onClick={() => setReserveReason('meeting')} style={{ flex: 1, padding: 8, background: reserveReason === 'meeting' ? '#22B573' : 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: 6 }}>{t('randevu.block.reasonMeeting')}</button>

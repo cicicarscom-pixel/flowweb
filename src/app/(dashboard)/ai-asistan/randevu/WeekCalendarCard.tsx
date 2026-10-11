@@ -14,14 +14,13 @@ type WeekCalendarCardProps = {
   setMenuConfig: React.Dispatch<any>;
   setNewAppt: React.Dispatch<React.SetStateAction<{ name: string; phone: string; time: string; service: string; calendar_id: string; note: string; }>>;
   setReserveConflicts: React.Dispatch<React.SetStateAction<any[]>>;
-  setReserveDurationType: React.Dispatch<any>;
   setReserveError: React.Dispatch<React.SetStateAction<string>>;
   setReserveModal: React.Dispatch<any>;
   setReserveScope: React.Dispatch<any>;
   t: ReturnType<typeof useTranslations>;
 };
 
-export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dialog, selectedDate, setDaySchedule, setIsModalOpen, setMenuConfig, setNewAppt, setReserveConflicts, setReserveDurationType, setReserveError, setReserveModal, setReserveScope, t }: WeekCalendarCardProps) {
+export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dialog, selectedDate, setDaySchedule, setIsModalOpen, setMenuConfig, setNewAppt, setReserveConflicts, setReserveError, setReserveModal, setReserveScope, t }: WeekCalendarCardProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <div className="glass" style={{ borderRadius: 24, padding: "24px", border: "1px solid rgba(255,255,255,0.06)" }}>
@@ -47,7 +46,6 @@ export function WeekCalendarCard({ activeCalendarId, add30Mins, daySchedule, dia
             setReserveModal({ visible: true, time: start, endTime: add30Mins(start) });
             setReserveError('');
             setReserveConflicts([]);
-            setReserveDurationType('range');
             setReserveScope(activeCalendarId ? 'doctor' : 'clinic');
           }}
           style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 12, border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.06)", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
